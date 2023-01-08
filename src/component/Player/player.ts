@@ -1,6 +1,6 @@
-import { PlayerOptions, $warn,styles, ToolBar, LoadingMask,ErrorMask } from "../../index";
-import  "./player.less"
-class Player {
+import { PlayerOptions, $warn,styles, ToolBar, LoadingMask,ErrorMask, EventObject, BaseEvent } from "../../index";
+import  "./player.less";
+class Player extends BaseEvent{
   private playerOptions = {
     url: "",
     autoplay: false,
@@ -9,11 +9,15 @@ class Player {
   };
   private container!: HTMLElement;
   private toolbar!: ToolBar;
+  private video!: HTMLVideoElement;
   constructor(options: PlayerOptions) {
+    super();
     this.playerOptions = Object.assign(this.playerOptions, options);
     this.init();
     this.initComponent();
     this.initContainer();
+    // 初始化播放器的事件
+    this.initEvent();
   }
 
   init() {
@@ -25,9 +29,10 @@ class Player {
   }
   
   initComponent() {
-    let toolbar = new ToolBar();
+    let toolbar = new ToolBar(this.container);
     this.toolbar = toolbar;
   }
+
   initContainer() {
     this.container.style.width = this.playerOptions.width;
     this.container.style.height = this.playerOptions.height;
@@ -42,8 +47,35 @@ class Player {
       </div>
     `
     this.container.appendChild(this.toolbar.template);
+    this.video = this.container.querySelector("video")!;
   }
 
+  initEvent() {
+    this.container.onclick = (e: Event) => {
+      if (e.target == this.video) {
+        if (this.video.paused) {
+          this.video.play();
+        } else if (this.video.played) {
+          this.video.pause();
+        }
+      }
+    }
+
+    this.video.onplay = (e: Event) => {
+      this.toolbar.emit("play")
+    }
+
+    this.video.onpause = (e:Event) => {
+      this.toolbar.emit("pause")
+    }
+
+    this.video.onwaiting = (e:Event) => {
+
+    }
+
+
+  }
+ 
   isTagValidate(ele: HTMLElement): boolean {
     if (window.getComputedStyle(ele).display === "block") return true;
     if (window.getComputedStyle(ele).display === "inline") return false;

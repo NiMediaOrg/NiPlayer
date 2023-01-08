@@ -5,4 +5,5 @@ export declare const icon: {
     "icon-yinliang": string;
     "icon-quanping": string;
     "icon-cuowutishi": string;
+    "icon-zanting": string;
 };

@@ -2,7 +2,9 @@ import { $warn, styles } from "../../index";
 import "loading-mask.less";
 export class LoadingMask {
   private template_!: string | HTMLElement;
-  constructor() {
+  private container!: HTMLElement;
+  constructor(container: HTMLElement) {
+    this.container = container;
     this.init();
   }
 
@@ -11,6 +13,11 @@ export class LoadingMask {
   }
 
   init() {
+    
+    this.template_ = this.generateLoadingMask();
+  }
+
+  generateLoadingMask(): HTMLElement {
     let mask = document.createElement("div") as HTMLElement;
     mask.className = styles["loading-mask"];
     let loadingContainer = document.createElement("div") as HTMLElement;
@@ -23,6 +30,21 @@ export class LoadingMask {
     loadingContainer.appendChild(loaadingItem);
     loadingContainer.appendChild(loadingTitle);
     mask.appendChild(loadingContainer);
-    this.template_ = mask;
+
+    return mask;
+  } 
+
+  addLoadingMask() {
+    if(![...this.container.children].includes(this.template as HTMLElement)) {
+      this.container.appendChild(this.template as HTMLElement);
+    }
+    
+  }
+
+  removeLoadingMask() { 
+    if([...this.container.children].includes(this.template as HTMLElement)) {
+      this.container.removeChild(this.template as HTMLElement);
+    }
+    
   }
 }

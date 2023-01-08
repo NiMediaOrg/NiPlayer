@@ -4,5 +4,6 @@ export const icon = {
     "icon-shezhi":"",
     "icon-yinliang":"",
     "icon-quanping":"",
-    "icon-cuowutishi":""
+    "icon-cuowutishi":"",
+    "icon-zanting":""
 }

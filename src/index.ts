@@ -1,4 +1,6 @@
 export * from "./types/PlayerOptions"
+export * from "./types/EventObject"
+export * from "./class/BaseEvent"
 export * from "./component/Player/player";
 export * from "./component/ToolBar/toolbar";
 export * from "./component/Progress/progress";

@@ -1,7 +1,7 @@
 {
   "name": "niplayer",
   "version": "1.0.0",
-  "description": "This is a TS library for video play",
+  "description": "This is a TS library for video player",
   "main": "./dist/player.umd.js",
   "scripts": {
     "build:rollup": "rollup -cw",

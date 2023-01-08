@@ -1,7 +1,27 @@
 import 'loading-mask.less';
 
-class Player {
+class BaseEvent {
+    constructor() {
+        this.$events = {};
+    }
+    //事件触发
+    emit(event, ...args) {
+        if (this.$events[event]) {
+            this.$events[event].forEach((cb) => {
+                cb.call(this, ...args);
+            });
+        }
+    }
+    //事件监听
+    on(event, cb) {
+        this.$events[event] = this.$events[event] || [];
+        this.$events[event].push(cb);
+    }
+}
+
+class Player extends BaseEvent {
     constructor(options) {
+        super();
         this.playerOptions = {
             url: "",
             autoplay: false,
@@ -12,6 +32,8 @@ class Player {
         this.init();
         this.initComponent();
         this.initContainer();
+        // 初始化播放器的事件
+        this.initEvent();
     }
     init() {
         let container = this.playerOptions.container;
@@ -21,8 +43,8 @@ class Player {
         this.container = container;
     }
     initComponent() {
-        let toolbar = new ToolBar();
-        this.toolbar = toolbar.template;
+        let toolbar = new ToolBar(this.container);
+        this.toolbar = toolbar;
     }
     initContainer() {
         this.container.style.width = this.playerOptions.width;
@@ -37,7 +59,28 @@ class Player {
         </video>
       </div>
     `;
-        this.container.appendChild(this.toolbar);
+        this.container.appendChild(this.toolbar.template);
+        this.video = this.container.querySelector("video");
+    }
+    initEvent() {
+        this.container.onclick = (e) => {
+            if (e.target == this.video) {
+                if (this.video.paused) {
+                    this.video.play();
+                }
+                else if (this.video.played) {
+                    this.video.pause();
+                }
+            }
+        };
+        this.video.onplay = (e) => {
+            this.toolbar.emit("play");
+        };
+        this.video.onpause = (e) => {
+            this.toolbar.emit("pause");
+        };
+        this.video.onwaiting = (e) => {
+        };
     }
     isTagValidate(ele) {
         if (window.getComputedStyle(ele).display === "block")
@@ -60,19 +103,38 @@ class Player {
 }
 
 // 视频播放器的工具栏组件
-class ToolBar {
-    constructor() {
+class ToolBar extends BaseEvent {
+    constructor(container) {
+        super();
+        this.container = container;
         this.init();
+        this.initComponent();
+        this.initTemplate();
+        this.initEvent();
     }
     get template() {
         return this.template_;
     }
     init() {
+    }
+    initComponent() {
+        this.progress = new Progress();
+        this.controller = new Controller(this.container);
+    }
+    initTemplate() {
         let div = document.createElement("div");
         div.className = `${styles["video-controls"]} ${styles["video-controls-hidden"]}`;
-        div.innerHTML += new Progress().template;
-        div.innerHTML += new Controller().template;
+        div.innerHTML += this.progress.template;
+        div.innerHTML += this.controller.template;
         this.template_ = div;
+    }
+    initEvent() {
+        this.on("play", () => {
+            this.controller.emit("play");
+        });
+        this.on("pause", () => {
+            this.controller.emit("pause");
+        });
     }
 }
 
@@ -95,8 +157,10 @@ class Progress {
     }
 }
 
-class Controller {
-    constructor() {
+class Controller extends BaseEvent {
+    constructor(container) {
+        super();
+        this.container = container;
         this.init();
     }
     get template() {
@@ -130,17 +194,32 @@ class Controller {
             </div>
         </div>
     `;
+        this.videoPlayBtn = this.container.querySelector(`.${styles["video-start-pause"]} i`);
+        this.currentTime = this.container.querySelector(`.${styles["video-duration-completed"]}`);
+        this.summaryTime = this.container.querySelector(`.${styles["video-duration-all"]}`);
+    }
+    initEvent() {
+        this.on("play", () => {
+            this.videoPlayBtn.className = `${icon["iconfont"]} ${icon["icon-zanting"]}`;
+        });
+        this.on("pause", () => {
+            this.videoPlayBtn.className = `${icon["iconfont"]} ${icon["icon-bofang"]}`;
+        });
     }
 }
 
 class LoadingMask {
-    constructor() {
+    constructor(container) {
+        this.container = container;
         this.init();
     }
     get template() {
         return this.template_;
     }
     init() {
+        this.template_ = this.generateLoadingMask();
+    }
+    generateLoadingMask() {
         let mask = document.createElement("div");
         mask.className = styles["loading-mask"];
         let loadingContainer = document.createElement("div");
@@ -153,18 +232,32 @@ class LoadingMask {
         loadingContainer.appendChild(loaadingItem);
         loadingContainer.appendChild(loadingTitle);
         mask.appendChild(loadingContainer);
-        this.template_ = mask;
+        return mask;
+    }
+    addLoadingMask() {
+        if (![...this.container.children].includes(this.template)) {
+            this.container.appendChild(this.template);
+        }
+    }
+    removeLoadingMask() {
+        if ([...this.container.children].includes(this.template)) {
+            this.container.removeChild(this.template);
+        }
     }
 }
 
 class ErrorMask {
-    constructor() {
+    constructor(container) {
+        this.container = container;
         this.init();
     }
     get template() {
         return this.template_;
     }
     init() {
+        this.template_ = this.generateErrorMask();
+    }
+    generateErrorMask() {
         let mask = document.createElement("div");
         mask.className = styles["error-mask"];
         let errorContainer = document.createElement("div");
@@ -180,7 +273,19 @@ class ErrorMask {
         errorContainer.appendChild(errorItem);
         errorContainer.appendChild(errorTitle);
         mask.appendChild(errorContainer);
-        this.template_ = mask;
+        return mask;
+    }
+    addErrorMask() {
+        if (![...this.container.children].includes(this.template)) {
+            // ToDo
+            this.container.appendChild(this.template);
+        }
+    }
+    removeErrorMask() {
+        if ([...this.container.children].includes(this.template)) {
+            // ToDo
+            this.container.removeChild(this.template);
+        }
     }
 }
 
@@ -228,7 +333,8 @@ const icon = {
     "icon-shezhi": "",
     "icon-yinliang": "",
     "icon-quanping": "",
-    "icon-cuowutishi": ""
+    "icon-cuowutishi": "",
+    "icon-zanting": ""
 };
 
-export { $warn, Controller, ErrorMask, LoadingMask, Player, Progress, ToolBar, icon, styles };
+export { $warn, BaseEvent, Controller, ErrorMask, LoadingMask, Player, Progress, ToolBar, icon, styles };

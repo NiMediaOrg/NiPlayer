@@ -3,7 +3,9 @@ import "./error-mask.less";
 
 export class ErrorMask {
   private template_!: string | HTMLElement;
-  constructor() {
+  private container!: HTMLElement;
+  constructor(container: HTMLElement) {
+    this.container = container;
     this.init();
   }
 
@@ -33,5 +35,19 @@ export class ErrorMask {
     mask.appendChild(errorContainer);
 
     return mask;
+  }
+
+  addErrorMask() {
+    if(![...this.container.children].includes(this.template as HTMLElement)) {
+      // ToDo
+      this.container.appendChild(this.template as HTMLElement);
+    }
+  }
+
+  removeErrorMask() {
+    if([...this.container.children].includes(this.template as HTMLElement)) {
+      // ToDo
+      this.container.removeChild(this.template as HTMLElement);
+    }
   }
 }

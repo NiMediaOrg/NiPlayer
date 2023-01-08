@@ -1,9 +1,14 @@
-import { $warn, styles,icon } from "../../index";
+import { $warn, styles,icon, EventObject, BaseEvent } from "../../index";
 import "./controller.less"
-export class Controller {
+export class Controller extends BaseEvent {
   private template_!: HTMLElement | string;
-
-  constructor() {
+  private container!: HTMLElement;
+  private videoPlayBtn!: HTMLElement;
+  private currentTime!: HTMLElement;
+  private summaryTime!: HTMLElement;
+  constructor(container: HTMLElement) {
+    super();
+    this.container = container;
     this.init();
   }
 
@@ -39,5 +44,20 @@ export class Controller {
             </div>
         </div>
     `;
+
+    this.videoPlayBtn = this.container.querySelector(`.${styles["video-start-pause"]} i`)!;
+    this.currentTime = this.container.querySelector(`.${styles["video-duration-completed"]}`)!;
+    this.summaryTime = this.container.querySelector(`.${styles["video-duration-all"]}`)!;
+  }
+
+  initEvent() {
+    this.on("play",()=>{
+        this.videoPlayBtn.className = `${icon["iconfont"]} ${icon["icon-zanting"]}`;
+    })
+
+    this.on("pause",()=>{
+        this.videoPlayBtn.className = `${icon["iconfont"]} ${icon["icon-bofang"]}`;
+    })
+
   }
 }
