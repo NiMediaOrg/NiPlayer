@@ -297,6 +297,16 @@ function $warn(msg) {
     throw new Error(msg);
 }
 
+function addZero(num) {
+    return num > 9 ? "" + num : "0" + num;
+}
+function formatTime(seconds) {
+    seconds = Math.floor(seconds);
+    let minute = Math.floor(seconds / 60);
+    let second = seconds % 60;
+    return addZero(minute) + ":" + addZero(second);
+}
+
 const styles = {
     "video-container": "player_video-container__ndwL-",
     "video-wrapper": "player_video-wrapper__zkaDS",
@@ -349,5 +359,6 @@ exports.LoadingMask = LoadingMask;
 exports.Player = Player;
 exports.Progress = Progress;
 exports.ToolBar = ToolBar;
+exports.formatTime = formatTime;
 exports.icon = icon;
 exports.styles = styles;
