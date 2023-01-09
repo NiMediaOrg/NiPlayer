@@ -86,10 +86,12 @@ export class ToolBar extends BaseEvent {
 
     this.on("loadedmetadata", (summary: number) => {
       this.controller.emit("loadedmetadata", summary);
+      this.progress.emit("loadedmetadata", summary);
     });
 
     this.on("timeupdate", (current: number) => {
       this.controller.emit("timeupdate", current);
+      this.progress.emit("timeupdate",current);
     });
 
     this.on("mounted", () => {

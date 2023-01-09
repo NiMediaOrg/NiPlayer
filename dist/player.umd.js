@@ -69,9 +69,9 @@
           this.video = this.container.querySelector("video");
       }
       initEvent() {
-          this.on("mounted", (ctx) => {
-              ctx.playerOptions.autoplay && ctx.video.play();
-          });
+          // this.on("mounted",(ctx: this)=>{
+          //   ctx.playerOptions.autoplay && ctx.video.play();
+          // })
           this.toolbar.emit("mounted");
           this.emit("mounted", this);
           this.container.onclick = (e) => {
@@ -95,6 +95,7 @@
           });
           this.video.addEventListener("loadedmetadata", (e) => {
               console.log("元数据加载完毕", this.video.duration);
+              this.playerOptions.autoplay && this.video.play();
               this.toolbar.emit("loadedmetadata", this.video.duration);
           });
           this.video.addEventListener("timeupdate", (e) => {
@@ -208,9 +209,11 @@
           });
           this.on("loadedmetadata", (summary) => {
               this.controller.emit("loadedmetadata", summary);
+              this.progress.emit("loadedmetadata", summary);
           });
           this.on("timeupdate", (current) => {
               this.controller.emit("timeupdate", current);
+              this.progress.emit("timeupdate", current);
           });
           this.on("mounted", () => {
               this.video = this.container.querySelector("video");
@@ -223,6 +226,7 @@
   class Progress extends BaseEvent {
       constructor(container) {
           super();
+          this.mouseDown = false;
           this.container = container;
           this.init();
           this.initEvent();
@@ -240,6 +244,59 @@
         </div>
         `;
       }
+      initProgressEvent() {
+          this.progress.onmouseenter = () => {
+              console.log(111);
+              this.dot.className = `${styles["video-dot"]}`;
+          };
+          this.progress.onmouseleave = () => {
+              if (!this.mouseDown) {
+                  this.dot.className = `${styles["video-dot"]} ${styles["video-dot-hidden"]}`;
+              }
+          };
+          this.progress.onclick = (e) => {
+              let scale = e.offsetX / this.progress.offsetWidth;
+              if (scale < 0) {
+                  scale = 0;
+              }
+              else if (scale > 1) {
+                  scale = 1;
+              }
+              this.dot.style.left = this.progress.offsetWidth * scale - 5 + "px";
+              this.bufferedProgress.style.width = scale * 100 + "%";
+              this.completedProgress.style.width = scale * 100 + "%";
+              this.video.currentTime = Math.floor(scale * this.video.duration);
+              if (this.video.paused)
+                  this.video.play();
+          };
+          this.dot.addEventListener("mousedown", (e) => {
+              let left = this.completedProgress.offsetWidth;
+              let mouseX = e.pageX;
+              this.mouseDown = true;
+              document.onmousemove = (e) => {
+                  let scale = (e.pageX - mouseX + left) / this.progress.offsetWidth;
+                  if (scale < 0) {
+                      scale = 0;
+                  }
+                  else if (scale > 1) {
+                      scale = 1;
+                  }
+                  this.dot.style.left = this.progress.offsetWidth * scale - 5 + "px";
+                  this.bufferedProgress.style.width = scale * 100 + "%";
+                  this.completedProgress.style.width = scale * 100 + "%";
+                  this.video.currentTime = Math.floor(scale * this.video.duration);
+                  if (this.video.paused)
+                      this.video.play();
+                  e.preventDefault();
+              };
+              document.onmouseup = (e) => {
+                  document.onmousemove = document.onmouseup = null;
+                  this.mouseDown = false;
+                  e.preventDefault();
+              };
+              e.preventDefault();
+          });
+      }
       initEvent() {
           this.on("mounted", () => {
               this.progress = this.container.querySelector(`.${styles["video-controls"]} .${styles["video-progress"]}`);
@@ -247,7 +304,20 @@
               this.bufferedProgress = this.progress.children[1];
               this.completedProgress = this.progress.children[2];
               this.dot = this.progress.children[3];
+              this.video = this.container.querySelector("video");
+              this.initProgressEvent();
           });
+          this.on("timeupdate", (current) => {
+              let scaleCurr = (this.video.currentTime / this.video.duration) * 100;
+              let scaleBuffer = ((this.video.buffered.end(0) + this.video.currentTime) /
+                  this.video.duration) *
+                  100;
+              this.completedProgress.style.width = scaleCurr + "%";
+              this.dot.style.left =
+                  this.progress.offsetWidth * (scaleCurr / 100) - 5 + "px";
+              this.bufferedProgress.style.width = scaleBuffer + "%";
+          });
+          this.on("loadedmetadata", (summary) => { });
       }
   }
 
@@ -290,6 +360,24 @@
         </div>
     `;
       }
+      initControllerEvent() {
+          this.videoPlayBtn.onclick = (e) => {
+              if (this.video.paused) {
+                  this.video.play();
+              }
+              else if (this.video.played) {
+                  this.video.pause();
+              }
+          };
+          this.fullScreen.onclick = () => {
+              if (this.container.requestFullscreen && !document.fullscreenElement) {
+                  this.container.requestFullscreen(); //该函数请求全屏
+              }
+              else if (document.fullscreenElement) {
+                  document.exitFullscreen(); //退出全屏函数仅仅绑定在document对象上，该点需要切记！！！
+              }
+          };
+      }
       initEvent() {
           this.on("play", () => {
               this.videoPlayBtn.className = `${icon["iconfont"]} ${icon["icon-zanting"]}`;
@@ -307,6 +395,9 @@
               this.videoPlayBtn = this.container.querySelector(`.${styles["video-start-pause"]} i`);
               this.currentTime = this.container.querySelector(`.${styles["video-duration-completed"]}`);
               this.summaryTime = this.container.querySelector(`.${styles["video-duration-all"]}`);
+              this.video = this.container.querySelector("video");
+              this.fullScreen = this.container.querySelector(`.${styles["video-fullscreen"]} i`);
+              this.initControllerEvent();
           });
       }
   }
