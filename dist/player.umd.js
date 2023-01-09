@@ -33,6 +33,7 @@
               height: "100%",
           };
           this.playerOptions = Object.assign(this.playerOptions, options);
+          console.log(this.playerOptions);
           this.init();
           this.initComponent();
           this.initContainer();
@@ -66,9 +67,13 @@
     `;
           this.container.appendChild(this.toolbar.template);
           this.video = this.container.querySelector("video");
-          this.toolbar.emit("mounted");
       }
       initEvent() {
+          this.on("mounted", (ctx) => {
+              ctx.playerOptions.autoplay && ctx.video.play();
+          });
+          this.toolbar.emit("mounted");
+          this.emit("mounted", this);
           this.container.onclick = (e) => {
               if (e.target == this.video) {
                   if (this.video.paused) {
@@ -174,7 +179,7 @@
       }
       init() { }
       initComponent() {
-          this.progress = new Progress();
+          this.progress = new Progress(this.container);
           this.controller = new Controller(this.container);
       }
       initTemplate() {
@@ -210,13 +215,17 @@
           this.on("mounted", () => {
               this.video = this.container.querySelector("video");
               this.controller.emit("mounted");
+              this.progress.emit("mounted");
           });
       }
   }
 
-  class Progress {
-      constructor() {
+  class Progress extends BaseEvent {
+      constructor(container) {
+          super();
+          this.container = container;
           this.init();
+          this.initEvent();
       }
       get template() {
           return this.template_;
@@ -230,6 +239,15 @@
             <div class="${styles["video-dot"]} ${styles["video-dot-hidden"]}"></div>
         </div>
         `;
+      }
+      initEvent() {
+          this.on("mounted", () => {
+              this.progress = this.container.querySelector(`.${styles["video-controls"]} .${styles["video-progress"]}`);
+              this.pretime = this.progress.children[0];
+              this.bufferedProgress = this.progress.children[1];
+              this.completedProgress = this.progress.children[2];
+              this.dot = this.progress.children[3];
+          });
       }
   }
 
@@ -426,13 +444,13 @@
   };
 
   const icon = {
-      "iconfont": "",
-      "icon-bofang": "",
-      "icon-shezhi": "",
-      "icon-yinliang": "",
-      "icon-quanping": "",
-      "icon-cuowutishi": "",
-      "icon-zanting": ""
+      iconfont: "main_iconfont__23ooR",
+      "icon-bofang": "main_icon-bofang__SU-ss",
+      "icon-shezhi": "main_icon-shezhi__y-8S0",
+      "icon-yinliang": "main_icon-yinliang__ZFc2R",
+      "icon-quanping": "main_icon-quanping__eGMiv",
+      "icon-cuowutishi": "main_icon-cuowutishi__fy-Bm",
+      "icon-zanting": "main_icon-zanting__BtGq5",
   };
 
   exports.$warn = $warn;

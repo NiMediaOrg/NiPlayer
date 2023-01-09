@@ -1,5 +1,6 @@
 import { PlayerOptions, BaseEvent } from "../../index";
 import "./player.less";
+import "../../main.less";
 declare class Player extends BaseEvent {
     private playerOptions;
     private container;

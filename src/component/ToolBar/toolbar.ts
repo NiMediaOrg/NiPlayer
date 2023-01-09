@@ -51,7 +51,7 @@ export class ToolBar extends BaseEvent {
   init() {}
 
   initComponent() {
-    this.progress = new Progress();
+    this.progress = new Progress(this.container);
     this.controller = new Controller(this.container);
   }
 
@@ -95,6 +95,7 @@ export class ToolBar extends BaseEvent {
     this.on("mounted", () => {
       this.video = this.container.querySelector("video")!;
       this.controller.emit("mounted");
+      this.progress.emit("mounted")
     });
   }
 }
