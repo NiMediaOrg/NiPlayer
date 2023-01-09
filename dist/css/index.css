@@ -23,6 +23,9 @@
   transition: all 0.3s ease;
   z-index: 1000;
 }
+.toolbar_video-controls-hidden__Fyvfe {
+  height: 5px;
+}
 
 .pregress_video-progress__QjWkP {
   width: 100%;

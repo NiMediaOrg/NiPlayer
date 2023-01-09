@@ -1,5 +1,12 @@
-import { $warn, styles,icon, EventObject, BaseEvent } from "../../index";
-import "./controller.less"
+import {
+  $warn,
+  styles,
+  icon,
+  EventObject,
+  BaseEvent,
+  formatTime,
+} from "../../index";
+import "./controller.less";
 export class Controller extends BaseEvent {
   private template_!: HTMLElement | string;
   private container!: HTMLElement;
@@ -10,6 +17,7 @@ export class Controller extends BaseEvent {
     super();
     this.container = container;
     this.init();
+    this.initEvent();
   }
 
   get template(): HTMLElement | string {
@@ -44,20 +52,35 @@ export class Controller extends BaseEvent {
             </div>
         </div>
     `;
-
-    this.videoPlayBtn = this.container.querySelector(`.${styles["video-start-pause"]} i`)!;
-    this.currentTime = this.container.querySelector(`.${styles["video-duration-completed"]}`)!;
-    this.summaryTime = this.container.querySelector(`.${styles["video-duration-all"]}`)!;
   }
 
   initEvent() {
-    this.on("play",()=>{
-        this.videoPlayBtn.className = `${icon["iconfont"]} ${icon["icon-zanting"]}`;
-    })
+    this.on("play", () => {
+      this.videoPlayBtn.className = `${icon["iconfont"]} ${icon["icon-zanting"]}`;
+    });
 
-    this.on("pause",()=>{
-        this.videoPlayBtn.className = `${icon["iconfont"]} ${icon["icon-bofang"]}`;
-    })
+    this.on("pause", () => {
+      this.videoPlayBtn.className = `${icon["iconfont"]} ${icon["icon-bofang"]}`;
+    });
 
+    this.on("loadedmetadata", (summary: number) => {
+      this.summaryTime.innerHTML = formatTime(summary);
+    });
+
+    this.on("timeupdate", (current: number) => {
+      this.currentTime.innerHTML = formatTime(current);
+    });
+
+    this.on("mounted", () => {
+      this.videoPlayBtn = this.container.querySelector(
+        `.${styles["video-start-pause"]} i`
+      )!;
+      this.currentTime = this.container.querySelector(
+        `.${styles["video-duration-completed"]}`
+      )!;
+      this.summaryTime = this.container.querySelector(
+        `.${styles["video-duration-all"]}`
+      )!;
+    });
   }
 }

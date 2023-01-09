@@ -1,4 +1,4 @@
-import { $warn, styles,icon } from "../../index";
+import { $warn, styles, icon } from "../../index";
 import "./error-mask.less";
 
 export class ErrorMask {
@@ -38,14 +38,14 @@ export class ErrorMask {
   }
 
   addErrorMask() {
-    if(![...this.container.children].includes(this.template as HTMLElement)) {
+    if (![...this.container.children].includes(this.template as HTMLElement)) {
       // ToDo
       this.container.appendChild(this.template as HTMLElement);
     }
   }
 
   removeErrorMask() {
-    if([...this.container.children].includes(this.template as HTMLElement)) {
+    if ([...this.container.children].includes(this.template as HTMLElement)) {
       // ToDo
       this.container.removeChild(this.template as HTMLElement);
     }

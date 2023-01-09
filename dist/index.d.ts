@@ -9,5 +9,6 @@ export * from "./component/LoadingMask/loading-mask";
 export * from "./component/ErrorMask/error-mask";
 export * from "./utils/warn";
 export * from "./utils/format";
+export * from "./utils/map";
 export * from "./styles/style";
 export * from "./styles/icon";

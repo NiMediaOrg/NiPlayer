@@ -47,8 +47,9 @@ class Player extends BaseEvent {
         this.container = container;
     }
     initComponent() {
-        let toolbar = new ToolBar(this.container);
-        this.toolbar = toolbar;
+        this.toolbar = new ToolBar(this.container);
+        this.loadingMask = new LoadingMask(this.container);
+        this.errorMask = new ErrorMask(this.container);
     }
     initContainer() {
         this.container.style.width = this.playerOptions.width;
@@ -65,6 +66,7 @@ class Player extends BaseEvent {
     `;
         this.container.appendChild(this.toolbar.template);
         this.video = this.container.querySelector("video");
+        this.toolbar.emit("mounted");
     }
     initEvent() {
         this.container.onclick = (e) => {
@@ -77,14 +79,53 @@ class Player extends BaseEvent {
                 }
             }
         };
-        this.video.onplay = (e) => {
+        this.container.addEventListener("mouseenter", (e) => {
+            this.toolbar.emit("showtoolbar", e);
+        });
+        this.container.addEventListener("mousemove", (e) => {
+            this.toolbar.emit("showtoolbar", e);
+        });
+        this.container.addEventListener("mouseleave", (e) => {
+            this.toolbar.emit("hidetoolbar");
+        });
+        this.video.addEventListener("loadedmetadata", (e) => {
+            console.log("元数据加载完毕", this.video.duration);
+            this.toolbar.emit("loadedmetadata", this.video.duration);
+        });
+        this.video.addEventListener("timeupdate", (e) => {
+            this.toolbar.emit("timeupdate", this.video.currentTime);
+        });
+        // 当视频可以再次播放的时候就移除loading和error的mask，通常是为了应对在播放的过程中出现需要缓冲或者播放错误这种情况从而需要展示对应的mask
+        this.video.addEventListener("play", (e) => {
+            this.loadingMask.removeLoadingMask();
+            this.errorMask.removeErrorMask();
             this.toolbar.emit("play");
-        };
-        this.video.onpause = (e) => {
+        });
+        this.video.addEventListener("pause", (e) => {
             this.toolbar.emit("pause");
-        };
-        this.video.onwaiting = (e) => {
-        };
+        });
+        this.video.addEventListener("waiting", (e) => {
+            this.loadingMask.removeLoadingMask();
+            this.errorMask.removeErrorMask();
+            this.loadingMask.addLoadingMask();
+        });
+        //当浏览器请求视频发生错误的时候
+        this.video.addEventListener("stalled", (e) => {
+            console.log("视频加载发生错误");
+            this.loadingMask.removeLoadingMask();
+            this.errorMask.removeErrorMask();
+            this.errorMask.addErrorMask();
+        });
+        this.video.addEventListener("error", (e) => {
+            this.loadingMask.removeLoadingMask();
+            this.errorMask.removeErrorMask();
+            this.errorMask.addErrorMask();
+        });
+        this.video.addEventListener("abort", (e) => {
+            this.loadingMask.removeLoadingMask();
+            this.errorMask.removeErrorMask();
+            this.errorMask.addErrorMask();
+        });
     }
     isTagValidate(ele) {
         if (window.getComputedStyle(ele).display === "block")
@@ -119,8 +160,19 @@ class ToolBar extends BaseEvent {
     get template() {
         return this.template_;
     }
-    init() {
+    showToolBar(e) {
+        this.container.querySelector(`.${styles["video-controls"]}`).className = `${styles["video-controls"]}`;
+        if (e.target !== this.video) ;
+        else {
+            this.timer = window.setTimeout(() => {
+                this.hideToolBar();
+            }, 3000);
+        }
     }
+    hideToolBar() {
+        this.container.querySelector(`.${styles["video-controls"]}`).className = `${styles["video-controls"]} ${styles["video-controls-hidden"]}`;
+    }
+    init() { }
     initComponent() {
         this.progress = new Progress();
         this.controller = new Controller(this.container);
@@ -133,11 +185,31 @@ class ToolBar extends BaseEvent {
         this.template_ = div;
     }
     initEvent() {
+        this.on("showtoolbar", (e) => {
+            if (this.timer) {
+                clearTimeout(this.timer);
+                this.timer = null;
+            }
+            this.showToolBar(e);
+        });
+        this.on("hidetoolbar", () => {
+            this.hideToolBar();
+        });
         this.on("play", () => {
             this.controller.emit("play");
         });
         this.on("pause", () => {
             this.controller.emit("pause");
+        });
+        this.on("loadedmetadata", (summary) => {
+            this.controller.emit("loadedmetadata", summary);
+        });
+        this.on("timeupdate", (current) => {
+            this.controller.emit("timeupdate", current);
+        });
+        this.on("mounted", () => {
+            this.video = this.container.querySelector("video");
+            this.controller.emit("mounted");
         });
     }
 }
@@ -166,6 +238,7 @@ class Controller extends BaseEvent {
         super();
         this.container = container;
         this.init();
+        this.initEvent();
     }
     get template() {
         return this.template_;
@@ -198,9 +271,6 @@ class Controller extends BaseEvent {
             </div>
         </div>
     `;
-        this.videoPlayBtn = this.container.querySelector(`.${styles["video-start-pause"]} i`);
-        this.currentTime = this.container.querySelector(`.${styles["video-duration-completed"]}`);
-        this.summaryTime = this.container.querySelector(`.${styles["video-duration-all"]}`);
     }
     initEvent() {
         this.on("play", () => {
@@ -208,6 +278,17 @@ class Controller extends BaseEvent {
         });
         this.on("pause", () => {
             this.videoPlayBtn.className = `${icon["iconfont"]} ${icon["icon-bofang"]}`;
+        });
+        this.on("loadedmetadata", (summary) => {
+            this.summaryTime.innerHTML = formatTime(summary);
+        });
+        this.on("timeupdate", (current) => {
+            this.currentTime.innerHTML = formatTime(current);
+        });
+        this.on("mounted", () => {
+            this.videoPlayBtn = this.container.querySelector(`.${styles["video-start-pause"]} i`);
+            this.currentTime = this.container.querySelector(`.${styles["video-duration-completed"]}`);
+            this.summaryTime = this.container.querySelector(`.${styles["video-duration-all"]}`);
         });
     }
 }
@@ -307,11 +388,14 @@ function formatTime(seconds) {
     return addZero(minute) + ":" + addZero(second);
 }
 
+let LOADING_MASK_MAP = new Array();
+let ERROR_MASK_MAP = new Array();
+
 const styles = {
     "video-container": "player_video-container__ndwL-",
     "video-wrapper": "player_video-wrapper__zkaDS",
     "video-controls": "toolbar_video-controls__z6g6I",
-    "video-controls-hidden": "",
+    "video-controls-hidden": "toolbar_video-controls-hidden__Fyvfe",
     "video-progress": "pregress_video-progress__QjWkP",
     "video-pretime": "pregress_video-pretime__JInJt",
     "video-buffered": "pregress_video-buffered__N25SV",
@@ -354,7 +438,9 @@ const icon = {
 exports.$warn = $warn;
 exports.BaseEvent = BaseEvent;
 exports.Controller = Controller;
+exports.ERROR_MASK_MAP = ERROR_MASK_MAP;
 exports.ErrorMask = ErrorMask;
+exports.LOADING_MASK_MAP = LOADING_MASK_MAP;
 exports.LoadingMask = LoadingMask;
 exports.Player = Player;
 exports.Progress = Progress;
