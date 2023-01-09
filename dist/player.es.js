@@ -65,9 +65,6 @@ class Player extends BaseEvent {
         this.video = this.container.querySelector("video");
     }
     initEvent() {
-        // this.on("mounted",(ctx: this)=>{
-        //   ctx.playerOptions.autoplay && ctx.video.play();
-        // })
         this.toolbar.emit("mounted");
         this.emit("mounted", this);
         this.container.onclick = (e) => {
@@ -242,13 +239,29 @@ class Progress extends BaseEvent {
     }
     initProgressEvent() {
         this.progress.onmouseenter = () => {
-            console.log(111);
             this.dot.className = `${styles["video-dot"]}`;
         };
         this.progress.onmouseleave = () => {
             if (!this.mouseDown) {
                 this.dot.className = `${styles["video-dot"]} ${styles["video-dot-hidden"]}`;
             }
+        };
+        this.progress.onmousemove = (e) => {
+            let scale = e.offsetX / this.progress.offsetWidth;
+            if (scale < 0) {
+                scale = 0;
+            }
+            else if (scale > 1) {
+                scale = 1;
+            }
+            let preTime = formatTime(scale * this.video.duration);
+            this.pretime.style.display = "block";
+            this.pretime.innerHTML = preTime;
+            this.pretime.style.left = e.offsetX - 17 + "px";
+            e.preventDefault();
+        };
+        this.progress.onmouseleave = (e) => {
+            this.pretime.style.display = "none";
         };
         this.progress.onclick = (e) => {
             let scale = e.offsetX / this.progress.offsetWidth;

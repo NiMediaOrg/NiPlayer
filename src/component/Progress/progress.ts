@@ -1,4 +1,4 @@
-import { $warn, BaseEvent, styles } from "../../index";
+import { $warn, BaseEvent, formatTime, styles } from "../../index";
 import "./pregress.less";
 export class Progress extends BaseEvent {
   private template_!: HTMLElement | string;
@@ -34,7 +34,6 @@ export class Progress extends BaseEvent {
 
   initProgressEvent() {
     this.progress.onmouseenter = () => {
-        console.log(111)
       this.dot.className = `${styles["video-dot"]}`;
     };
 
@@ -44,6 +43,24 @@ export class Progress extends BaseEvent {
       }
     };
 
+    this.progress.onmousemove = (e: MouseEvent) => {
+        let scale = e.offsetX / this.progress.offsetWidth;
+        if (scale < 0) {
+          scale = 0;
+        } else if (scale > 1) {
+          scale = 1;
+        }
+  
+        let preTime = formatTime(scale * this.video.duration);
+        this.pretime.style.display = "block";
+        this.pretime.innerHTML = preTime;
+        this.pretime.style.left = e.offsetX - 17 + "px";
+        e.preventDefault();
+      };
+
+    this.progress.onmouseleave = (e: MouseEvent) => {
+        this.pretime.style.display = "none";
+    };
     this.progress.onclick =  (e: MouseEvent) => {
         let scale = e.offsetX / this.progress.offsetWidth;
         if (scale < 0) {

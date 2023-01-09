@@ -67,9 +67,6 @@ class Player extends BaseEvent {
   }
 
   initEvent() {
-    // this.on("mounted",(ctx: this)=>{
-    //   ctx.playerOptions.autoplay && ctx.video.play();
-    // })
 
     this.toolbar.emit("mounted");
 
