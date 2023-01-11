@@ -5,22 +5,19 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    <script src="./dist/player.umd.js"></script>
-    <link rel="stylesheet" href="./dist/css/index.css">
+   
 </head>
 <body>
-    <div class="video"></div>
+    <div>
+        <video id="videoPlayer" controls width="500" height="300"></video>
+    </div>
+    <script src="http://cdn.dashjs.org/v3.1.0/dash.all.debug.js"></script>
     <script>
-
-        window.onload = function() {
-            let player = new Player.Player({
-                url: "./video.mp4",
-                container:document.getElementsByClassName("video")[0],
-                width:"600px",
-                height:"400px",
-                autoplay: true
-            })
-        }
+        (function(){
+            var url = "https://dash.akamaized.net/envivio/EnvivioDash3/manifest.mpd";
+            var player = dashjs.MediaPlayer().create();
+            player.initialize(document.querySelector("#videoPlayer"), url, true);
+        })();
     </script>
 </body>
 </html>
