@@ -9,15 +9,16 @@
 </head>
 <body>
     <div>
-        <video id="videoPlayer" controls width="500" height="300"></video>
+        <video id="videoPlayer" controls width="500" height="300" src="https://dash.akamaized.net/envivio/EnvivioDash3/v7_257-270146-i-94.m4s"></video>
     </div>
     <script src="http://cdn.dashjs.org/v3.1.0/dash.all.debug.js"></script>
     <script>
-        (function(){
-            var url = "https://dash.akamaized.net/envivio/EnvivioDash3/manifest.mpd";
-            var player = dashjs.MediaPlayer().create();
-            player.initialize(document.querySelector("#videoPlayer"), url, true);
-        })();
+        // (function(){
+        //     var url = "https://dash.akamaized.net/envivio/EnvivioDash3/manifest.mpd";
+        //     var player = dashjs.MediaPlayer().create();
+        //     player.initialize(document.querySelector("#videoPlayer"), url, true);
+        // })();
+        
     </script>
 </body>
 </html>

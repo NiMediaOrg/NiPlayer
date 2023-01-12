@@ -17,32 +17,33 @@ import { string2booolean, string2number } from "../utils/typeSwtich";
 import { $warn } from "../utils/warn";
 
 export function initMpdFile(mpd: Document): MpdFile {
-    return {
-        tag:"File",
-        root:initMpd(mpd.querySelector("MPD")!)
-    }
+  return {
+    tag: "File",
+    root: initMpd(mpd.querySelector("MPD")!),
+  };
 }
 
-export function initMpd(mpd:Element): Mpd {
-    let type = mpd.getAttribute("type") as ("static" | "dynamic")
-    let availabilityStartTime = mpd.getAttribute("availabilityStartTime");
-    let mediaPresentationDuration = mpd.getAttribute("mediaPresentationDuration");
-    let minBufferTime = mpd.getAttribute("minBufferTime");
-    let minimumUpdatePeriod = mpd.getAttribute("minimumUpdatePeriod");
-
-    let children = new Array<Period>();
-    mpd.querySelectorAll("Period").forEach(item=>{
-        children.push(initPeriod(item));
-    })
-    return {
-        tag:"MPD",
-        type,
-        children,
-        availabilityStartTime,
-        mediaPresentationDuration,
-        minBufferTime,
-        minimumUpdatePeriod
-    }
+export function initMpd(mpd: Element): Mpd {
+  let type = mpd.getAttribute("type") as "static" | "dynamic";
+  let availabilityStartTime = mpd.getAttribute("availabilityStartTime");
+  let mediaPresentationDuration = mpd.getAttribute("mediaPresentationDuration");
+  let minBufferTime = mpd.getAttribute("minBufferTime");
+  let minimumUpdatePeriod = mpd.getAttribute("minimumUpdatePeriod");
+  let maxSegmentDuration = mpd.getAttribute("maxSegmentDuration");
+  let children = new Array<Period>();
+  mpd.querySelectorAll("Period").forEach((item) => {
+    children.push(initPeriod(item));
+  });
+  return {
+    tag: "MPD",
+    type,
+    children,
+    maxSegmentDuration,
+    availabilityStartTime,
+    mediaPresentationDuration,
+    minBufferTime,
+    minimumUpdatePeriod,
+  };
 }
 
 export function initPeriod(period: Element): Period {
