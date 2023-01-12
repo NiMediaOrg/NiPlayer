@@ -11,23 +11,46 @@ export function formatTime(seconds: number): string {
   return addZero(minute) + ":" + addZero(second);
 }
 
-export function switchToSeconds(time:Time): number {
-  return time.hours * 3600 + time.minutes * 60 + time.seconds;
+export function switchToSeconds(time: Time): number {
+  let sum = 0;
+  if(time.hours) sum += time.hours * 3600;
+  if(time.minutes) sum += time.minutes * 60;
+  if(time.seconds) sum += time.seconds;
+
+  return sum;
 }
 
 // 解析MPD文件的时间字符串
-export function parseDuration(pt: string):Time {
+export function parseDuration(pt: string): Time {
   // Parse time from format "PT#H#M##.##S"
-  var ptTemp: any = pt.split("T")[1];
-  ptTemp = ptTemp.split("H");
-  var hours = ptTemp[0];
-  var minutes = ptTemp[1].split("M")[0];
-  var seconds = ptTemp[1].split("M")[1].split("S")[0];
-  var hundredths = seconds.split(".");
-  //  Display the length of video (taken from .mpd file, since video duration is infinate)
+  let hours, minutes, seconds;
+  for (let i = pt.length - 1; i >= 0; i--) {
+    if (pt[i] === "S") {
+      let j = i;
+      while (pt[i] !== "M" && pt[i] !== "H" && pt[i] !== "T") {
+        i--;
+      }
+      i += 1;
+      seconds = parseInt(pt.slice(i, j));
+    } else if (pt[i] === "M") {
+      let j = i;
+      while (pt[i] !== "H" && pt[i] !== "T") {
+        i--;
+      }
+      i += 1;
+      minutes = parseInt(pt.slice(i, j));
+    } else if (pt[i] === "H") {
+      let j = i;
+      while (pt[i] !== "T") {
+        i--;
+      }
+      i += 1;
+      hours = parseInt(pt.slice(i, j));
+    }
+  }
   return {
-    hours: Number(hours),
-    minutes: Number(minutes),
-    seconds: Number(hundredths[0]),
+    hours,
+    minutes,
+    seconds,
   };
 }

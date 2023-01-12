@@ -6,6 +6,7 @@ import {
   RangeRequest,
   Representation,
   SegmentRequest,
+  SegmentTemplate,
 } from "../types/MpdFile";
 import { parseDuration, switchToSeconds } from "../utils/format";
 import {
@@ -24,6 +25,7 @@ import { initMpdFile } from "./initMpd";
 export function parseMpd(mpd: Document) {
   let mpdModel = initMpdFile(mpd).root;
   let type = mpdModel.type;
+  console.log(parseDuration(mpdModel.mediaPresentationDuration));
   let mediaPresentationDuration = switchToSeconds(
     parseDuration(mpdModel.mediaPresentationDuration)
   );
@@ -33,7 +35,7 @@ export function parseMpd(mpd: Document) {
   let sumSegment = maxSegmentDuration
     ? Math.ceil(mediaPresentationDuration / maxSegmentDuration)
     : null;
-  // 代表的是整个MPD文档中的需要发送的所有xhr请求地址，包括多个Period对应的视频和音频请求地址  
+  // 代表的是整个MPD文档中的需要发送的所有xhr请求地址，包括多个Period对应的视频和音频请求地址
   let mpdRequest = [];
   // 遍历文档中的每一个Period，Period代表着一个完整的音视频，不同的Period具有不同内容的音视频，例如广告和正片就属于不同的Period
   mpdModel.children.forEach((period) => {
@@ -49,22 +51,32 @@ export function parseMpd(mpd: Document) {
     }
     period.children.forEach((child) => {
       if (checkAdaptationSet(child)) {
-        if(child.mimeType === "audio/mp4") {
-          audioRequest = parseAdaptationSet(child, path, sumSegment,child.mimeType);
-        } else if(child.mimeType === "video/mp4") {
-          videoRequest = parseAdaptationSet(child, path, sumSegment,child.mimeType)
+        if (child.mimeType === "audio/mp4") {
+          audioRequest = parseAdaptationSet(
+            child,
+            path,
+            sumSegment,
+            child.mimeType
+          );
+        } else if (child.mimeType === "video/mp4") {
+          videoRequest = parseAdaptationSet(
+            child,
+            path,
+            sumSegment,
+            child.mimeType
+          );
         }
       }
     });
-    mpdRequest.push({videoRequest,audioRequest});
+    mpdRequest.push({ videoRequest, audioRequest });
   });
 
   return {
     mpdRequest,
     type,
     mediaPresentationDuration,
-    maxSegmentDuration
-  }
+    maxSegmentDuration,
+  };
 }
 
 export function parseAdaptationSet(
@@ -75,24 +87,27 @@ export function parseAdaptationSet(
 ) {
   let children = adaptationSet.children;
   let hasTemplate = false;
-  let generateInitializationUrl,
-    initializationFormat,
-    generateMediaUrl,
-    mediaFormat;
+  let template: SegmentTemplate;
   for (let i = children.length - 1; i >= 0; i--) {
     let child = children[i];
     if (checkSegmentTemplate(child)) {
       hasTemplate = true;
-      [generateInitializationUrl, initializationFormat] = generateTemplateTuple(
-        child.initialization!
-      );
-      [generateMediaUrl, mediaFormat] = generateTemplateTuple(child.media!);
+      template = child;
       break;
     }
   }
-  let mediaResolve: MediaVideoResolve | MeidaAudioResolve;
+  let mediaResolve: MediaVideoResolve | MeidaAudioResolve = {};
   children.forEach((child) => {
     if (checkRepresentation(child)) {
+      let generateInitializationUrl,
+        initializationFormat,
+        generateMediaUrl,
+        mediaFormat;
+      if (hasTemplate) {
+        [generateInitializationUrl, initializationFormat] =
+          generateTemplateTuple(template.initialization);
+        [generateMediaUrl, mediaFormat] = generateTemplateTuple(template.media);
+      }
       let obj = parseRepresentation(
         child,
         hasTemplate,
@@ -103,9 +118,9 @@ export function parseAdaptationSet(
         [generateMediaUrl, mediaFormat]
       );
 
-      Object.assign(mediaResolve,obj)
+      Object.assign(mediaResolve, obj);
     }
-  })
+  });
   return mediaResolve;
 }
 
@@ -114,15 +129,15 @@ export function parseRepresentation(
   hasTemplate: boolean = false,
   path: string = "",
   sumSegment: number | null,
-  type :MediaType,
+  type: MediaType,
   initializationSegment?: [Function, string[]],
   mediaSegment?: [Function, string[]]
 ): MediaVideoResolve {
   let resolve;
-  if(type === "video/mp4") {
+  if (type === "video/mp4") {
     resolve = `${representation.width}*${representation.height}`;
-  } else if(type === "audio/mp4") {
-    resolve = `${representation.audioSamplingRate}`
+  } else if (type === "audio/mp4") {
+    resolve = `${representation.audioSamplingRate}`;
   }
   let obj = {};
   // 一. 如果该适应集 中具有标签SegmentTemplate，则接下来的Representation中请求的Initialization Segment和Media Segment的请求地址一律以SegmentTemplate中的属性为基准
@@ -160,29 +175,29 @@ export function parseRepresentationWithSegmentTemplateOuter(
     initializationSegment!;
   let [generateMediaUrl, mediaFormat] = mediaSegment!;
   // 1.处理对于Initialization Segment的请求
-  initializationFormat.forEach((item) => {
-    if (item === "RepresentationID") {
-      item = representation.id;
-    } else if (item === "Number") {
-      item = "1";
+  for (let i in initializationFormat) {
+    if (initializationFormat[i] === "RepresentationID") {
+      initializationFormat[i] = representation.id;
+    } else if (initializationFormat[i] === "Number") {
+      initializationFormat[i] = "1";
     }
-  });
+  }
   requestArray.push({
     type: "segement",
     url: path + generateInitializationUrl(...initializationFormat),
   });
   // 2.处理对于Media Segment的请求
-  mediaFormat.forEach((item) => {
-    if (item === "RepresentationID") {
-      item = representation.id;
-    } else if (item === "Number") {
-      item = "1";
+  for (let i in mediaFormat) {
+    if (mediaFormat[i] === "RepresentationID") {
+      mediaFormat[i] = representation.id;
     }
-  });
+  }
   for (let index = 1; index <= sumSegment; index++) {
-    mediaFormat.forEach((item) => {
-      if (item === "Number") item = String(index);
-    });
+    for (let i in mediaFormat) {
+      if (mediaFormat[i] === "Number") {
+        mediaFormat[i] = `${index}`;
+      }
+    }
     requestArray.push({
       type: "segement",
       url: path + generateMediaUrl(...mediaFormat),
@@ -298,6 +313,9 @@ export function generateTemplateTuple(
       s = s.slice(i + 1);
       i = 0;
       continue;
+    }
+    if (i + 1 === s.length) {
+      splitStr.push(s);
     }
   }
   return [

@@ -510,22 +510,49 @@ function formatTime(seconds) {
     return addZero(minute) + ":" + addZero(second);
 }
 function switchToSeconds(time) {
-    return time.hours * 3600 + time.minutes * 60 + time.seconds;
+    let sum = 0;
+    if (time.hours)
+        sum += time.hours * 3600;
+    if (time.minutes)
+        sum += time.minutes * 60;
+    if (time.seconds)
+        sum += time.seconds;
+    return sum;
 }
 // 解析MPD文件的时间字符串
 function parseDuration(pt) {
     // Parse time from format "PT#H#M##.##S"
-    var ptTemp = pt.split("T")[1];
-    ptTemp = ptTemp.split("H");
-    var hours = ptTemp[0];
-    var minutes = ptTemp[1].split("M")[0];
-    var seconds = ptTemp[1].split("M")[1].split("S")[0];
-    var hundredths = seconds.split(".");
-    //  Display the length of video (taken from .mpd file, since video duration is infinate)
+    let hours, minutes, seconds;
+    for (let i = pt.length - 1; i >= 0; i--) {
+        if (pt[i] === "S") {
+            let j = i;
+            while (pt[i] !== "M" && pt[i] !== "H" && pt[i] !== "T") {
+                i--;
+            }
+            i += 1;
+            seconds = parseInt(pt.slice(i, j));
+        }
+        else if (pt[i] === "M") {
+            let j = i;
+            while (pt[i] !== "H" && pt[i] !== "T") {
+                i--;
+            }
+            i += 1;
+            minutes = parseInt(pt.slice(i, j));
+        }
+        else if (pt[i] === "H") {
+            let j = i;
+            while (pt[i] !== "T") {
+                i--;
+            }
+            i += 1;
+            hours = parseInt(pt.slice(i, j));
+        }
+    }
     return {
-        hours: Number(hours),
-        minutes: Number(minutes),
-        seconds: Number(hundredths[0]),
+        hours,
+        minutes,
+        seconds,
     };
 }
 
@@ -739,7 +766,7 @@ function initAdaptationSet(adaptationSet) {
     }
 }
 function initRepresentation(representation) {
-    let bandWidth = Number(representation.getAttribute("bandWidth"));
+    let bandWidth = Number(representation.getAttribute("bandwidth"));
     let codecs = representation.getAttribute("codecs");
     let id = representation.getAttribute("id");
     let width = Number(representation.getAttribute("width"));
@@ -747,9 +774,6 @@ function initRepresentation(representation) {
     let mimeType = representation.getAttribute("mimeType");
     let audioSamplingRate = representation.getAttribute("audioSamplingRate");
     let children = new Array();
-    if (!(bandWidth && codecs && id && width && height)) {
-        $warn("传入的MPD文件中Representation标签上不存在属性xxx");
-    }
     if (mimeType && !checkMediaType(mimeType)) {
         $warn("");
     }
@@ -779,7 +803,7 @@ function initRepresentation(representation) {
                     children.push(list);
                 }
             }
-            else {
+            else if (representation.querySelector("SegmentBase")) {
                 //2. BaseURL+SegmentBase 适用于每个rep只有一个Seg的情况
                 let base = initSegmentBase(representation.querySelector("SegmentBase"));
                 if (representation.querySelector("BaseURL")) {
@@ -869,12 +893,13 @@ function initBaseURL(baseURL) {
 function parseMpd(mpd) {
     let mpdModel = initMpdFile(mpd).root;
     let type = mpdModel.type;
+    console.log(parseDuration(mpdModel.mediaPresentationDuration));
     let mediaPresentationDuration = switchToSeconds(parseDuration(mpdModel.mediaPresentationDuration));
     let maxSegmentDuration = switchToSeconds(parseDuration(mpdModel.maxSegmentDuration));
     let sumSegment = maxSegmentDuration
         ? Math.ceil(mediaPresentationDuration / maxSegmentDuration)
         : null;
-    // 代表的是整个MPD文档中的需要发送的所有xhr请求地址，包括多个Period对应的视频和音频请求地址  
+    // 代表的是整个MPD文档中的需要发送的所有xhr请求地址，包括多个Period对应的视频和音频请求地址
     let mpdRequest = [];
     // 遍历文档中的每一个Period，Period代表着一个完整的音视频，不同的Period具有不同内容的音视频，例如广告和正片就属于不同的Period
     mpdModel.children.forEach((period) => {
@@ -904,25 +929,30 @@ function parseMpd(mpd) {
         mpdRequest,
         type,
         mediaPresentationDuration,
-        maxSegmentDuration
+        maxSegmentDuration,
     };
 }
 function parseAdaptationSet(adaptationSet, path = "", sumSegment, type) {
     let children = adaptationSet.children;
     let hasTemplate = false;
-    let generateInitializationUrl, initializationFormat, generateMediaUrl, mediaFormat;
+    let template;
     for (let i = children.length - 1; i >= 0; i--) {
         let child = children[i];
         if (checkSegmentTemplate(child)) {
             hasTemplate = true;
-            [generateInitializationUrl, initializationFormat] = generateTemplateTuple(child.initialization);
-            [generateMediaUrl, mediaFormat] = generateTemplateTuple(child.media);
+            template = child;
             break;
         }
     }
-    let mediaResolve;
+    let mediaResolve = {};
     children.forEach((child) => {
         if (checkRepresentation(child)) {
+            let generateInitializationUrl, initializationFormat, generateMediaUrl, mediaFormat;
+            if (hasTemplate) {
+                [generateInitializationUrl, initializationFormat] =
+                    generateTemplateTuple(template.initialization);
+                [generateMediaUrl, mediaFormat] = generateTemplateTuple(template.media);
+            }
             let obj = parseRepresentation(child, hasTemplate, path, sumSegment, type, [generateInitializationUrl, initializationFormat], [generateMediaUrl, mediaFormat]);
             Object.assign(mediaResolve, obj);
         }
@@ -958,30 +988,30 @@ function parseRepresentationWithSegmentTemplateOuter(representation, path = "", 
     let [generateInitializationUrl, initializationFormat] = initializationSegment;
     let [generateMediaUrl, mediaFormat] = mediaSegment;
     // 1.处理对于Initialization Segment的请求
-    initializationFormat.forEach((item) => {
-        if (item === "RepresentationID") {
-            item = representation.id;
+    for (let i in initializationFormat) {
+        if (initializationFormat[i] === "RepresentationID") {
+            initializationFormat[i] = representation.id;
         }
-        else if (item === "Number") {
-            item = "1";
+        else if (initializationFormat[i] === "Number") {
+            initializationFormat[i] = "1";
         }
-    });
+    }
     requestArray.push({
         type: "segement",
         url: path + generateInitializationUrl(...initializationFormat),
     });
     // 2.处理对于Media Segment的请求
-    mediaFormat.forEach((item) => {
-        if (item === "RepresentationID") {
-            item = representation.id;
+    for (let i in mediaFormat) {
+        if (mediaFormat[i] === "RepresentationID") {
+            mediaFormat[i] = representation.id;
         }
-        else if (item === "Number") {
-            item = "1";
-        }
-    });
+    }
     for (let index = 1; index <= sumSegment; index++) {
-        mediaFormat.forEach((item) => {
-        });
+        for (let i in mediaFormat) {
+            if (mediaFormat[i] === "Number") {
+                mediaFormat[i] = `${index}`;
+            }
+        }
         requestArray.push({
             type: "segement",
             url: path + generateMediaUrl(...mediaFormat),
@@ -1083,6 +1113,9 @@ function generateTemplateTuple(s) {
             s = s.slice(i + 1);
             i = 0;
             continue;
+        }
+        if (i + 1 === s.length) {
+            splitStr.push(s);
         }
     }
     return [

@@ -8,17 +8,33 @@
    
 </head>
 <body>
+    <input type="file" id="file">
     <div>
-        <video id="videoPlayer" controls width="500" height="300" src="https://dash.akamaized.net/envivio/EnvivioDash3/v7_257-270146-i-94.m4s"></video>
+        <!-- <video id="videoPlayer" controls width="500" height="300"></video> -->
     </div>
-    <script src="http://cdn.dashjs.org/v3.1.0/dash.all.debug.js"></script>
+    <script src="./dist/player.umd.js"></script>
     <script>
         // (function(){
         //     var url = "https://dash.akamaized.net/envivio/EnvivioDash3/manifest.mpd";
         //     var player = dashjs.MediaPlayer().create();
         //     player.initialize(document.querySelector("#videoPlayer"), url, true);
         // })();
-        
+        let parseMpd = Player.parseMpd;
+        let fileReder = new FileReader();
+        let File = document.getElementById("file")
+        File.onchange = function() {
+            let file = File.files[0];
+            fileReder.readAsText(file);
+            fileReder.onload = function() {
+                let data = fileReder.result;
+                let parser = new DOMParser();
+                let document = parser.parseFromString(data,"text/xml");
+                let init = Player.initMpdFile(document);
+                let request = Player.parseMpd(document);
+                // console.log(init)
+                console.log(request)
+            }
+        }
     </script>
 </body>
 </html>

@@ -101,7 +101,7 @@ export function initAdaptationSet(
 export function initRepresentation(
   representation: Element
 ): Representation | never {
-  let bandWidth = Number(representation.getAttribute("bandWidth"));
+  let bandWidth = Number(representation.getAttribute("bandwidth"));
   let codecs = representation.getAttribute("codecs");
   let id = representation.getAttribute("id");
   let width = Number(representation.getAttribute("width"));
@@ -109,9 +109,6 @@ export function initRepresentation(
   let mimeType = representation.getAttribute("mimeType");
   let audioSamplingRate = representation.getAttribute("audioSamplingRate");
   let children = new Array<BaseURL | SegmentBase | SegmentList>();
-  if (!(bandWidth && codecs && id && width && height)) {
-    $warn("传入的MPD文件中Representation标签上不存在属性xxx");
-  }
   if (mimeType && !checkMediaType(mimeType)) {
     $warn("");
   } else {
@@ -142,7 +139,7 @@ export function initRepresentation(
         } else {
           children.push(list);
         }
-      } else {
+      } else if(representation.querySelector("SegmentBase")){
         //2. BaseURL+SegmentBase 适用于每个rep只有一个Seg的情况
         let base = initSegmentBase(
           representation.querySelector("SegmentBase")!
@@ -155,7 +152,7 @@ export function initRepresentation(
         } else {
           $warn("传入的MPD文件中Representation中的子节点结构错误");
         }
-      }
+      } 
       return {
         tag: "Representation",
         bandWidth,
