@@ -30,7 +30,7 @@
                 let parser = new DOMParser();
                 let document = parser.parseFromString(data,"text/xml");
                 let init = Player.initMpdFile(document);
-                let request = Player.parseMpd(document);
+                let request = Player.parseMpd(document,"https://dash.akamaized.net/envivio/EnvivioDash3/");
                 // console.log(init)
                 console.log(request)
             }
