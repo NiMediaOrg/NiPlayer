@@ -10,9 +10,9 @@ export * from "./component/LoadingMask/loading-mask";
 export * from "./component/ErrorMask/error-mask";
 export * from "./utils/warn";
 export * from "./utils/format";
-export * from "./utils/map"
 export * from "./utils/typeCheck"
 export * from "./utils/typeSwtich"
 export * from "./styles/style";
 export * from "./styles/icon";
 export * from "./dash/initMpd";
+export * from "./dash/parseMpd";
