@@ -3,6 +3,7 @@ import {
   MediaType,
   MediaVideoResolve,
   MeidaAudioResolve,
+  PeriodRequest,
   RangeRequest,
   Representation,
   SegmentRequest,
@@ -35,7 +36,7 @@ export function parseMpd(mpd: Document, BASE_URL: string = "") {
     ? Math.ceil(mediaPresentationDuration / maxSegmentDuration)
     : null;
   // 代表的是整个MPD文档中的需要发送的所有xhr请求地址，包括多个Period对应的视频和音频请求地址
-  let mpdRequest = [];
+  let mpdRequest = new Array<PeriodRequest>();
   // 遍历文档中的每一个Period，Period代表着一个完整的音视频，不同的Period具有不同内容的音视频，例如广告和正片就属于不同的Period
   mpdModel.children.forEach((period) => {
     let path = "" + BASE_URL;

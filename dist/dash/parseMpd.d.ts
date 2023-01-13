@@ -1,6 +1,6 @@
-import { AdaptationSet, MediaType, MediaVideoResolve, RangeRequest, Representation, SegmentRequest } from "../types/MpdFile";
+import { AdaptationSet, MediaType, MediaVideoResolve, PeriodRequest, RangeRequest, Representation, SegmentRequest } from "../types/MpdFile";
 export declare function parseMpd(mpd: Document, BASE_URL?: string): {
-    mpdRequest: any[];
+    mpdRequest: PeriodRequest[];
     type: "static" | "dynamic";
     mediaPresentationDuration: number;
     maxSegmentDuration: number;

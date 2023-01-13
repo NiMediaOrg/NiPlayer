@@ -492,7 +492,7 @@ function parseMpd(mpd, BASE_URL = "") {
         ? Math.ceil(mediaPresentationDuration / maxSegmentDuration)
         : null;
     // 代表的是整个MPD文档中的需要发送的所有xhr请求地址，包括多个Period对应的视频和音频请求地址
-    let mpdRequest = [];
+    let mpdRequest = new Array();
     // 遍历文档中的每一个Period，Period代表着一个完整的音视频，不同的Period具有不同内容的音视频，例如广告和正片就属于不同的Period
     mpdModel.children.forEach((period) => {
         let path = "" + BASE_URL;
@@ -784,14 +784,9 @@ class MpdPlayer {
     init() {
         return __awaiter(this, void 0, void 0, function* () {
             yield this.getMpdFile(this.mpdUrl);
+            // 遍历每一个Period
             this.requestInfo.mpdRequest.forEach((child) => __awaiter(this, void 0, void 0, function* () {
-                let videoResolve = child.videoRequest["1920*1080"];
-                let audioResolve = child.audioRequest["48000"];
-                let val = yield Promise.all([
-                    this.getInitializationSegment(videoResolve[0].url),
-                    this.getInitializationSegment(audioResolve[0].url),
-                ]);
-                console.log(val);
+                yield this.handlePeriod(child);
             }));
         });
     }
@@ -808,10 +803,37 @@ class MpdPlayer {
             this.requestInfo = result;
         });
     }
+    handlePeriod(child) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let videoResolve = child.videoRequest["1920*1080"];
+            let audioResolve = child.audioRequest["48000"];
+            yield this.handleInitializationSegment(videoResolve[0].url, audioResolve[0].url);
+            yield this.handleMediaSegment(videoResolve.slice(1), audioResolve.slice(1));
+        });
+    }
+    handleInitializationSegment(videoUrl, audioUrl) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield Promise.all([
+                this.getSegment(videoUrl),
+                this.getSegment(audioUrl),
+            ]);
+        });
+    }
+    handleMediaSegment(videoRequest, audioRequest) {
+        return __awaiter(this, void 0, void 0, function* () {
+            for (let i = 0; i < Math.min(videoRequest.length, audioRequest.length); i++) {
+                let val = yield Promise.all([
+                    this.getSegment(videoRequest[i].url),
+                    this.getSegment(audioRequest[i].url),
+                ]);
+                console.log(i + 1, val);
+            }
+        });
+    }
     /**
-     * @description 根据解析到的MPD文件获取初始段（Initialization Segment）
+     * @description 根据解析到的MPD文件的段（Initialization Segment 和 Media Segment）
      */
-    getInitializationSegment(url) {
+    getSegment(url) {
         return this.axios.get(url, {}, "arraybuffer");
     }
 }

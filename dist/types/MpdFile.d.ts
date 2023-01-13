@@ -2,6 +2,10 @@
  * @description MIME类型
  */
 export type MediaType = "video/mp4" | "audio/mp4" | "text/html" | "text/xml" | "text/plain" | "image/png" | "image/jpeg";
+export type PeriodRequest = {
+    "videoRequest": MediaVideoResolve;
+    "audioRequest": MeidaAudioResolve;
+};
 /**
  * @description video类型媒体的分辨率
  */
