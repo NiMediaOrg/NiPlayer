@@ -9,6 +9,7 @@ export declare class MpdPlayer {
     private axios;
     constructor(player: Player);
     init(): Promise<void>;
+    initEvent(): void;
     /**
      * @description 获取并且解析MPD文件
      */

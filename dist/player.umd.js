@@ -784,12 +784,17 @@
       }
       init() {
           return __awaiter(this, void 0, void 0, function* () {
+              this.player.video.controls = true;
               yield this.getMpdFile(this.mpdUrl);
               // 遍历每一个Period
               this.requestInfo.mpdRequest.forEach((child) => __awaiter(this, void 0, void 0, function* () {
                   yield this.handlePeriod(child);
               }));
           });
+      }
+      initEvent() {
+          this.player.toolbar.emit("mounted");
+          this.player.emit("mounted", this);
       }
       /**
        * @description 获取并且解析MPD文件
@@ -886,6 +891,8 @@
     `;
           this.container.appendChild(this.toolbar.template);
           this.video = this.container.querySelector("video");
+          this.video.height = this.container.clientHeight;
+          this.video.width = this.container.clientWidth;
       }
       isTagValidate(ele) {
           if (window.getComputedStyle(ele).display === "block")

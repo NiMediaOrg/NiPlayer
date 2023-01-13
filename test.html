@@ -5,6 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <link rel="stylesheet" href="./dist/css/index.css">
    
 </head>
 <body>
@@ -21,10 +22,11 @@
         // })();
         let player = new Player.Player({
             url:"https://dash.akamaized.net/envivio/EnvivioDash3/manifest.mpd",
-            container:document.getElementById("video")
+            // url:"./videos.mp4",
+            container:document.getElementById("video"),
+            width: "500px",
+            height: "300px"
         })
-
-
         let parseMpd = Player.parseMpd;
         let fileReder = new FileReader();
         let File = document.getElementById("file")
