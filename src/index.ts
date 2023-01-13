@@ -1,6 +1,7 @@
 export * from "./types/PlayerOptions"
 export * from "./types/EventObject"
 export * from "./types/MpdFile"
+export * from "./types/AxiosRequest"
 export * from "./class/BaseEvent"
 export * from "./component/Player/player";
 export * from "./component/ToolBar/toolbar";
@@ -16,3 +17,4 @@ export * from "./styles/style";
 export * from "./styles/icon";
 export * from "./dash/initMpd";
 export * from "./dash/parseMpd";
+export * from "./axios/Axios"

@@ -1,11 +1,6 @@
-import { AdaptationSet, MediaType, MediaVideoResolve, MeidaAudioResolve, RangeRequest, Representation, SegmentRequest } from "../types/MpdFile";
-export declare function parseMpd(mpd: Document, BASE_URL?: string): {
-    mpdRequest: any[];
-    type: "static" | "dynamic";
-    mediaPresentationDuration: number;
-    maxSegmentDuration: number;
-};
-export declare function parseAdaptationSet(adaptationSet: AdaptationSet, path: string, sumSegment: number | null, type: MediaType): MediaVideoResolve | MeidaAudioResolve;
+import { AdaptationSet, MediaType, MediaVideoResolve, RangeRequest, Representation, SegmentRequest } from "../types/MpdFile";
+export declare function parseMpd(mpd: Document, BASE_URL?: string): Object;
+export declare function parseAdaptationSet(adaptationSet: AdaptationSet, path: string, sumSegment: number | null, type: MediaType): Object;
 export declare function parseRepresentation(representation: Representation, hasTemplate: boolean, path: string, sumSegment: number | null, type: MediaType, initializationSegment?: [Function, string[]], mediaSegment?: [Function, string[]]): MediaVideoResolve;
 /**
  * @description 应对Representation外部具有SegmentTemplate的结构这种情况

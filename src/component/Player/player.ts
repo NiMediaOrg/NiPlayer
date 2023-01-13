@@ -10,6 +10,7 @@ import {
 import "./player.less";
 import "../../main.less";
 import { parseMpd } from "../../dash/parseMpd";
+import { Axios } from "../../axios/Axios";
 class Player extends BaseEvent {
   private playerOptions = {
     url: "",

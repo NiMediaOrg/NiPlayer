@@ -31,10 +31,18 @@
                 let document = parser.parseFromString(data,"text/xml");
                 let init = Player.initMpdFile(document);
                 let request = Player.parseMpd(document,"https://dash.akamaized.net/envivio/EnvivioDash3/");
-                // console.log(init)
                 console.log(request)
             }
         }
+
+        let axios = new Player.Axios();
+        console.log(axios);
+        axios.post("http://localhost/login",{"Content-Type":"application/json"},"arraybuffer",JSON.stringify({
+            username:"nyc757791",
+            password:"ddddd"
+        })).then((val)=>{
+            console.log(val)
+        })
     </script>
 </body>
 </html>
