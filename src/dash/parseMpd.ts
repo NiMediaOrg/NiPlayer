@@ -194,14 +194,15 @@ export function parseRepresentationWithSegmentTemplateOuter(
     }
   }
   for (let index = 1; index <= sumSegment; index++) {
+    let copy = [...mediaFormat];
     for (let i in mediaFormat) {
-      if (mediaFormat[i] === "Number") {
-        mediaFormat[i] = `${index}`;
+      if (copy[i] === "Number") {
+        copy[i] = `${index}`;
       }
     }
     requestArray.push({
       type: "segement",
-      url: path + generateMediaUrl(...mediaFormat),
+      url: path + generateMediaUrl(...copy),
     });
   }
 

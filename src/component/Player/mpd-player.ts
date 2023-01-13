@@ -37,6 +37,7 @@ export class MpdPlayer {
     );
     this.mpd = document;
     this.requestInfo = result;
+    console.log(this.requestInfo)
   }
 
   async handlePeriod(child: PeriodRequest) {

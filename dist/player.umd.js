@@ -600,14 +600,15 @@
           }
       }
       for (let index = 1; index <= sumSegment; index++) {
+          let copy = [...mediaFormat];
           for (let i in mediaFormat) {
-              if (mediaFormat[i] === "Number") {
-                  mediaFormat[i] = `${index}`;
+              if (copy[i] === "Number") {
+                  copy[i] = `${index}`;
               }
           }
           requestArray.push({
               type: "segement",
-              url: path + generateMediaUrl(...mediaFormat),
+              url: path + generateMediaUrl(...copy),
           });
       }
       return requestArray;
@@ -801,6 +802,7 @@
               let result = parseMpd(document, "https://dash.akamaized.net/envivio/EnvivioDash3/");
               this.mpd = document;
               this.requestInfo = result;
+              console.log(this.requestInfo);
           });
       }
       handlePeriod(child) {
