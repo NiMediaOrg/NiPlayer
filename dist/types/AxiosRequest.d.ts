@@ -6,6 +6,12 @@ export type AxiosContentType = "application/x-www-form-urlencoded" | "multipart/
 export type AxiosData = XMLHttpRequestBodyInit;
 export type AxiosHeader = {
     "Content-Type"?: AxiosContentType;
-    "Range"?: string;
-    "Authroization"?: string;
+    Range?: string;
+    Authroization?: string;
+};
+export type AxiosReturnType = {
+    status: "success" | "fail";
+    data: JSON | ArrayBuffer | Blob | Document | string | {
+        [props: string]: any;
+    };
 };

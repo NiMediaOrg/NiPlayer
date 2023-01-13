@@ -22,7 +22,7 @@ import {
 } from "../utils/typeCheck";
 import { initMpdFile } from "./initMpd";
 
-export function parseMpd(mpd: Document, BASE_URL: string = ""): Object {
+export function parseMpd(mpd: Document, BASE_URL: string = "") {
   let mpdModel = initMpdFile(mpd).root;
   let type = mpdModel.type;
   let mediaPresentationDuration = switchToSeconds(
@@ -75,6 +75,7 @@ export function parseMpd(mpd: Document, BASE_URL: string = ""): Object {
     type,
     mediaPresentationDuration,
     maxSegmentDuration,
+    mpdModel
   };
 }
 

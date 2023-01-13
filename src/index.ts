@@ -4,6 +4,8 @@ export * from "./types/MpdFile"
 export * from "./types/AxiosRequest"
 export * from "./class/BaseEvent"
 export * from "./component/Player/player";
+export * from "./component/Player/mp4-player"
+export * from "./component/Player/mpd-player"
 export * from "./component/ToolBar/toolbar";
 export * from "./component/Progress/progress";
 export * from "./component/Controller/controller";

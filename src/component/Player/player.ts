@@ -9,29 +9,32 @@ import {
 } from "../../index";
 import "./player.less";
 import "../../main.less";
-import { parseMpd } from "../../dash/parseMpd";
-import { Axios } from "../../axios/Axios";
+import { getFileExtension } from "../../utils/getFileExtension";
+import { Mp4Player } from "./mp4-player";
+import { MpdPlayer } from "./mpd-player";
 class Player extends BaseEvent {
-  private playerOptions = {
+ playerOptions = {
     url: "",
     autoplay: false,
     width: "100%",
     height: "100%",
   };
-  private container!: HTMLElement;
-  private video!: HTMLVideoElement;
-  private toolbar!: ToolBar;
-  private loadingMask!: LoadingMask;
-  private errorMask!: ErrorMask;
+  container!: HTMLElement;
+  video!: HTMLVideoElement;
+  toolbar!: ToolBar;
+  loadingMask!: LoadingMask;
+  errorMask!: ErrorMask;
   constructor(options: PlayerOptions) {
     super();
     this.playerOptions = Object.assign(this.playerOptions, options);
-    console.log(this.playerOptions)
     this.init();
     this.initComponent();
     this.initContainer();
-    // 初始化播放器的事件
-    this.initEvent();
+    if(getFileExtension(this.playerOptions.url) === "mp4") {
+      new Mp4Player(this);
+    } else if(getFileExtension(this.playerOptions.url) === "mpd") {
+      new MpdPlayer(this)
+    }
   }
 
   init() {
@@ -43,7 +46,9 @@ class Player extends BaseEvent {
     }
     this.container = container;
   }
-
+  /**
+   * @description 初始化播放器上的各种组件实例
+   */
   initComponent() {
     this.toolbar = new ToolBar(this.container);
     this.loadingMask = new LoadingMask(this.container);
@@ -56,91 +61,11 @@ class Player extends BaseEvent {
     this.container.className = styles["video-container"];
     this.container.innerHTML = `
       <div class="${styles["video-wrapper"]}">
-        <video>
-          <source src="${this.playerOptions.url}" type="video/mp4">
-            你的浏览器暂不支持HTML5标签,非常抱歉
-          </source>
-        </video>
+        <video></video>
       </div>
     `;
     this.container.appendChild(this.toolbar.template);
     this.video = this.container.querySelector("video")!
-  }
-
-  initEvent() {
-
-    this.toolbar.emit("mounted");
-
-    this.emit("mounted",this);
-
-    this.container.onclick = (e: Event) => {
-      if (e.target == this.video) {
-        if (this.video.paused) {
-          this.video.play();
-        } else if (this.video.played) {
-          this.video.pause();
-        }
-      }
-    };
-
-    this.container.addEventListener("mouseenter", (e: MouseEvent) => {
-      this.toolbar.emit("showtoolbar", e);
-    });
-
-    this.container.addEventListener("mousemove", (e: MouseEvent) => {
-      this.toolbar.emit("showtoolbar", e);
-    });
-
-    this.container.addEventListener("mouseleave", (e: MouseEvent) => {
-      this.toolbar.emit("hidetoolbar");
-    });
-
-    this.video.addEventListener("loadedmetadata", (e: Event) => {
-      console.log("元数据加载完毕", this.video.duration);
-      this.playerOptions.autoplay && this.video.play();
-      this.toolbar.emit("loadedmetadata", this.video.duration);
-    });
-
-    this.video.addEventListener("timeupdate", (e: Event) => {
-      this.toolbar.emit("timeupdate", this.video.currentTime);
-    });
-
-    // 当视频可以再次播放的时候就移除loading和error的mask，通常是为了应对在播放的过程中出现需要缓冲或者播放错误这种情况从而需要展示对应的mask
-    this.video.addEventListener("play", (e: Event) => {
-      this.loadingMask.removeLoadingMask();
-      this.errorMask.removeErrorMask();
-      this.toolbar.emit("play");
-    });
-
-    this.video.addEventListener("pause", (e: Event) => {
-      this.toolbar.emit("pause");
-    });
-
-    this.video.addEventListener("waiting", (e: Event) => {
-      this.loadingMask.removeLoadingMask();
-      this.errorMask.removeErrorMask();
-      this.loadingMask.addLoadingMask();
-    });
-
-    //当浏览器请求视频发生错误的时候
-    this.video.addEventListener("stalled", (e) => {
-      console.log("视频加载发生错误");
-      this.loadingMask.removeLoadingMask();
-      this.errorMask.removeErrorMask();
-      this.errorMask.addErrorMask();
-    });
-
-    this.video.addEventListener("error", (e) => {
-      this.loadingMask.removeLoadingMask();
-      this.errorMask.removeErrorMask();
-      this.errorMask.addErrorMask();
-    });
-
-    this.video.addEventListener("abort", (e: Event) => {
-      this.loadingMask.removeLoadingMask();
-      this.errorMask.removeErrorMask();
-      this.errorMask.addErrorMask();
-    });
   }
 
   isTagValidate(ele: HTMLElement): boolean {
