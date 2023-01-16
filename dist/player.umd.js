@@ -108,29 +108,426 @@
       }
   }
 
-  /******************************************************************************
-  Copyright (c) Microsoft Corporation.
+  class Player extends BaseEvent {
+      constructor(options) {
+          super();
+          this.playerOptions = {
+              url: "",
+              autoplay: false,
+              width: "100%",
+              height: "100%",
+          };
+          this.playerOptions = Object.assign(this.playerOptions, options);
+          this.init();
+          this.initComponent();
+          this.initContainer();
+          if (getFileExtension(this.playerOptions.url) === "mp4") {
+              new Mp4Player(this);
+          }
+          else if (getFileExtension(this.playerOptions.url) === "mpd") ;
+      }
+      init() {
+          let container = this.playerOptions.container;
+          if (!this.isTagValidate(container)) {
+              $warn("你传入的容器的元素类型不适合，建议传入块元素或者行内块元素，拒绝传入具有交互类型的元素例如input框等表单类型的元素");
+          }
+          this.container = container;
+      }
+      /**
+       * @description 初始化播放器上的各种组件实例
+       */
+      initComponent() {
+          this.toolbar = new ToolBar(this.container);
+          this.loadingMask = new LoadingMask(this.container);
+          this.errorMask = new ErrorMask(this.container);
+      }
+      initContainer() {
+          this.container.style.width = this.playerOptions.width;
+          this.container.style.height = this.playerOptions.height;
+          this.container.className = styles["video-container"];
+          this.container.innerHTML = `
+      <div class="${styles["video-wrapper"]}">
+        <video></video>
+      </div>
+    `;
+          this.container.appendChild(this.toolbar.template);
+          this.video = this.container.querySelector("video");
+          this.video.height = this.container.clientHeight;
+          this.video.width = this.container.clientWidth;
+      }
+      isTagValidate(ele) {
+          if (window.getComputedStyle(ele).display === "block")
+              return true;
+          if (window.getComputedStyle(ele).display === "inline")
+              return false;
+          if (window.getComputedStyle(ele).display === "inline-block") {
+              if (ele instanceof HTMLImageElement ||
+                  ele instanceof HTMLAudioElement ||
+                  ele instanceof HTMLVideoElement ||
+                  ele instanceof HTMLInputElement ||
+                  ele instanceof HTMLCanvasElement ||
+                  ele instanceof HTMLButtonElement) {
+                  return false;
+              }
+              return true;
+          }
+          return true;
+      }
+  }
 
-  Permission to use, copy, modify, and/or distribute this software for any
-  purpose with or without fee is hereby granted.
+  class MpdPlayer {
+      constructor() {
+      }
+  }
 
-  THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
-  REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY
-  AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
-  INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM
-  LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
-  OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
-  PERFORMANCE OF THIS SOFTWARE.
-  ***************************************************************************** */
+  // 视频播放器的工具栏组件
+  class ToolBar extends BaseEvent {
+      constructor(container) {
+          super();
+          this.container = container;
+          this.init();
+          this.initComponent();
+          this.initTemplate();
+          this.initEvent();
+      }
+      get template() {
+          return this.template_;
+      }
+      showToolBar(e) {
+          this.container.querySelector(`.${styles["video-controls"]}`).className = `${styles["video-controls"]}`;
+          if (e.target !== this.video) ;
+          else {
+              this.timer = window.setTimeout(() => {
+                  this.hideToolBar();
+              }, 3000);
+          }
+      }
+      hideToolBar() {
+          this.container.querySelector(`.${styles["video-controls"]}`).className = `${styles["video-controls"]} ${styles["video-controls-hidden"]}`;
+      }
+      init() { }
+      initComponent() {
+          this.progress = new Progress(this.container);
+          this.controller = new Controller(this.container);
+      }
+      initTemplate() {
+          let div = document.createElement("div");
+          div.className = `${styles["video-controls"]} ${styles["video-controls-hidden"]}`;
+          div.innerHTML += this.progress.template;
+          div.innerHTML += this.controller.template;
+          this.template_ = div;
+      }
+      initEvent() {
+          this.on("showtoolbar", (e) => {
+              if (this.timer) {
+                  clearTimeout(this.timer);
+                  this.timer = null;
+              }
+              this.showToolBar(e);
+          });
+          this.on("hidetoolbar", () => {
+              this.hideToolBar();
+          });
+          this.on("play", () => {
+              this.controller.emit("play");
+          });
+          this.on("pause", () => {
+              this.controller.emit("pause");
+          });
+          this.on("loadedmetadata", (summary) => {
+              this.controller.emit("loadedmetadata", summary);
+              this.progress.emit("loadedmetadata", summary);
+          });
+          this.on("timeupdate", (current) => {
+              this.controller.emit("timeupdate", current);
+              this.progress.emit("timeupdate", current);
+          });
+          this.on("mounted", () => {
+              this.video = this.container.querySelector("video");
+              this.controller.emit("mounted");
+              this.progress.emit("mounted");
+          });
+      }
+  }
 
-  function __awaiter(thisArg, _arguments, P, generator) {
-      function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-      return new (P || (P = Promise))(function (resolve, reject) {
-          function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-          function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-          function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-          step((generator = generator.apply(thisArg, _arguments || [])).next());
-      });
+  class Progress extends BaseEvent {
+      constructor(container) {
+          super();
+          this.mouseDown = false;
+          this.container = container;
+          this.init();
+          this.initEvent();
+      }
+      get template() {
+          return this.template_;
+      }
+      init() {
+          this.template_ = `
+        <div class="${styles["video-progress"]}">
+            <div class="${styles["video-pretime"]}">00:00</div>
+            <div class="${styles["video-buffered"]}"></div>
+            <div class="${styles["video-completed"]} "></div>
+            <div class="${styles["video-dot"]} ${styles["video-dot-hidden"]}"></div>
+        </div>
+        `;
+      }
+      initProgressEvent() {
+          this.progress.onmouseenter = () => {
+              this.dot.className = `${styles["video-dot"]}`;
+          };
+          this.progress.onmouseleave = () => {
+              if (!this.mouseDown) {
+                  this.dot.className = `${styles["video-dot"]} ${styles["video-dot-hidden"]}`;
+              }
+          };
+          this.progress.onmousemove = (e) => {
+              let scale = e.offsetX / this.progress.offsetWidth;
+              if (scale < 0) {
+                  scale = 0;
+              }
+              else if (scale > 1) {
+                  scale = 1;
+              }
+              let preTime = formatTime(scale * this.video.duration);
+              this.pretime.style.display = "block";
+              this.pretime.innerHTML = preTime;
+              this.pretime.style.left = e.offsetX - 17 + "px";
+              e.preventDefault();
+          };
+          this.progress.onmouseleave = (e) => {
+              this.pretime.style.display = "none";
+          };
+          this.progress.onclick = (e) => {
+              let scale = e.offsetX / this.progress.offsetWidth;
+              if (scale < 0) {
+                  scale = 0;
+              }
+              else if (scale > 1) {
+                  scale = 1;
+              }
+              this.dot.style.left = this.progress.offsetWidth * scale - 5 + "px";
+              this.bufferedProgress.style.width = scale * 100 + "%";
+              this.completedProgress.style.width = scale * 100 + "%";
+              this.video.currentTime = Math.floor(scale * this.video.duration);
+              if (this.video.paused)
+                  this.video.play();
+          };
+          this.dot.addEventListener("mousedown", (e) => {
+              let left = this.completedProgress.offsetWidth;
+              let mouseX = e.pageX;
+              this.mouseDown = true;
+              document.onmousemove = (e) => {
+                  let scale = (e.pageX - mouseX + left) / this.progress.offsetWidth;
+                  if (scale < 0) {
+                      scale = 0;
+                  }
+                  else if (scale > 1) {
+                      scale = 1;
+                  }
+                  this.dot.style.left = this.progress.offsetWidth * scale - 5 + "px";
+                  this.bufferedProgress.style.width = scale * 100 + "%";
+                  this.completedProgress.style.width = scale * 100 + "%";
+                  this.video.currentTime = Math.floor(scale * this.video.duration);
+                  if (this.video.paused)
+                      this.video.play();
+                  e.preventDefault();
+              };
+              document.onmouseup = (e) => {
+                  document.onmousemove = document.onmouseup = null;
+                  this.mouseDown = false;
+                  e.preventDefault();
+              };
+              e.preventDefault();
+          });
+      }
+      initEvent() {
+          this.on("mounted", () => {
+              this.progress = this.container.querySelector(`.${styles["video-controls"]} .${styles["video-progress"]}`);
+              this.pretime = this.progress.children[0];
+              this.bufferedProgress = this.progress.children[1];
+              this.completedProgress = this.progress.children[2];
+              this.dot = this.progress.children[3];
+              this.video = this.container.querySelector("video");
+              this.initProgressEvent();
+          });
+          this.on("timeupdate", (current) => {
+              let scaleCurr = (this.video.currentTime / this.video.duration) * 100;
+              let scaleBuffer = ((this.video.buffered.end(0) + this.video.currentTime) /
+                  this.video.duration) *
+                  100;
+              this.completedProgress.style.width = scaleCurr + "%";
+              this.dot.style.left =
+                  this.progress.offsetWidth * (scaleCurr / 100) - 5 + "px";
+              this.bufferedProgress.style.width = scaleBuffer + "%";
+          });
+          this.on("loadedmetadata", (summary) => { });
+      }
+  }
+
+  class Controller extends BaseEvent {
+      constructor(container) {
+          super();
+          this.container = container;
+          this.init();
+          this.initEvent();
+      }
+      get template() {
+          return this.template_;
+      }
+      init() {
+          this.template_ = `
+        <div class="${styles["video-play"]}">
+            <div class="${styles["video-subplay"]}">
+                <div class="${styles["video-start-pause"]}">
+                    <i class="${icon["iconfont"]} ${icon["icon-bofang"]}"></i>
+                </div>
+                <div class="${styles["video-duration"]}">
+                    <span class="${styles["video-duration-completed"]}">00:00</span>&nbsp;/&nbsp;<span class="${styles["video-duration-all"]}">00:00</span>
+                </div>
+            </div>
+            <div class="${styles["video-settings"]}">
+                <div class="${styles["video-subsettings"]}">
+                    <i class="${icon["iconfont"]} ${icon["icon-shezhi"]}"></i>
+                </div>
+                <div class="${styles["video-volume"]}">
+                    <i class="${icon["iconfont"]} ${icon["icon-yinliang"]}"></i>
+                    <div class="${styles["video-volume-progress"]}">
+                    <div class="${styles["video-volume-completed"]}"></div>
+                    <div class="${styles["video-volume-dot"]}"></div>
+                    </div>
+                </div>
+                <div class="${styles["video-fullscreen"]}">
+                    <i class="${icon["iconfont"]} ${icon["icon-quanping"]}"></i>
+                </div>
+            </div>
+        </div>
+    `;
+      }
+      initControllerEvent() {
+          this.videoPlayBtn.onclick = (e) => {
+              if (this.video.paused) {
+                  this.video.play();
+              }
+              else if (this.video.played) {
+                  this.video.pause();
+              }
+          };
+          this.fullScreen.onclick = () => {
+              if (this.container.requestFullscreen && !document.fullscreenElement) {
+                  this.container.requestFullscreen(); //该函数请求全屏
+              }
+              else if (document.fullscreenElement) {
+                  document.exitFullscreen(); //退出全屏函数仅仅绑定在document对象上，该点需要切记！！！
+              }
+          };
+      }
+      initEvent() {
+          this.on("play", () => {
+              this.videoPlayBtn.className = `${icon["iconfont"]} ${icon["icon-zanting"]}`;
+          });
+          this.on("pause", () => {
+              this.videoPlayBtn.className = `${icon["iconfont"]} ${icon["icon-bofang"]}`;
+          });
+          this.on("loadedmetadata", (summary) => {
+              this.summaryTime.innerHTML = formatTime(summary);
+          });
+          this.on("timeupdate", (current) => {
+              this.currentTime.innerHTML = formatTime(current);
+          });
+          this.on("mounted", () => {
+              this.videoPlayBtn = this.container.querySelector(`.${styles["video-start-pause"]} i`);
+              this.currentTime = this.container.querySelector(`.${styles["video-duration-completed"]}`);
+              this.summaryTime = this.container.querySelector(`.${styles["video-duration-all"]}`);
+              this.video = this.container.querySelector("video");
+              this.fullScreen = this.container.querySelector(`.${styles["video-fullscreen"]} i`);
+              this.initControllerEvent();
+          });
+      }
+  }
+
+  class LoadingMask {
+      constructor(container) {
+          this.container = container;
+          this.init();
+      }
+      get template() {
+          return this.template_;
+      }
+      init() {
+          this.template_ = this.generateLoadingMask();
+      }
+      generateLoadingMask() {
+          let mask = document.createElement("div");
+          mask.className = styles["loading-mask"];
+          let loadingContainer = document.createElement("div");
+          loadingContainer.className = styles["loading-container"];
+          let loaadingItem = document.createElement("div");
+          loaadingItem.className = styles["loading-item"];
+          let loadingTitle = document.createElement("div");
+          loadingTitle.className = styles["loading-title"];
+          loadingTitle.innerText = "视频正在努力加载中...";
+          loadingContainer.appendChild(loaadingItem);
+          loadingContainer.appendChild(loadingTitle);
+          mask.appendChild(loadingContainer);
+          return mask;
+      }
+      addLoadingMask() {
+          if (![...this.container.children].includes(this.template)) {
+              this.container.appendChild(this.template);
+          }
+      }
+      removeLoadingMask() {
+          if ([...this.container.children].includes(this.template)) {
+              this.container.removeChild(this.template);
+          }
+      }
+  }
+
+  class ErrorMask {
+      constructor(container) {
+          this.container = container;
+          this.init();
+      }
+      get template() {
+          return this.template_;
+      }
+      init() {
+          this.template_ = this.generateErrorMask();
+      }
+      generateErrorMask() {
+          let mask = document.createElement("div");
+          mask.className = styles["error-mask"];
+          let errorContainer = document.createElement("div");
+          errorContainer.className = styles["error-container"];
+          let errorItem = document.createElement("div");
+          errorItem.className = styles["error-item"];
+          let i = document.createElement("i");
+          i.className = `${icon["iconfont"]} ${icon["icon-cuowutishi"]}`;
+          errorItem.appendChild(i);
+          let errorTitle = document.createElement("div");
+          errorTitle.className = styles["error-title"];
+          errorTitle.innerText = "视频加载发生错误";
+          errorContainer.appendChild(errorItem);
+          errorContainer.appendChild(errorTitle);
+          mask.appendChild(errorContainer);
+          return mask;
+      }
+      addErrorMask() {
+          if (![...this.container.children].includes(this.template)) {
+              // ToDo
+              this.container.appendChild(this.template);
+          }
+      }
+      removeErrorMask() {
+          if ([...this.container.children].includes(this.template)) {
+              // ToDo
+              this.container.removeChild(this.template);
+          }
+      }
+  }
+
+  function $warn(msg) {
+      throw new Error(msg);
   }
 
   function addZero(num) {
@@ -285,9 +682,49 @@
           return null;
   }
 
-  function $warn(msg) {
-      throw new Error(msg);
-  }
+  const styles = {
+      "video-container": "player_video-container__ndwL-",
+      "video-wrapper": "player_video-wrapper__zkaDS",
+      "video-controls": "toolbar_video-controls__z6g6I",
+      "video-controls-hidden": "toolbar_video-controls-hidden__Fyvfe",
+      "video-progress": "pregress_video-progress__QjWkP",
+      "video-pretime": "pregress_video-pretime__JInJt",
+      "video-buffered": "pregress_video-buffered__N25SV",
+      "video-completed": "pregress_video-completed__CnWX-",
+      "video-dot": "pregress_video-dot__giuCI",
+      "video-dot-hidden": "pregress_video-dot-hidden__SceSE",
+      "video-play": "controller_video-play__fP3BY",
+      "video-subplay": "controller_video-subplay__WTnV2",
+      "video-start-pause": "controller_video-start-pause__MAW2N",
+      "video-duration": "controller_video-duration__4mxGN",
+      "video-duration-completed": "controller_video-duration-completed__aKEo3",
+      "video-settings": "controller_video-settings__vL60f",
+      "video-subsettings": "controller_video-subsettings__lRckv",
+      "video-volume": "controller_video-volume__6xzJB",
+      "video-volume-progress": "controller_video-volume-progress__f4U3J",
+      "video-volume-completed": "controller_video-volume-completed__R0FaX",
+      "video-volume-dot": "pregress_video-dot__giuCI",
+      "video-fullscreen": "controller_video-fullscreen__1-aJA",
+      "video-duration-all": "controller_video-duration-all__MOXNR",
+      "loading-mask": "",
+      "loading-container": "",
+      "loading-item": "",
+      "loading-title": "",
+      "error-mask": "",
+      "error-container": "",
+      "error-item": "",
+      "error-title": ""
+  };
+
+  const icon = {
+      iconfont: "main_iconfont__23ooR",
+      "icon-bofang": "main_icon-bofang__SU-ss",
+      "icon-shezhi": "main_icon-shezhi__y-8S0",
+      "icon-yinliang": "main_icon-yinliang__ZFc2R",
+      "icon-quanping": "main_icon-quanping__eGMiv",
+      "icon-cuowutishi": "main_icon-cuowutishi__fy-Bm",
+      "icon-zanting": "main_icon-zanting__BtGq5",
+  };
 
   function initMpdFile(mpd) {
       return {
@@ -772,534 +1209,6 @@
           return sendRequest(url, "post", header, responseType, data);
       }
   }
-
-  class MpdPlayer {
-      constructor(player) {
-          this.player = player;
-          this.axios = new Axios();
-          this.mpdUrl = this.player.playerOptions.url;
-          this.init();
-      }
-      init() {
-          return __awaiter(this, void 0, void 0, function* () {
-              this.player.video.controls = true;
-              yield this.getMpdFile(this.mpdUrl);
-              // 遍历每一个Period
-              this.requestInfo.mpdRequest.forEach((child) => __awaiter(this, void 0, void 0, function* () {
-                  yield this.handlePeriod(child);
-              }));
-          });
-      }
-      initEvent() {
-          this.player.toolbar.emit("mounted");
-          this.player.emit("mounted", this);
-      }
-      /**
-       * @description 获取并且解析MPD文件
-       */
-      getMpdFile(url) {
-          return __awaiter(this, void 0, void 0, function* () {
-              let val = yield this.axios.get(url, {}, "text");
-              let parser = new DOMParser();
-              let document = parser.parseFromString(val.data, "text/xml");
-              let result = parseMpd(document, "https://dash.akamaized.net/envivio/EnvivioDash3/");
-              this.requestInfo = result;
-              console.log(this.requestInfo);
-          });
-      }
-      handlePeriod(child) {
-          return __awaiter(this, void 0, void 0, function* () {
-              let videoResolve = child.videoRequest["1920*1080"];
-              let audioResolve = child.audioRequest["48000"];
-              yield this.handleInitializationSegment(videoResolve[0].url, audioResolve[0].url);
-              yield this.handleMediaSegment(videoResolve.slice(1), audioResolve.slice(1));
-          });
-      }
-      handleInitializationSegment(videoUrl, audioUrl) {
-          return __awaiter(this, void 0, void 0, function* () {
-              yield Promise.all([
-                  this.getSegment(videoUrl),
-                  this.getSegment(audioUrl),
-              ]);
-          });
-      }
-      handleMediaSegment(videoRequest, audioRequest) {
-          return __awaiter(this, void 0, void 0, function* () {
-              for (let i = 0; i < Math.min(videoRequest.length, audioRequest.length); i++) {
-                  yield Promise.all([
-                      this.getSegment(videoRequest[i].url),
-                      this.getSegment(audioRequest[i].url),
-                  ]);
-              }
-          });
-      }
-      /**
-       * @description 根据解析到的MPD文件的段（Initialization Segment 和 Media Segment）
-       */
-      getSegment(url) {
-          return this.axios.get(url, {}, "arraybuffer");
-      }
-  }
-
-  class Player extends BaseEvent {
-      constructor(options) {
-          super();
-          this.playerOptions = {
-              url: "",
-              autoplay: false,
-              width: "100%",
-              height: "100%",
-          };
-          this.playerOptions = Object.assign(this.playerOptions, options);
-          this.init();
-          this.initComponent();
-          this.initContainer();
-          if (getFileExtension(this.playerOptions.url) === "mp4") {
-              new Mp4Player(this);
-          }
-          else if (getFileExtension(this.playerOptions.url) === "mpd") {
-              new MpdPlayer(this);
-          }
-      }
-      init() {
-          let container = this.playerOptions.container;
-          if (!this.isTagValidate(container)) {
-              $warn("你传入的容器的元素类型不适合，建议传入块元素或者行内块元素，拒绝传入具有交互类型的元素例如input框等表单类型的元素");
-          }
-          this.container = container;
-      }
-      /**
-       * @description 初始化播放器上的各种组件实例
-       */
-      initComponent() {
-          this.toolbar = new ToolBar(this.container);
-          this.loadingMask = new LoadingMask(this.container);
-          this.errorMask = new ErrorMask(this.container);
-      }
-      initContainer() {
-          this.container.style.width = this.playerOptions.width;
-          this.container.style.height = this.playerOptions.height;
-          this.container.className = styles["video-container"];
-          this.container.innerHTML = `
-      <div class="${styles["video-wrapper"]}">
-        <video></video>
-      </div>
-    `;
-          this.container.appendChild(this.toolbar.template);
-          this.video = this.container.querySelector("video");
-          this.video.height = this.container.clientHeight;
-          this.video.width = this.container.clientWidth;
-          console.log(this.video.paused);
-      }
-      isTagValidate(ele) {
-          if (window.getComputedStyle(ele).display === "block")
-              return true;
-          if (window.getComputedStyle(ele).display === "inline")
-              return false;
-          if (window.getComputedStyle(ele).display === "inline-block") {
-              if (ele instanceof HTMLImageElement ||
-                  ele instanceof HTMLAudioElement ||
-                  ele instanceof HTMLVideoElement ||
-                  ele instanceof HTMLInputElement ||
-                  ele instanceof HTMLCanvasElement ||
-                  ele instanceof HTMLButtonElement) {
-                  return false;
-              }
-              return true;
-          }
-          return true;
-      }
-  }
-
-  // 视频播放器的工具栏组件
-  class ToolBar extends BaseEvent {
-      constructor(container) {
-          super();
-          this.container = container;
-          this.init();
-          this.initComponent();
-          this.initTemplate();
-          this.initEvent();
-      }
-      get template() {
-          return this.template_;
-      }
-      showToolBar(e) {
-          this.container.querySelector(`.${styles["video-controls"]}`).className = `${styles["video-controls"]}`;
-          if (e.target !== this.video) ;
-          else {
-              this.timer = window.setTimeout(() => {
-                  this.hideToolBar();
-              }, 3000);
-          }
-      }
-      hideToolBar() {
-          this.container.querySelector(`.${styles["video-controls"]}`).className = `${styles["video-controls"]} ${styles["video-controls-hidden"]}`;
-      }
-      init() { }
-      initComponent() {
-          this.progress = new Progress(this.container);
-          this.controller = new Controller(this.container);
-      }
-      initTemplate() {
-          let div = document.createElement("div");
-          div.className = `${styles["video-controls"]} ${styles["video-controls-hidden"]}`;
-          div.innerHTML += this.progress.template;
-          div.innerHTML += this.controller.template;
-          this.template_ = div;
-      }
-      initEvent() {
-          this.on("showtoolbar", (e) => {
-              if (this.timer) {
-                  clearTimeout(this.timer);
-                  this.timer = null;
-              }
-              this.showToolBar(e);
-          });
-          this.on("hidetoolbar", () => {
-              this.hideToolBar();
-          });
-          this.on("play", () => {
-              this.controller.emit("play");
-          });
-          this.on("pause", () => {
-              this.controller.emit("pause");
-          });
-          this.on("loadedmetadata", (summary) => {
-              this.controller.emit("loadedmetadata", summary);
-              this.progress.emit("loadedmetadata", summary);
-          });
-          this.on("timeupdate", (current) => {
-              this.controller.emit("timeupdate", current);
-              this.progress.emit("timeupdate", current);
-          });
-          this.on("mounted", () => {
-              this.video = this.container.querySelector("video");
-              this.controller.emit("mounted");
-              this.progress.emit("mounted");
-          });
-      }
-  }
-
-  class Progress extends BaseEvent {
-      constructor(container) {
-          super();
-          this.mouseDown = false;
-          this.container = container;
-          this.init();
-          this.initEvent();
-      }
-      get template() {
-          return this.template_;
-      }
-      init() {
-          this.template_ = `
-        <div class="${styles["video-progress"]}">
-            <div class="${styles["video-pretime"]}">00:00</div>
-            <div class="${styles["video-buffered"]}"></div>
-            <div class="${styles["video-completed"]} "></div>
-            <div class="${styles["video-dot"]} ${styles["video-dot-hidden"]}"></div>
-        </div>
-        `;
-      }
-      initProgressEvent() {
-          this.progress.onmouseenter = () => {
-              this.dot.className = `${styles["video-dot"]}`;
-          };
-          this.progress.onmouseleave = () => {
-              if (!this.mouseDown) {
-                  this.dot.className = `${styles["video-dot"]} ${styles["video-dot-hidden"]}`;
-              }
-          };
-          this.progress.onmousemove = (e) => {
-              let scale = e.offsetX / this.progress.offsetWidth;
-              if (scale < 0) {
-                  scale = 0;
-              }
-              else if (scale > 1) {
-                  scale = 1;
-              }
-              let preTime = formatTime(scale * this.video.duration);
-              this.pretime.style.display = "block";
-              this.pretime.innerHTML = preTime;
-              this.pretime.style.left = e.offsetX - 17 + "px";
-              e.preventDefault();
-          };
-          this.progress.onmouseleave = (e) => {
-              this.pretime.style.display = "none";
-          };
-          this.progress.onclick = (e) => {
-              let scale = e.offsetX / this.progress.offsetWidth;
-              if (scale < 0) {
-                  scale = 0;
-              }
-              else if (scale > 1) {
-                  scale = 1;
-              }
-              this.dot.style.left = this.progress.offsetWidth * scale - 5 + "px";
-              this.bufferedProgress.style.width = scale * 100 + "%";
-              this.completedProgress.style.width = scale * 100 + "%";
-              this.video.currentTime = Math.floor(scale * this.video.duration);
-              if (this.video.paused)
-                  this.video.play();
-          };
-          this.dot.addEventListener("mousedown", (e) => {
-              let left = this.completedProgress.offsetWidth;
-              let mouseX = e.pageX;
-              this.mouseDown = true;
-              document.onmousemove = (e) => {
-                  let scale = (e.pageX - mouseX + left) / this.progress.offsetWidth;
-                  if (scale < 0) {
-                      scale = 0;
-                  }
-                  else if (scale > 1) {
-                      scale = 1;
-                  }
-                  this.dot.style.left = this.progress.offsetWidth * scale - 5 + "px";
-                  this.bufferedProgress.style.width = scale * 100 + "%";
-                  this.completedProgress.style.width = scale * 100 + "%";
-                  this.video.currentTime = Math.floor(scale * this.video.duration);
-                  if (this.video.paused)
-                      this.video.play();
-                  e.preventDefault();
-              };
-              document.onmouseup = (e) => {
-                  document.onmousemove = document.onmouseup = null;
-                  this.mouseDown = false;
-                  e.preventDefault();
-              };
-              e.preventDefault();
-          });
-      }
-      initEvent() {
-          this.on("mounted", () => {
-              this.progress = this.container.querySelector(`.${styles["video-controls"]} .${styles["video-progress"]}`);
-              this.pretime = this.progress.children[0];
-              this.bufferedProgress = this.progress.children[1];
-              this.completedProgress = this.progress.children[2];
-              this.dot = this.progress.children[3];
-              this.video = this.container.querySelector("video");
-              this.initProgressEvent();
-          });
-          this.on("timeupdate", (current) => {
-              let scaleCurr = (this.video.currentTime / this.video.duration) * 100;
-              let scaleBuffer = ((this.video.buffered.end(0) + this.video.currentTime) /
-                  this.video.duration) *
-                  100;
-              this.completedProgress.style.width = scaleCurr + "%";
-              this.dot.style.left =
-                  this.progress.offsetWidth * (scaleCurr / 100) - 5 + "px";
-              this.bufferedProgress.style.width = scaleBuffer + "%";
-          });
-          this.on("loadedmetadata", (summary) => { });
-      }
-  }
-
-  class Controller extends BaseEvent {
-      constructor(container) {
-          super();
-          this.container = container;
-          this.init();
-          this.initEvent();
-      }
-      get template() {
-          return this.template_;
-      }
-      init() {
-          this.template_ = `
-        <div class="${styles["video-play"]}">
-            <div class="${styles["video-subplay"]}">
-                <div class="${styles["video-start-pause"]}">
-                    <i class="${icon["iconfont"]} ${icon["icon-bofang"]}"></i>
-                </div>
-                <div class="${styles["video-duration"]}">
-                    <span class="${styles["video-duration-completed"]}">00:00</span>&nbsp;/&nbsp;<span class="${styles["video-duration-all"]}">00:00</span>
-                </div>
-            </div>
-            <div class="${styles["video-settings"]}">
-                <div class="${styles["video-subsettings"]}">
-                    <i class="${icon["iconfont"]} ${icon["icon-shezhi"]}"></i>
-                </div>
-                <div class="${styles["video-volume"]}">
-                    <i class="${icon["iconfont"]} ${icon["icon-yinliang"]}"></i>
-                    <div class="${styles["video-volume-progress"]}">
-                    <div class="${styles["video-volume-completed"]}"></div>
-                    <div class="${styles["video-volume-dot"]}"></div>
-                    </div>
-                </div>
-                <div class="${styles["video-fullscreen"]}">
-                    <i class="${icon["iconfont"]} ${icon["icon-quanping"]}"></i>
-                </div>
-            </div>
-        </div>
-    `;
-      }
-      initControllerEvent() {
-          this.videoPlayBtn.onclick = (e) => {
-              if (this.video.paused) {
-                  this.video.play();
-              }
-              else if (this.video.played) {
-                  this.video.pause();
-              }
-          };
-          this.fullScreen.onclick = () => {
-              if (this.container.requestFullscreen && !document.fullscreenElement) {
-                  this.container.requestFullscreen(); //该函数请求全屏
-              }
-              else if (document.fullscreenElement) {
-                  document.exitFullscreen(); //退出全屏函数仅仅绑定在document对象上，该点需要切记！！！
-              }
-          };
-      }
-      initEvent() {
-          this.on("play", () => {
-              this.videoPlayBtn.className = `${icon["iconfont"]} ${icon["icon-zanting"]}`;
-          });
-          this.on("pause", () => {
-              this.videoPlayBtn.className = `${icon["iconfont"]} ${icon["icon-bofang"]}`;
-          });
-          this.on("loadedmetadata", (summary) => {
-              this.summaryTime.innerHTML = formatTime(summary);
-          });
-          this.on("timeupdate", (current) => {
-              this.currentTime.innerHTML = formatTime(current);
-          });
-          this.on("mounted", () => {
-              this.videoPlayBtn = this.container.querySelector(`.${styles["video-start-pause"]} i`);
-              this.currentTime = this.container.querySelector(`.${styles["video-duration-completed"]}`);
-              this.summaryTime = this.container.querySelector(`.${styles["video-duration-all"]}`);
-              this.video = this.container.querySelector("video");
-              this.fullScreen = this.container.querySelector(`.${styles["video-fullscreen"]} i`);
-              this.initControllerEvent();
-          });
-      }
-  }
-
-  class LoadingMask {
-      constructor(container) {
-          this.container = container;
-          this.init();
-      }
-      get template() {
-          return this.template_;
-      }
-      init() {
-          this.template_ = this.generateLoadingMask();
-      }
-      generateLoadingMask() {
-          let mask = document.createElement("div");
-          mask.className = styles["loading-mask"];
-          let loadingContainer = document.createElement("div");
-          loadingContainer.className = styles["loading-container"];
-          let loaadingItem = document.createElement("div");
-          loaadingItem.className = styles["loading-item"];
-          let loadingTitle = document.createElement("div");
-          loadingTitle.className = styles["loading-title"];
-          loadingTitle.innerText = "视频正在努力加载中...";
-          loadingContainer.appendChild(loaadingItem);
-          loadingContainer.appendChild(loadingTitle);
-          mask.appendChild(loadingContainer);
-          return mask;
-      }
-      addLoadingMask() {
-          if (![...this.container.children].includes(this.template)) {
-              this.container.appendChild(this.template);
-          }
-      }
-      removeLoadingMask() {
-          if ([...this.container.children].includes(this.template)) {
-              this.container.removeChild(this.template);
-          }
-      }
-  }
-
-  class ErrorMask {
-      constructor(container) {
-          this.container = container;
-          this.init();
-      }
-      get template() {
-          return this.template_;
-      }
-      init() {
-          this.template_ = this.generateErrorMask();
-      }
-      generateErrorMask() {
-          let mask = document.createElement("div");
-          mask.className = styles["error-mask"];
-          let errorContainer = document.createElement("div");
-          errorContainer.className = styles["error-container"];
-          let errorItem = document.createElement("div");
-          errorItem.className = styles["error-item"];
-          let i = document.createElement("i");
-          i.className = `${icon["iconfont"]} ${icon["icon-cuowutishi"]}`;
-          errorItem.appendChild(i);
-          let errorTitle = document.createElement("div");
-          errorTitle.className = styles["error-title"];
-          errorTitle.innerText = "视频加载发生错误";
-          errorContainer.appendChild(errorItem);
-          errorContainer.appendChild(errorTitle);
-          mask.appendChild(errorContainer);
-          return mask;
-      }
-      addErrorMask() {
-          if (![...this.container.children].includes(this.template)) {
-              // ToDo
-              this.container.appendChild(this.template);
-          }
-      }
-      removeErrorMask() {
-          if ([...this.container.children].includes(this.template)) {
-              // ToDo
-              this.container.removeChild(this.template);
-          }
-      }
-  }
-
-  const styles = {
-      "video-container": "player_video-container__ndwL-",
-      "video-wrapper": "player_video-wrapper__zkaDS",
-      "video-controls": "toolbar_video-controls__z6g6I",
-      "video-controls-hidden": "toolbar_video-controls-hidden__Fyvfe",
-      "video-progress": "pregress_video-progress__QjWkP",
-      "video-pretime": "pregress_video-pretime__JInJt",
-      "video-buffered": "pregress_video-buffered__N25SV",
-      "video-completed": "pregress_video-completed__CnWX-",
-      "video-dot": "pregress_video-dot__giuCI",
-      "video-dot-hidden": "pregress_video-dot-hidden__SceSE",
-      "video-play": "controller_video-play__fP3BY",
-      "video-subplay": "controller_video-subplay__WTnV2",
-      "video-start-pause": "controller_video-start-pause__MAW2N",
-      "video-duration": "controller_video-duration__4mxGN",
-      "video-duration-completed": "controller_video-duration-completed__aKEo3",
-      "video-settings": "controller_video-settings__vL60f",
-      "video-subsettings": "controller_video-subsettings__lRckv",
-      "video-volume": "controller_video-volume__6xzJB",
-      "video-volume-progress": "controller_video-volume-progress__f4U3J",
-      "video-volume-completed": "controller_video-volume-completed__R0FaX",
-      "video-volume-dot": "pregress_video-dot__giuCI",
-      "video-fullscreen": "controller_video-fullscreen__1-aJA",
-      "video-duration-all": "controller_video-duration-all__MOXNR",
-      "loading-mask": "",
-      "loading-container": "",
-      "loading-item": "",
-      "loading-title": "",
-      "error-mask": "",
-      "error-container": "",
-      "error-item": "",
-      "error-title": ""
-  };
-
-  const icon = {
-      iconfont: "main_iconfont__23ooR",
-      "icon-bofang": "main_icon-bofang__SU-ss",
-      "icon-shezhi": "main_icon-shezhi__y-8S0",
-      "icon-yinliang": "main_icon-yinliang__ZFc2R",
-      "icon-quanping": "main_icon-quanping__eGMiv",
-      "icon-cuowutishi": "main_icon-cuowutishi__fy-Bm",
-      "icon-zanting": "main_icon-zanting__BtGq5",
-  };
 
   exports.$warn = $warn;
   exports.Axios = Axios;

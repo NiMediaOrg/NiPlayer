@@ -1,6 +1,6 @@
 export * from "./types/PlayerOptions";
 export * from "./types/EventObject";
-export * from "./types/MpdFile";
+export * from "./types/dash/MpdFile";
 export * from "./types/AxiosRequest";
 export * from "./class/BaseEvent";
 export * from "./component/Player/player";

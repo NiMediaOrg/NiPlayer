@@ -1,4 +1,4 @@
-import { AdaptationSet, BaseURL, Initialization, MediaType, Representation, SegmentBase, SegmentList, SegmentTemplate, SegmentURL } from "../types/MpdFile";
+import { AdaptationSet, BaseURL, Initialization, MediaType, Representation, SegmentBase, SegmentList, SegmentTemplate, SegmentURL } from "../types/dash/MpdFile";
 /**
  * @description 类型守卫函数
  */

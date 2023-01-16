@@ -29,12 +29,28 @@ const FactoryMaker = (function() {
         merge<T>(classConstructor: BaseConstructor<T>, context: object, args:any[]): T {
             let extensionObject = context[classConstructor.name];
             if(extensionObject) {
+                // 如果获取到的上下文的属性classConstructor.name对应的对象上具有覆写（override）属性，则意味着需要覆写classConstructor上对应的属性
+                if(extensionObject.override) {
+                    let instance = new classConstructor({context},...args);
+                    let override = new extensionObject.instance({
+                        context,
+                        parent:instance
+                    })
 
+                    for(let props in override) {
+                        if(instance.hasOwnProperty(props)) {
+                            instance[props] = parent[props];
+                        }
+                    }
+                } else {// 如果不需要覆写，则意味着直接拿context中传入的构造函数来替换这个构造函数
+                    return new extensionObject.instance({
+                        context,
+                    })
+                }
             } else {
-                return new classConstructor(context,...args);
+                return new classConstructor({context},...args);
             }
         }
-
     }
 
     return new FactoryMaker();

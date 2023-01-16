@@ -1,4 +1,4 @@
-import { BaseURL, Initialization, Mpd, MpdFile, Representation, SegmentBase, SegmentList, SegmentURL, AdaptationSet, SegmentTemplate, Period } from "../types/MpdFile";
+import { BaseURL, Initialization, Mpd, MpdFile, Representation, SegmentBase, SegmentList, SegmentURL, AdaptationSet, SegmentTemplate, Period } from "../types/dash/MpdFile";
 export declare function initMpdFile(mpd: Document): MpdFile;
 export declare function initMpd(mpd: Element): Mpd;
 export declare function initPeriod(period: Element): Period;

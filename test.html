@@ -21,12 +21,14 @@
         //     player.initialize(document.querySelector("#videoPlayer"), url, true);
         // })();
         let player = new Player.Player({
-            url:"https://dash.akamaized.net/envivio/EnvivioDash3/manifest.mpd",
-            // url:"./videos.mp4",
+            // url:"https://dash.akamaized.net/envivio/EnvivioDash3/manifest.mpd",
+            url:"./video.mp4",
             container:document.getElementById("video"),
             width: "500px",
             height: "300px"
         })
+
+        console.log(player)
         let parseMpd = Player.parseMpd;
         let fileReder = new FileReader();
         let File = document.getElementById("file")

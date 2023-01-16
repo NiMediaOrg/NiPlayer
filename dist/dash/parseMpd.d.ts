@@ -1,4 +1,4 @@
-import { AdaptationSet, MediaType, MediaVideoResolve, PeriodRequest, RangeRequest, Representation, SegmentRequest } from "../types/MpdFile";
+import { AdaptationSet, MediaType, MediaVideoResolve, PeriodRequest, RangeRequest, Representation, SegmentRequest } from "../types/dash/MpdFile";
 export declare function parseMpd(mpd: Document, BASE_URL?: string): {
     mpdRequest: PeriodRequest[];
     type: "static" | "dynamic";
