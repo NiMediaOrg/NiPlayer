@@ -14,7 +14,6 @@ export type PeriodRequest = {
   "videoRequest": MediaVideoResolve;
   "audioRequest": MeidaAudioResolve;
 }
-
 /**
  * @description video类型媒体的分辨率
  */

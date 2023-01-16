@@ -8,7 +8,7 @@ import {
   Representation,
   SegmentRequest,
   SegmentTemplate,
-} from "../types/MpdFile";
+} from "../types/dash/MpdFile";
 import { parseDuration, switchToSeconds } from "../utils/format";
 import {
   checkAdaptationSet,
@@ -76,7 +76,6 @@ export function parseMpd(mpd: Document, BASE_URL: string = "") {
     type,
     mediaPresentationDuration,
     maxSegmentDuration,
-    mpdModel
   };
 }
 

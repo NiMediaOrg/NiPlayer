@@ -522,7 +522,6 @@
           type,
           mediaPresentationDuration,
           maxSegmentDuration,
-          mpdModel
       };
   }
   function parseAdaptationSet(adaptationSet, path = "", sumSegment, type) {
@@ -767,7 +766,6 @@
           this.data = data;
       }
       get(url, header, responseType) {
-          console.log(url);
           return sendRequest(url, "get", header, responseType);
       }
       post(url, header, responseType, data) {
@@ -805,7 +803,6 @@
               let parser = new DOMParser();
               let document = parser.parseFromString(val.data, "text/xml");
               let result = parseMpd(document, "https://dash.akamaized.net/envivio/EnvivioDash3/");
-              this.mpd = document;
               this.requestInfo = result;
               console.log(this.requestInfo);
           });
@@ -829,11 +826,10 @@
       handleMediaSegment(videoRequest, audioRequest) {
           return __awaiter(this, void 0, void 0, function* () {
               for (let i = 0; i < Math.min(videoRequest.length, audioRequest.length); i++) {
-                  let val = yield Promise.all([
+                  yield Promise.all([
                       this.getSegment(videoRequest[i].url),
                       this.getSegment(audioRequest[i].url),
                   ]);
-                  console.log(i + 1, val);
               }
           });
       }
@@ -893,6 +889,7 @@
           this.video = this.container.querySelector("video");
           this.video.height = this.container.clientHeight;
           this.video.width = this.container.clientWidth;
+          console.log(this.video.paused);
       }
       isTagValidate(ele) {
           if (window.getComputedStyle(ele).display === "block")

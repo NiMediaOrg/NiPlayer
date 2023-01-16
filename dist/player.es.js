@@ -518,7 +518,6 @@ function parseMpd(mpd, BASE_URL = "") {
         type,
         mediaPresentationDuration,
         maxSegmentDuration,
-        mpdModel
     };
 }
 function parseAdaptationSet(adaptationSet, path = "", sumSegment, type) {
@@ -763,7 +762,6 @@ class Axios {
         this.data = data;
     }
     get(url, header, responseType) {
-        console.log(url);
         return sendRequest(url, "get", header, responseType);
     }
     post(url, header, responseType, data) {
@@ -801,7 +799,6 @@ class MpdPlayer {
             let parser = new DOMParser();
             let document = parser.parseFromString(val.data, "text/xml");
             let result = parseMpd(document, "https://dash.akamaized.net/envivio/EnvivioDash3/");
-            this.mpd = document;
             this.requestInfo = result;
             console.log(this.requestInfo);
         });
@@ -825,11 +822,10 @@ class MpdPlayer {
     handleMediaSegment(videoRequest, audioRequest) {
         return __awaiter(this, void 0, void 0, function* () {
             for (let i = 0; i < Math.min(videoRequest.length, audioRequest.length); i++) {
-                let val = yield Promise.all([
+                yield Promise.all([
                     this.getSegment(videoRequest[i].url),
                     this.getSegment(audioRequest[i].url),
                 ]);
-                console.log(i + 1, val);
             }
         });
     }
@@ -889,6 +885,7 @@ class Player extends BaseEvent {
         this.video = this.container.querySelector("video");
         this.video.height = this.container.clientHeight;
         this.video.width = this.container.clientWidth;
+        console.log(this.video.paused);
     }
     isTagValidate(ele) {
         if (window.getComputedStyle(ele).display === "block")

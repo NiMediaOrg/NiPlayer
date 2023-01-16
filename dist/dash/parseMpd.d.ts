@@ -4,7 +4,6 @@ export declare function parseMpd(mpd: Document, BASE_URL?: string): {
     type: "static" | "dynamic";
     mediaPresentationDuration: number;
     maxSegmentDuration: number;
-    mpdModel: import("../types/MpdFile").Mpd;
 };
 export declare function parseAdaptationSet(adaptationSet: AdaptationSet, path: string, sumSegment: number | null, type: MediaType): Object;
 export declare function parseRepresentation(representation: Representation, hasTemplate: boolean, path: string, sumSegment: number | null, type: MediaType, initializationSegment?: [Function, string[]], mediaSegment?: [Function, string[]]): MediaVideoResolve;

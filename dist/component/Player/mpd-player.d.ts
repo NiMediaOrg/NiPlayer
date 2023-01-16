@@ -3,7 +3,6 @@ import { AxiosReturnType } from "../../types/AxiosRequest";
 import { PeriodRequest, RangeRequest, SegmentRequest } from "../../types/MpdFile";
 export declare class MpdPlayer {
     private player;
-    private mpd;
     private requestInfo;
     private mpdUrl;
     private axios;

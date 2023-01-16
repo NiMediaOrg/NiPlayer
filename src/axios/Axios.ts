@@ -43,7 +43,6 @@ export class Axios{
   ) {}
 
   get(url:string,header?:AxiosHeader,responseType?:XMLHttpRequestResponseType) {
-    console.log(url)
     return sendRequest(url,"get",header,responseType);
   }
 
