@@ -81,24 +81,3 @@ export function checkSegmentURL(s:any):s is SegmentURL {
 export function checkSegmentBase(s:any):s is SegmentBase {
   return s.tag === "SegmentBase";
 }
-
-export let checkUtils = {
-  checkMediaType,
-  checkBaseURL,
-  checkAdaptationSet,
-  checkSegmentTemplate,
-  checkRepresentation,
-  checkSegmentList,
-  checkInitialization,
-  checkSegmentURL,
-  checkSegmentBase
-}
-
-export function findSpecificType(array:Array<unknown>,type:string): boolean {
-  array.forEach(item=>{
-    if(checkUtils[`check${type}`] && checkUtils[`check${type}`].call(this,item)) {
-      return true;
-    }
-  })
-  return false;
-}

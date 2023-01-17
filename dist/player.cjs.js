@@ -633,25 +633,6 @@ function checkSegmentURL(s) {
 function checkSegmentBase(s) {
     return s.tag === "SegmentBase";
 }
-let checkUtils = {
-    checkMediaType,
-    checkBaseURL,
-    checkAdaptationSet,
-    checkSegmentTemplate,
-    checkRepresentation,
-    checkSegmentList,
-    checkInitialization,
-    checkSegmentURL,
-    checkSegmentBase
-};
-function findSpecificType(array, type) {
-    array.forEach(item => {
-        if (checkUtils[`check${type}`] && checkUtils[`check${type}`].call(this, item)) {
-            return true;
-        }
-    });
-    return false;
-}
 
 class DashParser {
     constructor(ctx, ...args) {
@@ -1399,8 +1380,6 @@ exports.checkSegmentBase = checkSegmentBase;
 exports.checkSegmentList = checkSegmentList;
 exports.checkSegmentTemplate = checkSegmentTemplate;
 exports.checkSegmentURL = checkSegmentURL;
-exports.checkUtils = checkUtils;
-exports.findSpecificType = findSpecificType;
 exports.formatTime = formatTime;
 exports.icon = icon;
 exports.parseDuration = parseDuration;

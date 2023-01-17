@@ -4,7 +4,7 @@ import { AdaptationSet, Mpd, Period, SegmentTemplate } from "../../types/dash/Mp
 import SegmentTemplateParserFactory,{SegmentTemplateParser} from "./SegmentTemplateParser";
 import FactoryMaker from "../FactoryMaker";
 import { parseDuration, switchToSeconds } from "../../utils/format";
-import { checkMpd, checkPeriod, checkUtils } from "../../utils/typeCheck";
+import { checkMpd, checkPeriod } from "../../utils/typeCheck";
 class DashParser {
   private config: FactoryObject = {};
   private segmentTemplateParser:SegmentTemplateParser;

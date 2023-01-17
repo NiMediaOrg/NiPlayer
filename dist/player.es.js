@@ -629,25 +629,6 @@ function checkSegmentURL(s) {
 function checkSegmentBase(s) {
     return s.tag === "SegmentBase";
 }
-let checkUtils = {
-    checkMediaType,
-    checkBaseURL,
-    checkAdaptationSet,
-    checkSegmentTemplate,
-    checkRepresentation,
-    checkSegmentList,
-    checkInitialization,
-    checkSegmentURL,
-    checkSegmentBase
-};
-function findSpecificType(array, type) {
-    array.forEach(item => {
-        if (checkUtils[`check${type}`] && checkUtils[`check${type}`].call(this, item)) {
-            return true;
-        }
-    });
-    return false;
-}
 
 class DashParser {
     constructor(ctx, ...args) {
@@ -1373,4 +1354,4 @@ const icon = {
     "icon-zanting": "main_icon-zanting__BtGq5",
 };
 
-export { $warn, BaseEvent, Controller, ErrorMask, LoadingMask, Mp4Player, MpdPlayer, Player, Progress, ToolBar, addZero, checkAdaptationSet, checkBaseURL, checkInitialization, checkMediaType, checkMpd, checkPeriod, checkRepresentation, checkSegmentBase, checkSegmentList, checkSegmentTemplate, checkSegmentURL, checkUtils, findSpecificType, formatTime, icon, parseDuration, string2booolean, string2number, styles, switchToSeconds };
+export { $warn, BaseEvent, Controller, ErrorMask, LoadingMask, Mp4Player, MpdPlayer, Player, Progress, ToolBar, addZero, checkAdaptationSet, checkBaseURL, checkInitialization, checkMediaType, checkMpd, checkPeriod, checkRepresentation, checkSegmentBase, checkSegmentList, checkSegmentTemplate, checkSegmentURL, formatTime, icon, parseDuration, string2booolean, string2number, styles, switchToSeconds };
