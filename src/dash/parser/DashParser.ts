@@ -1,19 +1,20 @@
 import { DOMNodeTypes, ManifestObjectNode } from "../../types/dash/DomNodeTypes";
 import { FactoryObject } from "../../types/dash/Factory";
-import { Representation, SegmentTemplate } from "../../types/dash/MpdFile";
+import { Mpd, Representation, SegmentTemplate } from "../../types/dash/MpdFile";
 import SegmentTemplateParserFactory,{SegmentTemplateParser} from "./SegmentTemplateParser";
 import FactoryMaker from "../FactoryMaker";
+import { parseDuration, switchToSeconds } from "../../utils/format";
 class DashParser {
   private config: FactoryObject = {};
   private segmentTemplateParser:SegmentTemplateParser;
-  private templateReg:RegExp = /\$(.+)?\$/;
+
   constructor(ctx: FactoryObject, ...args: any[]) {
     this.config = ctx.context;
     this.setup();
   }
 
   setup() {
-    this.segmentTemplateParser = SegmentTemplateParserFactory({}).create();
+    this.segmentTemplateParser = SegmentTemplateParserFactory({}).getInstance();
   }
 
   string2xml(s: string): Document {
@@ -31,6 +32,7 @@ class DashParser {
     }
     
     this.mergeNodeSegementTemplate(Mpd);
+    this.setDurationForRepresentation(Mpd);
     return Mpd;
   }
 
@@ -124,7 +126,7 @@ class DashParser {
     }
   }
 
-  mergeNodeSegementTemplate(Mpd:FactoryObject) {
+  mergeNodeSegementTemplate(Mpd:Mpd) {
     let segmentTemplate: SegmentTemplate | null = null;
     Mpd["Period_asArray"].forEach(Period=>{
       if(Period["SegmentTemplate_asArray"]) {
@@ -148,50 +150,54 @@ class DashParser {
     })
   }
 
-  parseNodeSegmentTemplate(Mpd:FactoryObject) {
-    Mpd["Period_asArray"].forEach(Period=>{
-      Period["AdaptationSet_asArray"].forEach(AdaptationSet=>{
-        AdaptationSet["Representation_asArray"].forEach(Representation=>{
-          let SegmentTemplate = Representation["SegmentTemplate"];
-          this.generateInitializationURL(SegmentTemplate,Representation);
-          this.generateMediaURL(SegmentTemplate,Representation);
+  getTotalDuration(Mpd:Mpd): number | never {
+    let totalDuration = 0;
+    let MpdDuration = NaN;
+    if(Mpd.mediaPresentationDuration) {
+      MpdDuration = switchToSeconds(parseDuration(Mpd.mediaPresentationDuration));
+      console.log(MpdDuration)
+    }
+    // MPD文件的总时间要么是由Mpd标签上的availabilityStartTime指定，要么是每一个Period上的duration之和
+    if(isNaN(MpdDuration)) {
+      Mpd.forEach(Period=>{
+        if(Period.duration) {
+          totalDuration += switchToSeconds(parseDuration(Period.duration));
+        } else {
+          throw new Error("MPD文件格式错误")
+        }
+      })
+    } else {
+      totalDuration = MpdDuration;
+    }
+    return totalDuration;
+  }
+
+  // 给每一个Representation对象上挂载duration属性
+  setDurationForRepresentation(Mpd:Mpd) {
+    //1. 如果只有一个Period
+    if(Mpd["Period_asArray"].length === 1) {
+      let totalDuration = this.getTotalDuration(Mpd);
+      Mpd["Period_asArray"].forEach(Period=>{
+        Period.duration = Period.duration || totalDuration;
+        Period["AdaptationSet_asArray"].forEach(AdaptationSet=>{
+          AdaptationSet.duration = totalDuration;
+          AdaptationSet["Representation_asArray"].forEach(Representation=>{
+            Representation.duration = totalDuration;
+          })
         })
       })
-    })
-  }
-
-  generateInitializationURL(SegmentTemplate:SegmentTemplate,parent:Representation) {
-    let initialization = SegmentTemplate.initialization;
-    let media = SegmentTemplate.media;
-    let r;
-    let formatArray = new Array<string>();
-    let replaceArray = new Array<string>();
-    if(this.templateReg.test(initialization)) {
-      while(r = this.templateReg.exec(initialization)) {
-        formatArray.push(r[0]);
-        if(r[1] === "Number") {
-          r[1] = "1";
-        } else if(r[1] === "RepresentationID") {
-          r[1] = parent.id!;
-        }
-        replaceArray.push(r[1]);
-      }
-
-      let index = 0;
-      while(index < replaceArray.length) {
-        initialization.replace(formatArray[index],replaceArray[index]);
-        index++;
-      }
+    } else {
+      Mpd["Period_asArray"].forEach(Period=>{
+        if(!Period.duration) throw new Error("MPD文件格式错误");
+        let duration = Period.duration;
+        Period["AdaptationSet_asArray"].forEach(AdaptationSet=>{
+          AdaptationSet.duration = duration;
+          AdaptationSet["Representation_asArray"].forEach(Representation=>{
+            Representation.duration = duration;
+          })
+        })
+      })
     }
-    parent.initializationURL = initialization;
-  }
-
-  generateMediaURL(SegmentTemplate:SegmentTemplate,parent:Representation) {
-    let meida = SegmentTemplate.media;
-    let r;
-    let formatArray = new Array<string>();
-    let replaceArray = new Array<string>();
-    
   }
 }
 

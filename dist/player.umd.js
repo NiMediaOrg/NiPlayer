@@ -401,22 +401,119 @@
 
   class SegmentTemplateParser {
       constructor(ctx, ...args) {
-          this.config = ctx.context;
-          this.setup();
-      }
-      setup() { }
-  }
-  const factory$2 = FactoryMaker.getSingleFactory(SegmentTemplateParser);
-
-  class DashParser {
-      constructor(ctx, ...args) {
-          this.config = {};
           this.templateReg = /\$(.+)?\$/;
           this.config = ctx.context;
           this.setup();
       }
+      setup() { }
+      parseNodeSegmentTemplate(Mpd) {
+          Mpd["Period_asArray"].forEach(Period => {
+              Period["AdaptationSet_asArray"].forEach(AdaptationSet => {
+                  AdaptationSet["Representation_asArray"].forEach(Representation => {
+                      let SegmentTemplate = Representation["SegmentTemplate"];
+                      this.generateInitializationURL(SegmentTemplate, Representation);
+                      this.generateMediaURL(SegmentTemplate, Representation);
+                  });
+              });
+          });
+      }
+      generateInitializationURL(SegmentTemplate, parent) {
+          let initialization = SegmentTemplate.initialization;
+          SegmentTemplate.media;
+          let r;
+          let formatArray = new Array();
+          let replaceArray = new Array();
+          if (this.templateReg.test(initialization)) {
+              while (r = this.templateReg.exec(initialization)) {
+                  formatArray.push(r[0]);
+                  if (r[1] === "Number") {
+                      r[1] = "1";
+                  }
+                  else if (r[1] === "RepresentationID") {
+                      r[1] = parent.id;
+                  }
+                  replaceArray.push(r[1]);
+              }
+              let index = 0;
+              while (index < replaceArray.length) {
+                  initialization.replace(formatArray[index], replaceArray[index]);
+                  index++;
+              }
+          }
+          parent.initializationURL = initialization;
+      }
+      generateMediaURL(SegmentTemplate, parent) {
+          SegmentTemplate.media;
+          new Array();
+          new Array();
+      }
+  }
+  const factory$2 = FactoryMaker.getSingleFactory(SegmentTemplateParser);
+
+  function addZero(num) {
+      return num > 9 ? "" + num : "0" + num;
+  }
+  function formatTime(seconds) {
+      seconds = Math.floor(seconds);
+      let minute = Math.floor(seconds / 60);
+      let second = seconds % 60;
+      return addZero(minute) + ":" + addZero(second);
+  }
+  function switchToSeconds(time) {
+      let sum = 0;
+      if (time.hours)
+          sum += time.hours * 3600;
+      if (time.minutes)
+          sum += time.minutes * 60;
+      if (time.seconds)
+          sum += time.seconds;
+      return sum;
+  }
+  // 解析MPD文件的时间字符串
+  function parseDuration(pt) {
+      // Parse time from format "PT#H#M##.##S"
+      let hours = 0, minutes = 0, seconds = 0;
+      for (let i = pt.length - 1; i >= 0; i--) {
+          if (pt[i] === "S") {
+              let j = i;
+              while (pt[i] !== "M" && pt[i] !== "H" && pt[i] !== "T") {
+                  i--;
+              }
+              i += 1;
+              seconds = parseInt(pt.slice(i, j));
+          }
+          else if (pt[i] === "M") {
+              let j = i;
+              while (pt[i] !== "H" && pt[i] !== "T") {
+                  i--;
+              }
+              i += 1;
+              minutes = parseInt(pt.slice(i, j));
+          }
+          else if (pt[i] === "H") {
+              let j = i;
+              while (pt[i] !== "T") {
+                  i--;
+              }
+              i += 1;
+              hours = parseInt(pt.slice(i, j));
+          }
+      }
+      return {
+          hours,
+          minutes,
+          seconds,
+      };
+  }
+
+  class DashParser {
+      constructor(ctx, ...args) {
+          this.config = {};
+          this.config = ctx.context;
+          this.setup();
+      }
       setup() {
-          this.segmentTemplateParser = factory$2({}).create();
+          this.segmentTemplateParser = factory$2({}).getInstance();
       }
       string2xml(s) {
           let parser = new DOMParser();
@@ -432,6 +529,7 @@
               Mpd = this.parseDOMChildren("MpdDocument", xml);
           }
           this.mergeNodeSegementTemplate(Mpd);
+          this.setDurationForRepresentation(Mpd);
           return Mpd;
       }
       parseDOMChildren(name, node) {
@@ -543,46 +641,57 @@
               });
           });
       }
-      parseNodeSegmentTemplate(Mpd) {
-          Mpd["Period_asArray"].forEach(Period => {
-              Period["AdaptationSet_asArray"].forEach(AdaptationSet => {
-                  AdaptationSet["Representation_asArray"].forEach(Representation => {
-                      let SegmentTemplate = Representation["SegmentTemplate"];
-                      this.generateInitializationURL(SegmentTemplate, Representation);
-                      this.generateMediaURL(SegmentTemplate, Representation);
+      getTotalDuration(Mpd) {
+          let totalDuration = 0;
+          let MpdDuration = NaN;
+          if (Mpd.mediaPresentationDuration) {
+              MpdDuration = switchToSeconds(parseDuration(Mpd.mediaPresentationDuration));
+              console.log(MpdDuration);
+          }
+          // MPD文件的总时间要么是由Mpd标签上的availabilityStartTime指定，要么是每一个Period上的duration之和
+          if (isNaN(MpdDuration)) {
+              Mpd.forEach(Period => {
+                  if (Period.duration) {
+                      totalDuration += switchToSeconds(parseDuration(Period.duration));
+                  }
+                  else {
+                      throw new Error("MPD文件格式错误");
+                  }
+              });
+          }
+          else {
+              totalDuration = MpdDuration;
+          }
+          return totalDuration;
+      }
+      // 给每一个Representation对象上挂载duration属性
+      setDurationForRepresentation(Mpd) {
+          //1. 如果只有一个Period
+          if (Mpd["Period_asArray"].length === 1) {
+              let totalDuration = this.getTotalDuration(Mpd);
+              Mpd["Period_asArray"].forEach(Period => {
+                  Period.duration = Period.duration || totalDuration;
+                  Period["AdaptationSet_asArray"].forEach(AdaptationSet => {
+                      AdaptationSet.duration = totalDuration;
+                      AdaptationSet["Representation_asArray"].forEach(Representation => {
+                          Representation.duration = totalDuration;
+                      });
                   });
               });
-          });
-      }
-      generateInitializationURL(SegmentTemplate, parent) {
-          let initialization = SegmentTemplate.initialization;
-          SegmentTemplate.media;
-          let r;
-          let formatArray = new Array();
-          let replaceArray = new Array();
-          if (this.templateReg.test(initialization)) {
-              while (r = this.templateReg.exec(initialization)) {
-                  formatArray.push(r[0]);
-                  if (r[1] === "Number") {
-                      r[1] = "1";
-                  }
-                  else if (r[1] === "RepresentationID") {
-                      r[1] = parent.id;
-                  }
-                  replaceArray.push(r[1]);
-              }
-              let index = 0;
-              while (index < replaceArray.length) {
-                  initialization.replace(formatArray[index], replaceArray[index]);
-                  index++;
-              }
           }
-          parent.initializationURL = initialization;
-      }
-      generateMediaURL(SegmentTemplate, parent) {
-          SegmentTemplate.media;
-          new Array();
-          new Array();
+          else {
+              Mpd["Period_asArray"].forEach(Period => {
+                  if (!Period.duration)
+                      throw new Error("MPD文件格式错误");
+                  let duration = Period.duration;
+                  Period["AdaptationSet_asArray"].forEach(AdaptationSet => {
+                      AdaptationSet.duration = duration;
+                      AdaptationSet["Representation_asArray"].forEach(Representation => {
+                          Representation.duration = duration;
+                      });
+                  });
+              });
+          }
       }
   }
   const factory$1 = FactoryMaker.getSingleFactory(DashParser);
@@ -1052,62 +1161,6 @@
 
   function $warn(msg) {
       throw new Error(msg);
-  }
-
-  function addZero(num) {
-      return num > 9 ? "" + num : "0" + num;
-  }
-  function formatTime(seconds) {
-      seconds = Math.floor(seconds);
-      let minute = Math.floor(seconds / 60);
-      let second = seconds % 60;
-      return addZero(minute) + ":" + addZero(second);
-  }
-  function switchToSeconds(time) {
-      let sum = 0;
-      if (time.hours)
-          sum += time.hours * 3600;
-      if (time.minutes)
-          sum += time.minutes * 60;
-      if (time.seconds)
-          sum += time.seconds;
-      return sum;
-  }
-  // 解析MPD文件的时间字符串
-  function parseDuration(pt) {
-      // Parse time from format "PT#H#M##.##S"
-      let hours, minutes, seconds;
-      for (let i = pt.length - 1; i >= 0; i--) {
-          if (pt[i] === "S") {
-              let j = i;
-              while (pt[i] !== "M" && pt[i] !== "H" && pt[i] !== "T") {
-                  i--;
-              }
-              i += 1;
-              seconds = parseInt(pt.slice(i, j));
-          }
-          else if (pt[i] === "M") {
-              let j = i;
-              while (pt[i] !== "H" && pt[i] !== "T") {
-                  i--;
-              }
-              i += 1;
-              minutes = parseInt(pt.slice(i, j));
-          }
-          else if (pt[i] === "H") {
-              let j = i;
-              while (pt[i] !== "T") {
-                  i--;
-              }
-              i += 1;
-              hours = parseInt(pt.slice(i, j));
-          }
-      }
-      return {
-          hours,
-          minutes,
-          seconds,
-      };
   }
 
   /**
