@@ -145,6 +145,7 @@ const FactoryMaker = (function () {
                             let instance = ctx.__single_instanceMap[classConstructor.name];
                             if (!instance) {
                                 instance = new classConstructor({ context }, ...args);
+                                ctx.__single_instanceMap[classConstructor.name] = instance;
                             }
                             return instance;
                         },
@@ -183,6 +184,59 @@ const FactoryMaker = (function () {
     }
     return new FactoryMaker();
 })();
+
+class EventBus {
+    constructor(ctx, ...args) {
+        this.config = {};
+        this.__events = {};
+        this.config = ctx.context;
+        this.setup();
+    }
+    setup() {
+    }
+    on(type, listener, scope) {
+        if (!this.__events[type]) {
+            this.__events[type] = [{
+                    cb: listener,
+                    scope
+                }];
+            console.log(this.__events[type]);
+            return;
+        }
+        if (this.__events[type].filter(event => {
+            return event.cb === listener && event.scope === scope;
+        }).length > 0) {
+            throw new Error("请勿重复绑定监听器");
+        }
+        this.__events[type].push({
+            cb: listener,
+            scope
+        });
+    }
+    off(type, listener, scope) {
+        if (!this.__events[type] || this.__events[type].filter(event => {
+            return event.cb === listener && event.scope === scope;
+        })) {
+            throw new Error("不存在该事件");
+        }
+        this.__events[type] = this.__events[type].filter(event => {
+            return event.cb === listener && event.scope === scope;
+        });
+    }
+    trigger(type, ...payload) {
+        console.log(this.__events);
+        if (this.__events[type]) {
+            this.__events[type].forEach(event => {
+                event.cb.call(event.scope, ...payload);
+            });
+        }
+    }
+}
+const factory$4 = FactoryMaker.getSingleFactory(EventBus);
+
+const EventConstants = {
+    MANIFEST_LOADED: "manifestLoaded"
+};
 
 class HTTPRequest {
     constructor(config) {
@@ -235,7 +289,7 @@ class XHRLoader {
         xhr.send();
     }
 }
-const factory$2 = FactoryMaker.getSingleFactory(XHRLoader);
+const factory$3 = FactoryMaker.getSingleFactory(XHRLoader);
 
 class URLLoader {
     constructor(ctx, ...args) {
@@ -247,17 +301,19 @@ class URLLoader {
         this.xhrLoader.loadManifest(config);
     }
     setup() {
-        this.xhrLoader = factory$2({}).getInstance();
+        this.xhrLoader = factory$3({}).getInstance();
+        this.eventBus = factory$4({}).getInstance();
     }
     // 每调用一次load函数就发送一次请求
     load(config) {
         //一个HTTPRequest对象才对应一个请求
         let request = new HTTPRequest(config);
+        let ctx = this;
         this._loadManifest({
             request: request,
             success: function (data) {
                 request.getResponseTime = new Date().getTime();
-                console.log(this, data);
+                ctx.eventBus.trigger(EventConstants.MANIFEST_LOADED, data);
             },
             error: function (error) {
                 console.log(this, error);
@@ -265,7 +321,93 @@ class URLLoader {
         });
     }
 }
-const factory$1 = FactoryMaker.getSingleFactory(URLLoader);
+const factory$2 = FactoryMaker.getSingleFactory(URLLoader);
+
+var DOMNodeTypes;
+(function (DOMNodeTypes) {
+    DOMNodeTypes[DOMNodeTypes["ELEMENT_NODE"] = 1] = "ELEMENT_NODE";
+    DOMNodeTypes[DOMNodeTypes["TEXT_NODE"] = 3] = "TEXT_NODE";
+    DOMNodeTypes[DOMNodeTypes["CDATA_SECTION_NODE"] = 4] = "CDATA_SECTION_NODE";
+    DOMNodeTypes[DOMNodeTypes["COMMENT_NODE"] = 8] = "COMMENT_NODE";
+    DOMNodeTypes[DOMNodeTypes["DOCUMENT_NODE"] = 9] = "DOCUMENT_NODE";
+})(DOMNodeTypes || (DOMNodeTypes = {}));
+
+class DashParser {
+    constructor(ctx, ...args) {
+        this.config = {};
+        this.config = ctx.context;
+    }
+    string2xml(s) {
+        let parser = new DOMParser();
+        return parser.parseFromString(s, "text/xml");
+    }
+    parse(manifest) {
+        let xml = this.string2xml(manifest);
+        return this.parseDOMChildren("Document", xml);
+    }
+    parseDOMChildren(name, node) {
+        //如果node的类型为文档类型
+        if (node.nodeType === DOMNodeTypes.DOCUMENT_NODE) {
+            let result = {
+                tag: node.nodeName,
+                __children: [],
+            };
+            // 文档类型的节点一定只有一个子节点
+            for (let index in node.childNodes) {
+                if (node.childNodes[index].nodeType === DOMNodeTypes.ELEMENT_NODE) {
+                    if (!this.config.ignoreRoot) {
+                        result.__children[index] = this.parseDOMChildren(node.childNodes[index].nodeName, node.childNodes[index]);
+                        result[node.childNodes[index].nodeName] = this.parseDOMChildren(node.childNodes[index].nodeName, node.childNodes[index]);
+                    }
+                    else {
+                        return this.parseDOMChildren(node.childNodes[index].nodeName, node.childNodes[index]);
+                    }
+                }
+            }
+            return result;
+        }
+        else if (node.nodeType === DOMNodeTypes.ELEMENT_NODE) {
+            let result = {
+                tag: node.nodeName,
+                __chilren: [],
+            };
+            // 1.解析node的子节点
+            for (let index = 0; index < node.childNodes.length; index++) {
+                let child = node.childNodes[index];
+                result.__chilren[index] = this.parseDOMChildren(child.nodeName, child);
+                if (!result[child.nodeName]) {
+                    result[child.nodeName] = this.parseDOMChildren(child.nodeName, child);
+                    continue;
+                }
+                if (result[child.nodeName] && !Array.isArray(result[child.nodeName])) {
+                    result[child.nodeName] = [result[child.nodeName]];
+                }
+                if (result[child.nodeName]) {
+                    result[child.nodeName].push(this.parseDOMChildren(child.nodeName, child));
+                }
+            }
+            for (let key in result) {
+                if (key !== "tag" && key !== "__children") {
+                    result[key + "_asArray"] = Array.isArray(result[key])
+                        ? [...result[key]]
+                        : [result[key]];
+                }
+            }
+            // 2.解析node上挂载的属性
+            for (let prop of node.attributes) {
+                result[prop.name] = prop.value;
+            }
+            return result;
+        }
+        else if (node.nodeType === DOMNodeTypes.TEXT_NODE) {
+            return {
+                tag: "#text",
+                text: node.nodeValue
+            };
+        }
+    }
+}
+const factory$1 = FactoryMaker.getSingleFactory(DashParser);
 
 /**
  * @description 整个dash处理流程的入口类MediaPlayer
@@ -275,10 +417,23 @@ class MediaPlayer {
         this.config = {};
         this.config = ctx.context;
         this.setup();
+        this.initializeEvent();
     }
     //初始化类
     setup() {
-        this.urlLoader = factory$1().getInstance();
+        this.urlLoader = factory$2().getInstance();
+        this.eventBus = factory$4().getInstance();
+        this.dashParser = factory$1({ ignoreRoot: true }).getInstance();
+    }
+    initializeEvent() {
+        this.eventBus.on(EventConstants.MANIFEST_LOADED, this.onManifestLoaded, this);
+    }
+    resetEvent() {
+        this.eventBus.off(EventConstants.MANIFEST_LOADED, this.onManifestLoaded, this);
+    }
+    onManifestLoaded(data) {
+        let manifest = this.dashParser.parse(data);
+        console.log(manifest);
     }
     /**
      * @description 发送MPD文件的网络请求，我要做的事情很纯粹，具体实现细节由各个Loader去具体实现

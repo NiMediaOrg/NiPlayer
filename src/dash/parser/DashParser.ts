@@ -1,6 +1,6 @@
-import { DOMNodeTypes, ManifestObjectNode } from "../types/dash/DomNodeTypes";
-import { FactoryObject } from "../types/dash/Factory";
-import FactoryMaker from "./FactoryMaker";
+import { DOMNodeTypes, ManifestObjectNode } from "../../types/dash/DomNodeTypes";
+import { FactoryObject } from "../../types/dash/Factory";
+import FactoryMaker from "../FactoryMaker";
 class DashParser {
   private config: FactoryObject = {};
   constructor(ctx: FactoryObject, ...args: any[]) {
@@ -47,7 +47,7 @@ class DashParser {
         __chilren: [],
       };
       // 1.解析node的子节点
-      for (let index in node.childNodes) {
+      for (let index = 0; index<node.childNodes.length; index++) {
         let child = node.childNodes[index];
         result.__chilren[index] = this.parseDOMChildren(child.nodeName,child);
         if (!result[child.nodeName]) {
@@ -82,6 +82,6 @@ class DashParser {
   }
 }
 
-const factory = FactoryMaker.getClassFactory(DashParser);
+const factory = FactoryMaker.getSingleFactory(DashParser);
 export default factory;
 export {DashParser};

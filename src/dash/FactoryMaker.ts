@@ -41,6 +41,7 @@ const FactoryMaker = (function () {
               let instance = ctx.__single_instanceMap[classConstructor.name];
               if(!instance) {
                 instance = new classConstructor({context},...args);
+                ctx.__single_instanceMap[classConstructor.name] = instance;
               }
               return instance;
             },

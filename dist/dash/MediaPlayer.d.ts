@@ -5,8 +5,13 @@ import { FactoryObject } from "../types/dash/Factory";
 declare class MediaPlayer {
     private config;
     private urlLoader;
+    private eventBus;
+    private dashParser;
     constructor(ctx: FactoryObject, ...args: any[]);
     setup(): void;
+    initializeEvent(): void;
+    resetEvent(): void;
+    onManifestLoaded(data: string): void;
     /**
      * @description 发送MPD文件的网络请求，我要做的事情很纯粹，具体实现细节由各个Loader去具体实现
      * @param url
