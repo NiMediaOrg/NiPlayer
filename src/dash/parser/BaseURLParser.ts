@@ -1,9 +1,10 @@
 import { FactoryObject } from "../../types/dash/Factory";
+import { Path } from "../../types/dash/Location";
 import { Mpd } from "../../types/dash/MpdFile";
 import FactoryMaker from "../FactoryMaker";
 class URLNode {
-    private url:string | null;
-    private children: URLNode[] = [];
+    url:string | null;
+    children: URLNode[] = [];
     constructor(url:string | null) {
         this.url = url || null;
     }
@@ -38,7 +39,7 @@ class BaseURLParser {
             }
             let periodNode = new URLNode(url);
             root.setChild(pId,periodNode);
-            manifest["AdaptationSet_asArray"].forEach((a,aId)=>{
+            p["AdaptationSet_asArray"].forEach((a,aId)=>{
                 let url = null;
                 if(a["BaseURL_asArray"]) {
                     url = a["BaseURL_asArray"][0];
@@ -46,19 +47,35 @@ class BaseURLParser {
                 let adaptationSetNode = new URLNode(url);
                 periodNode.setChild(aId,adaptationSetNode);
 
-                manifest["Representation_asArray"].forEach((r,rId)=>{
+                a["Representation_asArray"].forEach((r,rId)=>{
                     let url = null;
                     if(r["BaseURL_asArray"]) {
                         url = r["BaseURL_asArray"][0];
                     }
                     let representationNode = new URLNode(url);
-                    adaptationSetNode.setChild(aId,representationNode);
+                    adaptationSetNode.setChild(rId,representationNode);
                 })
             })
         })
         return root;
     }
 
+    getBaseURLByPath(path:Path, urlNode:URLNode): string {
+        let baseURL = "";
+        let root = urlNode;
+        for(let i = 0;i<path.length;i++) {
+            if(path[i] >= root.children.length || path[i] < 0) {
+                throw new Error("传入的路径不正确");
+            }
+            baseURL += root.children[path[i]].url;
+            root = root.children[path[i]];
+        }
+        if(root.children.length > 0) {
+            throw new Error("传入的路径不正确");
+        }
+        return baseURL;
+    }
 }
 const factory = FactoryMaker.getSingleFactory(BaseURLParser);
 export default factory;
+export { BaseURLParser,URLNode};

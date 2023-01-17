@@ -7,6 +7,8 @@ declare class MediaPlayer {
     private urlLoader;
     private eventBus;
     private dashParser;
+    private baseURLParser;
+    private baseURLPath;
     constructor(ctx: FactoryObject, ...args: any[]);
     setup(): void;
     initializeEvent(): void;

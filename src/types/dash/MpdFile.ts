@@ -93,22 +93,24 @@ export type AdaptationSet = {
  */
 export type SegmentTemplate = {
   tag: "SegmentTemplate";
-  initialization: string | null;
-  media: string | null;
+  initialization?: string;
+  media?: string;
+  [props:string]: any;
 };
 /**
  * @description width * height --> 视频的分辨率
  */
 export type Representation = {
   tag: "Representation";
-  bandWidth: number | null;
-  codecs: string | null;
-  audioSamplingRate: string | null;
-  id: string | null;
-  width: number | null;
-  height: number | null;
-  mimeType: MediaType | null;
+  bandWidth?: number;
+  codecs?: string;
+  audioSamplingRate?: string;
+  id?: string;
+  width?: number;
+  height?: number;
+  mimeType?: MediaType;
   children?: Array<BaseURL | SegmentBase | SegmentList>;
+  [props:string]:any;
 };
 
 export type SegmentBase = {

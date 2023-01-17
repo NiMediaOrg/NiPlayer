@@ -228,7 +228,7 @@ class EventBus {
         }
     }
 }
-const factory$4 = FactoryMaker.getSingleFactory(EventBus);
+const factory$6 = FactoryMaker.getSingleFactory(EventBus);
 
 const EventConstants = {
     MANIFEST_LOADED: "manifestLoaded"
@@ -285,7 +285,7 @@ class XHRLoader {
         xhr.send();
     }
 }
-const factory$3 = FactoryMaker.getSingleFactory(XHRLoader);
+const factory$5 = FactoryMaker.getSingleFactory(XHRLoader);
 
 class URLLoader {
     constructor(ctx, ...args) {
@@ -297,8 +297,8 @@ class URLLoader {
         this.xhrLoader.loadManifest(config);
     }
     setup() {
-        this.xhrLoader = factory$3({}).getInstance();
-        this.eventBus = factory$4({}).getInstance();
+        this.xhrLoader = factory$5({}).getInstance();
+        this.eventBus = factory$6({}).getInstance();
     }
     // 每调用一次load函数就发送一次请求
     load(config) {
@@ -317,7 +317,74 @@ class URLLoader {
         });
     }
 }
-const factory$2 = FactoryMaker.getSingleFactory(URLLoader);
+const factory$4 = FactoryMaker.getSingleFactory(URLLoader);
+
+class URLNode {
+    constructor(url) {
+        this.children = [];
+        this.url = url || null;
+    }
+    setChild(index, child) {
+        this.children[index] = child;
+    }
+    getChild(index) {
+        return this.children[index];
+    }
+}
+class BaseURLParser {
+    constructor(ctx, ...args) {
+        this.config = {};
+        this.config = ctx.context;
+        this.setup();
+    }
+    setup() {
+    }
+    parseManifestForBaseURL(manifest) {
+        let root = new URLNode(null);
+        //1. 首先遍历每一个Period，规定BaseURL节点只可能出现在Period,AdaptationSet,Representation中
+        manifest["Period_asArray"].forEach((p, pId) => {
+            let url = null;
+            if (p["BaseURL_asArray"]) {
+                url = p["BaseURL_asArray"][0];
+            }
+            let periodNode = new URLNode(url);
+            root.setChild(pId, periodNode);
+            p["AdaptationSet_asArray"].forEach((a, aId) => {
+                let url = null;
+                if (a["BaseURL_asArray"]) {
+                    url = a["BaseURL_asArray"][0];
+                }
+                let adaptationSetNode = new URLNode(url);
+                periodNode.setChild(aId, adaptationSetNode);
+                a["Representation_asArray"].forEach((r, rId) => {
+                    let url = null;
+                    if (r["BaseURL_asArray"]) {
+                        url = r["BaseURL_asArray"][0];
+                    }
+                    let representationNode = new URLNode(url);
+                    adaptationSetNode.setChild(rId, representationNode);
+                });
+            });
+        });
+        return root;
+    }
+    getBaseURLByPath(path, urlNode) {
+        let baseURL = "";
+        let root = urlNode;
+        for (let i = 0; i < path.length; i++) {
+            if (path[i] >= root.children.length || path[i] < 0) {
+                throw new Error("传入的路径不正确");
+            }
+            baseURL += root.children[path[i]].url;
+            root = root.children[path[i]];
+        }
+        if (root.children.length > 0) {
+            throw new Error("传入的路径不正确");
+        }
+        return baseURL;
+    }
+}
+const factory$3 = FactoryMaker.getSingleFactory(BaseURLParser);
 
 var DOMNodeTypes;
 (function (DOMNodeTypes) {
@@ -328,10 +395,24 @@ var DOMNodeTypes;
     DOMNodeTypes[DOMNodeTypes["DOCUMENT_NODE"] = 9] = "DOCUMENT_NODE";
 })(DOMNodeTypes || (DOMNodeTypes = {}));
 
+class SegmentTemplateParser {
+    constructor(ctx, ...args) {
+        this.config = ctx.context;
+        this.setup();
+    }
+    setup() { }
+}
+const factory$2 = FactoryMaker.getSingleFactory(SegmentTemplateParser);
+
 class DashParser {
     constructor(ctx, ...args) {
         this.config = {};
+        this.templateReg = /\$(.+)?\$/;
         this.config = ctx.context;
+        this.setup();
+    }
+    setup() {
+        this.segmentTemplateParser = factory$2({}).create();
     }
     string2xml(s) {
         let parser = new DOMParser();
@@ -400,7 +481,7 @@ class DashParser {
                 }
             }
             // 3.如果该Element节点中含有text节点，则需要合并为一个整体
-            result["#text_asArray"].forEach(text => {
+            result["#text_asArray"] && result["#text_asArray"].forEach(text => {
                 result.__text = result.__text || "";
                 result.__text += `${text.text}/n`;
             });
@@ -458,6 +539,47 @@ class DashParser {
             });
         });
     }
+    parseNodeSegmentTemplate(Mpd) {
+        Mpd["Period_asArray"].forEach(Period => {
+            Period["AdaptationSet_asArray"].forEach(AdaptationSet => {
+                AdaptationSet["Representation_asArray"].forEach(Representation => {
+                    let SegmentTemplate = Representation["SegmentTemplate"];
+                    this.generateInitializationURL(SegmentTemplate, Representation);
+                    this.generateMediaURL(SegmentTemplate, Representation);
+                });
+            });
+        });
+    }
+    generateInitializationURL(SegmentTemplate, parent) {
+        let initialization = SegmentTemplate.initialization;
+        SegmentTemplate.media;
+        let r;
+        let formatArray = new Array();
+        let replaceArray = new Array();
+        if (this.templateReg.test(initialization)) {
+            while (r = this.templateReg.exec(initialization)) {
+                formatArray.push(r[0]);
+                if (r[1] === "Number") {
+                    r[1] = "1";
+                }
+                else if (r[1] === "RepresentationID") {
+                    r[1] = parent.id;
+                }
+                replaceArray.push(r[1]);
+            }
+            let index = 0;
+            while (index < replaceArray.length) {
+                initialization.replace(formatArray[index], replaceArray[index]);
+                index++;
+            }
+        }
+        parent.initializationURL = initialization;
+    }
+    generateMediaURL(SegmentTemplate, parent) {
+        SegmentTemplate.media;
+        new Array();
+        new Array();
+    }
 }
 const factory$1 = FactoryMaker.getSingleFactory(DashParser);
 
@@ -473,10 +595,11 @@ class MediaPlayer {
     }
     //初始化类
     setup() {
-        this.urlLoader = factory$2().getInstance();
-        this.eventBus = factory$4().getInstance();
+        this.urlLoader = factory$4().getInstance();
+        this.eventBus = factory$6().getInstance();
         // ignoreRoot -> 忽略Document节点，从MPD开始作为根节点
         this.dashParser = factory$1({ ignoreRoot: true }).getInstance();
+        this.baseURLParser = factory$3().getInstance();
     }
     initializeEvent() {
         this.eventBus.on(EventConstants.MANIFEST_LOADED, this.onManifestLoaded, this);
@@ -484,9 +607,12 @@ class MediaPlayer {
     resetEvent() {
         this.eventBus.off(EventConstants.MANIFEST_LOADED, this.onManifestLoaded, this);
     }
+    //MPD文件请求成功获得对应的data数据
     onManifestLoaded(data) {
         let manifest = this.dashParser.parse(data);
         console.log(manifest);
+        this.baseURLPath = this.baseURLParser.parseManifestForBaseURL(manifest);
+        console.log(this.baseURLPath);
     }
     /**
      * @description 发送MPD文件的网络请求，我要做的事情很纯粹，具体实现细节由各个Loader去具体实现
