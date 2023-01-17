@@ -43,7 +43,6 @@ class MediaPlayer {
     //MPD文件请求成功获得对应的data数据
     onManifestLoaded(data:string) { 
         let manifest = this.dashParser.parse(data);
-        console.log(manifest);
         this.baseURLPath = this.baseURLParser.parseManifestForBaseURL(manifest as Mpd);
         console.log(this.baseURLPath);
 

@@ -1,8 +1,10 @@
-import { AdaptationSet, BaseURL, Initialization, MediaType, Representation, SegmentBase, SegmentList, SegmentTemplate, SegmentURL } from "../types/dash/MpdFile";
+import { AdaptationSet, BaseURL, Initialization, MediaType, Representation, SegmentBase, SegmentList, SegmentTemplate, SegmentURL, Mpd, Period } from "../types/dash/MpdFile";
 /**
  * @description 类型守卫函数
  */
 export declare function checkMediaType(s: any): s is MediaType;
+export declare function checkMpd(s: any): s is Mpd;
+export declare function checkPeriod(s: any): s is Period;
 /**
  * @description 类型守卫函数
  */

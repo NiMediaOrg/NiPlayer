@@ -1,3 +1,7 @@
 let str = "$Number$-header-$Number$-$ID$-m4s"
 
-console.log(str.replace("$Number$","@@@"))
+let reg = /\$(.+?)\$/ig
+
+while(r = reg.exec(str)) {
+    console.log(r)
+}

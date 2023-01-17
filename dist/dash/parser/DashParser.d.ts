@@ -1,6 +1,6 @@
 import { ManifestObjectNode } from "../../types/dash/DomNodeTypes";
 import { FactoryObject } from "../../types/dash/Factory";
-import { Mpd } from "../../types/dash/MpdFile";
+import { AdaptationSet, Mpd, Period } from "../../types/dash/MpdFile";
 declare class DashParser {
     private config;
     private segmentTemplateParser;
@@ -11,8 +11,8 @@ declare class DashParser {
     parseDOMChildren<T extends string>(name: T, node: Node): ManifestObjectNode[T];
     mergeNode(node: FactoryObject, compare: FactoryObject): void;
     mergeNodeSegementTemplate(Mpd: Mpd): void;
-    getTotalDuration(Mpd: Mpd): number | never;
-    setDurationForRepresentation(Mpd: Mpd): void;
+    static getTotalDuration(Mpd: Mpd): number | never;
+    static setDurationForRepresentation(Mpd: Mpd | Period | AdaptationSet): void;
 }
 declare const factory: import("../../types/dash/Factory").FactoryFunction<DashParser>;
 export default factory;

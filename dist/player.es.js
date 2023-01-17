@@ -395,57 +395,6 @@ var DOMNodeTypes;
     DOMNodeTypes[DOMNodeTypes["DOCUMENT_NODE"] = 9] = "DOCUMENT_NODE";
 })(DOMNodeTypes || (DOMNodeTypes = {}));
 
-class SegmentTemplateParser {
-    constructor(ctx, ...args) {
-        this.templateReg = /\$(.+)?\$/;
-        this.config = ctx.context;
-        this.setup();
-    }
-    setup() { }
-    parseNodeSegmentTemplate(Mpd) {
-        Mpd["Period_asArray"].forEach(Period => {
-            Period["AdaptationSet_asArray"].forEach(AdaptationSet => {
-                AdaptationSet["Representation_asArray"].forEach(Representation => {
-                    let SegmentTemplate = Representation["SegmentTemplate"];
-                    this.generateInitializationURL(SegmentTemplate, Representation);
-                    this.generateMediaURL(SegmentTemplate, Representation);
-                });
-            });
-        });
-    }
-    generateInitializationURL(SegmentTemplate, parent) {
-        let initialization = SegmentTemplate.initialization;
-        SegmentTemplate.media;
-        let r;
-        let formatArray = new Array();
-        let replaceArray = new Array();
-        if (this.templateReg.test(initialization)) {
-            while (r = this.templateReg.exec(initialization)) {
-                formatArray.push(r[0]);
-                if (r[1] === "Number") {
-                    r[1] = "1";
-                }
-                else if (r[1] === "RepresentationID") {
-                    r[1] = parent.id;
-                }
-                replaceArray.push(r[1]);
-            }
-            let index = 0;
-            while (index < replaceArray.length) {
-                initialization.replace(formatArray[index], replaceArray[index]);
-                index++;
-            }
-        }
-        parent.initializationURL = initialization;
-    }
-    generateMediaURL(SegmentTemplate, parent) {
-        SegmentTemplate.media;
-        new Array();
-        new Array();
-    }
-}
-const factory$2 = FactoryMaker.getSingleFactory(SegmentTemplateParser);
-
 function addZero(num) {
     return num > 9 ? "" + num : "0" + num;
 }
@@ -502,6 +451,204 @@ function parseDuration(pt) {
     };
 }
 
+/**
+ * @description 该类仅用于处理MPD文件中具有SegmentTemplate此种情况
+ */
+class SegmentTemplateParser {
+    constructor(ctx, ...args) {
+        this.config = ctx.context;
+        this.setup();
+    }
+    setup() {
+    }
+    parse(Mpd) {
+        DashParser.setDurationForRepresentation(Mpd);
+        this.setSegmentDurationForRepresentation(Mpd);
+        this.parseNodeSegmentTemplate(Mpd);
+    }
+    setSegmentDurationForRepresentation(Mpd) {
+        let maxSegmentDuration = switchToSeconds(parseDuration(Mpd.maxSegmentDuration));
+        Mpd["Period_asArray"].forEach(Period => {
+            Period["AdaptationSet_asArray"].forEach(AdaptationSet => {
+                AdaptationSet["Representation_asArray"].forEach(Representation => {
+                    if (Representation["SegmentTemplate"]) {
+                        if (Representation["SegmentTemplate"].duration) {
+                            let duration = Representation["SegmentTemplate"].duration;
+                            let timescale = Representation["SegmentTemplate"].timescale || 1;
+                            Representation.segmentDuration = (duration / timescale).toFixed(1);
+                        }
+                        else {
+                            if (maxSegmentDuration) {
+                                Representation.segmentDuration = maxSegmentDuration;
+                            }
+                            else {
+                                throw new Error("MPD文件格式错误");
+                            }
+                        }
+                    }
+                });
+            });
+        });
+    }
+    parseNodeSegmentTemplate(Mpd) {
+        Mpd["Period_asArray"].forEach(Period => {
+            Period["AdaptationSet_asArray"].forEach(AdaptationSet => {
+                AdaptationSet["Representation_asArray"].forEach(Representation => {
+                    let SegmentTemplate = Representation["SegmentTemplate"];
+                    if (SegmentTemplate) {
+                        this.generateInitializationURL(SegmentTemplate, Representation);
+                        this.generateMediaURL(SegmentTemplate, Representation);
+                    }
+                });
+            });
+        });
+    }
+    generateInitializationURL(SegmentTemplate, parent) {
+        let templateReg = /\$(.+?)\$/ig;
+        let initialization = SegmentTemplate.initialization;
+        let r;
+        let formatArray = new Array();
+        let replaceArray = new Array();
+        if (templateReg.test(initialization)) {
+            templateReg.lastIndex = 0;
+            while (r = templateReg.exec(initialization)) {
+                formatArray.push(r[0]);
+                if (r[1] === "Number") {
+                    r[1] = "1";
+                }
+                else if (r[1] === "RepresentationID") {
+                    r[1] = parent.id;
+                }
+                replaceArray.push(r[1]);
+            }
+            let index = 0;
+            while (index < replaceArray.length) {
+                initialization = initialization.replace(formatArray[index], replaceArray[index]);
+                index++;
+            }
+        }
+        parent.initializationURL = initialization;
+    }
+    generateMediaURL(SegmentTemplate, parent) {
+        let templateReg = /\$(.+?)\$/ig;
+        let media = SegmentTemplate.media;
+        let r;
+        let formatArray = new Array();
+        let replaceArray = new Array();
+        parent.mediaURL = new Array();
+        if (templateReg.test(media)) {
+            while (r = templateReg.exec(media)) {
+                formatArray.push(r[0]);
+                if (r[1] === "Number") {
+                    r[1] = "@Number@";
+                }
+                else if (r[1] === "RepresentationID") {
+                    r[1] = parent.id;
+                }
+                replaceArray.push(r[1]);
+            }
+        }
+        let index = 0;
+        while (index < replaceArray.length) {
+            media = media.replace(formatArray[index], replaceArray[index]);
+            index++;
+        }
+        for (let i = 1; i <= Math.ceil(parent.duration / parent.segmentDuration); i++) {
+            let s = media;
+            while (s.includes("@Number@")) {
+                s = s.replace("@Number@", `${i}`);
+            }
+            parent.mediaURL[i] = s;
+        }
+    }
+}
+const factory$2 = FactoryMaker.getSingleFactory(SegmentTemplateParser);
+
+/**
+ * @description 类型守卫函数
+ */
+function checkMediaType(s) {
+    if (!s)
+        return true;
+    return (s === "video/mp4" ||
+        s === "audio/mp4" ||
+        s === "text/html" ||
+        s === "text/xml" ||
+        s === "text/plain" ||
+        s === "image/png" ||
+        s === "image/jpeg");
+}
+function checkMpd(s) {
+    if (s.tag === "MPD")
+        return true;
+    return false;
+}
+function checkPeriod(s) {
+    return s.tag === "Period";
+}
+/**
+ * @description 类型守卫函数
+ */
+function checkBaseURL(s) {
+    if (s.tag === "BaseURL" && typeof s.url === "string")
+        return true;
+    return false;
+}
+/**
+ * @description 类型守卫函数
+ */
+function checkAdaptationSet(s) {
+    if (s.tag === "AdaptationSet")
+        return true;
+    return false;
+}
+/**
+ * @description 类型守卫函数
+ */
+function checkSegmentTemplate(s) {
+    return s.tag === "SegmentTemplate";
+}
+/**
+ * @description 类型守卫函数
+ */
+function checkRepresentation(s) {
+    return s.tag === "Representation";
+}
+/**
+ * @description 类型守卫函数
+ */
+function checkSegmentList(s) {
+    return s.tag === "SegmentList";
+}
+function checkInitialization(s) {
+    return s.tag === "Initialization";
+}
+function checkSegmentURL(s) {
+    return s.tag === "SegmentURL";
+}
+function checkSegmentBase(s) {
+    return s.tag === "SegmentBase";
+}
+let checkUtils = {
+    checkMediaType,
+    checkBaseURL,
+    checkAdaptationSet,
+    checkSegmentTemplate,
+    checkRepresentation,
+    checkSegmentList,
+    checkInitialization,
+    checkSegmentURL,
+    checkSegmentBase
+};
+function findSpecificType(array, type) {
+    array.forEach(item => {
+        if (checkUtils[`check${type}`] && checkUtils[`check${type}`].call(this, item)) {
+            return true;
+        }
+    });
+    return false;
+}
+
 class DashParser {
     constructor(ctx, ...args) {
         this.config = {};
@@ -509,12 +656,13 @@ class DashParser {
         this.setup();
     }
     setup() {
-        this.segmentTemplateParser = factory$2({}).getInstance();
+        this.segmentTemplateParser = factory$2().getInstance();
     }
     string2xml(s) {
         let parser = new DOMParser();
         return parser.parseFromString(s, "text/xml");
     }
+    // 解析请求到的xml类型的文本字符串，生成MPD对象,方便后续的解析
     parse(manifest) {
         let xml = this.string2xml(manifest);
         let Mpd;
@@ -525,7 +673,8 @@ class DashParser {
             Mpd = this.parseDOMChildren("MpdDocument", xml);
         }
         this.mergeNodeSegementTemplate(Mpd);
-        this.setDurationForRepresentation(Mpd);
+        this.segmentTemplateParser.parse(Mpd);
+        console.log(Mpd);
         return Mpd;
     }
     parseDOMChildren(name, node) {
@@ -637,12 +786,11 @@ class DashParser {
             });
         });
     }
-    getTotalDuration(Mpd) {
+    static getTotalDuration(Mpd) {
         let totalDuration = 0;
         let MpdDuration = NaN;
         if (Mpd.mediaPresentationDuration) {
             MpdDuration = switchToSeconds(parseDuration(Mpd.mediaPresentationDuration));
-            console.log(MpdDuration);
         }
         // MPD文件的总时间要么是由Mpd标签上的availabilityStartTime指定，要么是每一个Period上的duration之和
         if (isNaN(MpdDuration)) {
@@ -661,33 +809,37 @@ class DashParser {
         return totalDuration;
     }
     // 给每一个Representation对象上挂载duration属性
-    setDurationForRepresentation(Mpd) {
-        //1. 如果只有一个Period
-        if (Mpd["Period_asArray"].length === 1) {
-            let totalDuration = this.getTotalDuration(Mpd);
-            Mpd["Period_asArray"].forEach(Period => {
-                Period.duration = Period.duration || totalDuration;
-                Period["AdaptationSet_asArray"].forEach(AdaptationSet => {
-                    AdaptationSet.duration = totalDuration;
-                    AdaptationSet["Representation_asArray"].forEach(Representation => {
-                        Representation.duration = totalDuration;
+    static setDurationForRepresentation(Mpd) {
+        if (checkMpd(Mpd)) {
+            //1. 如果只有一个Period
+            if (Mpd["Period_asArray"].length === 1) {
+                let totalDuration = DashParser.getTotalDuration(Mpd);
+                Mpd["Period_asArray"].forEach(Period => {
+                    Period.duration = Period.duration || totalDuration;
+                    Period["AdaptationSet_asArray"].forEach(AdaptationSet => {
+                        AdaptationSet.duration = totalDuration;
+                        AdaptationSet["Representation_asArray"].forEach(Representation => {
+                            Representation.duration = totalDuration;
+                        });
                     });
                 });
-            });
-        }
-        else {
-            Mpd["Period_asArray"].forEach(Period => {
-                if (!Period.duration)
-                    throw new Error("MPD文件格式错误");
-                let duration = Period.duration;
-                Period["AdaptationSet_asArray"].forEach(AdaptationSet => {
-                    AdaptationSet.duration = duration;
-                    AdaptationSet["Representation_asArray"].forEach(Representation => {
-                        Representation.duration = duration;
+            }
+            else {
+                Mpd["Period_asArray"].forEach(Period => {
+                    if (!Period.duration) {
+                        throw new Error("MPD文件格式错误");
+                    }
+                    let duration = Period.duration;
+                    Period["AdaptationSet_asArray"].forEach(AdaptationSet => {
+                        AdaptationSet.duration = duration;
+                        AdaptationSet["Representation_asArray"].forEach(Representation => {
+                            Representation.duration = duration;
+                        });
                     });
                 });
-            });
+            }
         }
+        else if (checkPeriod(Mpd)) ;
     }
 }
 const factory$1 = FactoryMaker.getSingleFactory(DashParser);
@@ -719,7 +871,6 @@ class MediaPlayer {
     //MPD文件请求成功获得对应的data数据
     onManifestLoaded(data) {
         let manifest = this.dashParser.parse(data);
-        console.log(manifest);
         this.baseURLPath = this.baseURLParser.parseManifestForBaseURL(manifest);
         console.log(this.baseURLPath);
     }
@@ -1159,83 +1310,6 @@ function $warn(msg) {
     throw new Error(msg);
 }
 
-/**
- * @description 类型守卫函数
- */
-function checkMediaType(s) {
-    if (!s)
-        return true;
-    return (s === "video/mp4" ||
-        s === "audio/mp4" ||
-        s === "text/html" ||
-        s === "text/xml" ||
-        s === "text/plain" ||
-        s === "image/png" ||
-        s === "image/jpeg");
-}
-/**
- * @description 类型守卫函数
- */
-function checkBaseURL(s) {
-    if (s.tag === "BaseURL" && typeof s.url === "string")
-        return true;
-    return false;
-}
-/**
- * @description 类型守卫函数
- */
-function checkAdaptationSet(s) {
-    if (s.tag === "AdaptationSet")
-        return true;
-    return false;
-}
-/**
- * @description 类型守卫函数
- */
-function checkSegmentTemplate(s) {
-    return s.tag === "SegmentTemplate";
-}
-/**
- * @description 类型守卫函数
- */
-function checkRepresentation(s) {
-    return s.tag === "Representation";
-}
-/**
- * @description 类型守卫函数
- */
-function checkSegmentList(s) {
-    return s.tag === "SegmentList";
-}
-function checkInitialization(s) {
-    return s.tag === "Initialization";
-}
-function checkSegmentURL(s) {
-    return s.tag === "SegmentURL";
-}
-function checkSegmentBase(s) {
-    return s.tag === "SegmentBase";
-}
-let checkUtils = {
-    checkMediaType,
-    checkBaseURL,
-    checkAdaptationSet,
-    checkSegmentTemplate,
-    checkRepresentation,
-    checkSegmentList,
-    checkInitialization,
-    checkSegmentURL,
-    checkSegmentBase
-};
-function findSpecificType(array, type) {
-    array.forEach(item => {
-        if (checkUtils[`check${type}`] && checkUtils[`check${type}`].call(this, item)) {
-            return true;
-        }
-    });
-    return false;
-}
-
 function string2booolean(s) {
     if (s === "true") {
         return true;
@@ -1299,4 +1373,4 @@ const icon = {
     "icon-zanting": "main_icon-zanting__BtGq5",
 };
 
-export { $warn, BaseEvent, Controller, ErrorMask, LoadingMask, Mp4Player, MpdPlayer, Player, Progress, ToolBar, addZero, checkAdaptationSet, checkBaseURL, checkInitialization, checkMediaType, checkRepresentation, checkSegmentBase, checkSegmentList, checkSegmentTemplate, checkSegmentURL, checkUtils, findSpecificType, formatTime, icon, parseDuration, string2booolean, string2number, styles, switchToSeconds };
+export { $warn, BaseEvent, Controller, ErrorMask, LoadingMask, Mp4Player, MpdPlayer, Player, Progress, ToolBar, addZero, checkAdaptationSet, checkBaseURL, checkInitialization, checkMediaType, checkMpd, checkPeriod, checkRepresentation, checkSegmentBase, checkSegmentList, checkSegmentTemplate, checkSegmentURL, checkUtils, findSpecificType, formatTime, icon, parseDuration, string2booolean, string2number, styles, switchToSeconds };

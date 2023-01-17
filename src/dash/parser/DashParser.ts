@@ -1,9 +1,10 @@
 import { DOMNodeTypes, ManifestObjectNode } from "../../types/dash/DomNodeTypes";
 import { FactoryObject } from "../../types/dash/Factory";
-import { Mpd, Representation, SegmentTemplate } from "../../types/dash/MpdFile";
+import { AdaptationSet, Mpd, Period, SegmentTemplate } from "../../types/dash/MpdFile";
 import SegmentTemplateParserFactory,{SegmentTemplateParser} from "./SegmentTemplateParser";
 import FactoryMaker from "../FactoryMaker";
 import { parseDuration, switchToSeconds } from "../../utils/format";
+import { checkMpd, checkPeriod, checkUtils } from "../../utils/typeCheck";
 class DashParser {
   private config: FactoryObject = {};
   private segmentTemplateParser:SegmentTemplateParser;
@@ -14,7 +15,7 @@ class DashParser {
   }
 
   setup() {
-    this.segmentTemplateParser = SegmentTemplateParserFactory({}).getInstance();
+    this.segmentTemplateParser = SegmentTemplateParserFactory().getInstance();
   }
 
   string2xml(s: string): Document {
@@ -22,6 +23,7 @@ class DashParser {
     return parser.parseFromString(s, "text/xml");
   }
 
+  // 解析请求到的xml类型的文本字符串，生成MPD对象,方便后续的解析
   parse(manifest: string): ManifestObjectNode["MpdDocument"] | ManifestObjectNode["Mpd"] {
     let xml = this.string2xml(manifest);
     let Mpd;
@@ -32,7 +34,8 @@ class DashParser {
     }
     
     this.mergeNodeSegementTemplate(Mpd);
-    this.setDurationForRepresentation(Mpd);
+    this.segmentTemplateParser.parse(Mpd);
+    console.log(Mpd);
     return Mpd;
   }
 
@@ -150,12 +153,11 @@ class DashParser {
     })
   }
 
-  getTotalDuration(Mpd:Mpd): number | never {
+  static getTotalDuration(Mpd:Mpd): number | never {
     let totalDuration = 0;
     let MpdDuration = NaN;
     if(Mpd.mediaPresentationDuration) {
       MpdDuration = switchToSeconds(parseDuration(Mpd.mediaPresentationDuration));
-      console.log(MpdDuration)
     }
     // MPD文件的总时间要么是由Mpd标签上的availabilityStartTime指定，要么是每一个Period上的duration之和
     if(isNaN(MpdDuration)) {
@@ -173,30 +175,37 @@ class DashParser {
   }
 
   // 给每一个Representation对象上挂载duration属性
-  setDurationForRepresentation(Mpd:Mpd) {
-    //1. 如果只有一个Period
-    if(Mpd["Period_asArray"].length === 1) {
-      let totalDuration = this.getTotalDuration(Mpd);
-      Mpd["Period_asArray"].forEach(Period=>{
-        Period.duration = Period.duration || totalDuration;
-        Period["AdaptationSet_asArray"].forEach(AdaptationSet=>{
-          AdaptationSet.duration = totalDuration;
-          AdaptationSet["Representation_asArray"].forEach(Representation=>{
-            Representation.duration = totalDuration;
+  static setDurationForRepresentation(Mpd: Mpd | Period | AdaptationSet) {
+    if(checkMpd(Mpd)) {
+      //1. 如果只有一个Period
+      if(Mpd["Period_asArray"].length === 1) {
+        let totalDuration = DashParser.getTotalDuration(Mpd);
+        Mpd["Period_asArray"].forEach(Period=>{
+          Period.duration = Period.duration || totalDuration;
+          Period["AdaptationSet_asArray"].forEach(AdaptationSet=>{
+            AdaptationSet.duration = totalDuration;
+            AdaptationSet["Representation_asArray"].forEach(Representation=>{
+              Representation.duration = totalDuration;
+            })
           })
         })
-      })
-    } else {
-      Mpd["Period_asArray"].forEach(Period=>{
-        if(!Period.duration) throw new Error("MPD文件格式错误");
-        let duration = Period.duration;
-        Period["AdaptationSet_asArray"].forEach(AdaptationSet=>{
-          AdaptationSet.duration = duration;
-          AdaptationSet["Representation_asArray"].forEach(Representation=>{
-            Representation.duration = duration;
+      } else {
+        Mpd["Period_asArray"].forEach(Period=>{
+          if(!Period.duration) {
+            throw new Error("MPD文件格式错误");
+          }
+          let duration = Period.duration;
+          Period["AdaptationSet_asArray"].forEach(AdaptationSet=>{
+            AdaptationSet.duration = duration;
+            AdaptationSet["Representation_asArray"].forEach(Representation=>{
+              Representation.duration = duration;
+            })
           })
         })
-      })
+      }
+    } else if(checkPeriod(Mpd)) {
+      //ToDo
+
     }
   }
 }
