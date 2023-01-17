@@ -1,4 +1,4 @@
-import { Time } from "../types/Time";
+import { Time } from "../types/dash/Time";
 
 export function addZero(num: number): string {
   return num > 9 ? "" + num : "0" + num;

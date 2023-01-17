@@ -36,6 +36,10 @@ export type SegmentRequest = {
     type: "segement";
     url: string;
 };
+export type Document = {
+    tag: "Document";
+    root: Mpd;
+};
 /**
  * @description mediaPresentationDuration表示媒体文件的总时长
  */
@@ -112,8 +116,4 @@ export type SegmentURL = {
     tag: "SegmentURL";
     media?: string;
     mediaRange?: string;
-};
-export type MpdFile = {
-    tag: "File";
-    root: Mpd;
 };

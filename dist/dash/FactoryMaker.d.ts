@@ -1,10 +1,17 @@
 import { BaseConstructor } from "../class/BaseConstructor";
-import { FactoryFunction } from "../types/dash/Factory";
+import { FactoryFunction, FactoryObject } from "../types/dash/Factory";
 declare const FactoryMaker: {
-    readonly __factoryMap: {
-        [props: string]: FactoryFunction;
+    __class_factoryMap: {
+        [props: string]: FactoryFunction<any>;
     };
-    getClassFactory<T>(classConstructor: BaseConstructor<T>): FactoryFunction;
-    merge<T_1>(classConstructor: BaseConstructor<T_1>, context: object, args: any[]): T_1;
+    __single_factoryMap: {
+        [props: string]: FactoryFunction<any>;
+    };
+    __single_instanceMap: {
+        [props: string]: any;
+    };
+    getClassFactory<T>(classConstructor: BaseConstructor<T>): FactoryFunction<T>;
+    getSingleFactory<T_1>(classConstructor: BaseConstructor<T_1>): FactoryFunction<T_1>;
+    merge<T_2>(classConstructor: BaseConstructor<T_2>, context: FactoryObject, ...args: any[]): T_2;
 };
 export default FactoryMaker;
