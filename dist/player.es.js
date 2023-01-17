@@ -339,7 +339,13 @@ class DashParser {
     }
     parse(manifest) {
         let xml = this.string2xml(manifest);
-        let Mpd = this.parseDOMChildren("MpdDocument", xml);
+        let Mpd;
+        if (this.config.override) {
+            Mpd = this.parseDOMChildren("Mpd", xml);
+        }
+        else {
+            Mpd = this.parseDOMChildren("MpdDocument", xml);
+        }
         this.mergeNodeSegementTemplate(Mpd);
         return Mpd;
     }
@@ -385,6 +391,7 @@ class DashParser {
                     result[child.nodeName].push(this.parseDOMChildren(child.nodeName, child));
                 }
             }
+            // 2. 将node中的具有多个相同标签的子标签合并为一个数组
             for (let key in result) {
                 if (key !== "tag" && key !== "__children") {
                     result[key + "_asArray"] = Array.isArray(result[key])
@@ -392,7 +399,12 @@ class DashParser {
                         : [result[key]];
                 }
             }
-            // 2.解析node上挂载的属性
+            // 3.如果该Element节点中含有text节点，则需要合并为一个整体
+            result["#text_asArray"].forEach(text => {
+                result.__text = result.__text || "";
+                result.__text += `${text.text}/n`;
+            });
+            // 4.解析node上挂载的属性
             for (let prop of node.attributes) {
                 result[prop.name] = prop.value;
             }
@@ -463,6 +475,7 @@ class MediaPlayer {
     setup() {
         this.urlLoader = factory$2().getInstance();
         this.eventBus = factory$4().getInstance();
+        // ignoreRoot -> 忽略Document节点，从MPD开始作为根节点
         this.dashParser = factory$1({ ignoreRoot: true }).getInstance();
     }
     initializeEvent() {

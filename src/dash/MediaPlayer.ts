@@ -22,6 +22,7 @@ class MediaPlayer {
     setup() {
         this.urlLoader = URLLoaderFactory().getInstance();
         this.eventBus = EventBusFactory().getInstance();
+        // ignoreRoot -> 忽略Document节点，从MPD开始作为根节点
         this.dashParser = DashParserFactory({ignoreRoot:true}).getInstance();
     }
 

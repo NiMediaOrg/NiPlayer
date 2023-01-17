@@ -15,7 +15,13 @@ class DashParser {
 
   parse(manifest: string): ManifestObjectNode["MpdDocument"] | ManifestObjectNode["Mpd"] {
     let xml = this.string2xml(manifest);
-    let Mpd = this.parseDOMChildren("MpdDocument", xml);
+    let Mpd;
+    if(this.config.override) {
+      Mpd = this.parseDOMChildren("Mpd", xml);
+    } else {
+      Mpd = this.parseDOMChildren("MpdDocument",xml);
+    }
+    
     this.mergeNodeSegementTemplate(Mpd);
     return Mpd;
   }
@@ -45,7 +51,7 @@ class DashParser {
       }
       return result;
     } else if (node.nodeType === DOMNodeTypes.ELEMENT_NODE) {
-      let result = {
+      let result: FactoryObject = {
         tag: node.nodeName,
         __chilren: [],
       };
@@ -64,6 +70,7 @@ class DashParser {
           result[child.nodeName].push(this.parseDOMChildren(child.nodeName,child));
         }
       }
+      // 2. 将node中的具有多个相同标签的子标签合并为一个数组
       for (let key in result) {
         if (key !== "tag" && key !== "__children") {
           result[key + "_asArray"] = Array.isArray(result[key])
@@ -71,10 +78,16 @@ class DashParser {
             : [result[key]];
         }
       }
-      // 2.解析node上挂载的属性
+      // 3.如果该Element节点中含有text节点，则需要合并为一个整体
+      result["#text_asArray"].forEach(text=>{
+        result.__text = result.__text || "";
+        result.__text += `${text.text}/n`
+      })
+      // 4.解析node上挂载的属性
       for (let prop of (node as Element).attributes) {
         result[prop.name] = prop.value;
       }
+      
       return result;
     } else if (node.nodeType === DOMNodeTypes.TEXT_NODE) {
       return {

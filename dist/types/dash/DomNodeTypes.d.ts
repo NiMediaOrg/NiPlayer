@@ -1,4 +1,4 @@
-import { AdaptationSet, Initialization, Mpd, Period, Representation, SegmentBase, SegmentList, SegmentTemplate, SegmentURL } from "./MpdFile";
+import { AdaptationSet, Initialization, Mpd, MpdDocument, Period, Representation, SegmentBase, SegmentList, SegmentTemplate, SegmentURL } from "./MpdFile";
 export declare enum DOMNodeTypes {
     ELEMENT_NODE = 1,
     TEXT_NODE = 3,
@@ -7,7 +7,7 @@ export declare enum DOMNodeTypes {
     DOCUMENT_NODE = 9
 }
 export type ManifestObjectNode = {
-    Document: Document;
+    MpdDocument: MpdDocument;
     Mpd: Mpd;
     Period: Period;
     AdaptationSet: AdaptationSet;
