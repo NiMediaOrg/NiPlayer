@@ -36,7 +36,7 @@ export type SegmentRequest = {
     type: "segement";
     url: string;
 };
-export type Document = {
+export type MpdDocument = {
     tag: "Document";
     root: Mpd;
 };

@@ -343,7 +343,9 @@
       }
       parse(manifest) {
           let xml = this.string2xml(manifest);
-          return this.parseDOMChildren("Document", xml);
+          let Mpd = this.parseDOMChildren("MpdDocument", xml);
+          this.mergeNodeSegementTemplate(Mpd);
+          return Mpd;
       }
       parseDOMChildren(name, node) {
           //如果node的类型为文档类型
@@ -355,6 +357,7 @@
               // 文档类型的节点一定只有一个子节点
               for (let index in node.childNodes) {
                   if (node.childNodes[index].nodeType === DOMNodeTypes.ELEMENT_NODE) {
+                      // 如果在配置指定需要忽略根节点的话，也就是忽略MpdDocument节点
                       if (!this.config.ignoreRoot) {
                           result.__children[index] = this.parseDOMChildren(node.childNodes[index].nodeName, node.childNodes[index]);
                           result[node.childNodes[index].nodeName] = this.parseDOMChildren(node.childNodes[index].nodeName, node.childNodes[index]);
@@ -405,6 +408,47 @@
                   text: node.nodeValue
               };
           }
+      }
+      mergeNode(node, compare) {
+          if (node[compare.tag]) {
+              let target = node[`${compare.tag}_asArray`];
+              target.forEach(element => {
+                  for (let key in compare) {
+                      if (!element.hasOwnProperty(key)) {
+                          element[key] = compare[key];
+                      }
+                  }
+              });
+          }
+          else {
+              node[compare.tag] = compare;
+              node.__children = node.__children || [];
+              node.__children.push(compare);
+              node[`${compare.tag}__asArray`] = [compare];
+          }
+      }
+      mergeNodeSegementTemplate(Mpd) {
+          let segmentTemplate = null;
+          Mpd["Period_asArray"].forEach(Period => {
+              if (Period["SegmentTemplate_asArray"]) {
+                  segmentTemplate = Period["SegmentTemplate_asArray"][0];
+              }
+              Period["AdaptationSet_asArray"].forEach(AdaptationSet => {
+                  let template = segmentTemplate;
+                  if (segmentTemplate) {
+                      this.mergeNode(AdaptationSet, segmentTemplate);
+                  }
+                  if (AdaptationSet["SegmentTemplate_asArray"]) {
+                      segmentTemplate = AdaptationSet["SegmentTemplate_asArray"][0];
+                  }
+                  AdaptationSet["Representation_asArray"].forEach(Representation => {
+                      if (segmentTemplate) {
+                          this.mergeNode(Representation, segmentTemplate);
+                      }
+                  });
+                  segmentTemplate = template;
+              });
+          });
       }
   }
   const factory$1 = FactoryMaker.getSingleFactory(DashParser);
