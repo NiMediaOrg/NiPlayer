@@ -89,4 +89,5 @@ export type MpdSegmentRequest = {
 export type PlayerBuffer = {
   video:ArrayBuffer;
   audio:ArrayBuffer;
+  streamId: number;
 }

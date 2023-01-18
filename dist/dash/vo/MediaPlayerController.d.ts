@@ -7,6 +7,7 @@ declare class MediaPlayerController {
     private audioSourceBuffer;
     private buffer;
     private eventBus;
+    private isFirstRequestCompleted;
     constructor(ctx: FactoryObject, ...args: any[]);
     setup(): void;
     initEvent(): void;
@@ -16,6 +17,7 @@ declare class MediaPlayerController {
     appendAudioSource(data: ArrayBuffer): void;
     onSourceopen(e: any): void;
     onUpdateend(): void;
+    onMediaPlaybackFinished(): void;
 }
 declare const factory: import("../../types/dash/Factory").FactoryFunction<MediaPlayerController>;
 export default factory;

@@ -1,4 +1,5 @@
 import { FactoryObject } from "../../types/dash/Factory";
+import { PlayerBuffer } from "../../types/dash/Net";
 import EventBusFactory, { EventBus } from "../event/EventBus";
 import { EventConstants } from "../event/EventConstants";
 import FactoryMaker from "../FactoryMaker";
@@ -11,6 +12,7 @@ class MediaPlayerController {
     private audioSourceBuffer: SourceBuffer;
     private buffer: MediaPlayerBuffer;
     private eventBus: EventBus;
+    private isFirstRequestCompleted:boolean = false;
     constructor(ctx:FactoryObject,...args:any[]) {
         this.config = ctx.context;
         if(this.config.video) {
@@ -32,6 +34,12 @@ class MediaPlayerController {
                 this.appendSource();
             }
         },this)
+
+        this.eventBus.on(EventConstants.FIRST_REQUEST_COMPLETED,()=>{
+            this.isFirstRequestCompleted = true;
+        },this)
+
+        this.eventBus.on(EventConstants.MEDIA_PLAYBACK_FINISHED,this.onMediaPlaybackFinished,this)
     }
 
     initPlayer() {
@@ -62,14 +70,23 @@ class MediaPlayerController {
         this.videoSourceBuffer = this.mediaSource.addSourceBuffer('video/mp4; codecs="avc1.64001E"');
         this.audioSourceBuffer = this.mediaSource.addSourceBuffer('audio/mp4; codecs="mp4a.40.2"');
 
+        console.log(this.videoSourceBuffer.mode)
         this.videoSourceBuffer.addEventListener("updateend",this.onUpdateend.bind(this));
         this.audioSourceBuffer.addEventListener("updateend",this.onUpdateend.bind(this));
     }
 
     onUpdateend() {
         if(!this.videoSourceBuffer.updating && !this.audioSourceBuffer.updating) {
+            if(this.isFirstRequestCompleted) {
+                this.eventBus.trigger(EventConstants.SEGMENT_CONSUMED);
+            }
             this.appendSource();
         }
+    }
+
+    onMediaPlaybackFinished() {
+        this.mediaSource.endOfStream();
+        
     }
 }
 

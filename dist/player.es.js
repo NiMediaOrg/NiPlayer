@@ -219,7 +219,6 @@ class EventBus {
         });
     }
     trigger(type, ...payload) {
-        console.log(this.__events);
         if (this.__events[type]) {
             this.__events[type].forEach(event => {
                 event.cb.call(event.scope, ...payload);
@@ -234,7 +233,10 @@ const EventConstants = {
     MANIFEST_PARSE_COMPLETED: "manifestParseCompleted",
     SOURCE_ATTACHED: "sourceAttached",
     SEGEMTN_LOADED: "segmentLoaded",
-    BUFFER_APPENDED: "bufferAppended"
+    BUFFER_APPENDED: "bufferAppended",
+    SEGMENT_CONSUMED: "segmentConsumed",
+    MEDIA_PLAYBACK_FINISHED: "mediaPlaybackFinished",
+    FIRST_REQUEST_COMPLETED: "firstRequestCompleted"
 };
 
 class HTTPRequest {
@@ -880,10 +882,14 @@ const factory$4 = FactoryMaker.getSingleFactory(BaseURLParser);
 class StreamController {
     constructor(ctx, ...args) {
         this.config = {};
-        //音视频的分辨率
+        // 音视频的分辨率
         this.videoResolvePower = "1920*1080";
         this.audioResolvePower = "48000";
+        // 和索引相关的变量
+        this.mediaIndex = 0;
+        this.streamId = 0;
         this.config = ctx.context;
+        this.segmentRequestStruct = this.config.num || 23;
         this.setup();
         this.initialEvent();
     }
@@ -895,18 +901,7 @@ class StreamController {
     }
     initialEvent() {
         this.eventBus.on(EventConstants.MANIFEST_PARSE_COMPLETED, this.onManifestParseCompleted, this);
-    }
-    //初始化播放流，一次至多加载23个Segement过来
-    startStream(Mpd) {
-        Mpd["Period_asArray"].forEach((p, pid) => __awaiter(this, void 0, void 0, function* () {
-            let ires = yield this.loadInitialSegment(pid);
-            this.eventBus.trigger(EventConstants.SEGEMTN_LOADED, ires);
-            let number = this.segmentRequestStruct.request[pid].VideoSegmentRequest[0].video[this.videoResolvePower][1].length;
-            for (let i = 0; i < (number >= 23 ? 23 : number); i++) {
-                let mres = yield this.loadMediaSegment(pid, i);
-                this.eventBus.trigger(EventConstants.SEGEMTN_LOADED, mres);
-            }
-        }));
+        this.eventBus.on(EventConstants.SEGMENT_CONSUMED, this.onSegmentConsumed, this);
     }
     onManifestParseCompleted(mainifest) {
         this.segmentRequestStruct = this.generateSegmentRequestStruct(mainifest);
@@ -961,6 +956,46 @@ class StreamController {
             }));
         }
         return res;
+    }
+    getNumberOfMediaSegmentForPeriod(streamId) {
+        return this.segmentRequestStruct.request[this.streamId].VideoSegmentRequest[0].video[this.videoResolvePower][1].length;
+    }
+    //初始化播放流，一次至多加载23个Segement过来
+    startStream(Mpd) {
+        return __awaiter(this, void 0, void 0, function* () {
+            Mpd["Period_asArray"][this.streamId];
+            let ires = yield this.loadInitialSegment(this.streamId);
+            this.eventBus.trigger(EventConstants.SEGEMTN_LOADED, { data: ires, streamId: this.streamId });
+            let number = this.getNumberOfMediaSegmentForPeriod(this.streamId);
+            for (let i = 0; i < (number >= this.firstRequestNumber ? this.firstRequestNumber : number); i++) {
+                let mres = yield this.loadMediaSegment(this.streamId, this.mediaIndex);
+                this.mediaIndex++;
+                this.eventBus.trigger(EventConstants.SEGEMTN_LOADED, { data: mres, streamId: this.streamId });
+            }
+        });
+    }
+    //播放器消费一个Segment我就继续请求一个Segment
+    onSegmentConsumed() {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (!this.segmentRequestStruct.request[this.streamId])
+                return;
+            let total = this.getNumberOfMediaSegmentForPeriod(this.streamId);
+            if (this.mediaIndex >= total) {
+                this.mediaIndex = 0;
+                this.streamId++;
+            }
+            else {
+                this.mediaIndex++;
+            }
+            if (this.segmentRequestStruct.request[this.streamId] === undefined) {
+                console.log("播放完毕");
+                this.eventBus.trigger(EventConstants.MEDIA_PLAYBACK_FINISHED);
+            }
+            else {
+                let mres = yield this.loadMediaSegment(this.streamId, this.mediaIndex);
+                this.eventBus.trigger(EventConstants.SEGEMTN_LOADED, { data: mres, streamId: this.streamId });
+            }
+        });
     }
     //此处的streamId标识具体的Period对象
     loadInitialSegment(streamId) {
@@ -1018,6 +1053,7 @@ const factory$2 = FactoryMaker.getSingleFactory(MediaPlayerBuffer);
 class MediaPlayerController {
     constructor(ctx, ...args) {
         this.config = {};
+        this.isFirstRequestCompleted = false;
         this.config = ctx.context;
         if (this.config.video) {
             this.video = this.config.video;
@@ -1037,6 +1073,10 @@ class MediaPlayerController {
                 this.appendSource();
             }
         }, this);
+        this.eventBus.on(EventConstants.FIRST_REQUEST_COMPLETED, () => {
+            this.isFirstRequestCompleted = true;
+        }, this);
+        this.eventBus.on(EventConstants.MEDIA_PLAYBACK_FINISHED, this.onMediaPlaybackFinished, this);
     }
     initPlayer() {
         this.video.src = window.URL.createObjectURL(this.mediaSource);
@@ -1060,13 +1100,20 @@ class MediaPlayerController {
     onSourceopen(e) {
         this.videoSourceBuffer = this.mediaSource.addSourceBuffer('video/mp4; codecs="avc1.64001E"');
         this.audioSourceBuffer = this.mediaSource.addSourceBuffer('audio/mp4; codecs="mp4a.40.2"');
+        console.log(this.videoSourceBuffer.mode);
         this.videoSourceBuffer.addEventListener("updateend", this.onUpdateend.bind(this));
         this.audioSourceBuffer.addEventListener("updateend", this.onUpdateend.bind(this));
     }
     onUpdateend() {
         if (!this.videoSourceBuffer.updating && !this.audioSourceBuffer.updating) {
+            if (this.isFirstRequestCompleted) {
+                this.eventBus.trigger(EventConstants.SEGMENT_CONSUMED);
+            }
             this.appendSource();
         }
+    }
+    onMediaPlaybackFinished() {
+        this.mediaSource.endOfStream();
     }
 }
 const factory$1 = FactoryMaker.getClassFactory(MediaPlayerController);
@@ -1077,6 +1124,7 @@ const factory$1 = FactoryMaker.getClassFactory(MediaPlayerController);
 class MediaPlayer {
     constructor(ctx, ...args) {
         this.config = {};
+        this.firstCurrentRequest = 0;
         this.config = ctx.context;
         this.setup();
         this.initializeEvent();
@@ -1087,7 +1135,7 @@ class MediaPlayer {
         this.eventBus = factory$a().getInstance();
         // ignoreRoot -> 忽略Document节点，从MPD开始作为根节点
         this.dashParser = factory$5({ ignoreRoot: true }).getInstance();
-        this.streamController = factory$3().create();
+        this.streamController = factory$3({ num: 23 }).create();
         this.buffer = factory$2().getInstance();
     }
     initializeEvent() {
@@ -1103,13 +1151,19 @@ class MediaPlayer {
         let manifest = this.dashParser.parse(data);
         this.eventBus.trigger(EventConstants.MANIFEST_PARSE_COMPLETED, manifest);
     }
-    onSegmentLoaded(data) {
+    onSegmentLoaded(res) {
         console.log("加载Segment成功");
+        this.firstCurrentRequest++;
+        if (this.firstCurrentRequest === 23) {
+            this.eventBus.trigger(EventConstants.FIRST_REQUEST_COMPLETED);
+        }
+        let data = res.data;
         let videoBuffer = data[0];
         let audioBuffer = data[1];
         this.buffer.push({
             video: videoBuffer,
-            audio: audioBuffer
+            audio: audioBuffer,
+            streamId: res.streamId
         });
         this.eventBus.trigger(EventConstants.BUFFER_APPENDED);
     }

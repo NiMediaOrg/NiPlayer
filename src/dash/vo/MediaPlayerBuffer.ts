@@ -3,9 +3,9 @@ import { PlayerBuffer } from "../../types/dash/Net";
 import FactoryMaker from "../FactoryMaker";
 
 class MediaPlayerBuffer {
-    private config:FactoryObject = {};
-    private arrayBuffer:Array<PlayerBuffer> = new Array<PlayerBuffer>();
-    constructor(ctx:FactoryObject,...args:any[]) {
+    private config: FactoryObject = {};
+    private arrayBuffer: Array<PlayerBuffer> = new Array<PlayerBuffer>();
+    constructor(ctx: FactoryObject,...args: any[]) {
         this.config = ctx.context;
     }
 

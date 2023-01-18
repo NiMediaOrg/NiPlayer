@@ -1,4 +1,5 @@
 import { FactoryObject } from "../types/dash/Factory";
+import { ConsumedSegment } from "../types/dash/Stream";
 import EventBusFactory, { EventBus } from "./event/EventBus";
 import { EventConstants } from "./event/EventConstants";
 import FactoryMaker from "./FactoryMaker";
@@ -19,6 +20,7 @@ class MediaPlayer {
     private mediaPlayerController:MediaPlayerController;
     private video: HTMLVideoElement;
     private buffer: MediaPlayerBuffer;
+    private firstCurrentRequest: number = 0;
     constructor(ctx:FactoryObject,...args:any[]) {
         this.config = ctx.context;
         this.setup();
@@ -31,7 +33,7 @@ class MediaPlayer {
         this.eventBus = EventBusFactory().getInstance();
         // ignoreRoot -> 忽略Document节点，从MPD开始作为根节点
         this.dashParser = DashParserFactory({ignoreRoot:true}).getInstance();
-        this.streamController = StreamControllerFactory().create();
+        this.streamController = StreamControllerFactory({num:23}).create();
         
         this.buffer = MediaPlayerBufferFactory().getInstance();
     }
@@ -53,13 +55,19 @@ class MediaPlayer {
         this.eventBus.trigger(EventConstants.MANIFEST_PARSE_COMPLETED,manifest);
     }
 
-    onSegmentLoaded(data:ArrayBuffer[]) {
+    onSegmentLoaded(res: ConsumedSegment) {
         console.log("加载Segment成功");
+        this.firstCurrentRequest ++;
+        if(this.firstCurrentRequest === 23) {
+            this.eventBus.trigger(EventConstants.FIRST_REQUEST_COMPLETED);
+        }
+        let data = res.data;
         let videoBuffer = data[0];
         let audioBuffer = data[1];
         this.buffer.push({
             video:videoBuffer,
-            audio:audioBuffer
+            audio:audioBuffer,
+            streamId: res.streamId
         })
         this.eventBus.trigger(EventConstants.BUFFER_APPENDED);
     }
