@@ -16,6 +16,7 @@ class MediaPlayer {
     private dashParser: DashParser;
     private streamController:StreamController;
     private mediaPlayerController:MediaPlayerController;
+    private video: HTMLVideoElement;
     constructor(ctx:FactoryObject,...args:any[]) {
         this.config = ctx.context;
         this.setup();

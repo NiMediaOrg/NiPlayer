@@ -5,7 +5,9 @@
   "main": "./dist/player.umd.js",
   "scripts": {
     "build:rollup": "rollup -cw",
-    "build:tsc": "tsc"
+    "build:tsc": "tsc",
+    "test": "vitest",
+    "coverage": "vitest run --coverage"
   },
   "keywords": [
     "player",
@@ -18,6 +20,7 @@
     "@babel/preset-typescript": "^7.18.6",
     "@rollup/plugin-node-resolve": "^15.0.1",
     "@rollup/plugin-typescript": "^10.0.1",
+    "@vitest/coverage-c8": "^0.27.2",
     "autoprefixer": "^8.0.0",
     "less": "^4.1.3",
     "postcss": "^8.4.21",
@@ -27,7 +30,8 @@
     "rollup-plugin-dts": "^4.1.0",
     "rollup-plugin-postcss": "^4.0.2",
     "rollup-plugin-terser": "^7.0.2",
-    "rollup-plugin-typescript2": "^0.34.1"
+    "rollup-plugin-typescript2": "^0.34.1",
+    "vitest": "^0.27.2"
   },
   "author": "novani",
   "license": "ISC",
