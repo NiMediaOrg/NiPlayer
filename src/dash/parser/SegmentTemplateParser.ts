@@ -1,6 +1,5 @@
 import { FactoryObject } from "../../types/dash/Factory";
 import { AdaptationSet, Mpd, Period, Representation, SegmentTemplate } from "../../types/dash/MpdFile";
-import { parseDuration, switchToSeconds } from "../../utils/format";
 import FactoryMaker from "../FactoryMaker";
 import { DashParser } from "./DashParser";
 /**
@@ -8,44 +7,16 @@ import { DashParser } from "./DashParser";
  */
 class SegmentTemplateParser { 
     private config: FactoryObject;
-    private dashParser: DashParser;
     constructor(ctx:FactoryObject,...args:any[]) {
         this.config = ctx.context;
         this.setup();
     }
 
-    setup(){
-        
-    }
+    setup(){}
 
     parse(Mpd: Mpd | Period | AdaptationSet) {
-        DashParser.setDurationForRepresentation(Mpd);
-        this.setSegmentDurationForRepresentation(Mpd as Mpd);
         this.parseNodeSegmentTemplate(Mpd as Mpd);
     } 
-
-    setSegmentDurationForRepresentation(Mpd:Mpd) {
-        let maxSegmentDuration = switchToSeconds(parseDuration(Mpd.maxSegmentDuration));
-        Mpd["Period_asArray"].forEach(Period => {
-            Period["AdaptationSet_asArray"].forEach(AdaptationSet => {
-              AdaptationSet["Representation_asArray"].forEach(Representation => {
-                if(Representation["SegmentTemplate"]) {
-                    if((Representation["SegmentTemplate"] as SegmentTemplate).duration) {
-                        let duration = (Representation["SegmentTemplate"] as SegmentTemplate).duration
-                        let timescale = (Representation["SegmentTemplate"] as SegmentTemplate).timescale || 1;
-                        Representation.segmentDuration = (duration / timescale).toFixed(1);
-                    } else {
-                        if(maxSegmentDuration) {
-                            Representation.segmentDuration = maxSegmentDuration;
-                        } else {
-                            throw new Error("MPD文件格式错误")
-                        }
-                    }
-                }
-              })
-            })
-          })
-    }
 
     parseNodeSegmentTemplate(Mpd:Mpd) {
         Mpd["Period_asArray"].forEach(Period=>{

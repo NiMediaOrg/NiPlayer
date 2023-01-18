@@ -4,18 +4,29 @@ import { AdaptationSet, Mpd, Period, SegmentTemplate } from "../../types/dash/Mp
 import SegmentTemplateParserFactory,{SegmentTemplateParser} from "./SegmentTemplateParser";
 import FactoryMaker from "../FactoryMaker";
 import { parseDuration, switchToSeconds } from "../../utils/format";
-import { checkMpd, checkPeriod } from "../../utils/typeCheck";
+import EventBusFactory, { EventBus } from "../event/EventBus";
+import { EventConstants } from "../event/EventConstants";
+import URLUtilsFactory, { URLUtils } from "../utils/URLUtils";
 class DashParser {
   private config: FactoryObject = {};
   private segmentTemplateParser:SegmentTemplateParser;
-
+  private eventBus: EventBus;
+  private mpdURL: string;
+  private URLUtils:URLUtils;
   constructor(ctx: FactoryObject, ...args: any[]) {
     this.config = ctx.context;
     this.setup();
+    this.initialEvent();
   }
 
   setup() {
     this.segmentTemplateParser = SegmentTemplateParserFactory().getInstance();
+    this.eventBus = EventBusFactory().getInstance();
+    this.URLUtils = URLUtilsFactory().getInstance();
+  }
+
+  initialEvent() {
+    this.eventBus.on(EventConstants.SOURCE_ATTACHED, this.onSourceAttached, this);
   }
 
   string2xml(s: string): Document {
@@ -35,6 +46,9 @@ class DashParser {
     
     this.mergeNodeSegementTemplate(Mpd);
     this.setResolvePowerForRepresentation(Mpd);
+    this.setDurationForRepresentation(Mpd);
+    this.setSegmentDurationForRepresentation(Mpd);
+    this.setBaseURLForMpd(Mpd);
     this.segmentTemplateParser.parse(Mpd);
     console.log(Mpd);
     return Mpd;
@@ -154,6 +168,11 @@ class DashParser {
     })
   }
 
+  setBaseURLForMpd(Mpd:Mpd) {
+    Mpd.baseURL = this.URLUtils.sliceLastURLPath(this.mpdURL);
+  }
+
+  //给每个Representation上挂载分辨率属性
   setResolvePowerForRepresentation(Mpd:Mpd) {
     Mpd["Period_asArray"].forEach(Period=>{ 
       Period["AdaptationSet_asArray"].forEach(AdaptationSet=>{
@@ -166,7 +185,7 @@ class DashParser {
     })
   }
 
-  static getTotalDuration(Mpd:Mpd): number | never {
+  getTotalDuration(Mpd:Mpd): number | never {
     let totalDuration = 0;
     let MpdDuration = NaN;
     if(Mpd.mediaPresentationDuration) {
@@ -187,12 +206,11 @@ class DashParser {
     return totalDuration;
   }
 
-  // 给每一个Representation对象上挂载duration属性
-  static setDurationForRepresentation(Mpd: Mpd | Period | AdaptationSet) {
-    if(checkMpd(Mpd)) {
-      //1. 如果只有一个Period
-      if(Mpd["Period_asArray"].length === 1) {
-        let totalDuration = DashParser.getTotalDuration(Mpd);
+  // 给每一个Representation对象上挂载duration属性，此处的duration指的是媒体的总时长
+  setDurationForRepresentation(Mpd: Mpd) {
+    //1. 如果只有一个Period
+    if(Mpd["Period_asArray"].length === 1) {
+        let totalDuration = this.getTotalDuration(Mpd);
         Mpd["Period_asArray"].forEach(Period=>{
           Period.duration = Period.duration || totalDuration;
           Period["AdaptationSet_asArray"].forEach(AdaptationSet=>{
@@ -216,10 +234,34 @@ class DashParser {
           })
         })
       }
-    } else if(checkPeriod(Mpd)) {
-      //ToDo
+  }
 
-    }
+  // 给每一个Rpresentation对象上挂载segmentDuration属性，用来标识该Representation每一个Segment的时长
+  setSegmentDurationForRepresentation(Mpd:Mpd) {
+    let maxSegmentDuration = switchToSeconds(parseDuration(Mpd.maxSegmentDuration));
+    Mpd["Period_asArray"].forEach(Period => {
+        Period["AdaptationSet_asArray"].forEach(AdaptationSet => {
+          AdaptationSet["Representation_asArray"].forEach(Representation => {
+            if(Representation["SegmentTemplate"]) {
+                if((Representation["SegmentTemplate"] as SegmentTemplate).duration) {
+                    let duration = (Representation["SegmentTemplate"] as SegmentTemplate).duration
+                    let timescale = (Representation["SegmentTemplate"] as SegmentTemplate).timescale || 1;
+                    Representation.segmentDuration = (duration / timescale).toFixed(1);
+                } else {
+                    if(maxSegmentDuration) {
+                        Representation.segmentDuration = maxSegmentDuration;
+                    } else {
+                        throw new Error("MPD文件格式错误")
+                    }
+                }
+            }
+          })
+        })
+      })
+  }
+
+  onSourceAttached(url:string) {
+    this.mpdURL = url;
   }
 }
 

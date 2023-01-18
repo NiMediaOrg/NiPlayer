@@ -1,3 +1,5 @@
 export const EventConstants = {
-    MANIFEST_LOADED: "manifestLoaded"
+    MANIFEST_LOADED: "manifestLoaded",
+    MANIFEST_PARSE_COMPLETED:"manifestParseCompleted",
+    SOURCE_ATTACHED:"sourceAttached"
 }

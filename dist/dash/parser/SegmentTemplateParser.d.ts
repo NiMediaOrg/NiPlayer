@@ -5,11 +5,9 @@ import { AdaptationSet, Mpd, Period, Representation, SegmentTemplate } from "../
  */
 declare class SegmentTemplateParser {
     private config;
-    private dashParser;
     constructor(ctx: FactoryObject, ...args: any[]);
     setup(): void;
     parse(Mpd: Mpd | Period | AdaptationSet): void;
-    setSegmentDurationForRepresentation(Mpd: Mpd): void;
     parseNodeSegmentTemplate(Mpd: Mpd): void;
     generateInitializationURL(SegmentTemplate: SegmentTemplate, parent: Representation): void;
     generateMediaURL(SegmentTemplate: SegmentTemplate, parent: Representation): void;

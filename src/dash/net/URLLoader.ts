@@ -18,17 +18,21 @@ class URLLoader {
         this.xhrLoader.load(config);
     }
 
+    private _loadSegment(config:XHRConfig) {
+        this.xhrLoader.load(config);
+    }
+
     setup() {
         this.xhrLoader = XHRLoaderFactory({}).getInstance();
         this.eventBus = EventBusFactory({}).getInstance();
     }
     // 每调用一次load函数就发送一次请求
-    load(config: URLConfig,type: RequestType) {
+    load(config: URLConfig,type: RequestType):Promise<any> | void {
         //一个HTTPRequest对象才对应一个请求
         let request = new HTTPRequest(config);
         let ctx = this;
         if(type === "Manifest") {
-            this._loadManifest({
+            ctx._loadManifest({
                 request: request,
                 success: function(data) {
                     request.getResponseTime = new Date().getTime();
@@ -39,7 +43,17 @@ class URLLoader {
                 }
             })
         } else if(type === "Segment") {
-            
+            return new Promise((res,rej)=>{
+                ctx._loadSegment({
+                    request:request,
+                    success:function(data) {
+                        res(data);
+                    },
+                    error:function(error) {
+                        rej(error);
+                    }
+                })
+            })
         }
         
     }

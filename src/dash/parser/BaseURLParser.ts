@@ -65,7 +65,9 @@ class BaseURLParser {
             if(path[i] >= root.children.length || path[i] < 0) {
                 throw new Error("传入的路径不正确");
             }
-            baseURL += root.children[path[i]].url;
+            if(root.children[path[i]].url) {
+                baseURL += root.children[path[i]].url;
+            }
             root = root.children[path[i]];
         }
         if(root.children.length > 0) {

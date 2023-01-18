@@ -16,7 +16,7 @@ class URLUtils {
             let url = urls[index];
             // 如果url不以/或者./,../这种形式开头的话
             if(/^(?!(\.|\/))/.test(url)) {
-                if(str[str.length - 1] !== '/') {
+                if(str[str.length - 1] !== '/' && str !== "") {
                     str += '/';
                 }
             } else if(/^\/.+/.test(url)) {
@@ -31,6 +31,15 @@ class URLUtils {
             index ++;
         }
         return str;
+    }
+
+    sliceLastURLPath(url:string): string {
+        for(let i = url.length - 1;i>=0;i--) {
+            if(url[i] === "/") {
+                return url.slice(0,i);
+            }
+        }
+        return url;
     }
 
 }

@@ -44,8 +44,7 @@ class MediaPlayer {
     onManifestLoaded(data:string) { 
         let manifest = this.dashParser.parse(data);
 
-        let res = this.streamController.generateSegmentRequestStruct(manifest as Mpd);
-        console.log(res);
+        this.eventBus.trigger(EventConstants.MANIFEST_PARSE_COMPLETED,manifest);
     }
 
     /**
@@ -53,6 +52,7 @@ class MediaPlayer {
      * @param url 
      */
     public attachSource(url:string) {
+        this.eventBus.trigger(EventConstants.SOURCE_ATTACHED,url);
         this.urlLoader.load({url,responseType:"text"},"Manifest");
     }
 }
