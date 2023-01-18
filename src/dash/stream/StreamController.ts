@@ -138,7 +138,6 @@ class StreamController {
             this.mediaIndex ++;
         }
         if(this.segmentRequestStruct.request[this.streamId] === undefined) {
-            console.log("播放完毕")
             this.eventBus.trigger(EventConstants.MEDIA_PLAYBACK_FINISHED);
         } else {
             let mres = await this.loadMediaSegment(this.streamId,this.mediaIndex);

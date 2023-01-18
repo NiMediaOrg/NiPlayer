@@ -992,7 +992,6 @@ class StreamController {
                 this.mediaIndex++;
             }
             if (this.segmentRequestStruct.request[this.streamId] === undefined) {
-                console.log("播放完毕");
                 this.eventBus.trigger(EventConstants.MEDIA_PLAYBACK_FINISHED);
             }
             else {
@@ -1118,6 +1117,8 @@ class MediaPlayerController {
     }
     onMediaPlaybackFinished() {
         this.mediaSource.endOfStream();
+        window.URL.revokeObjectURL(this.video.src);
+        console.log("播放流加载结束");
     }
 }
 const factory$1 = FactoryMaker.getClassFactory(MediaPlayerController);

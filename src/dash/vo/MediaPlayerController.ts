@@ -86,7 +86,8 @@ class MediaPlayerController {
 
     onMediaPlaybackFinished() {
         this.mediaSource.endOfStream();
-        
+        window.URL.revokeObjectURL(this.video.src);
+        console.log("播放流加载结束")
     }
 }
 
