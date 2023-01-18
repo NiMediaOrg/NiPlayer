@@ -997,7 +997,9 @@
           this.config = ctx.context;
           this.setup();
       }
-      setup() { }
+      setup() {
+          this.mediaSource = new MediaSource();
+      }
   }
   const factory$1 = FactoryMaker.getClassFactory(MediaPlayerController);
 
