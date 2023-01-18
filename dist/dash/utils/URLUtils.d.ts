@@ -1,11 +1,10 @@
 import { FactoryFunction, FactoryObject } from "../../types/dash/Factory";
-import { XHRConfig } from "../../types/dash/Net";
-declare class XHRLoader {
+declare class URLUtils {
     private config;
     constructor(ctx: FactoryObject, ...args: any[]);
     setup(): void;
-    load(config: XHRConfig): void;
+    resolve(...urls: string[]): string;
 }
-declare const factory: FactoryFunction<XHRLoader>;
+declare const factory: FactoryFunction<URLUtils>;
 export default factory;
-export { XHRLoader };
+export { URLUtils };

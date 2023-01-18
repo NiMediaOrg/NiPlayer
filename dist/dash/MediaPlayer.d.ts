@@ -1,14 +1,13 @@
 import { FactoryObject } from "../types/dash/Factory";
 /**
- * @description 整个dash处理流程的入口类MediaPlayer
+ * @description 整个dash处理流程的入口类MediaPlayer,类似于项目的中转中心，用于接收任务并且将任务分配给不同的解析器去完成
  */
 declare class MediaPlayer {
     private config;
     private urlLoader;
     private eventBus;
     private dashParser;
-    private baseURLParser;
-    private baseURLPath;
+    private streamController;
     constructor(ctx: FactoryObject, ...args: any[]);
     setup(): void;
     initializeEvent(): void;

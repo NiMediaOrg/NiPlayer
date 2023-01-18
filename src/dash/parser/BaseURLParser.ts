@@ -25,11 +25,9 @@ class BaseURLParser {
         this.setup();
     }
 
-    setup() {
+    setup() {}
 
-    }
-
-    parseManifestForBaseURL(manifest:Mpd) {
+    parseManifestForBaseURL(manifest:Mpd):URLNode {
         let root = new URLNode(null);
         //1. 首先遍历每一个Period，规定BaseURL节点只可能出现在Period,AdaptationSet,Representation中
         manifest["Period_asArray"].forEach((p,pId)=>{

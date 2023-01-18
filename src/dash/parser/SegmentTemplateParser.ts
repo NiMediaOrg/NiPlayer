@@ -6,9 +6,8 @@ import { DashParser } from "./DashParser";
 /**
  * @description 该类仅用于处理MPD文件中具有SegmentTemplate此种情况
  */
-class SegmentTemplateParser {
+class SegmentTemplateParser { 
     private config: FactoryObject;
-    
     private dashParser: DashParser;
     constructor(ctx:FactoryObject,...args:any[]) {
         this.config = ctx.context;
@@ -23,13 +22,13 @@ class SegmentTemplateParser {
         DashParser.setDurationForRepresentation(Mpd);
         this.setSegmentDurationForRepresentation(Mpd as Mpd);
         this.parseNodeSegmentTemplate(Mpd as Mpd);
-    }
+    } 
 
     setSegmentDurationForRepresentation(Mpd:Mpd) {
         let maxSegmentDuration = switchToSeconds(parseDuration(Mpd.maxSegmentDuration));
-        Mpd["Period_asArray"].forEach(Period=>{
-            Period["AdaptationSet_asArray"].forEach(AdaptationSet=>{
-              AdaptationSet["Representation_asArray"].forEach(Representation=>{
+        Mpd["Period_asArray"].forEach(Period => {
+            Period["AdaptationSet_asArray"].forEach(AdaptationSet => {
+              AdaptationSet["Representation_asArray"].forEach(Representation => {
                 if(Representation["SegmentTemplate"]) {
                     if((Representation["SegmentTemplate"] as SegmentTemplate).duration) {
                         let duration = (Representation["SegmentTemplate"] as SegmentTemplate).duration
@@ -60,7 +59,7 @@ class SegmentTemplateParser {
             })
           })
         })
-      }
+    }
     
     generateInitializationURL(SegmentTemplate:SegmentTemplate,parent:Representation) {
         let templateReg:RegExp = /\$(.+?)\$/ig;
@@ -96,6 +95,7 @@ class SegmentTemplateParser {
         let replaceArray = new Array<string>();
         parent.mediaURL = new Array<string>();
         if(templateReg.test(media)) {
+            templateReg.lastIndex = 0;
             while(r = templateReg.exec(media)) {
                 formatArray.push(r[0]);
                 if(r[1] === "Number") {

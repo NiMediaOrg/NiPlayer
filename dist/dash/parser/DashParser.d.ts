@@ -11,6 +11,7 @@ declare class DashParser {
     parseDOMChildren<T extends string>(name: T, node: Node): ManifestObjectNode[T];
     mergeNode(node: FactoryObject, compare: FactoryObject): void;
     mergeNodeSegementTemplate(Mpd: Mpd): void;
+    setResolvePowerForRepresentation(Mpd: Mpd): void;
     static getTotalDuration(Mpd: Mpd): number | never;
     static setDurationForRepresentation(Mpd: Mpd | Period | AdaptationSet): void;
 }

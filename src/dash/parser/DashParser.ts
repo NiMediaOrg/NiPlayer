@@ -34,6 +34,7 @@ class DashParser {
     }
     
     this.mergeNodeSegementTemplate(Mpd);
+    this.setResolvePowerForRepresentation(Mpd);
     this.segmentTemplateParser.parse(Mpd);
     console.log(Mpd);
     return Mpd;
@@ -153,6 +154,18 @@ class DashParser {
     })
   }
 
+  setResolvePowerForRepresentation(Mpd:Mpd) {
+    Mpd["Period_asArray"].forEach(Period=>{ 
+      Period["AdaptationSet_asArray"].forEach(AdaptationSet=>{
+        AdaptationSet["Representation_asArray"].forEach(Representation=>{
+          if(Representation.width && Representation.height) {
+            Representation.resolvePower = `${Representation.width}*${Representation.height}`;
+          }
+        })
+      })
+    })
+  }
+
   static getTotalDuration(Mpd:Mpd): number | never {
     let totalDuration = 0;
     let MpdDuration = NaN;
@@ -161,7 +174,7 @@ class DashParser {
     }
     // MPD文件的总时间要么是由Mpd标签上的availabilityStartTime指定，要么是每一个Period上的duration之和
     if(isNaN(MpdDuration)) {
-      Mpd.forEach(Period=>{
+      Mpd.forEach(Period => {
         if(Period.duration) {
           totalDuration += switchToSeconds(parseDuration(Period.duration));
         } else {
