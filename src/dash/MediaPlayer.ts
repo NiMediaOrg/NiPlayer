@@ -5,6 +5,7 @@ import FactoryMaker from "./FactoryMaker";
 import URLLoaderFactory, { URLLoader } from "./net/URLLoader";
 import DashParserFactory,{ DashParser } from "./parser/DashParser";
 import StreamControllerFactory ,{ StreamController } from "./stream/StreamController";
+import MediaPlayerBufferFactory,{ MediaPlayerBuffer } from "./vo/MediaPlayerBuffer";
 import MediaPlayerControllerFactory, { MediaPlayerController } from "./vo/MediaPlayerController";
 /**
  * @description 整个dash处理流程的入口类MediaPlayer,类似于项目的中转中心，用于接收任务并且将任务分配给不同的解析器去完成
@@ -17,6 +18,7 @@ class MediaPlayer {
     private streamController:StreamController;
     private mediaPlayerController:MediaPlayerController;
     private video: HTMLVideoElement;
+    private buffer: MediaPlayerBuffer;
     constructor(ctx:FactoryObject,...args:any[]) {
         this.config = ctx.context;
         this.setup();
@@ -30,7 +32,8 @@ class MediaPlayer {
         // ignoreRoot -> 忽略Document节点，从MPD开始作为根节点
         this.dashParser = DashParserFactory({ignoreRoot:true}).getInstance();
         this.streamController = StreamControllerFactory().create();
-        this.mediaPlayerController = MediaPlayerControllerFactory().create();
+        
+        this.buffer = MediaPlayerBufferFactory().getInstance();
     }
 
     initializeEvent() {
@@ -54,7 +57,11 @@ class MediaPlayer {
         console.log("加载Segment成功");
         let videoBuffer = data[0];
         let audioBuffer = data[1];
-
+        this.buffer.push({
+            video:videoBuffer,
+            audio:audioBuffer
+        })
+        this.eventBus.trigger(EventConstants.BUFFER_APPENDED);
     }
 
     /**
@@ -64,6 +71,11 @@ class MediaPlayer {
     public attachSource(url:string) {
         this.eventBus.trigger(EventConstants.SOURCE_ATTACHED,url);
         this.urlLoader.load({url,responseType:"text"},"Manifest");
+    }
+
+    public attachVideo(video:HTMLVideoElement) {
+        this.video = video;
+        this.mediaPlayerController = MediaPlayerControllerFactory({video:video}).create();
     }
 }
 

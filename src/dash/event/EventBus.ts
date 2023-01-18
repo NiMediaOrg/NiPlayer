@@ -18,7 +18,6 @@ class EventBus {
                 cb: listener,
                 scope
             }]
-            console.log(this.__events[type])
             return;
         }
         if(this.__events[type].filter(event=>{

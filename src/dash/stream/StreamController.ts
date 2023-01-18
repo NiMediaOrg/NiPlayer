@@ -26,7 +26,6 @@ class StreamController {
     private segmentRequestStruct:MpdSegmentRequest;
     constructor(ctx:FactoryObject,...args:any[]) {
         this.config = ctx.context;
-        console.log(this.config)
         this.setup();
         this.initialEvent();
     }
@@ -42,9 +41,23 @@ class StreamController {
         this.eventBus.on(EventConstants.MANIFEST_PARSE_COMPLETED,this.onManifestParseCompleted,this);
     }
 
+    //初始化播放流，一次至多加载23个Segement过来
+    startStream(Mpd:Mpd) {
+        Mpd["Period_asArray"].forEach(async (p,pid)=>{
+            let ires = await this.loadInitialSegment(pid);
+            
+            this.eventBus.trigger(EventConstants.SEGEMTN_LOADED,ires); 
+            let number = this.segmentRequestStruct.request[pid].VideoSegmentRequest[0].video[this.videoResolvePower][1].length;
+
+            for(let i = 0;i < (number >= 23 ? 23 : number); i++) {
+                let mres = await this.loadMediaSegment(pid,i);
+                this.eventBus.trigger(EventConstants.SEGEMTN_LOADED,mres);
+            }
+        })
+    }
+
     onManifestParseCompleted(mainifest:Mpd) {
         this.segmentRequestStruct = this.generateSegmentRequestStruct(mainifest);
-        console.log(this.segmentRequestStruct);
         this.startStream(mainifest);
     }
 
@@ -93,7 +106,6 @@ class StreamController {
             let Representation = AdaptationSet["Representation_asArray"][k];
             let url = this.URLUtils.
                 resolve(baseURL, this.baseURLParser.getBaseURLByPath([i,j,k],this.baseURLPath));
-            console.log(url)
             res[Representation.resolvePower] = [];
             res[Representation.resolvePower].push(this.URLUtils.resolve(url,Representation.initializationURL))
             res[Representation.resolvePower].push(Representation.mediaURL.map(item=>{
@@ -102,21 +114,7 @@ class StreamController {
         }
         return res;
     }
-
-    startStream(Mpd:Mpd) {
-        Mpd["Period_asArray"].forEach(async (p,pid)=>{
-            let ires = await this.loadInitialSegment(pid);
-            
-            this.eventBus.trigger(EventConstants.SEGEMTN_LOADED,ires); 
-            let number = this.segmentRequestStruct.request[pid].VideoSegmentRequest[0].video[this.videoResolvePower][1].length;
-
-            for(let i = 0;i < number; i++) {
-                let mres = await this.loadMediaSegment(pid,i);
-                this.eventBus.trigger(EventConstants.SEGEMTN_LOADED,mres);
-            }
-        })
-    }
-
+    
     //此处的streamId标识具体的Period对象
     loadInitialSegment(streamId) {
         let stream = this.segmentRequestStruct.request[streamId]

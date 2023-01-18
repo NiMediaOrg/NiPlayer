@@ -10,6 +10,7 @@ declare class MediaPlayer {
     private streamController;
     private mediaPlayerController;
     private video;
+    private buffer;
     constructor(ctx: FactoryObject, ...args: any[]);
     setup(): void;
     initializeEvent(): void;
@@ -21,6 +22,7 @@ declare class MediaPlayer {
      * @param url
      */
     attachSource(url: string): void;
+    attachVideo(video: HTMLVideoElement): void;
 }
 declare const factory: import("../types/dash/Factory").FactoryFunction<MediaPlayer>;
 export default factory;

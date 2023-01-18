@@ -3,4 +3,5 @@ export declare const EventConstants: {
     MANIFEST_PARSE_COMPLETED: string;
     SOURCE_ATTACHED: string;
     SEGEMTN_LOADED: string;
+    BUFFER_APPENDED: string;
 };
