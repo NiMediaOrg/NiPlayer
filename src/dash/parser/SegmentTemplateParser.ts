@@ -88,7 +88,7 @@ class SegmentTemplateParser {
             while(s.includes("@Number@")) {
                 s = s.replace("@Number@",`${i}`);
             }
-            parent.mediaURL[i] = s;
+            parent.mediaURL.push(s);
         }
     }
 }

@@ -232,12 +232,13 @@ class EventBus {
         }
     }
 }
-const factory$8 = FactoryMaker.getSingleFactory(EventBus);
+const factory$9 = FactoryMaker.getSingleFactory(EventBus);
 
 const EventConstants = {
     MANIFEST_LOADED: "manifestLoaded",
     MANIFEST_PARSE_COMPLETED: "manifestParseCompleted",
-    SOURCE_ATTACHED: "sourceAttached"
+    SOURCE_ATTACHED: "sourceAttached",
+    SEGEMTN_LOADED: "segmentLoaded"
 };
 
 class HTTPRequest {
@@ -290,7 +291,7 @@ class XHRLoader {
         xhr.send();
     }
 }
-const factory$7 = FactoryMaker.getSingleFactory(XHRLoader);
+const factory$8 = FactoryMaker.getSingleFactory(XHRLoader);
 
 class URLLoader {
     constructor(ctx, ...args) {
@@ -305,8 +306,8 @@ class URLLoader {
         this.xhrLoader.load(config);
     }
     setup() {
-        this.xhrLoader = factory$7({}).getInstance();
-        this.eventBus = factory$8({}).getInstance();
+        this.xhrLoader = factory$8({}).getInstance();
+        this.eventBus = factory$9({}).getInstance();
     }
     // 每调用一次load函数就发送一次请求
     load(config, type) {
@@ -340,7 +341,7 @@ class URLLoader {
         }
     }
 }
-const factory$6 = FactoryMaker.getSingleFactory(URLLoader);
+const factory$7 = FactoryMaker.getSingleFactory(URLLoader);
 
 var DOMNodeTypes;
 (function (DOMNodeTypes) {
@@ -432,11 +433,11 @@ class SegmentTemplateParser {
             while (s.includes("@Number@")) {
                 s = s.replace("@Number@", `${i}`);
             }
-            parent.mediaURL[i] = s;
+            parent.mediaURL.push(s);
         }
     }
 }
-const factory$5 = FactoryMaker.getSingleFactory(SegmentTemplateParser);
+const factory$6 = FactoryMaker.getSingleFactory(SegmentTemplateParser);
 
 function addZero(num) {
     return num > 9 ? "" + num : "0" + num;
@@ -531,7 +532,7 @@ class URLUtils {
         return url;
     }
 }
-const factory$4 = FactoryMaker.getSingleFactory(URLUtils);
+const factory$5 = FactoryMaker.getSingleFactory(URLUtils);
 
 class DashParser {
     constructor(ctx, ...args) {
@@ -541,9 +542,9 @@ class DashParser {
         this.initialEvent();
     }
     setup() {
-        this.segmentTemplateParser = factory$5().getInstance();
-        this.eventBus = factory$8().getInstance();
-        this.URLUtils = factory$4().getInstance();
+        this.segmentTemplateParser = factory$6().getInstance();
+        this.eventBus = factory$9().getInstance();
+        this.URLUtils = factory$5().getInstance();
     }
     initialEvent() {
         this.eventBus.on(EventConstants.SOURCE_ATTACHED, this.onSourceAttached, this);
@@ -687,11 +688,20 @@ class DashParser {
     setResolvePowerForRepresentation(Mpd) {
         Mpd["Period_asArray"].forEach(Period => {
             Period["AdaptationSet_asArray"].forEach(AdaptationSet => {
-                AdaptationSet["Representation_asArray"].forEach(Representation => {
-                    if (Representation.width && Representation.height) {
-                        Representation.resolvePower = `${Representation.width}*${Representation.height}`;
-                    }
-                });
+                if (AdaptationSet.mimeType === "video/mp4") {
+                    AdaptationSet["Representation_asArray"].forEach(Representation => {
+                        if (Representation.width && Representation.height) {
+                            Representation.resolvePower = `${Representation.width}*${Representation.height}`;
+                        }
+                    });
+                }
+                else if (AdaptationSet.mimeType === "audio/mp4") {
+                    AdaptationSet["Representation_asArray"].forEach(Representation => {
+                        if (Representation.audioSamplingRate) {
+                            Representation.resolvePower = Representation.audioSamplingRate;
+                        }
+                    });
+                }
             });
         });
     }
@@ -717,7 +727,7 @@ class DashParser {
         }
         return totalDuration;
     }
-    // 给每一个Representation对象上挂载duration属性，此处的duration指的是媒体的总时长
+    // 给每一个Representation对象上挂载duration属性，此处的duration指的是Representation所属的Period所代表的媒体的总时长
     setDurationForRepresentation(Mpd) {
         //1. 如果只有一个Period
         if (Mpd["Period_asArray"].length === 1) {
@@ -776,7 +786,7 @@ class DashParser {
         this.mpdURL = url;
     }
 }
-const factory$3 = FactoryMaker.getSingleFactory(DashParser);
+const factory$4 = FactoryMaker.getSingleFactory(DashParser);
 
 /******************************************************************************
 Copyright (c) Microsoft Corporation.
@@ -869,21 +879,24 @@ class BaseURLParser {
         return baseURL;
     }
 }
-const factory$2 = FactoryMaker.getSingleFactory(BaseURLParser);
+const factory$3 = FactoryMaker.getSingleFactory(BaseURLParser);
 
 class StreamController {
     constructor(ctx, ...args) {
         this.config = {};
+        //音视频的分辨率
+        this.videoResolvePower = "1920*1080";
+        this.audioResolvePower = "48000";
         this.config = ctx.context;
         console.log(this.config);
         this.setup();
         this.initialEvent();
     }
     setup() {
-        this.baseURLParser = factory$2().getInstance();
-        this.URLUtils = factory$4().getInstance();
-        this.eventBus = factory$8().getInstance();
-        this.urlLoader = factory$6().getInstance();
+        this.baseURLParser = factory$3().getInstance();
+        this.URLUtils = factory$5().getInstance();
+        this.eventBus = factory$9().getInstance();
+        this.urlLoader = factory$7().getInstance();
     }
     initialEvent() {
         this.eventBus.on(EventConstants.MANIFEST_PARSE_COMPLETED, this.onManifestParseCompleted, this);
@@ -891,6 +904,7 @@ class StreamController {
     onManifestParseCompleted(mainifest) {
         this.segmentRequestStruct = this.generateSegmentRequestStruct(mainifest);
         console.log(this.segmentRequestStruct);
+        this.startStream(mainifest);
     }
     generateBaseURLPath(Mpd) {
         this.baseURLPath = this.baseURLParser.parseManifestForBaseURL(Mpd);
@@ -919,7 +933,7 @@ class StreamController {
                 }
                 else if (AdaptationSet.mimeType === "audio/mp4") {
                     periodSegmentRequest.AudioSegmentRequest.push({
-                        lang: "en",
+                        lang: AdaptationSet.lang || "en",
                         audio: res
                     });
                 }
@@ -943,16 +957,49 @@ class StreamController {
         }
         return res;
     }
+    startStream(Mpd) {
+        Mpd["Period_asArray"].forEach((p, pid) => __awaiter(this, void 0, void 0, function* () {
+            let ires = yield this.loadInitialSegment(pid);
+            this.eventBus.trigger(EventConstants.SEGEMTN_LOADED, ires);
+            let number = this.segmentRequestStruct.request[pid].VideoSegmentRequest[0].video[this.videoResolvePower][1].length;
+            for (let i = 0; i < number; i++) {
+                let mres = yield this.loadMediaSegment(pid, i);
+                this.eventBus.trigger(EventConstants.SEGEMTN_LOADED, mres);
+            }
+        }));
+    }
+    //此处的streamId标识具体的Period对象
+    loadInitialSegment(streamId) {
+        let stream = this.segmentRequestStruct.request[streamId];
+        // 先默认选择音视频的第一个版本
+        let audioRequest = stream.AudioSegmentRequest[0].audio;
+        let videoRequest = stream.VideoSegmentRequest[0].video;
+        return this.loadSegment(videoRequest[this.videoResolvePower][0], audioRequest[this.audioResolvePower][0]);
+    }
+    loadMediaSegment(streamId, mediaId) {
+        let stream = this.segmentRequestStruct.request[streamId];
+        // 先默认选择音视频的第一个版本
+        let audioRequest = stream.AudioSegmentRequest[0].audio;
+        let videoRequest = stream.VideoSegmentRequest[0].video;
+        return this.loadSegment(videoRequest[this.videoResolvePower][1][mediaId], audioRequest[this.audioResolvePower][1][mediaId]);
+    }
     loadSegment(videoURL, audioURL) {
-        return __awaiter(this, void 0, void 0, function* () {
-            let p1 = this.urlLoader.load({ url: videoURL, responseType: "arraybuffer" }, "Segment");
-            let p2 = this.urlLoader.load({ url: audioURL, responseType: "arraybuffer" }, "Segment");
-            let p = yield Promise.all([p1, p2]);
-            console.log(p);
-        });
+        let p1 = this.urlLoader.load({ url: videoURL, responseType: "arraybuffer" }, "Segment");
+        let p2 = this.urlLoader.load({ url: audioURL, responseType: "arraybuffer" }, "Segment");
+        return Promise.all([p1, p2]);
     }
 }
-const factory$1 = FactoryMaker.getClassFactory(StreamController);
+const factory$2 = FactoryMaker.getClassFactory(StreamController);
+
+class MediaPlayerController {
+    constructor(ctx, ...args) {
+        this.config = {};
+        this.config = ctx.context;
+        this.setup();
+    }
+    setup() { }
+}
+const factory$1 = FactoryMaker.getClassFactory(MediaPlayerController);
 
 /**
  * @description 整个dash处理流程的入口类MediaPlayer,类似于项目的中转中心，用于接收任务并且将任务分配给不同的解析器去完成
@@ -966,22 +1013,30 @@ class MediaPlayer {
     }
     //初始化类
     setup() {
-        this.urlLoader = factory$6().getInstance();
-        this.eventBus = factory$8().getInstance();
+        this.urlLoader = factory$7().getInstance();
+        this.eventBus = factory$9().getInstance();
         // ignoreRoot -> 忽略Document节点，从MPD开始作为根节点
-        this.dashParser = factory$3({ ignoreRoot: true }).getInstance();
-        this.streamController = factory$1().create();
+        this.dashParser = factory$4({ ignoreRoot: true }).getInstance();
+        this.streamController = factory$2().create();
+        this.mediaPlayerController = factory$1().create();
     }
     initializeEvent() {
         this.eventBus.on(EventConstants.MANIFEST_LOADED, this.onManifestLoaded, this);
+        this.eventBus.on(EventConstants.SEGEMTN_LOADED, this.onSegmentLoaded, this);
     }
     resetEvent() {
         this.eventBus.off(EventConstants.MANIFEST_LOADED, this.onManifestLoaded, this);
+        this.eventBus.off(EventConstants.SEGEMTN_LOADED, this.onSegmentLoaded, this);
     }
     //MPD文件请求成功获得对应的data数据
     onManifestLoaded(data) {
         let manifest = this.dashParser.parse(data);
         this.eventBus.trigger(EventConstants.MANIFEST_PARSE_COMPLETED, manifest);
+    }
+    onSegmentLoaded(data) {
+        console.log("加载Segment成功");
+        data[0];
+        data[1];
     }
     /**
      * @description 发送MPD文件的网络请求，我要做的事情很纯粹，具体实现细节由各个Loader去具体实现

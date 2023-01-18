@@ -73,11 +73,11 @@ export type AdaptationSetAudioSegmentRequest = {
 export type PeriodSegmentRequest = {
   VideoSegmentRequest:Array<{
     type:string;
-    video:AdaptationSetAudioSegmentRequest
+    video:AdaptationSetVideoSegmentRequest
   }>;
   AudioSegmentRequest:Array<{
     lang: string;
-    audio:AdaptationSetVideoSegmentRequest
+    audio:AdaptationSetAudioSegmentRequest
   }>
 }
 
