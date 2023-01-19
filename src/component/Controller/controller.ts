@@ -9,7 +9,7 @@ import {
 import { volumeSVG } from "../SVGTool/VolumeModel";
 import { settingSVG } from "../SVGTool/SettingsModel";
 import { fullScreenSVG } from "../SVGTool/FullScreenModel";
-import { getDOMPoint } from "../../utils/getDOMPoint";
+import { checkIsMouseInRange, getDOMPoint } from "../../utils/getDOMPoint";
 import "./controller.less";
 export class Controller extends BaseEvent {
   private template_: HTMLElement | string;
@@ -105,14 +105,9 @@ export class Controller extends BaseEvent {
      */
     this.volumeBtn.onmouseenter = (e) => {
       this.volumeSet.style.display = "block";
-      let {x,y} = getDOMPoint(this.volumeBtn);
-      let top = y - parseInt(this.volumeSet.style.bottom) - this.volumeSet.clientHeight;
-      let bottom =  y - this.volumeBtn.clientHeight;
-      let left = x + Math.round(this.volumeBtn.clientWidth / 2) - Math.round(this.volumeSet.clientWidth / 2);
-      let right = x + Math.round(this.volumeBtn.clientWidth / 2) + Math.round(this.volumeSet.clientWidth / 2);
       document.body.onmousemove = (e) => {
         let pX = e.pageX,pY = e.pageY;
-        if(!((pX >= left && pX <= right && pY <= y && pY >=top) || (pX >= x && pX <= x + this.volumeBtn.clientWidth && pY >= y && pY <= y + this.volumeBtn.clientHeight))) {
+        if(!checkIsMouseInRange(this.volumeBtn,this.volumeSet,pX,pY)) {
           this.volumeSet.style.display = "none";
         }
       }

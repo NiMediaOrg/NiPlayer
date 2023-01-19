@@ -1784,6 +1784,21 @@ function getDOMPoint(dom) {
     }
     return { x: l, y: t };
 }
+function checkIsMouseInRange(parent, topChild, pageX, pageY) {
+    let { x, y } = getDOMPoint(parent);
+    let allTop = y - parseInt(topChild.style.bottom) - topChild.clientHeight;
+    let allBottom = y + parent.clientHeight;
+    let allLeft = x + Math.round(parent.clientWidth / 2) - Math.round(topChild.clientWidth / 2);
+    let allRight = x + Math.round(parent.clientWidth / 2) + Math.round(topChild.clientWidth / 2);
+    y - parseInt(topChild.style.bottom);
+    let parentLeft = x;
+    let parentRight = x + parent.clientWidth;
+    if (pageX >= allLeft && pageX <= allRight && pageY <= y && pageY >= allTop)
+        return true;
+    if (pageX >= parentLeft && pageX <= parentRight && pageY >= y && pageY <= allBottom)
+        return true;
+    return false;
+}
 
 class Controller extends BaseEvent {
     constructor(container) {
@@ -1862,14 +1877,9 @@ class Controller extends BaseEvent {
          */
         this.volumeBtn.onmouseenter = (e) => {
             this.volumeSet.style.display = "block";
-            let { x, y } = getDOMPoint(this.volumeBtn);
-            let top = y - parseInt(this.volumeSet.style.bottom) - this.volumeSet.clientHeight;
-            y - this.volumeBtn.clientHeight;
-            let left = x + Math.round(this.volumeBtn.clientWidth / 2) - Math.round(this.volumeSet.clientWidth / 2);
-            let right = x + Math.round(this.volumeBtn.clientWidth / 2) + Math.round(this.volumeSet.clientWidth / 2);
             document.body.onmousemove = (e) => {
                 let pX = e.pageX, pY = e.pageY;
-                if (!((pX >= left && pX <= right && pY <= y && pY >= top) || (pX >= x && pX <= x + this.volumeBtn.clientWidth && pY >= y && pY <= y + this.volumeBtn.clientHeight))) {
+                if (!checkIsMouseInRange(this.volumeBtn, this.volumeSet, pX, pY)) {
                     this.volumeSet.style.display = "none";
                 }
             };
