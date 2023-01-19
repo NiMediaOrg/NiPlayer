@@ -105,14 +105,9 @@ export class Controller extends BaseEvent {
      */
     this.volumeBtn.onmouseenter = (e) => {
       this.volumeSet.style.display = "block";
-      document.body.onmousemove = (e) => {
-        let pX = e.pageX,pY = e.pageY;
-        if(!checkIsMouseInRange(this.volumeBtn,this.volumeSet,pX,pY)) {
-          this.volumeSet.style.display = "none";
-        }
-      }
+      let ctx = this;
+      document.addEventListener("mousemove",this.handleMouseMove.bind(ctx));
     }
-    
   }
 
   initEvent() {
@@ -156,5 +151,15 @@ export class Controller extends BaseEvent {
 
       this.initControllerEvent();
     });
+  }
+
+  handleMouseMove(e:MouseEvent) {
+    let pX = e.pageX,pY = e.pageY;
+    let ctx = this;
+    // console.log(pX,pY)
+    if(!checkIsMouseInRange(ctx.volumeBtn,ctx.volumeSet,pX,pY)) {
+      this.volumeSet.style.display = "none";
+      document.removeEventListener("mousemove",ctx.handleMouseMove);
+    }
   }
 }

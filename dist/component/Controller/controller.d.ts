@@ -20,4 +20,5 @@ export declare class Controller extends BaseEvent {
     init(): void;
     initControllerEvent(): void;
     initEvent(): void;
+    handleMouseMove(e: MouseEvent): void;
 }

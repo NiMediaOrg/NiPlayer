@@ -12,6 +12,14 @@ export function getDOMPoint(dom:HTMLElement):{x:number,y:number} {
     return {x:l,y:t};
 }
 
+/**
+ * @description 查看当前的鼠标位置是否在父元素和绝对定位的子元素的组合范围内，如果超出则返回false
+ * @param parent 
+ * @param topChild 
+ * @param pageX 
+ * @param pageY 
+ * @returns {boolean}
+ */
 export function checkIsMouseInRange(parent:HTMLElement,topChild:HTMLElement,pageX:number,pageY:number) {
     let {x,y} = getDOMPoint(parent);
     let allTop = y - parseInt(topChild.style.bottom) - topChild.clientHeight;
