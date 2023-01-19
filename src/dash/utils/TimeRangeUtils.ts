@@ -1,5 +1,6 @@
 import { FactoryFunction, FactoryObject } from "../../types/dash/Factory";
 import { Mpd } from "../../types/dash/MpdFile";
+import { VideoBuffers } from "../../types/dash/Stream";
 import FactoryMaker from "../FactoryMaker";
 import DashParserFactory, { DashParser } from "../parser/DashParser"
 
@@ -30,6 +31,19 @@ class TimeRangeUtils {
         return sum;
     }
 
+    getOffestTimeOfMediaSegment(streamId:number,mediaId:number,Mpd:Mpd): number {
+        let beforeTime = this.getSummaryTimeBeforeStream(streamId,Mpd);
+        let segmentDuration = this.dashParser.getSegmentDuration(Mpd,streamId);
+        return beforeTime + segmentDuration * (mediaId + 1);
+    }
+
+    inVideoBuffered(time:number,ranges:VideoBuffers): boolean {
+        for(let range of ranges) {
+            if(time >= range.start && time <= range.end) return true;
+        }
+        return false;
+    }
+
     inSpecificStreamRange(streamId:number,currentTime:number,Mpd:Mpd): boolean{
         let totalTime = this.dashParser.getTotalDuration(Mpd);
         if(currentTime > totalTime) return false;
@@ -43,11 +57,9 @@ class TimeRangeUtils {
         [number,number] | never 
     {
         if(this.inSpecificStreamRange(streamId,currentTime,Mpd)) {
-            console.log(111)
             let segmentDuration = this.dashParser.getSegmentDuration(Mpd,streamId);
-            console.log(segmentDuration)
             let index = Math.floor(currentTime / segmentDuration);
-            return [index,streamId];
+            return [streamId,index];
         } else {
             let totalTime = this.dashParser.getTotalDuration(Mpd);
             if(currentTime > totalTime) {
@@ -60,7 +72,7 @@ class TimeRangeUtils {
                 if(sum > currentTime) {
                     let segmentDuration = this.dashParser.getSegmentDuration(Mpd,i);
                     let index = Math.floor(currentTime / segmentDuration);
-                    return [index,i];
+                    return [i,index];
                 }
             }
         }

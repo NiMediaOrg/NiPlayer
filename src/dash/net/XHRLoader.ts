@@ -4,6 +4,7 @@ import FactoryMaker from "../FactoryMaker";
 
 class XHRLoader {
     private config:FactoryObject = {};
+    
     constructor(ctx:FactoryObject,...args:any[]) {
         this.config = ctx.context;
         this.setup();
@@ -14,6 +15,7 @@ class XHRLoader {
     load(config: XHRConfig) {
         let request = config.request;
         let xhr = new XMLHttpRequest();
+        request.xhr = xhr;
         if(request.header) {
             for(let key in request.header) {
                 xhr.setRequestHeader(key,request.header[key]);

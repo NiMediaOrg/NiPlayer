@@ -29,6 +29,7 @@ class MediaPlayer {
     private currentStreamId:number = 0;
     // 媒体的总时长 -- duration
     private duration:number = 0;
+
     constructor(ctx:FactoryObject,...args:any[]) {
         this.config = ctx.context;
         this.setup();
@@ -65,10 +66,10 @@ class MediaPlayer {
     }
 
     onSegmentLoaded(res: ConsumedSegment) {
-        console.log("加载Segment成功");
+        console.log("加载Segment成功",res.mediaId);
         this.firstCurrentRequest ++;
         if(this.firstCurrentRequest === 23) {
-            // this.eventBus.trigger(EventConstants.FIRST_REQUEST_COMPLETED);
+            this.eventBus.trigger(EventConstants.FIRST_REQUEST_COMPLETED);
         }
         let data = res.data;
         let id = res.streamId;

@@ -7,5 +7,6 @@ export default class HTTPRequest {
     method: RequestMethod | null;
     url: string;
     responseType: ResponseType | null;
+    xhr?: XMLHttpRequest;
     constructor(config: FactoryObject);
 }

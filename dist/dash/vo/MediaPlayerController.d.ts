@@ -1,4 +1,5 @@
 import { FactoryObject } from "../../types/dash/Factory";
+import { VideoBuffers } from "../../types/dash/Stream";
 declare class MediaPlayerController {
     private config;
     private video;
@@ -20,6 +21,7 @@ declare class MediaPlayerController {
      * @description 配置MediaSource的相关选项和属性
      */
     setMediaSource(): void;
+    getVideoBuffered(video: HTMLVideoElement): VideoBuffers;
     appendSource(): void;
     appendVideoSource(data: ArrayBuffer): void;
     appendAudioSource(data: ArrayBuffer): void;

@@ -5,6 +5,7 @@ export declare const EventConstants: {
     SEGEMTN_LOADED: string;
     BUFFER_APPENDED: string;
     SEGMENT_CONSUMED: string;
+    SEGEMTN_REQUEST: string;
     MEDIA_PLAYBACK_FINISHED: string;
     FIRST_REQUEST_COMPLETED: string;
 };

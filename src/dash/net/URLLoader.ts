@@ -10,6 +10,7 @@ class URLLoader {
     private config: FactoryObject = {};
     private xhrLoader:XHRLoader;
     private eventBus: EventBus;
+    private xhrArray: HTTPRequest[] = [];
     constructor(ctx:FactoryObject,...args:any[]) {
         this.config = ctx.context;
         this.setup();
@@ -31,6 +32,7 @@ class URLLoader {
         //一个HTTPRequest对象才对应一个请求
         let request = new HTTPRequest(config);
         let ctx = this;
+        this.xhrArray.push(request);
         if(type === "Manifest") {
             ctx._loadManifest({
                 request: request,
@@ -39,7 +41,13 @@ class URLLoader {
                     ctx.eventBus.trigger(EventConstants.MANIFEST_LOADED, data);
                 },
                 error: function(error) {
-                    console.log(this , error)
+                    console.log(error);
+                },
+                load: function() {
+                    ctx.deleteRequestFromArray(request,ctx.xhrArray);
+                },
+                abort: function() {
+                    ctx.deleteRequestFromArray(request,ctx.xhrArray);
                 }
             })
         } else if(type === "Segment") {
@@ -51,11 +59,31 @@ class URLLoader {
                     },
                     error:function(error) {
                         rej(error);
+                    },
+                    load:function() {
+                        ctx.deleteRequestFromArray(request,ctx.xhrArray);
+                    },
+                    abort: function(e) {
+                        ctx.deleteRequestFromArray(request,ctx.xhrArray);
                     }
                 })
             })
         }
-        
+    }
+
+    abortAllXHR() {
+        this.xhrArray.forEach(xhr=>{
+            if(xhr.xhr) {
+                xhr.xhr.abort();
+            }
+        })
+    }
+
+    deleteRequestFromArray(request:HTTPRequest,array:HTTPRequest[]) {
+        let index = array.indexOf(request);
+        if(index !== -1) {
+            array.splice(index,1);
+        }
     }
 }
 

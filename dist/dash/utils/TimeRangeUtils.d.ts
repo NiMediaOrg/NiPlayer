@@ -1,5 +1,6 @@
 import { FactoryFunction, FactoryObject } from "../../types/dash/Factory";
 import { Mpd } from "../../types/dash/MpdFile";
+import { VideoBuffers } from "../../types/dash/Stream";
 declare class TimeRangeUtils {
     private config;
     private dashParser;
@@ -12,6 +13,8 @@ declare class TimeRangeUtils {
      * @returns {number} Number
      */
     getSummaryTimeBeforeStream(streamId: number, Mpd: Mpd): number;
+    getOffestTimeOfMediaSegment(streamId: number, mediaId: number, Mpd: Mpd): number;
+    inVideoBuffered(time: number, ranges: VideoBuffers): boolean;
     inSpecificStreamRange(streamId: number, currentTime: number, Mpd: Mpd): boolean;
     getSegmentAndStreamIndexByTime(streamId: number, currentTime: number, Mpd: Mpd): [
         number,
