@@ -13,6 +13,7 @@ class MediaPlayerController {
     private buffer: MediaPlayerBuffer;
     private eventBus: EventBus;
     private isFirstRequestCompleted:boolean = false;
+    private mediaDuration:number = 0;
     constructor(ctx:FactoryObject,...args:any[]) {
         this.config = ctx.context;
         if(this.config.video) {
@@ -24,6 +25,7 @@ class MediaPlayerController {
     }
     setup(){
         this.mediaSource = new MediaSource();
+       
         this.buffer = MediaPlayerBufferFactory().getInstance();
         this.eventBus = EventBusFactory().getInstance();
     }
@@ -40,11 +42,17 @@ class MediaPlayerController {
         },this)
 
         this.eventBus.on(EventConstants.MEDIA_PLAYBACK_FINISHED,this.onMediaPlaybackFinished,this)
+        this.eventBus.on(EventConstants.MANIFEST_PARSE_COMPLETED,(manifest,duration)=>{
+            this.mediaDuration = duration;
+            if(this.mediaSource.readyState === "open") {
+                this.mediaSource.duration = duration;
+            }
+        },this)
     }
 
     initPlayer() {
         this.video.src = window.URL.createObjectURL(this.mediaSource);
-        this.video.pause();
+        // this.video.pause();
         this.mediaSource.addEventListener("sourceopen",this.onSourceopen.bind(this));
     }
 
@@ -67,19 +75,19 @@ class MediaPlayerController {
 
     
     onSourceopen(e) {
+        this.mediaSource.duration = this.mediaDuration;
         this.videoSourceBuffer = this.mediaSource.addSourceBuffer('video/mp4; codecs="avc1.64001E"');
         this.audioSourceBuffer = this.mediaSource.addSourceBuffer('audio/mp4; codecs="mp4a.40.2"');
 
-        console.log(this.videoSourceBuffer.mode)
         this.videoSourceBuffer.addEventListener("updateend",this.onUpdateend.bind(this));
         this.audioSourceBuffer.addEventListener("updateend",this.onUpdateend.bind(this));
     }
 
     onUpdateend() {
         if(!this.videoSourceBuffer.updating && !this.audioSourceBuffer.updating) {
-            if(this.isFirstRequestCompleted) {
-                this.eventBus.trigger(EventConstants.SEGMENT_CONSUMED);
-            }
+            // if(this.isFirstRequestCompleted) {
+            //     this.eventBus.trigger(EventConstants.SEGMENT_CONSUMED);
+            // }
             this.appendSource();
         }
     }

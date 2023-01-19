@@ -31,7 +31,7 @@ class StreamController {
     private segmentRequestStruct:MpdSegmentRequest;
     constructor(ctx:FactoryObject,...args:any[]) {
         this.config = ctx.context;
-        this.segmentRequestStruct = this.config.num || 23;
+        this.firstRequestNumber = this.config.num || 23;
         this.setup();
         this.initialEvent();
     }

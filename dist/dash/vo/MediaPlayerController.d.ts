@@ -8,6 +8,7 @@ declare class MediaPlayerController {
     private buffer;
     private eventBus;
     private isFirstRequestCompleted;
+    private mediaDuration;
     constructor(ctx: FactoryObject, ...args: any[]);
     setup(): void;
     initEvent(): void;

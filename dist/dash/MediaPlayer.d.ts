@@ -13,6 +13,7 @@ declare class MediaPlayer {
     private video;
     private buffer;
     private firstCurrentRequest;
+    private duration;
     constructor(ctx: FactoryObject, ...args: any[]);
     setup(): void;
     initializeEvent(): void;

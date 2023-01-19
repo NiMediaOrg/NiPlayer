@@ -1,4 +1,5 @@
 import { FactoryObject } from "../types/dash/Factory";
+import { Mpd } from "../types/dash/MpdFile";
 import { ConsumedSegment } from "../types/dash/Stream";
 import EventBusFactory, { EventBus } from "./event/EventBus";
 import { EventConstants } from "./event/EventConstants";
@@ -21,6 +22,7 @@ class MediaPlayer {
     private video: HTMLVideoElement;
     private buffer: MediaPlayerBuffer;
     private firstCurrentRequest: number = 0;
+    private duration:number = 0;
     constructor(ctx:FactoryObject,...args:any[]) {
         this.config = ctx.context;
         this.setup();
@@ -51,15 +53,15 @@ class MediaPlayer {
     //MPD文件请求成功获得对应的data数据
     onManifestLoaded(data:string) { 
         let manifest = this.dashParser.parse(data);
-
-        this.eventBus.trigger(EventConstants.MANIFEST_PARSE_COMPLETED,manifest);
+        this.duration = this.dashParser.getTotalDuration(manifest as Mpd);
+        this.eventBus.trigger(EventConstants.MANIFEST_PARSE_COMPLETED,manifest,this.duration);
     }
 
     onSegmentLoaded(res: ConsumedSegment) {
         console.log("加载Segment成功");
         this.firstCurrentRequest ++;
         if(this.firstCurrentRequest === 23) {
-            this.eventBus.trigger(EventConstants.FIRST_REQUEST_COMPLETED);
+            // this.eventBus.trigger(EventConstants.FIRST_REQUEST_COMPLETED);
         }
         let data = res.data;
         let videoBuffer = data[0];
@@ -83,7 +85,7 @@ class MediaPlayer {
 
     public attachVideo(video:HTMLVideoElement) {
         this.video = video;
-        this.mediaPlayerController = MediaPlayerControllerFactory({video:video}).create();
+        this.mediaPlayerController = MediaPlayerControllerFactory({video:video,duration:this.duration}).create();
     }
 }
 
