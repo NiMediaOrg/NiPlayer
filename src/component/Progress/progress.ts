@@ -1,4 +1,5 @@
 import { $warn, BaseEvent, formatTime, styles } from "../../index";
+import { televisionSVG } from "../SVGTool/TelevisionDotModel";
 import "./pregress.less";
 export class Progress extends BaseEvent {
   private template_!: HTMLElement | string;
@@ -27,7 +28,9 @@ export class Progress extends BaseEvent {
             <div class="${styles["video-pretime"]}">00:00</div>
             <div class="${styles["video-buffered"]}"></div>
             <div class="${styles["video-completed"]} "></div>
-            <div class="${styles["video-dot"]} ${styles["video-dot-hidden"]}"></div>
+            <div class="${styles["video-dot"]} ${styles["video-dot-hidden"]}">
+              ${televisionSVG}
+            </div>
         </div>
         `;
   }
@@ -44,37 +47,37 @@ export class Progress extends BaseEvent {
     };
 
     this.progress.onmousemove = (e: MouseEvent) => {
-        let scale = e.offsetX / this.progress.offsetWidth;
-        if (scale < 0) {
-          scale = 0;
-        } else if (scale > 1) {
-          scale = 1;
-        }
-  
-        let preTime = formatTime(scale * this.video.duration);
-        this.pretime.style.display = "block";
-        this.pretime.innerHTML = preTime;
-        this.pretime.style.left = e.offsetX - 17 + "px";
-        e.preventDefault();
-      };
+      let scale = e.offsetX / this.progress.offsetWidth;
+      if (scale < 0) {
+        scale = 0;
+      } else if (scale > 1) {
+        scale = 1;
+      }
+
+      let preTime = formatTime(scale * this.video.duration);
+      this.pretime.style.display = "block";
+      this.pretime.innerHTML = preTime;
+      this.pretime.style.left = e.offsetX - 17 + "px";
+      e.preventDefault();
+    };
 
     this.progress.onmouseleave = (e: MouseEvent) => {
-        this.pretime.style.display = "none";
+      this.pretime.style.display = "none";
     };
-    this.progress.onclick =  (e: MouseEvent) => {
-        let scale = e.offsetX / this.progress.offsetWidth;
-        if (scale < 0) {
-          scale = 0;
-        } else if (scale > 1) {
-          scale = 1;
-        }
-        this.dot.style.left = this.progress.offsetWidth * scale - 5 + "px";
-        this.bufferedProgress.style.width = scale * 100 + "%";
-        this.completedProgress.style.width = scale * 100 + "%";
-  
-        this.video.currentTime = Math.floor(scale * this.video.duration);
-        if (this.video.paused) this.video.play();
-      };
+    this.progress.onclick = (e: MouseEvent) => {
+      let scale = e.offsetX / this.progress.offsetWidth;
+      if (scale < 0) {
+        scale = 0;
+      } else if (scale > 1) {
+        scale = 1;
+      }
+      this.dot.style.left = this.progress.offsetWidth * scale - 5 + "px";
+      this.bufferedProgress.style.width = scale * 100 + "%";
+      this.completedProgress.style.width = scale * 100 + "%";
+
+      this.video.currentTime = Math.floor(scale * this.video.duration);
+      if (this.video.paused) this.video.play();
+    };
 
     this.dot.addEventListener("mousedown", (e: MouseEvent) => {
       let left = this.completedProgress.offsetWidth;

@@ -61,7 +61,7 @@
 .pregress_video-progress__QjWkP {
   width: 100%;
   height: 5px;
-  background-color: #fff;
+  background-color: hsla(0, 0%, 100%, 0.2);
   cursor: pointer;
   position: relative;
 }
@@ -84,13 +84,13 @@
   width: 0;
   z-index: 1001;
   position: absolute;
-  background-color: gray;
+  background-color: hsla(0, 0%, 100%, 0.3);
   border-top-right-radius: 3px;
   border-bottom-right-radius: 3px;
 }
 .pregress_video-progress__QjWkP .pregress_video-completed__CnWX- {
   position: absolute;
-  background-color: #00aeec;
+  background-color: #00a1d6;
   height: 100%;
   border-top-right-radius: 3px;
   border-bottom-right-radius: 3px;
@@ -106,13 +106,9 @@
 .pregress_video-progress__QjWkP .pregress_video-dot__giuCI {
   position: absolute;
   left: 0px;
-  height: 10px;
-  width: 10px;
-  border-radius: 100%;
-  background-color: black;
   top: 50%;
-  -webkit-transform: translateY(-50%);
-          transform: translateY(-50%);
+  -webkit-transform: translateY(-9px);
+          transform: translateY(-9px);
   cursor: pointer;
   z-index: 1003;
 }
@@ -167,22 +163,31 @@
   -webkit-align-items: center;
       -ms-flex-align: center;
           align-items: center;
-  font-size: 18px;
+  font-size: 20px;
+  color: hsla(0, 0%, 100%, 0.8);
+  fill: hsla(0, 0%, 100%, 0.8);
 }
 .controller_video-play__fP3BY .controller_video-settings__vL60f .controller_video-subsettings__lRckv {
-  margin-right: 10px;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  width: 36px;
+  height: 20px;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+      -ms-flex-align: center;
+          align-items: center;
 }
-.controller_video-play__fP3BY .controller_video-settings__vL60f .controller_video-subsettings__lRckv i {
-  cursor: pointer;
-  -webkit-transition: all 0.5s ease;
-  transition: all 0.5s ease;
-}
-.controller_video-play__fP3BY .controller_video-settings__vL60f .controller_video-subsettings__lRckv i:hover {
-  -webkit-transform: rotateX(180deg);
-          transform: rotateX(180deg);
+.controller_video-play__fP3BY .controller_video-settings__vL60f .controller_video-subsettings__lRckv svg {
+  -webkit-transition: fill 0.15s ease-in-out;
+  transition: fill 0.15s ease-in-out;
 }
 .controller_video-play__fP3BY .controller_video-settings__vL60f .controller_video-volume__6xzJB {
-  margin-right: 10px;
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -191,38 +196,27 @@
   -webkit-align-items: center;
       -ms-flex-align: center;
           align-items: center;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  width: 36px;
+  height: 22px;
 }
-.controller_video-play__fP3BY .controller_video-settings__vL60f .controller_video-volume__6xzJB i {
-  cursor: pointer;
-  font-size: 18px;
-  margin-right: 8px;
-  -webkit-transition: all 0.5s ease;
-  transition: all 0.5s ease;
-}
-.controller_video-play__fP3BY .controller_video-settings__vL60f .controller_video-volume__6xzJB i:hover {
-  -webkit-transform: rotateX(180deg);
-          transform: rotateX(180deg);
-}
-.controller_video-play__fP3BY .controller_video-settings__vL60f .controller_video-volume__6xzJB .controller_video-volume-progress__f4U3J {
-  height: 5px;
-  background-color: #fff;
-  width: 50px;
-  border-radius: 5px;
-}
-.controller_video-play__fP3BY .controller_video-settings__vL60f .controller_video-volume__6xzJB .controller_video-volume-progress__f4U3J .controller_video-volume-completed__R0FaX {
-  width: 50%;
-  background-color: #00aeec;
-  border-radius: 5px;
-  height: 100%;
-}
-.controller_video-play__fP3BY .controller_video-settings__vL60f .controller_video-fullscreen__1-aJA i {
-  cursor: pointer;
-  font-size: 18px;
-  -webkit-transition: all 0.5s ease;
-  transition: all 0.5s ease;
-}
-.controller_video-play__fP3BY .controller_video-settings__vL60f .controller_video-fullscreen__1-aJA i:hover {
-  -webkit-transform: rotateX(180deg);
-          transform: rotateX(180deg);
+.controller_video-play__fP3BY .controller_video-settings__vL60f .controller_video-fullscreen__1-aJA {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  width: 36px;
+  height: 20px;
 }
 

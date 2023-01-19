@@ -31,57 +31,32 @@
       margin-right: 10px;
       display: flex;
       align-items: center;
-      font-size: 18px;
+      font-size: 20px;
+      color: hsla(0,0%,100%,.8);
+      fill: hsla(0,0%,100%,.8);
       .video-subsettings {
-        margin-right: 10px;
-        i {
-          cursor: pointer;
-          transition: all 0.5s ease;
-        }
-
-        i:hover {
-          transform: rotateX(180deg);
+        display: flex;
+        width: 36px;
+        height: 20px; 
+        justify-content: center;    
+        align-items: center;   
+        svg {
+          transition: fill .15s ease-in-out;
         }
       }
       .video-volume {
-        margin-right: 10px;
         display: flex;
         align-items: center;
-        i {
-          cursor: pointer;
-          font-size: 18px;
-          margin-right:8px;
-          transition: all 0.5s ease;
-        }
-
-        i:hover {
-          transform: rotateX(180deg);
-        }
-
-        .video-volume-progress {
-          height:5px;
-          background-color: #fff;
-          width:50px;
-          border-radius: 5px;
-
-          .video-volume-completed {
-            width: 50%;
-            background-color: #00aeec;
-            border-radius: 5px;
-            height: 100%;
-          }
-        }
+        justify-content: center;
+        width: 36px;
+        height: 22px;
       }
       .video-fullscreen {
-        i {
-          cursor: pointer;
-          font-size: 18px;
-          transition: all 0.5s ease;
-        }
-
-        i:hover {
-          transform: rotateX(180deg);
-        }
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 36px;
+        height: 20px;
       }
     }
   }

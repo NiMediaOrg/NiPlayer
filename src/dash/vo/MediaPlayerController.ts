@@ -117,7 +117,6 @@ class MediaPlayerController {
         if(!this.timeRangeUtils.inVideoBuffered(currentTime,ranges)) {
             console.log("超出缓存范围")
             this.buffer.clear();
-            
             this.eventBus.trigger(EventConstants.SEGEMTN_REQUEST,[streamId,mediaId]);
         } else {
             console.log("在缓存范围之内")

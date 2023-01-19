@@ -139,6 +139,7 @@ class StreamController {
      * @param tuple 
      */
     async onSegmentRequest(tuple:[number,number]) {
+        // 如果此时video发生缓存内容之外的跳转，则需要重新请求对应的segment，因此需要中断正在发送还没有收到结果的请求
         this.abortAllXHR();
         let [streamId,mediaId] = tuple;
         this.streamId = streamId;

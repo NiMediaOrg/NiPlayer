@@ -6,6 +6,9 @@ import {
   BaseEvent,
   formatTime,
 } from "../../index";
+import { volumeSVG } from "../SVGTool/VolumeModel";
+import { settingSVG } from "../SVGTool/SettingsModel";
+import { fullScreenSVG } from "../SVGTool/FullScreenModel";
 import "./controller.less";
 export class Controller extends BaseEvent {
   private template_!: HTMLElement | string;
@@ -38,18 +41,20 @@ export class Controller extends BaseEvent {
                 </div>
             </div>
             <div class="${styles["video-settings"]}">
-                <div class="${styles["video-subsettings"]}">
-                    <i class="${icon["iconfont"]} ${icon["icon-shezhi"]}"></i>
+                <div class="${styles["video-resolvepower"]}">
+                    分辨率
                 </div>
-                <div class="${styles["video-volume"]}">
-                    <i class="${icon["iconfont"]} ${icon["icon-yinliang"]}"></i>
-                    <div class="${styles["video-volume-progress"]}">
-                    <div class="${styles["video-volume-completed"]}"></div>
-                    <div class="${styles["video-volume-dot"]}"></div>
-                    </div>
+                <div class="${styles["video-playrate"]} aria-label="倍速">
+                    倍速
                 </div>
-                <div class="${styles["video-fullscreen"]}">
-                    <i class="${icon["iconfont"]} ${icon["icon-quanping"]}"></i>
+                <div class="${styles["video-volume"]}" aria-label="音量">
+                    ${volumeSVG}
+                </div>
+                <div class="${styles["video-subsettings"]}" aria-label="设置">
+                    ${settingSVG}
+                </div>
+                <div class="${styles["video-fullscreen"]}" aria-label="全屏">
+                    ${fullScreenSVG}
                 </div>
             </div>
         </div>
@@ -104,7 +109,7 @@ export class Controller extends BaseEvent {
 
       this.video = this.container.querySelector("video")!;
       this.fullScreen = this.container.querySelector(
-        `.${styles["video-fullscreen"]} i`
+        `.${styles["video-fullscreen"]}`
       )!;
 
       this.initControllerEvent();
