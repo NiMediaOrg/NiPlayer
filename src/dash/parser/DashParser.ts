@@ -194,6 +194,22 @@ class DashParser {
     })
   }
 
+  getSegmentDuration(Mpd:Mpd,streamId:number): number | never {
+    let Period = Mpd["Period_asArray"][streamId];
+    if(!Period) {
+      throw new Error("传入的流不存在");
+    }
+    let segmentDuration = 0;
+    Period["AdaptationSet_asArray"].forEach(AdaptationSet=>{
+      AdaptationSet["Representation_asArray"].forEach(Representation=>{
+        if(Representation.segmentDuration) {
+          segmentDuration = Number(Representation.segmentDuration);
+        }
+      })
+    })
+    return segmentDuration;
+  }
+
   getTotalDuration(Mpd:Mpd): number | never {
     let totalDuration = 0;
     let MpdDuration = -1;

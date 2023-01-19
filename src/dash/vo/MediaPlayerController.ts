@@ -1,10 +1,13 @@
 import { FactoryObject } from "../../types/dash/Factory";
+import { Mpd } from "../../types/dash/MpdFile";
 import { PlayerBuffer } from "../../types/dash/Net";
 import EventBusFactory, { EventBus } from "../event/EventBus";
 import { EventConstants } from "../event/EventConstants";
 import FactoryMaker from "../FactoryMaker";
+import TimeRangeUtilsFactory, { TimeRangeUtils } from "../utils/TimeRangeUtils";
 import MediaPlayerBufferFactory,{ MediaPlayerBuffer } from "../vo/MediaPlayerBuffer";
 class MediaPlayerController {
+    // 控制器
     private config: FactoryObject = {};
     private video: HTMLVideoElement;
     private mediaSource: MediaSource;
@@ -12,8 +15,12 @@ class MediaPlayerController {
     private audioSourceBuffer: SourceBuffer;
     private buffer: MediaPlayerBuffer;
     private eventBus: EventBus;
+    private timeRangeUtils: TimeRangeUtils;
+    // 属性
     private isFirstRequestCompleted:boolean = false;
     private mediaDuration:number = 0;
+    private currentStreamId: number = 0;
+    private Mpd: Mpd;
     constructor(ctx:FactoryObject,...args:any[]) {
         this.config = ctx.context;
         if(this.config.video) {
@@ -28,12 +35,14 @@ class MediaPlayerController {
        
         this.buffer = MediaPlayerBufferFactory().getInstance();
         this.eventBus = EventBusFactory().getInstance();
+        this.timeRangeUtils = TimeRangeUtilsFactory().getInstance();
     }
 
     initEvent() {
-        this.eventBus.on(EventConstants.BUFFER_APPENDED,()=>{
+        this.eventBus.on(EventConstants.BUFFER_APPENDED,(id:number)=>{
             if(!this.videoSourceBuffer.updating && !this.audioSourceBuffer.updating) {
                 this.appendSource();
+                this.currentStreamId = id;
             }
         },this)
 
@@ -42,18 +51,27 @@ class MediaPlayerController {
         },this)
 
         this.eventBus.on(EventConstants.MEDIA_PLAYBACK_FINISHED,this.onMediaPlaybackFinished,this)
-        this.eventBus.on(EventConstants.MANIFEST_PARSE_COMPLETED,(manifest,duration)=>{
+        this.eventBus.on(EventConstants.MANIFEST_PARSE_COMPLETED,(manifest,duration,Mpd)=>{
             this.mediaDuration = duration;
+            this.Mpd = Mpd;
             if(this.mediaSource.readyState === "open") {
-                this.mediaSource.duration = duration;
+                this.setMediaSource();
             }
         },this)
     }
 
     initPlayer() {
         this.video.src = window.URL.createObjectURL(this.mediaSource);
-        // this.video.pause();
         this.mediaSource.addEventListener("sourceopen",this.onSourceopen.bind(this));
+        this.video.addEventListener("seeking",this.onMediaSeeking.bind(this));
+    }
+
+    /**
+     * @description 配置MediaSource的相关选项和属性
+     */
+    setMediaSource() {
+        this.mediaSource.duration = this.mediaDuration;
+        this.mediaSource.setLiveSeekableRange(0,this.mediaDuration);
     }
 
     appendSource() {
@@ -73,9 +91,19 @@ class MediaPlayerController {
         this.audioSourceBuffer.appendBuffer(new Uint8Array(data));
     }
 
+    /**
+     * @description 当进度条发生跳转时触发
+     * @param { EventTarget} e 
+     */
+    onMediaSeeking(e) {
+        let currentTime = this.video.currentTime;
+        let [streamId,mediaId] = this.timeRangeUtils.
+            getSegmentAndStreamIndexByTime(this.currentStreamId,currentTime,this.Mpd);
+        console.log(streamId,mediaId);
+    }
     
     onSourceopen(e) {
-        this.mediaSource.duration = this.mediaDuration;
+        this.setMediaSource();
         this.videoSourceBuffer = this.mediaSource.addSourceBuffer('video/mp4; codecs="avc1.64001E"');
         this.audioSourceBuffer = this.mediaSource.addSourceBuffer('audio/mp4; codecs="mp4a.40.2"');
 

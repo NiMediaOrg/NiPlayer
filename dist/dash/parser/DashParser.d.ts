@@ -17,6 +17,7 @@ declare class DashParser {
     mergeNodeSegementTemplate(Mpd: Mpd): void;
     setBaseURLForMpd(Mpd: Mpd): void;
     setResolvePowerForRepresentation(Mpd: Mpd): void;
+    getSegmentDuration(Mpd: Mpd, streamId: number): number | never;
     getTotalDuration(Mpd: Mpd): number | never;
     setDurationForRepresentation(Mpd: Mpd): void;
     setSegmentDurationForRepresentation(Mpd: Mpd): void;

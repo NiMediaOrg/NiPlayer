@@ -7,15 +7,27 @@ declare class MediaPlayerController {
     private audioSourceBuffer;
     private buffer;
     private eventBus;
+    private timeRangeUtils;
     private isFirstRequestCompleted;
     private mediaDuration;
+    private currentStreamId;
+    private Mpd;
     constructor(ctx: FactoryObject, ...args: any[]);
     setup(): void;
     initEvent(): void;
     initPlayer(): void;
+    /**
+     * @description 配置MediaSource的相关选项和属性
+     */
+    setMediaSource(): void;
     appendSource(): void;
     appendVideoSource(data: ArrayBuffer): void;
     appendAudioSource(data: ArrayBuffer): void;
+    /**
+     * @description 当进度条发生跳转时触发
+     * @param { EventTarget} e
+     */
+    onMediaSeeking(e: any): void;
     onSourceopen(e: any): void;
     onUpdateend(): void;
     onMediaPlaybackFinished(): void;

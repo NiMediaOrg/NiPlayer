@@ -4,7 +4,6 @@ import { ConsumedSegment } from "../types/dash/Stream";
  * @description 整个dash处理流程的入口类MediaPlayer,类似于项目的中转中心，用于接收任务并且将任务分配给不同的解析器去完成
  */
 declare class MediaPlayer {
-    private config;
     private urlLoader;
     private eventBus;
     private dashParser;
@@ -12,7 +11,9 @@ declare class MediaPlayer {
     private mediaPlayerController;
     private video;
     private buffer;
+    private config;
     private firstCurrentRequest;
+    private currentStreamId;
     private duration;
     constructor(ctx: FactoryObject, ...args: any[]);
     setup(): void;
