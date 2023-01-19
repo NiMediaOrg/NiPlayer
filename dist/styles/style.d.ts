@@ -22,6 +22,9 @@ export declare const styles: {
     "video-volume-dot": string;
     "video-fullscreen": string;
     "video-duration-all": string;
+    "video-controller": string;
+    "video-playrate": string;
+    "video-resolvepower": string;
     "loading-mask": string;
     "loading-container": string;
     "loading-item": string;

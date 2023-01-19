@@ -53,6 +53,7 @@ class MediaPlayerController {
         },this)
 
         this.eventBus.on(EventConstants.MEDIA_PLAYBACK_FINISHED,this.onMediaPlaybackFinished,this)
+        
         this.eventBus.on(EventConstants.MANIFEST_PARSE_COMPLETED,(manifest,duration,Mpd)=>{
             this.mediaDuration = duration;
             this.Mpd = Mpd;

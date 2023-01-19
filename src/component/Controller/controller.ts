@@ -39,21 +39,22 @@ export class Controller extends BaseEvent {
                 <div class="${styles["video-duration"]}">
                     <span class="${styles["video-duration-completed"]}">00:00</span>&nbsp;/&nbsp;<span class="${styles["video-duration-all"]}">00:00</span>
                 </div>
-            </div>
+           </div>
             <div class="${styles["video-settings"]}">
-                <div class="${styles["video-resolvepower"]}">
+                <div class="${styles["video-resolvepower"]} ${styles["video-controller"]}" aria-label="分辨率">
                     分辨率
                 </div>
-                <div class="${styles["video-playrate"]} aria-label="倍速">
+                <div class="${styles["video-playrate"]} ${styles["video-controller"]}" aria-label="倍速">
                     倍速
                 </div>
-                <div class="${styles["video-volume"]}" aria-label="音量">
+                <div class="${styles["video-volume"]} ${styles["video-controller"]}" aria-label="音量">
+                    <div class="${styles["video-volume-set"]}" aria-label="调节音量"></div>
                     ${volumeSVG}
                 </div>
-                <div class="${styles["video-subsettings"]}" aria-label="设置">
+                <div class="${styles["video-subsettings"]} ${styles["video-controller"]}" aria-label="设置">
                     ${settingSVG}
                 </div>
-                <div class="${styles["video-fullscreen"]}" aria-label="全屏">
+                <div class="${styles["video-fullscreen"]} ${styles["video-controller"]}" aria-label="全屏">
                     ${fullScreenSVG}
                 </div>
             </div>

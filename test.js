@@ -1,8 +1,17 @@
-let p1 = Promise.resolve("111");
-let p2 = Promise.reject("error");
+const p = new Promise((res,rej)=>{
+    setTimeout(()=>{
+        console.log("111")
+    })
 
-Promise.all([p1,p2]).then((res)=>{
-    console.log(res);
-},(err)=>{
-    console.log(err)
+    console.log("222")
 })
+
+Promise.resolve("123").then(()=>{
+    console.log("3333")
+})
+
+process.nextTick(()=>{
+    console.log("4444")
+})
+
+console.log("555");
