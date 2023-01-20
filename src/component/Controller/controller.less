@@ -55,6 +55,7 @@
           margin-left: -16px;
           width: 32px;
           height: 100px;
+          padding-bottom: 8px;
           background: rgba(21,21,21,.9);
           border-radius: 2px;
           .video-volume-show {
@@ -68,7 +69,7 @@
           .video-voulme-progress {
             width: 2px;
             height: calc(100% - 20px - 10px);
-            margin-top: 3px;
+            margin-top: 8px;
             margin-left: 50%;
             transform: translateX(-50%);
             background-color: #fff;
@@ -89,17 +90,79 @@
               position: absolute;
               left: 50%;
               transform: translateX(-50%);
-              bottom: 0;
+              z-index: 1003;
             }
           }
         }
       }
       .video-fullscreen {}
+
+      .video-playrate {
+        position: relative;
+        .video-playrate-set {
+          border-radius: 2px;
+          bottom: 41px;
+          background-color: rgba(21,21,21,.9);
+          width: 70px;
+          padding: 0;
+          margin: 0;
+          box-sizing: border-box;
+          text-align: center;
+          position: absolute;
+          left: 50%;
+          transform: translateX(-50%);
+          list-style: none;
+          outline: none;
+          li {
+            color: #fff;
+            text-align: center;
+            height: 36px;
+            line-height: 36px;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            &:hover {
+              background-color: #C9CCD0;
+            }
+          }
+        }
+      }
+      .video-resolvepower {
+        position: relative;
+        .video-resolvepower-set {
+          list-style: none;
+          outline: none;
+          border-radius: 2px;
+          bottom: 41px;
+          background-color: rgba(21,21,21,.9);
+          padding: 0;
+          margin: 0;
+          position: absolute;
+          left: 50%;
+          transform: translateX(-50%);
+          cursor: pointer;
+          display: none;
+          li {
+            width: 145px;
+            padding: 0 12px;
+            height: 36px;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            font-size: 12px;
+            font-weight: 500;
+            color: #fff;
+            &:hover {
+              background-color: #C9CCD0;
+            }
+          }
+        }
+      }
       .video-playrate,.video-resolvepower {
         font-size: 14px;
-        font-weight:600;
+        font-weight:550;
         color: #fff;
-        padding:0 10px;
+        margin:0 10px;
       }
 
       .video-controller {

@@ -21,12 +21,14 @@ export declare const styles: {
     "video-controller": string;
     "video-playrate": string;
     "video-resolvepower": string;
+    "video-resolvepower-set": string;
     "video-volume": string;
     "video-volume-set": string;
     "video-volume-show": string;
     "video-volume-progress": string;
     "video-volume-completed": string;
     "video-volume-dot": string;
+    "video-playrate-set": string;
     "loading-mask": string;
     "loading-container": string;
     "loading-item": string;

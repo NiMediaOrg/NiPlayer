@@ -12,13 +12,16 @@ export declare class Controller extends BaseEvent {
     private volumeSet;
     private volumeDot;
     private volumeProgress;
+    private volumeCompleted;
     private playRate;
+    private playRateSet;
     private resolvePower;
+    private resolvePowerSet;
     private settings;
     constructor(container: HTMLElement);
     get template(): HTMLElement | string;
     init(): void;
     initControllerEvent(): void;
     initEvent(): void;
-    handleMouseMove(e: MouseEvent): void;
+    handleMouseMove(e: MouseEvent, type: "volume" | "playrate" | "resolvepower"): void;
 }

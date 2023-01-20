@@ -200,6 +200,7 @@
   margin-left: -16px;
   width: 32px;
   height: 100px;
+  padding-bottom: 8px;
   background: rgba(21, 21, 21, 0.9);
   border-radius: 2px;
 }
@@ -214,7 +215,7 @@
 .controller_video-play__fP3BY .controller_video-settings__vL60f .controller_video-volume__6xzJB .controller_video-volume-set__MZ1ks .controller_video-voulme-progress__QAOAm {
   width: 2px;
   height: calc(100% - 20px - 10px);
-  margin-top: 3px;
+  margin-top: 8px;
   margin-left: 50%;
   -webkit-transform: translateX(-50%);
           transform: translateX(-50%);
@@ -244,14 +245,84 @@
   left: 50%;
   -webkit-transform: translateX(-50%);
           transform: translateX(-50%);
-  bottom: 0;
+  z-index: 1003;
+}
+.controller_video-play__fP3BY .controller_video-settings__vL60f .controller_video-playrate__lmym3 {
+  position: relative;
+}
+.controller_video-play__fP3BY .controller_video-settings__vL60f .controller_video-playrate__lmym3 .controller_video-playrate-set__FH52z {
+  border-radius: 2px;
+  bottom: 41px;
+  background-color: rgba(21, 21, 21, 0.9);
+  width: 70px;
+  padding: 0;
+  margin: 0;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+  text-align: center;
+  position: absolute;
+  left: 50%;
+  -webkit-transform: translateX(-50%);
+          transform: translateX(-50%);
+  list-style: none;
+  outline: none;
+}
+.controller_video-play__fP3BY .controller_video-settings__vL60f .controller_video-playrate__lmym3 .controller_video-playrate-set__FH52z li {
+  color: #fff;
+  text-align: center;
+  height: 36px;
+  line-height: 36px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+}
+.controller_video-play__fP3BY .controller_video-settings__vL60f .controller_video-playrate__lmym3 .controller_video-playrate-set__FH52z li:hover {
+  background-color: #C9CCD0;
+}
+.controller_video-play__fP3BY .controller_video-settings__vL60f .controller_video-resolvepower__yDRda {
+  position: relative;
+}
+.controller_video-play__fP3BY .controller_video-settings__vL60f .controller_video-resolvepower__yDRda .controller_video-resolvepower-set__mWs9u {
+  list-style: none;
+  outline: none;
+  border-radius: 2px;
+  bottom: 41px;
+  background-color: rgba(21, 21, 21, 0.9);
+  padding: 0;
+  margin: 0;
+  position: absolute;
+  left: 50%;
+  -webkit-transform: translateX(-50%);
+          transform: translateX(-50%);
+  cursor: pointer;
+  display: none;
+}
+.controller_video-play__fP3BY .controller_video-settings__vL60f .controller_video-resolvepower__yDRda .controller_video-resolvepower-set__mWs9u li {
+  width: 145px;
+  padding: 0 12px;
+  height: 36px;
+  white-space: nowrap;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+      -ms-flex-align: center;
+          align-items: center;
+  font-size: 12px;
+  font-weight: 500;
+  color: #fff;
+}
+.controller_video-play__fP3BY .controller_video-settings__vL60f .controller_video-resolvepower__yDRda .controller_video-resolvepower-set__mWs9u li:hover {
+  background-color: #C9CCD0;
 }
 .controller_video-play__fP3BY .controller_video-settings__vL60f .controller_video-playrate__lmym3,
 .controller_video-play__fP3BY .controller_video-settings__vL60f .controller_video-resolvepower__yDRda {
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 550;
   color: #fff;
-  padding: 0 10px;
+  margin: 0 10px;
 }
 .controller_video-play__fP3BY .controller_video-settings__vL60f .controller_video-controller__MqNia {
   -webkit-box-sizing: border-box;
