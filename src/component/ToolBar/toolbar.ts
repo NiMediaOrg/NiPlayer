@@ -4,6 +4,7 @@ import {
   ComponentItem,
   DOMProps,
   Player,
+  Progress,
 } from "../../index";
 import { addClass, includeClass, removeClass } from "../../utils/domUtils";
 import "./toolbar.less";
@@ -12,6 +13,7 @@ export class ToolBar extends Component implements ComponentItem {
   readonly id: string = "Toolbar";
   props: DOMProps;
   player: Player;
+  progress: Progress;
   private timer: number = 0;
   // 先初始化播放器的默认样式，暂时不考虑用户的自定义样式
   constructor(player:Player, container:HTMLElement, desc?: string, props?:DOMProps, children?:Node[]) {
@@ -24,6 +26,7 @@ export class ToolBar extends Component implements ComponentItem {
   init() {
     this.initTemplate();
     this.initEvent();
+    this.initComponent();
   }
 
   /**
@@ -31,6 +34,10 @@ export class ToolBar extends Component implements ComponentItem {
    */
   initTemplate() {
     addClass(this.el,["video-controls","video-controls-hidden"]);
+  }
+
+  initComponent() {
+    this.progress = new Progress(this.player,this.el,"div.video-progress");
   }
 
   initEvent() {

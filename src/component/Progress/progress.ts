@@ -5,6 +5,7 @@ import { ComponentItem, DOMProps } from "../../types/Player";
 import { Dot } from "./parts/Dot";
 import { CompletedProgress } from "./parts/CompletedProgress";
 import { BufferedProgress } from "./parts/BufferedProgress";
+import "./progress.less"
 
 export class Progress extends Component implements ComponentItem {
   readonly id = "Progress";
@@ -22,10 +23,11 @@ export class Progress extends Component implements ComponentItem {
 
   init() {
     this.initComponent();
+    this.initEvent();
   }
 
   initComponent() {
-    this.dot = new Dot(this.player,this.el,"div.video-progress");
+    this.dot = new Dot(this.player,this.el,"div");
     this.completedProgress = new CompletedProgress(this.player,this.el,"div.video-completed");
     this.bufferedProgress = new BufferedProgress(this.player,this.el,"div.video-buffered");
   }

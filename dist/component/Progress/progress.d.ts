@@ -5,6 +5,7 @@ import { ComponentItem, DOMProps } from "../../types/Player";
 import { Dot } from "./parts/Dot";
 import { CompletedProgress } from "./parts/CompletedProgress";
 import { BufferedProgress } from "./parts/BufferedProgress";
+import "./progress.less";
 export declare class Progress extends Component implements ComponentItem {
     readonly id = "Progress";
     private mouseDown;

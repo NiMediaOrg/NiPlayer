@@ -3,16 +3,10 @@ export * from "./types/EventObject"
 export * from "./types/dash/MpdFile"
 export * from "./class/BaseEvent"
 export * from "./page/player";
-export * from "./component/Player/mp4-player"
-export * from "./component/Player/mpd-player"
 export * from "./component/ToolBar/ToolBar";
 export * from "./component/Progress/Progress";
 export * from "./component/Controller/controller";
-export * from "./component/LoadingMask/loading-mask";
-export * from "./component/ErrorMask/error-mask";
 export * from "./utils/warn";
 export * from "./utils/format";
 export * from "./utils/typeCheck"
 export * from "./utils/typeSwtich"
-export * from "./styles/style";
-export * from "./styles/icon";

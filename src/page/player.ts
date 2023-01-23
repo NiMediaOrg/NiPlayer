@@ -36,15 +36,15 @@ class Player extends Component implements ComponentItem{
   }
 
   initEvent() {
-    this.video.onmousemove = (e) => {
+    this.el.onmousemove = (e) => {
       this.emit("showtoolbar",e);
     }
 
-    this.video.onmouseenter = (e) => {
+    this.el.onmouseenter = (e) => {
       this.emit("showtoolbar",e);
     }
 
-    this.video.onmouseleave = (e) => {
+    this.el.onmouseleave = (e) => {
       this.emit("hidetoolbar",e);
     }
 
