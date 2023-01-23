@@ -56,6 +56,14 @@ class Player extends Component implements ComponentItem{
       this.emit("timeupdate",e);
     }
 
+    this.video.onplay = (e) => {
+      this.emit("play",e);
+    }
+
+    this.video.onpause = (e) => {
+      this.emit("pause",e);
+    }
+
     this.on("progress-click",(e,ctx)=>{
       let scale = e.offsetX / ctx.el.offsetWidth;
       if (scale < 0) {

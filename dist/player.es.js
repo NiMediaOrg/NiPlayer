@@ -92,6 +92,17 @@ function getElementSize(dom) {
     parent.removeChild(clone);
     return rect;
 }
+const svgNS = 'http://www.w3.org/2000/svg';
+function createSvg(d, viewBox = '0 0 1024 1024') {
+    const svg = document.createElementNS(svgNS, 'svg');
+    svg.setAttribute('viewBox', viewBox);
+    if (d) {
+        const path = document.createElementNS(svgNS, 'path');
+        path.setAttributeNS(null, 'd', d);
+        svg.appendChild(path);
+    }
+    return svg;
+}
 
 class Component extends BaseEvent {
     constructor(container, desc, props, children) {
@@ -143,6 +154,12 @@ class Player extends Component {
         this.video.ontimeupdate = (e) => {
             this.emit("timeupdate", e);
         };
+        this.video.onplay = (e) => {
+            this.emit("play", e);
+        };
+        this.video.onpause = (e) => {
+            this.emit("pause", e);
+        };
         this.on("progress-click", (e, ctx) => {
             let scale = e.offsetX / ctx.el.offsetWidth;
             if (scale < 0) {
@@ -172,8 +189,8 @@ class ToolBar extends Component {
     }
     init() {
         this.initTemplate();
-        this.initEvent();
         this.initComponent();
+        this.initEvent();
     }
     /**
      * @description 需要注意的是此处元素的class名字是官方用于控制整体toolbar一栏的显示和隐藏
@@ -183,6 +200,7 @@ class ToolBar extends Component {
     }
     initComponent() {
         this.progress = new Progress(this.player, this.el, "div.video-progress");
+        this.controller = new Controller(this.player, this.el, "div.video-play");
     }
     initEvent() {
         this.player.on("showtoolbar", (e) => {
@@ -465,10 +483,67 @@ class Progress extends Component {
 //   }
 // }
 
+const playPath = "M254.132978 880.390231c-6.079462 0-12.155854-1.511423-17.643845-4.497431-11.828396-6.482645-19.195178-18.85851-19.195178-32.341592L217.293955 180.465165c0-13.483082 7.366781-25.898857 19.195178-32.346709 11.787464-6.483668 26.226315-5.928013 37.57478 1.363044L789.797957 481.028615c10.536984 6.77531 16.908088 18.456351 16.908088 30.979572 0 12.523221-6.371104 24.203238-16.908088 30.982642L274.063913 874.53385C267.983427 878.403994 261.060761 880.390231 254.132978 880.390231L254.132978 880.390231zM254.132978 880.390231";
+const pausePath = "M304 176h80v672h-80zM712 176h-64c-4.4 0-8 3.6-8 8v656c0 4.4 3.6 8 8 8h64c4.4 0 8-3.6 8-8V184c0-4.4-3.6-8-8-8z";
+
+class PlayButton extends Component {
+    constructor(player, container, desc, props, children) {
+        super(container, desc, props, children);
+        this.id = "PlayButton";
+        this.player = player;
+        this.init();
+    }
+    init() {
+        this.initTemplate();
+        this.initEvent();
+    }
+    initTemplate() {
+        this.pauseIcon = createSvg(pausePath);
+        this.playIcon = createSvg(playPath);
+        this.button = this.playIcon;
+        this.el.appendChild(this.button);
+    }
+    initEvent() {
+        this.player.on("play", (e) => {
+            this.el.removeChild(this.button);
+            this.button = this.pauseIcon;
+            this.el.appendChild(this.button);
+        });
+        this.player.on("pause", (e) => {
+            this.el.removeChild(this.button);
+            this.button = this.playIcon;
+            this.el.appendChild(this.button);
+        });
+        this.el.onclick = (e) => {
+            if (this.player.video.paused) {
+                this.player.video.play();
+            }
+            else {
+                this.player.video.pause();
+            }
+        };
+    }
+}
+
 class Controller extends Component {
     constructor(player, container, desc, props, children) {
         super(container, desc, props, children);
         this.id = "Controller";
+        this.player = player;
+        this.init();
+    }
+    init() {
+        this.initTemplate();
+        this.initComponent();
+    }
+    initTemplate() {
+        this.subPlay = $("div.video-subplay");
+        this.settings = $("div.video-settings");
+        this.el.appendChild(this.subPlay);
+        this.el.appendChild(this.settings);
+    }
+    initComponent() {
+        this.playButton = new PlayButton(this.player, this.subPlay, "div.video-start-pause");
     }
 }
 
