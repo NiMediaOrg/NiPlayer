@@ -29,6 +29,7 @@ export const styles = {
     "video-volume-completed":"controller_video-volume-completed__R0FaX",
     "video-volume-dot":"controller_video-volume-dot__6sC-V",
     "video-playrate-set":"controller_video-playrate-set__FH52z",
+    "video-icon":"controller_video-icon__zlaGJ",
     "loading-mask":"",
     "loading-container":"",
     "loading-item":"",

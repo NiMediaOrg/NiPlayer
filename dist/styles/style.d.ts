@@ -29,6 +29,7 @@ export declare const styles: {
     "video-volume-completed": string;
     "video-volume-dot": string;
     "video-playrate-set": string;
+    "video-icon": string;
     "loading-mask": string;
     "loading-container": string;
     "loading-item": string;

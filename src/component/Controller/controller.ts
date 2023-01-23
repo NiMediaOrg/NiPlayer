@@ -9,7 +9,7 @@ import {
 import { volumeSVG } from "../SVGTool/VolumeModel";
 import { settingSVG } from "../SVGTool/SettingsModel";
 import { fullScreenSVG } from "../SVGTool/FullScreenModel";
-import { checkIsMouseInRange, getDOMPoint } from "../../utils/getDOMPoint";
+import { checkIsMouseInRange, getDOMPoint } from "../../utils/domUtils";
 import "./controller.less";
 export class Controller extends BaseEvent {
   private template_: HTMLElement | string;
@@ -51,7 +51,7 @@ export class Controller extends BaseEvent {
                 <div class="${styles["video-duration"]}">
                     <span class="${styles["video-duration-completed"]}">00:00</span>&nbsp;/&nbsp;<span class="${styles["video-duration-all"]}">00:00</span>
                 </div>
-           </div>
+            </div>
             <div class="${styles["video-settings"]}">
                 <div class="${styles["video-resolvepower"]} ${styles["video-controller"]}" aria-label="分辨率">
                     分辨率
@@ -82,13 +82,13 @@ export class Controller extends BaseEvent {
                         <div class="${styles["video-volume-dot"]}" style="bottom: 100%"></div>
                       </div>
                     </div>
-                    ${volumeSVG}
+                    <div class="${styles["video-icon"]}">${volumeSVG}</div>
                 </div>
                 <div class="${styles["video-subsettings"]} ${styles["video-controller"]}" aria-label="设置">
-                    ${settingSVG}
+                  <div class="${styles["video-icon"]}">${settingSVG}</div>
                 </div>
                 <div class="${styles["video-fullscreen"]} ${styles["video-controller"]}" aria-label="全屏">
-                    ${fullScreenSVG}
+                  <div class="${styles["video-icon"]}">${fullScreenSVG}</div>  
                 </div>
             </div>
         </div>
@@ -164,7 +164,7 @@ export class Controller extends BaseEvent {
     this.volumeDot.onmousedown = (e:MouseEvent) => {
       let mouseY = e.pageY;
       let comHeight = this.volumeCompleted.clientHeight;
-      document.body.onmousemove = (e:MouseEvent) => {
+      document.onmousemove = (e:MouseEvent) => {
         let pageY = e.pageY;
         let scale = (mouseY - pageY + comHeight) / this.volumeProgress.clientHeight;
         if(scale > 1) scale = 1;
@@ -173,8 +173,8 @@ export class Controller extends BaseEvent {
         this.volumeDot.style.bottom = this.volumeProgress.clientHeight * scale - 6 + "px";
         this.video.volume = scale;
       }
-      document.body.onmouseup = () => {
-        document.body.onmousemove = null;
+      document.onmouseup = () => {
+        document.onmousemove = null;
       }
       e.preventDefault();
     }
@@ -247,6 +247,7 @@ export class Controller extends BaseEvent {
       if(!checkIsMouseInRange(ctx.resolvePower,ctx.resolvePowerSet,pX,pY)) {
         ctx.resolvePowerSet.style.display = "none";
         document.body.onmousemove = null;
+        document.onmousemove = null;
       }
     }
   }

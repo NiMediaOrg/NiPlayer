@@ -59,7 +59,6 @@ export default defineConfig([
         ],
         // extract: true
         extract: 'css/index.css',
-        modules: true
       })
     ],
   },

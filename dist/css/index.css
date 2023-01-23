@@ -1,12 +1,12 @@
-.player_video-container__ndwL- {
+.video-container {
   position: relative;
   overflow: hidden;
 }
-.player_video-container__ndwL- .player_video-wrapper__zkaDS {
+.video-container .video-wrapper {
   width: 100%;
   height: 100%;
 }
-.player_video-container__ndwL- .player_video-wrapper__zkaDS video {
+.video-container .video-wrapper video {
   width: 100%;
   height: 100%;
 }
@@ -16,33 +16,33 @@
   /* Project id 3797258 */
   src: url("//at.alicdn.com/t/c/font_3797258_88colj2uuv9.woff2?t=1670043636699") format("woff2"), url("//at.alicdn.com/t/c/font_3797258_88colj2uuv9.woff?t=1670043636699") format("woff"), url("//at.alicdn.com/t/c/font_3797258_88colj2uuv9.ttf?t=1670043636699") format("truetype");
 }
-.main_iconfont__23ooR {
+.iconfont {
   font-family: "iconfont" !important;
   font-size: 16px;
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
-.main_icon-cuowutishi__fy-Bm:before {
+.icon-cuowutishi:before {
   content: "\e656";
 }
-.main_icon-shezhi__y-8S0:before {
+.icon-shezhi:before {
   content: "\e64b";
 }
-.main_icon-quanping__eGMiv:before {
+.icon-quanping:before {
   content: "\eb11";
 }
-.main_icon-yinliang__ZFc2R:before {
+.icon-yinliang:before {
   content: "\e63c";
 }
-.main_icon-zanting__BtGq5:before {
+.icon-zanting:before {
   content: "\e87a";
 }
-.main_icon-bofang__SU-ss:before {
+.icon-bofang:before {
   content: "\e87c";
 }
 
-.toolbar_video-controls__z6g6I {
+.video-controls {
   position: absolute;
   bottom: 0;
   left: 0;
@@ -55,66 +55,11 @@
   transition: all 0.3s ease;
   z-index: 1000;
 }
-.toolbar_video-controls-hidden__Fyvfe {
+.video-controls-hidden {
   height: 5px;
 }
 
-.pregress_video-progress__QjWkP {
-  width: 100%;
-  height: 5px;
-  background-color: hsla(0, 0%, 100%, 0.2);
-  cursor: pointer;
-  position: relative;
-}
-.pregress_video-progress__QjWkP .pregress_video-pretime__JInJt {
-  position: absolute;
-  left: 0;
-  top: -18px;
-  height: 15px;
-  width: 35px;
-  background-color: rgba(0, 0, 0, 0.6);
-  color: #fff;
-  line-height: 15px;
-  text-align: center;
-  font-size: 10px;
-  display: none;
-}
-.pregress_video-progress__QjWkP .pregress_video-buffered__N25SV {
-  left: 0;
-  height: 100%;
-  width: 0;
-  z-index: 1001;
-  position: absolute;
-  background-color: hsla(0, 0%, 100%, 0.3);
-  border-top-right-radius: 3px;
-  border-bottom-right-radius: 3px;
-}
-.pregress_video-progress__QjWkP .pregress_video-completed__CnWX- {
-  position: absolute;
-  background-color: #00a1d6;
-  height: 100%;
-  border-top-right-radius: 3px;
-  border-bottom-right-radius: 3px;
-  left: 0;
-  width: 0;
-  z-index: 1002;
-}
-.pregress_video-progress__QjWkP .pregress_video-dot-hidden__SceSE {
-  opacity: 0;
-  -webkit-transition: all 0.6s ease;
-  transition: all 0.6s ease;
-}
-.pregress_video-progress__QjWkP .pregress_video-dot__giuCI {
-  position: absolute;
-  left: 0px;
-  top: 50%;
-  -webkit-transform: translateY(-9px);
-          transform: translateY(-9px);
-  cursor: pointer;
-  z-index: 1003;
-}
-
-.controller_video-play__fP3BY {
+.video-play {
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -129,7 +74,7 @@
           justify-content: space-between;
   padding: 15px 5px 0 5px;
 }
-.controller_video-play__fP3BY .controller_video-subplay__WTnV2 {
+.video-play .video-subplay {
   margin-left: 10px;
   display: -webkit-box;
   display: -webkit-flex;
@@ -141,7 +86,7 @@
           align-items: center;
   height: 22px;
 }
-.controller_video-play__fP3BY .controller_video-subplay__WTnV2 .controller_video-start-pause__MAW2N {
+.video-play .video-subplay .video-start-pause {
   height: 100%;
   margin-right: 5px;
   cursor: pointer;
@@ -154,10 +99,10 @@
       -ms-flex-align: center;
           align-items: center;
 }
-.controller_video-play__fP3BY .controller_video-subplay__WTnV2 .controller_video-start-pause__MAW2N i {
+.video-play .video-subplay .video-start-pause i {
   font-size: 20px!important;
 }
-.controller_video-play__fP3BY .controller_video-subplay__WTnV2 .controller_video-duration__4mxGN {
+.video-play .video-subplay .video-duration {
   margin-left: 5px;
   height: 100%;
   display: -webkit-box;
@@ -170,7 +115,7 @@
           align-items: center;
   font-size: 12px;
 }
-.controller_video-play__fP3BY .controller_video-settings__vL60f {
+.video-play .video-settings {
   position: relative;
   margin-right: 10px;
   display: -webkit-box;
@@ -186,14 +131,14 @@
   fill: hsla(0, 0%, 100%, 0.8);
   height: 22px;
 }
-.controller_video-play__fP3BY .controller_video-settings__vL60f .controller_video-subsettings__lRckv svg {
+.video-play .video-settings .video-subsettings svg {
   -webkit-transition: fill 0.15s ease-in-out;
   transition: fill 0.15s ease-in-out;
 }
-.controller_video-play__fP3BY .controller_video-settings__vL60f .controller_video-volume__6xzJB {
+.video-play .video-settings .video-volume {
   position: relative;
 }
-.controller_video-play__fP3BY .controller_video-settings__vL60f .controller_video-volume__6xzJB .controller_video-volume-set__MZ1ks {
+.video-play .video-settings .video-volume .video-volume-set {
   position: absolute;
   bottom: 41px;
   left: 50%;
@@ -204,7 +149,7 @@
   background: rgba(21, 21, 21, 0.9);
   border-radius: 2px;
 }
-.controller_video-play__fP3BY .controller_video-settings__vL60f .controller_video-volume__6xzJB .controller_video-volume-set__MZ1ks .controller_video-volume-show__uRgS1 {
+.video-play .video-settings .video-volume .video-volume-set .video-volume-show {
   width: 100%;
   height: 15px;
   padding-top: 5px;
@@ -212,7 +157,7 @@
   line-height: 15px;
   font-size: 12px;
 }
-.controller_video-play__fP3BY .controller_video-settings__vL60f .controller_video-volume__6xzJB .controller_video-volume-set__MZ1ks .controller_video-voulme-progress__QAOAm {
+.video-play .video-settings .video-volume .video-volume-set .video-voulme-progress {
   width: 2px;
   height: calc(100% - 20px - 10px);
   margin-top: 8px;
@@ -231,12 +176,12 @@
       -ms-flex-direction: column-reverse;
           flex-direction: column-reverse;
 }
-.controller_video-play__fP3BY .controller_video-settings__vL60f .controller_video-volume__6xzJB .controller_video-volume-set__MZ1ks .controller_video-voulme-progress__QAOAm .controller_video-volume-completed__R0FaX {
+.video-play .video-settings .video-volume .video-volume-set .video-voulme-progress .video-volume-completed {
   height: 50%;
   width: 100%;
   background-color: #00a1d6;
 }
-.controller_video-play__fP3BY .controller_video-settings__vL60f .controller_video-volume__6xzJB .controller_video-volume-set__MZ1ks .controller_video-voulme-progress__QAOAm .controller_video-volume-dot__6sC-V {
+.video-play .video-settings .video-volume .video-volume-set .video-voulme-progress .video-volume-dot {
   width: 12px;
   height: 12px;
   border-radius: 50%;
@@ -247,10 +192,10 @@
           transform: translateX(-50%);
   z-index: 1003;
 }
-.controller_video-play__fP3BY .controller_video-settings__vL60f .controller_video-playrate__lmym3 {
+.video-play .video-settings .video-playrate {
   position: relative;
 }
-.controller_video-play__fP3BY .controller_video-settings__vL60f .controller_video-playrate__lmym3 .controller_video-playrate-set__FH52z {
+.video-play .video-settings .video-playrate .video-playrate-set {
   border-radius: 2px;
   bottom: 41px;
   background-color: rgba(21, 21, 21, 0.9);
@@ -267,7 +212,7 @@
   list-style: none;
   outline: none;
 }
-.controller_video-play__fP3BY .controller_video-settings__vL60f .controller_video-playrate__lmym3 .controller_video-playrate-set__FH52z li {
+.video-play .video-settings .video-playrate .video-playrate-set li {
   color: #fff;
   text-align: center;
   height: 36px;
@@ -276,13 +221,13 @@
   font-weight: 500;
   cursor: pointer;
 }
-.controller_video-play__fP3BY .controller_video-settings__vL60f .controller_video-playrate__lmym3 .controller_video-playrate-set__FH52z li:hover {
+.video-play .video-settings .video-playrate .video-playrate-set li:hover {
   background-color: #C9CCD0;
 }
-.controller_video-play__fP3BY .controller_video-settings__vL60f .controller_video-resolvepower__yDRda {
+.video-play .video-settings .video-resolvepower {
   position: relative;
 }
-.controller_video-play__fP3BY .controller_video-settings__vL60f .controller_video-resolvepower__yDRda .controller_video-resolvepower-set__mWs9u {
+.video-play .video-settings .video-resolvepower .video-resolvepower-set {
   list-style: none;
   outline: none;
   border-radius: 2px;
@@ -297,7 +242,7 @@
   cursor: pointer;
   display: none;
 }
-.controller_video-play__fP3BY .controller_video-settings__vL60f .controller_video-resolvepower__yDRda .controller_video-resolvepower-set__mWs9u li {
+.video-play .video-settings .video-resolvepower .video-resolvepower-set li {
   width: 145px;
   padding: 0 12px;
   height: 36px;
@@ -314,17 +259,17 @@
   font-weight: 500;
   color: #fff;
 }
-.controller_video-play__fP3BY .controller_video-settings__vL60f .controller_video-resolvepower__yDRda .controller_video-resolvepower-set__mWs9u li:hover {
+.video-play .video-settings .video-resolvepower .video-resolvepower-set li:hover {
   background-color: #C9CCD0;
 }
-.controller_video-play__fP3BY .controller_video-settings__vL60f .controller_video-playrate__lmym3,
-.controller_video-play__fP3BY .controller_video-settings__vL60f .controller_video-resolvepower__yDRda {
+.video-play .video-settings .video-playrate,
+.video-play .video-settings .video-resolvepower {
   font-size: 14px;
   font-weight: 550;
   color: #fff;
   margin: 0 10px;
 }
-.controller_video-play__fP3BY .controller_video-settings__vL60f .controller_video-controller__MqNia {
+.video-play .video-settings .video-controller {
   -webkit-box-sizing: border-box;
           box-sizing: border-box;
   min-width: 33px;
@@ -344,5 +289,9 @@
   cursor: pointer;
   color: #fff;
   opacity: 0.9;
+}
+.video-play .video-settings .video-controller .video-icon {
+  height: 100%;
+  width: 100%;
 }
 
