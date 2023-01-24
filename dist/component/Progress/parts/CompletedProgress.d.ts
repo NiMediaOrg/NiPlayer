@@ -8,5 +8,5 @@ export declare class CompletedProgress extends Component implements ComponentIte
     constructor(player: Player, container: HTMLElement, desc?: string, props?: DOMProps, children?: Node[]);
     init(): void;
     initEvent(): void;
-    onChangeWidth(e: MouseEvent, ctx: Component): void;
+    onChangeSize(e: MouseEvent, ctx: Component): void;
 }

@@ -17,6 +17,41 @@ class BaseEvent {
     }
 }
 
+function getDOMPoint(dom) {
+    var t = 0;
+    var l = 0;
+    //判断是否有父容器，如果存在则累加其边距
+    while (dom !== document.body) {
+        t += dom.offsetTop; //叠加父容器的上边距
+        l += dom.offsetLeft; //叠加父容器的左边距
+        //if(dom.style.borderLeftWidth) l += Number(dom.style.borderLeftWidth);
+        //if(dom.style.borderTopWidth) t += Number(dom.style.borderTopWidth);
+        dom = dom.parentNode;
+    }
+    return { x: l, y: t };
+}
+/**
+ * @description 查看当前的鼠标位置是否在父元素和绝对定位的子元素的组合范围内，如果超出则返回false
+ * @param parent
+ * @param topChild
+ * @param pageX
+ * @param pageY
+ * @returns {boolean}
+ */
+function checkIsMouseInRange(parent, topChild, pageX, pageY) {
+    let { x, y } = getDOMPoint(parent);
+    let allTop = y - parseInt(topChild.style.bottom) - topChild.clientHeight;
+    let allBottom = y + parent.clientHeight;
+    let allLeft = x + Math.round(parent.clientWidth / 2) - Math.round(topChild.clientWidth / 2);
+    let allRight = x + Math.round(parent.clientWidth / 2) + Math.round(topChild.clientWidth / 2);
+    let parentLeft = x;
+    let parentRight = x + parent.clientWidth;
+    if (pageX >= allLeft && pageX <= allRight && pageY <= y && pageY >= allTop)
+        return true;
+    if (pageX >= parentLeft - 5 && pageX <= parentRight + 5 && pageY >= y && pageY <= allBottom)
+        return true;
+    return false;
+}
 const SELECTOR_REG = /([\w-]+)?(?:#([\w-]+))?(?:\.([\w-]+))?/;
 /**
  * @description 根据desc的标签描述和props的属性描述来创建一个DOM对象，并且在实例上挂载各种属性
@@ -289,10 +324,11 @@ class CompletedProgress extends Component {
     }
     initEvent() {
         this.player.on("progress-click", (e, ctx) => {
-            this.onChangeWidth(e, ctx);
+            this.onChangeSize(e, ctx);
         });
+        // this.player.on("volume-progress-click",(e:MouseEvent,ctx:))
     }
-    onChangeWidth(e, ctx) {
+    onChangeSize(e, ctx) {
         let scale = e.offsetX / ctx.el.offsetWidth;
         if (scale < 0) {
             scale = 0;
@@ -525,6 +561,88 @@ class PlayButton extends Component {
     }
 }
 
+class Options extends Component {
+    constructor(player, container, hideWidth, hideHeight, desc, props, children) {
+        super(container, desc, props, children);
+        this.id = "Options";
+        this.player = player;
+        props ? (this.props = props) : (this.props = null);
+        this.hideHeight = hideHeight;
+        this.hideWidth = hideWidth;
+        this.initBase();
+    }
+    initBase() {
+        this.initBaseTemplate();
+        this.initBaseEvent();
+    }
+    initBaseTemplate() {
+        this.hideBox = $("div", { style: { display: "none" } });
+        if (this.hideHeight && this.hideHeight > 0) {
+            this.hideBox.style.height = this.hideHeight + 'px';
+        }
+        if (this.hideWidth && this.hideWidth > 0) {
+            this.hideBox.style.width = this.hideWidth + 'px';
+        }
+        this.el.appendChild(this.hideBox);
+        this.iconBox = $("div");
+        this.el.appendChild(this.iconBox);
+    }
+    initBaseEvent() {
+        this.el.onmouseenter = (e) => {
+            let ctx = this;
+            ctx.hideBox.style.display = "";
+            document.body.onmousemove = ctx.handleMouseMove.bind(this);
+        };
+    }
+    handleMouseMove(e) {
+        let pX = e.pageX, pY = e.pageY;
+        let ctx = this;
+        if (!checkIsMouseInRange(ctx.el, ctx.hideBox, pX, pY)) {
+            ctx.hideBox.style.display = "none";
+            document.body.onmousemove = null;
+        }
+    }
+}
+
+class Volume extends Options {
+    constructor(player, container, desc, props, children) {
+        super(player, container, 0, 0, desc);
+        this.id = "Volume";
+        this.init();
+    }
+    init() {
+        this.initTemplate();
+        this.initEvent();
+    }
+    initTemplate() {
+        this.el["aria-label"] = "音量";
+        this.hideBox.style.bottom = "41px";
+        addClass(this.hideBox, ["video-volume-set"]);
+        this.volumeProgress = $("div.video-volume-progress", { style: { height: "70px" } });
+        this.volumeShow = $("div.video-volume-show");
+        this.volumeShow.innerText = "50";
+        this.volumeCompleted = new CompletedProgress(this.player, this.volumeProgress, "div.video-volume-completed");
+        this.hideBox.appendChild(this.volumeShow);
+        this.hideBox.appendChild(this.volumeProgress);
+    }
+    initEvent() {
+        this.player.on("volume-progress-click", (e, ctx) => {
+            let offsetY = this.volumeProgress.clientHeight - e.offsetY;
+            let scale = offsetY / this.volumeProgress.clientHeight;
+            if (scale < 0) {
+                scale = 0;
+            }
+            else if (scale > 1) {
+                scale = 1;
+            }
+            this.volumeCompleted.el.style.height = scale * 100 + "%";
+        });
+        this.volumeProgress.onclick = (e) => {
+            this.player.emit("volume-progress-click", e, this);
+        };
+    }
+}
+
 class Controller extends Component {
     constructor(player, container, desc, props, children) {
         super(container, desc, props, children);
@@ -544,6 +662,8 @@ class Controller extends Component {
     }
     initComponent() {
         this.playButton = new PlayButton(this.player, this.subPlay, "div.video-start-pause");
+        this.volume = new Volume(this.player, this.settings, "div");
+        addClass(this.volume.el, ["video-volume", "video-controller"]);
     }
 }
 

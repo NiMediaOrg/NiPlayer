@@ -9,7 +9,7 @@ export type PlayerOptions = {
 export type DOMProps = {
     className?: string[] | {[key:string]:boolean};
     id?: string;
-    style?: CSSStyleDeclaration;
+    style?: Partial<CSSStyleDeclaration>;
     [props:string]: any;
 }
 

@@ -221,8 +221,9 @@
   line-height: 15px;
   font-size: 12px;
 }
-.video-play .video-settings .video-volume .video-volume-set .video-voulme-progress {
-  width: 2px;
+.video-play .video-settings .video-volume .video-volume-set .video-volume-progress {
+  border-radius: 2px;
+  width: 5px;
   height: calc(100% - 20px - 10px);
   margin-top: 8px;
   margin-left: 50%;
@@ -240,12 +241,12 @@
       -ms-flex-direction: column-reverse;
           flex-direction: column-reverse;
 }
-.video-play .video-settings .video-volume .video-volume-set .video-voulme-progress .video-volume-completed {
+.video-play .video-settings .video-volume .video-volume-set .video-volume-progress .video-volume-completed {
   height: 50%;
   width: 100%;
   background-color: #00a1d6;
 }
-.video-play .video-settings .video-volume .video-volume-set .video-voulme-progress .video-volume-dot {
+.video-play .video-settings .video-volume .video-volume-set .video-volume-progress .video-volume-dot {
   width: 12px;
   height: 12px;
   border-radius: 50%;

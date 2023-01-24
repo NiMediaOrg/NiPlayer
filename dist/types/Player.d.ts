@@ -10,7 +10,7 @@ export type DOMProps = {
         [key: string]: boolean;
     };
     id?: string;
-    style?: CSSStyleDeclaration;
+    style?: Partial<CSSStyleDeclaration>;
     [props: string]: any;
 };
 export interface ComponentItem {
