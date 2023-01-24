@@ -36,3 +36,4 @@ export declare function getElementSize(dom: HTMLElement): {
 };
 export declare function createSvg(d?: string, viewBox?: string): SVGSVGElement;
 export declare function setSvgPath(svg: SVGSVGElement, d: string): void;
+export declare function createSvgs(d: string[], viewBox?: string): SVGSVGElement;

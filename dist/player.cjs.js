@@ -142,6 +142,16 @@ function createSvg(d, viewBox = '0 0 1024 1024') {
     }
     return svg;
 }
+function createSvgs(d, viewBox = '0 0 1024 1024') {
+    const svg = document.createElementNS(svgNS, 'svg');
+    svg.setAttribute('viewBox', viewBox);
+    for (let str of d) {
+        const path = document.createElementNS(svgNS, 'path');
+        path.setAttributeNS(null, 'd', str);
+        svg.appendChild(path);
+    }
+    return svg;
+}
 
 class Component extends BaseEvent {
     constructor(container, desc, props, children) {
@@ -525,6 +535,8 @@ class Progress extends Component {
 
 const playPath = "M254.132978 880.390231c-6.079462 0-12.155854-1.511423-17.643845-4.497431-11.828396-6.482645-19.195178-18.85851-19.195178-32.341592L217.293955 180.465165c0-13.483082 7.366781-25.898857 19.195178-32.346709 11.787464-6.483668 26.226315-5.928013 37.57478 1.363044L789.797957 481.028615c10.536984 6.77531 16.908088 18.456351 16.908088 30.979572 0 12.523221-6.371104 24.203238-16.908088 30.982642L274.063913 874.53385C267.983427 878.403994 261.060761 880.390231 254.132978 880.390231L254.132978 880.390231zM254.132978 880.390231";
 const pausePath = "M304 176h80v672h-80zM712 176h-64c-4.4 0-8 3.6-8 8v656c0 4.4 3.6 8 8 8h64c4.4 0 8-3.6 8-8V184c0-4.4-3.6-8-8-8z";
+const volumePath$1 = "M318.577778 352.711111h-156.444445c-31.288889 0-56.888889 25.6-56.888889 56.888889v206.222222c0 31.288889 25.6 56.888889 56.888889 56.888889h156.444445L512 866.133333c27.022222 27.022222 72.533333 8.533333 72.533333-29.866666V187.733333c0-38.4-45.511111-56.888889-72.533333-29.866666L318.577778 352.711111z m210.488889 448L359.822222 631.466667c-11.377778-11.377778-25.6-17.066667-39.822222-17.066667h-156.444444V409.6h156.444444c15.644444 0 29.866667-5.688889 39.822222-17.066667l169.244445-169.244444v577.422222zM642.844444 341.333333v8.533334c0 7.111111 4.266667 14.222222 9.955556 19.911111 41.244444 34.133333 66.844444 85.333333 66.844444 142.222222s-25.6 108.088889-66.844444 142.222222c-5.688889 4.266667-9.955556 11.377778-9.955556 19.911111v8.533334c0 21.333333 24.177778 32.711111 41.244445 19.911111 56.888889-44.088889 92.444444-112.355556 92.444444-190.577778 0-76.8-35.555556-145.066667-92.444444-190.577778-17.066667-12.8-41.244444-1.422222-41.244445 19.911111z";
+const volumePath$2 = "M642.844444 183.466667c0 11.377778 7.111111 21.333333 17.066667 25.6 118.044444 49.777778 201.955556 166.4 201.955556 301.511111 0 136.533333-83.911111 253.155556-201.955556 301.511111-9.955556 4.266667-17.066667 14.222222-17.066667 25.6 0 19.911111 21.333333 34.133333 39.822223 25.6 137.955556-58.311111 236.088889-194.844444 236.088889-354.133333S822.044444 213.333333 682.666667 155.022222c-18.488889-5.688889-39.822222 8.533333-39.822223 28.444445z";
 
 class PlayButton extends Component {
     constructor(player, container, desc, props, children) {
@@ -628,10 +640,14 @@ class Volume extends Options {
         this.volumeCompleted = new CompletedProgress(this.player, this.volumeProgress, "div.video-volume-completed");
         this.hideBox.appendChild(this.volumeShow);
         this.hideBox.appendChild(this.volumeProgress);
+        addClass(this.iconBox, ["video-icon"]);
+        let svg = createSvgs([volumePath$1, volumePath$2]);
+        this.iconBox.appendChild(svg);
     }
     initEvent() {
         this.player.on("volume-progress-click", (e, ctx) => {
-            let offsetY = this.volumeProgress.clientHeight - e.offsetY;
+            let eoffsetY = e.pageY - getDOMPoint(this.volumeProgress).y;
+            let offsetY = this.volumeProgress.clientHeight - eoffsetY;
             let scale = offsetY / this.volumeProgress.clientHeight;
             if (scale < 0) {
                 scale = 0;

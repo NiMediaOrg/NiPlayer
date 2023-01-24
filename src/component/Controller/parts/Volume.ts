@@ -1,8 +1,9 @@
 import { Options } from "./Options";
 import { Player } from "../../../page/player";
 import { DOMProps, Node } from "../../../types/Player";
-import { $, addClass } from "../../../utils/domUtils";
+import { $, addClass, createSvg, createSvgs, getDOMPoint } from "../../../utils/domUtils";
 import { CompletedProgress } from "../../Progress/parts/CompletedProgress";
+import { volumePath$1, volumePath$2 } from "../path/defaultPath";
 
 export class Volume extends Options{
     readonly id = "Volume";
@@ -29,11 +30,16 @@ export class Volume extends Options{
         this.volumeCompleted = new CompletedProgress(this.player,this.volumeProgress,"div.video-volume-completed");
         this.hideBox.appendChild(this.volumeShow);
         this.hideBox.appendChild(this.volumeProgress);
+
+        addClass(this.iconBox,["video-icon"]);
+        let svg = createSvgs([volumePath$1,volumePath$2]);
+        this.iconBox.appendChild(svg);
     }
 
     initEvent() {
         this.player.on("volume-progress-click",(e: MouseEvent,ctx: Volume) => {
-            let offsetY = this.volumeProgress.clientHeight - e.offsetY;
+            let eoffsetY = e.pageY - getDOMPoint(this.volumeProgress).y;
+            let offsetY = this.volumeProgress.clientHeight - eoffsetY;
             let scale = offsetY / this.volumeProgress.clientHeight;
             if (scale < 0) {
                 scale = 0;

@@ -245,6 +245,7 @@
   height: 50%;
   width: 100%;
   background-color: #00a1d6;
+  position: absolute;
 }
 .video-play .video-settings .video-volume .video-volume-set .video-volume-progress .video-volume-dot {
   width: 12px;
@@ -256,6 +257,13 @@
   -webkit-transform: translateX(-50%);
           transform: translateX(-50%);
   z-index: 1003;
+}
+.video-play .video-settings .video-volume .video-icon svg {
+  height: 20px;
+  width: 20px;
+}
+.video-play .video-settings .video-volume .video-icon svg path {
+  fill: #fff;
 }
 .video-play .video-settings .video-playrate {
   position: relative;
