@@ -178,6 +178,7 @@ class Player extends Component {
         options.container.className = "video-container";
         options.container.style.width = this.playerOptions.width + "px";
         options.container.style.height = this.playerOptions.height + "px";
+        this.container = options.container;
         this.init();
     }
     init() {
@@ -537,6 +538,46 @@ const playPath = "M254.132978 880.390231c-6.079462 0-12.155854-1.511423-17.64384
 const pausePath = "M304 176h80v672h-80zM712 176h-64c-4.4 0-8 3.6-8 8v656c0 4.4 3.6 8 8 8h64c4.4 0 8-3.6 8-8V184c0-4.4-3.6-8-8-8z";
 const volumePath$1 = "M318.577778 352.711111h-156.444445c-31.288889 0-56.888889 25.6-56.888889 56.888889v206.222222c0 31.288889 25.6 56.888889 56.888889 56.888889h156.444445L512 866.133333c27.022222 27.022222 72.533333 8.533333 72.533333-29.866666V187.733333c0-38.4-45.511111-56.888889-72.533333-29.866666L318.577778 352.711111z m210.488889 448L359.822222 631.466667c-11.377778-11.377778-25.6-17.066667-39.822222-17.066667h-156.444444V409.6h156.444444c15.644444 0 29.866667-5.688889 39.822222-17.066667l169.244445-169.244444v577.422222zM642.844444 341.333333v8.533334c0 7.111111 4.266667 14.222222 9.955556 19.911111 41.244444 34.133333 66.844444 85.333333 66.844444 142.222222s-25.6 108.088889-66.844444 142.222222c-5.688889 4.266667-9.955556 11.377778-9.955556 19.911111v8.533334c0 21.333333 24.177778 32.711111 41.244445 19.911111 56.888889-44.088889 92.444444-112.355556 92.444444-190.577778 0-76.8-35.555556-145.066667-92.444444-190.577778-17.066667-12.8-41.244444-1.422222-41.244445 19.911111z";
 const volumePath$2 = "M642.844444 183.466667c0 11.377778 7.111111 21.333333 17.066667 25.6 118.044444 49.777778 201.955556 166.4 201.955556 301.511111 0 136.533333-83.911111 253.155556-201.955556 301.511111-9.955556 4.266667-17.066667 14.222222-17.066667 25.6 0 19.911111 21.333333 34.133333 39.822223 25.6 137.955556-58.311111 236.088889-194.844444 236.088889-354.133333S822.044444 213.333333 682.666667 155.022222c-18.488889-5.688889-39.822222 8.533333-39.822223 28.444445z";
+const fullscreenPath = "M290 236.4l43.9-43.9c4.7-4.7 1.9-12.8-4.7-13.6L169 160c-5.1-0.6-9.5 3.7-8.9 8.9L179 329.1c0.8 6.6 8.9 9.4 13.6 4.7l43.7-43.7L370 423.7c3.1 3.1 8.2 3.1 11.3 0l42.4-42.3c3.1-3.1 3.1-8.2 0-11.3L290 236.4zM642.7 423.7c3.1 3.1 8.2 3.1 11.3 0l133.7-133.6 43.7 43.7c4.7 4.7 12.8 1.9 13.6-4.7L863.9 169c0.6-5.1-3.7-9.5-8.9-8.9L694.8 179c-6.6 0.8-9.4 8.9-4.7 13.6l43.9 43.9L600.3 370c-3.1 3.1-3.1 8.2 0 11.3l42.4 42.4zM845 694.9c-0.8-6.6-8.9-9.4-13.6-4.7l-43.7 43.7L654 600.3c-3.1-3.1-8.2-3.1-11.3 0l-42.4 42.3c-3.1 3.1-3.1 8.2 0 11.3L734 787.6l-43.9 43.9c-4.7 4.7-1.9 12.8 4.7 13.6L855 864c5.1 0.6 9.5-3.7 8.9-8.9L845 694.9zM381.3 600.3c-3.1-3.1-8.2-3.1-11.3 0L236.3 733.9l-43.7-43.7c-4.7-4.7-12.8-1.9-13.6 4.7L160.1 855c-0.6 5.1 3.7 9.5 8.9 8.9L329.2 845c6.6-0.8 9.4-8.9 4.7-13.6L290 787.6 423.7 654c3.1-3.1 3.1-8.2 0-11.3l-42.4-42.4z";
+const fullscreenExitPath = "M391 240.9c-0.8-6.6-8.9-9.4-13.6-4.7l-43.7 43.7L200 146.3c-3.1-3.1-8.2-3.1-11.3 0l-42.4 42.3c-3.1 3.1-3.1 8.2 0 11.3L280 333.6l-43.9 43.9c-4.7 4.7-1.9 12.8 4.7 13.6L401 410c5.1 0.6 9.5-3.7 8.9-8.9L391 240.9zM401.1 614.1L240.8 633c-6.6 0.8-9.4 8.9-4.7 13.6l43.9 43.9L146.3 824c-3.1 3.1-3.1 8.2 0 11.3l42.4 42.3c3.1 3.1 8.2 3.1 11.3 0L333.7 744l43.7 43.7c4.7 4.7 12.8 1.9 13.6-4.7l18.9-160.1c0.6-5.1-3.7-9.4-8.8-8.8zM622.9 409.9L783.2 391c6.6-0.8 9.4-8.9 4.7-13.6L744 333.6 877.7 200c3.1-3.1 3.1-8.2 0-11.3l-42.4-42.3c-3.1-3.1-8.2-3.1-11.3 0L690.3 279.9l-43.7-43.7c-4.7-4.7-12.8-1.9-13.6 4.7L614.1 401c-0.6 5.2 3.7 9.5 8.8 8.9zM744 690.4l43.9-43.9c4.7-4.7 1.9-12.8-4.7-13.6L623 614c-5.1-0.6-9.5 3.7-8.9 8.9L633 783.1c0.8 6.6 8.9 9.4 13.6 4.7l43.7-43.7L824 877.7c3.1 3.1 8.2 3.1 11.3 0l42.4-42.3c3.1-3.1 3.1-8.2 0-11.3L744 690.4z";
+
+class FullScreen extends Component {
+    constructor(player, container, desc, props, children) {
+        super(container, desc, props, children);
+        this.id = "FullScreen";
+        this.player = player;
+        this.init();
+    }
+    init() {
+        this.initTemplate();
+        this.initEvent();
+    }
+    initTemplate() {
+        addClass(this.el, ["video-fullscreen", "video-controller"]);
+    }
+    initEvent() {
+        this.el.onclick = this.onClick.bind(this);
+        addClass(this.el, ["video-fullscreen", "video-controller"]);
+        this.iconBox = $("div.video-icon");
+        this.icon = createSvg(fullscreenPath);
+        this.iconBox.appendChild(this.icon);
+        this.el.appendChild(this.iconBox);
+    }
+    onClick(e) {
+        if (this.player.container.requestFullscreen && !document.fullscreenElement) {
+            this.player.container.requestFullscreen(); //该函数请求全屏
+            this.iconBox.removeChild(this.icon);
+            this.icon = createSvg(fullscreenExitPath);
+            this.iconBox.appendChild(this.icon);
+        }
+        else if (document.fullscreenElement) {
+            document.exitFullscreen(); //退出全屏函数仅仅绑定在document对象上，该点需要切记！！！
+            this.iconBox.removeChild(this.icon);
+            this.icon = createSvg(fullscreenPath);
+            this.iconBox.appendChild(this.icon);
+        }
+    }
+}
 
 class PlayButton extends Component {
     constructor(player, container, desc, props, children) {
@@ -620,6 +661,36 @@ class Options extends Component {
     }
 }
 
+/**
+ * @description 播放速率的类
+ */
+class Playrate extends Options {
+    constructor(player, container, desc, props, children) {
+        super(player, container, 0, 0, desc);
+        this.id = "Playrate";
+        this.init();
+    }
+    init() {
+        this.initTemplate();
+    }
+    initTemplate() {
+        this.el["aria-label"] = "播放倍速";
+        addClass(this.el, ["video-playrate", "video-controller"]);
+        this.el.removeChild(this.iconBox);
+        this.iconBox = $("span", null, "倍速");
+        this.el.appendChild(this.iconBox);
+        this.el.removeChild(this.hideBox);
+        this.hideBox = $("ul", { style: { bottom: "41px" }, "aria-label": "播放速度调节" });
+        addClass(this.hideBox, ["video-playrate-set"]);
+        this.el.appendChild(this.hideBox);
+        for (let i = 0; i < 6; i++) {
+            let li = $("li");
+            li.innerText = "2.0x";
+            this.hideBox.appendChild(li);
+        }
+    }
+}
+
 class Volume extends Options {
     constructor(player, container, desc, props, children) {
         super(player, container, 0, 0, desc);
@@ -682,7 +753,9 @@ class Controller extends Component {
     }
     initComponent() {
         this.playButton = new PlayButton(this.player, this.subPlay, "div.video-start-pause");
+        this.playrate = new Playrate(this.player, this.settings, "div");
         this.volume = new Volume(this.player, this.settings, "div");
+        this.fullscreen = new FullScreen(this.player, this.settings, "div");
         addClass(this.volume.el, ["video-volume", "video-controller"]);
     }
 }

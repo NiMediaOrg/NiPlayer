@@ -201,12 +201,21 @@
 }
 .video-play .video-settings .video-volume {
   position: relative;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+      -ms-flex-align: center;
+          align-items: center;
 }
 .video-play .video-settings .video-volume .video-volume-set {
   position: absolute;
   bottom: 41px;
   left: 50%;
-  margin-left: -16px;
+  -webkit-transform: translateX(-16px);
+          transform: translateX(-16px);
   width: 32px;
   height: 100px;
   padding-bottom: 8px;
@@ -246,6 +255,7 @@
   width: 100%;
   background-color: #00a1d6;
   position: absolute;
+  left: 0;
 }
 .video-play .video-settings .video-volume .video-volume-set .video-volume-progress .video-volume-dot {
   width: 12px;
@@ -265,8 +275,23 @@
 .video-play .video-settings .video-volume .video-icon svg path {
   fill: #fff;
 }
+.video-play .video-settings .video-fullscreen .video-icon svg {
+  height: 20px;
+  width: 20px;
+}
+.video-play .video-settings .video-fullscreen .video-icon svg path {
+  fill: #fff;
+}
 .video-play .video-settings .video-playrate {
   position: relative;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+      -ms-flex-align: center;
+          align-items: center;
 }
 .video-play .video-settings .video-playrate .video-playrate-set {
   border-radius: 2px;
@@ -296,6 +321,10 @@
 }
 .video-play .video-settings .video-playrate .video-playrate-set li:hover {
   background-color: #C9CCD0;
+}
+.video-play .video-settings .video-playrate span {
+  width: 100%;
+  height: 100%;
 }
 .video-play .video-settings .video-resolvepower {
   position: relative;

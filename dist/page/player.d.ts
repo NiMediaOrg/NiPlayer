@@ -12,6 +12,7 @@ declare class Player extends Component implements ComponentItem {
     };
     video: HTMLVideoElement;
     toolBar: ToolBar;
+    container: HTMLElement;
     constructor(options: PlayerOptions);
     init(): void;
     initEvent(): void;

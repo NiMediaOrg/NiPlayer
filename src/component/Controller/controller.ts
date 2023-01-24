@@ -3,7 +3,9 @@ import { Player } from "../../page/player";
 import { ComponentItem, DOMProps,Node } from "../../types/Player";
 import { $, addClass } from "../../utils/domUtils";
 import "./controller.less";
+import { FullScreen } from "./parts/FullScreen";
 import { PlayButton } from "./parts/PlayButton";
+import { Playrate } from "./parts/Playrate";
 import { Volume } from "./parts/Volume";
 export class Controller extends Component implements ComponentItem {
   readonly id = "Controller";
@@ -12,7 +14,9 @@ export class Controller extends Component implements ComponentItem {
   props: DOMProps;
   player: Player;
   playButton: PlayButton;
+  fullscreen: FullScreen;
   volume: Volume;
+  playrate: Playrate;
   constructor(player:Player,container:HTMLElement, desc?:string,props?:DOMProps,children?:Node[]) {
     super(container,desc,props,children);
     this.player = player;
@@ -33,7 +37,9 @@ export class Controller extends Component implements ComponentItem {
 
   initComponent() {
     this.playButton = new PlayButton(this.player,this.subPlay,"div.video-start-pause");
+    this.playrate = new Playrate(this.player,this.settings,"div")
     this.volume = new Volume(this.player,this.settings,"div");
+    this.fullscreen = new FullScreen(this.player,this.settings,"div");
     addClass(this.volume.el,["video-volume","video-controller"])
   }
   // private template_: HTMLElement | string;

@@ -18,12 +18,14 @@ class Player extends Component implements ComponentItem{
   };
   video: HTMLVideoElement;
   toolBar: ToolBar;
+  container: HTMLElement;
   constructor(options: PlayerOptions) {
     super(options.container,"div.video-wrapper");
     this.playerOptions = Object.assign(this.playerOptions, options);
     options.container.className = "video-container";
     options.container.style.width = this.playerOptions.width + "px";
     options.container.style.height = this.playerOptions.height + "px"
+    this.container = options.container;
     this.init();
   }
 
