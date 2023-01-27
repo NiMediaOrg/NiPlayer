@@ -1,13 +1,16 @@
 import {
   ComponentItem,
+  DOMProps,
   PlayerOptions,
   ToolBar,
 } from "../index";
 import "./player.less";
 import "../main.less";
 import { Component } from "../class/Component";
-import { $ } from "../utils/domUtils";
-class Player extends Component implements ComponentItem{
+import { $, patchComponent } from "../utils/domUtils";
+import { Plugin } from "../index";
+import { CONTROL_COMPONENT_STORE } from "../utils/store";
+class Player extends Component implements ComponentItem {
   readonly id = "Player";
   // 播放器的默认配置
   readonly playerOptions = {
@@ -19,6 +22,7 @@ class Player extends Component implements ComponentItem{
   video: HTMLVideoElement;
   toolBar: ToolBar;
   container: HTMLElement;
+  props: DOMProps;
   constructor(options: PlayerOptions) {
     super(options.container,"div.video-wrapper");
     this.playerOptions = Object.assign(this.playerOptions, options);
@@ -80,6 +84,23 @@ class Player extends Component implements ComponentItem{
 
   attendSource(url: string) {
     this.video.src = url;
+  }
+
+  registerControls(id:string, component:Partial<ComponentItem>) {
+    let store = CONTROL_COMPONENT_STORE;
+    if(store.has(id)) {
+      patchComponent(store.get(id),component);
+    } else {
+
+    }
+  }
+
+  /**
+   * @description 注册对应的组件
+   * @param plugin 
+   */
+  use(plugin: Plugin) {
+    plugin.install(this);
   }
 }
 

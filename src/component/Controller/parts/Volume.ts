@@ -4,12 +4,14 @@ import { DOMProps, Node } from "../../../types/Player";
 import { $, addClass, createSvg, createSvgs, getDOMPoint } from "../../../utils/domUtils";
 import { CompletedProgress } from "../../Progress/parts/CompletedProgress";
 import { volumePath$1, volumePath$2 } from "../path/defaultPath";
+import { storeControlComponent } from "../../../utils/store";
 
 export class Volume extends Options{
     readonly id = "Volume";
     volumeProgress: HTMLElement;
     volumeShow: HTMLElement;
     volumeCompleted: CompletedProgress;
+    icon: SVGSVGElement;
     constructor(player: Player,container: HTMLElement, desc?: string, props?: DOMProps,children?: Node[]) {
         super(player,container,0,0,desc);
         this.init();
@@ -18,6 +20,8 @@ export class Volume extends Options{
     init() {
         this.initTemplate();
         this.initEvent();
+
+        storeControlComponent(this);
     }
 
     initTemplate() {
@@ -32,8 +36,8 @@ export class Volume extends Options{
         this.hideBox.appendChild(this.volumeProgress);
 
         addClass(this.iconBox,["video-icon"]);
-        let svg = createSvgs([volumePath$1,volumePath$2]);
-        this.iconBox.appendChild(svg);
+        this.icon = createSvgs([volumePath$1,volumePath$2]);
+        this.iconBox.appendChild(this.icon);
     }
 
     initEvent() {

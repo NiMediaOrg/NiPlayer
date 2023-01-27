@@ -1,4 +1,4 @@
-import { DOMProps, Node } from "../types/Player";
+import { ComponentItem, DOMProps, Node, registerOptions } from "../types/Player";
 export declare function getDOMPoint(dom: HTMLElement): {
     x: number;
     y: number;
@@ -37,3 +37,12 @@ export declare function getElementSize(dom: HTMLElement): {
 export declare function createSvg(d?: string, viewBox?: string): SVGSVGElement;
 export declare function setSvgPath(svg: SVGSVGElement, d: string): void;
 export declare function createSvgs(d: string[], viewBox?: string): SVGSVGElement;
+/**
+ * @description 合并两个组件的实例对象
+ * @param target
+ * @param another
+ */
+export declare function patchComponent(target: ComponentItem, another: Partial<ComponentItem>, options?: registerOptions): void;
+export declare function patchDOMProps(targetProps: DOMProps, anotherProps: DOMProps, el: HTMLElement): void;
+export declare function patchStyle(targetStyle: Partial<CSSStyleDeclaration>, anotherStyle: Partial<CSSStyleDeclaration>, el: HTMLElement): void;
+export declare function patchFn<T extends Function>(targetFn: T, another: T, context: ComponentItem): void;

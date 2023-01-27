@@ -1,4 +1,4 @@
-import { DOMProps, Node } from "../types/Player";
+import { ComponentItem, DOMProps, Node, registerOptions } from "../types/Player";
 export function getDOMPoint(dom:HTMLElement):{x:number,y:number} {
     var t = 0; 
     var l = 0; 
@@ -166,4 +166,94 @@ export function createSvgs(d:string[], viewBox = '0 0 1024 1024'): SVGSVGElement
         svg.appendChild(path);
     }
     return svg;
+}
+/**
+ * @description 合并两个组件的实例对象
+ * @param target 
+ * @param another 
+ */
+export function patchComponent(
+    target: ComponentItem, 
+    another: Partial<ComponentItem>, 
+    options:registerOptions = {replaceElementType:"replaceOuterHTMLOfComponent"}
+) {
+    if(target.id !== another.id) throw new Error("需要合并的两个组件的id不相同");
+    for(let key in target) {
+        if(another.hasOwnProperty(key)) {
+            if(key === 'props') {
+                patchDOMProps(target[key],another[key],target.el);
+            } else if(key === 'el') {
+                if(options.replaceElementType === "replaceOuterHTMLOfComponent") {
+                    target.el = another.el;
+                } else {
+                    for(let child of target.el.childNodes) {
+                        target.el.removeChild(child);
+                    }
+                    target.el.appendChild(another.el);
+                }
+            } else {
+                if(target[key] instanceof Function) {
+                    if(!(another[key] instanceof Function)) {
+                        throw new Error(`属性${key}对应的值应该为函数类型`);
+                    }
+                    patchFn(target[key],another[key],target);
+                } else if(target[key] instanceof HTMLElement) {
+                    if(!(another[key] instanceof HTMLElement) && typeof another[key] !== 'string') {
+                        throw new Error(`属性${key}对应的值应该为DOM元素或者字符串类型`);
+                    }
+                    if(typeof another[key] === 'string') {
+                        
+                        
+                    } else {
+                        (target[key] as HTMLElement).parentNode?.insertBefore(another[key],target[key]);
+                        (target[key] as HTMLElement).parentNode?.removeChild(target[key]);
+                        target[key] = another[key];
+                    }
+                    
+                }
+            }
+        } 
+    }
+}
+
+export function patchDOMProps(targetProps: DOMProps,anotherProps:DOMProps,el:HTMLElement) {
+    for(let key in anotherProps) {
+        if(targetProps.hasOwnProperty(key)) {
+            if(key === 'id') {
+                targetProps.id = anotherProps.id;
+                el.id = targetProps.id;
+            } else if(key === "className") {
+                targetProps.className.concat(anotherProps.className);
+                addClass(el,anotherProps.className);
+            } else if(key === "style") {
+                patchStyle(targetProps.style,anotherProps.style,el);
+            }
+        } else {
+            targetProps[key] = anotherProps[key];
+            if(key !== "style") { 
+                el[key] = anotherProps[key];
+            } else if(key === "style") {
+                for(let prop in anotherProps['style']) {
+                    el.style[prop] = anotherProps['style'][prop];
+                }
+            }
+        }
+    }
+}
+
+export function patchStyle(
+    targetStyle: Partial<CSSStyleDeclaration>,
+    anotherStyle: Partial<CSSStyleDeclaration>,
+    el: HTMLElement
+) {
+    for(let key in anotherStyle) {
+        targetStyle[key] = anotherStyle[key];
+    } 
+    for(let key in targetStyle) {
+        el.style[key] = targetStyle[key];
+    }
+}
+
+export function patchFn<T extends Function>(targetFn: T,another : T, context: ComponentItem) {
+    
 }

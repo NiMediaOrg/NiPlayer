@@ -2,6 +2,7 @@ import { Component } from "../../../class/Component"
 import { Player } from "../../../page/player";
 import { ComponentItem, DOMProps,Node } from "../../../types/Player";
 import { createSvg } from "../../../utils/domUtils";
+import { storeControlComponent } from "../../../utils/store";
 import { pausePath, playPath } from "../path/defaultPath";
 
 export class PlayButton extends Component implements ComponentItem {
@@ -20,6 +21,7 @@ export class PlayButton extends Component implements ComponentItem {
     init() {
         this.initTemplate();
         this.initEvent();
+        storeControlComponent(this);
     }
 
     initTemplate() {
@@ -30,6 +32,7 @@ export class PlayButton extends Component implements ComponentItem {
     }
 
     initEvent() {
+        this.onClick = this.onClick.bind(this);
         this.player.on("play",(e:Event) => {
             this.el.removeChild(this.button);
             this.button = this.pauseIcon as SVGSVGElement;
@@ -42,12 +45,14 @@ export class PlayButton extends Component implements ComponentItem {
             this.el.appendChild(this.button);
         })
 
-        this.el.onclick = (e) => {
-            if(this.player.video.paused) {
-                this.player.video.play();
-            } else {
-                this.player.video.pause();
-            }
+        this.el.onclick = this.onClick.bind(this);
+    }
+
+    onClick(e:MouseEvent) {
+        if(this.player.video.paused) {
+            this.player.video.play();
+        } else {
+            this.player.video.pause();
         }
     }
 }

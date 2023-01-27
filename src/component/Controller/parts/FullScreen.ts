@@ -2,6 +2,7 @@ import { Component } from "../../../class/Component";
 import { Player } from "../../../page/player";
 import { ComponentItem, DOMProps, Node } from "../../../types/Player";
 import { $, addClass, createSvg } from "../../../utils/domUtils";
+import { storeControlComponent } from "../../../utils/store";
 import { fullscreenExitPath, fullscreenPath } from "../path/defaultPath";
 
 export class FullScreen extends Component implements ComponentItem{
@@ -19,6 +20,7 @@ export class FullScreen extends Component implements ComponentItem{
     init() {
         this.initTemplate();
         this.initEvent();
+        storeControlComponent(this);
     }
 
     initTemplate() {
@@ -26,7 +28,8 @@ export class FullScreen extends Component implements ComponentItem{
     }
     
     initEvent() {
-        this.el.onclick = this.onClick.bind(this);
+        this.onClick = this.onClick.bind(this);
+        this.el.onclick = this.onClick;
         addClass(this.el,["video-fullscreen","video-controller"]);
         this.iconBox = $("div.video-icon");
         this.icon = createSvg(fullscreenPath);

@@ -7,6 +7,7 @@ export declare class Volume extends Options {
     volumeProgress: HTMLElement;
     volumeShow: HTMLElement;
     volumeCompleted: CompletedProgress;
+    icon: SVGSVGElement;
     constructor(player: Player, container: HTMLElement, desc?: string, props?: DOMProps, children?: Node[]);
     init(): void;
     initTemplate(): void;

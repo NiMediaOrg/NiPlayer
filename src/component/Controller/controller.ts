@@ -2,6 +2,7 @@ import { Component } from "../../class/Component";
 import { Player } from "../../page/player";
 import { ComponentItem, DOMProps,Node } from "../../types/Player";
 import { $, addClass } from "../../utils/domUtils";
+import { storeControlComponent } from "../../utils/store";
 import "./controller.less";
 import { FullScreen } from "./parts/FullScreen";
 import { PlayButton } from "./parts/PlayButton";
@@ -17,7 +18,7 @@ export class Controller extends Component implements ComponentItem {
   fullscreen: FullScreen;
   volume: Volume;
   playrate: Playrate;
-  constructor(player:Player,container:HTMLElement, desc?:string,props?:DOMProps,children?:Node[]) {
+  constructor(player:Player,container:HTMLElement, desc?:string, props?:DOMProps, children?:Node[]) {
     super(container,desc,props,children);
     this.player = player;
     this.init();
@@ -26,6 +27,8 @@ export class Controller extends Component implements ComponentItem {
   init() {
     this.initTemplate();
     this.initComponent();
+
+    storeControlComponent(this);
   }
 
   initTemplate() {

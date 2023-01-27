@@ -1,3 +1,4 @@
+import { Player } from "../page/player";
 export type PlayerOptions = {
     url: string;
     container: HTMLElement;
@@ -6,9 +7,7 @@ export type PlayerOptions = {
     height?: string;
 };
 export type DOMProps = {
-    className?: string[] | {
-        [key: string]: boolean;
-    };
+    className?: string[];
     id?: string;
     style?: Partial<CSSStyleDeclaration>;
     [props: string]: any;
@@ -16,10 +15,16 @@ export type DOMProps = {
 export interface ComponentItem {
     id: string;
     el: HTMLElement;
-    props?: DOMProps;
+    props: DOMProps;
     [props: string]: any;
 }
 export interface Node {
     id: string;
     el: HTMLElement;
 }
+export type Plugin = {
+    install: (player: Player) => any;
+};
+export type registerOptions = {
+    replaceElementType?: "replaceOuterHTMLOfComponent" | "replaceInnerHTMLOfComponent";
+};

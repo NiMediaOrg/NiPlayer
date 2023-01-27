@@ -154,6 +154,91 @@
       }
       return svg;
   }
+  /**
+   * @description 合并两个组件的实例对象
+   * @param target
+   * @param another
+   */
+  function patchComponent(target, another, options = { replaceElementType: "replaceOuterHTMLOfComponent" }) {
+      var _a, _b;
+      if (target.id !== another.id)
+          throw new Error("需要合并的两个组件的id不相同");
+      for (let key in target) {
+          if (another.hasOwnProperty(key)) {
+              if (key === 'props') {
+                  patchDOMProps(target[key], another[key], target.el);
+              }
+              else if (key === 'el') {
+                  if (options.replaceElementType === "replaceOuterHTMLOfComponent") {
+                      target.el = another.el;
+                  }
+                  else {
+                      for (let child of target.el.childNodes) {
+                          target.el.removeChild(child);
+                      }
+                      target.el.appendChild(another.el);
+                  }
+              }
+              else {
+                  if (target[key] instanceof Function) {
+                      if (!(another[key] instanceof Function)) {
+                          throw new Error(`属性${key}对应的值应该为函数类型`);
+                      }
+                      patchFn(target[key], another[key]);
+                  }
+                  else if (target[key] instanceof HTMLElement) {
+                      if (!(another[key] instanceof HTMLElement) && typeof another[key] !== 'string') {
+                          throw new Error(`属性${key}对应的值应该为DOM元素或者字符串类型`);
+                      }
+                      if (typeof another[key] === 'string') ;
+                      else {
+                          (_a = target[key].parentNode) === null || _a === void 0 ? void 0 : _a.insertBefore(another[key], target[key]);
+                          (_b = target[key].parentNode) === null || _b === void 0 ? void 0 : _b.removeChild(target[key]);
+                          target[key] = another[key];
+                      }
+                  }
+              }
+          }
+      }
+  }
+  function patchDOMProps(targetProps, anotherProps, el) {
+      for (let key in anotherProps) {
+          if (targetProps.hasOwnProperty(key)) {
+              if (key === 'id') {
+                  targetProps.id = anotherProps.id;
+                  el.id = targetProps.id;
+              }
+              else if (key === "className") {
+                  targetProps.className.concat(anotherProps.className);
+                  addClass(el, anotherProps.className);
+              }
+              else if (key === "style") {
+                  patchStyle(targetProps.style, anotherProps.style, el);
+              }
+          }
+          else {
+              targetProps[key] = anotherProps[key];
+              if (key !== "style") {
+                  el[key] = anotherProps[key];
+              }
+              else if (key === "style") {
+                  for (let prop in anotherProps['style']) {
+                      el.style[prop] = anotherProps['style'][prop];
+                  }
+              }
+          }
+      }
+  }
+  function patchStyle(targetStyle, anotherStyle, el) {
+      for (let key in anotherStyle) {
+          targetStyle[key] = anotherStyle[key];
+      }
+      for (let key in targetStyle) {
+          el.style[key] = targetStyle[key];
+      }
+  }
+  function patchFn(targetFn, another, context) {
+  }
 
   class Component extends BaseEvent {
       constructor(container, desc, props, children) {
@@ -163,6 +248,11 @@
           // 安装组件成功
           container.append(dom);
       }
+  }
+
+  const CONTROL_COMPONENT_STORE = new Map();
+  function storeControlComponent(item) {
+      CONTROL_COMPONENT_STORE.set(item.id, item);
   }
 
   class Player extends Component {
@@ -226,6 +316,19 @@
       }
       attendSource(url) {
           this.video.src = url;
+      }
+      registerControls(id, component) {
+          let store = CONTROL_COMPONENT_STORE;
+          if (store.has(id)) {
+              patchComponent(store.get(id), component);
+          }
+      }
+      /**
+       * @description 注册对应的组件
+       * @param plugin
+       */
+      use(plugin) {
+          plugin.install(this);
       }
   }
 
@@ -553,12 +656,14 @@
       init() {
           this.initTemplate();
           this.initEvent();
+          storeControlComponent(this);
       }
       initTemplate() {
           addClass(this.el, ["video-fullscreen", "video-controller"]);
       }
       initEvent() {
-          this.el.onclick = this.onClick.bind(this);
+          this.onClick = this.onClick.bind(this);
+          this.el.onclick = this.onClick;
           addClass(this.el, ["video-fullscreen", "video-controller"]);
           this.iconBox = $("div.video-icon");
           this.icon = createSvg(fullscreenPath);
@@ -591,6 +696,7 @@
       init() {
           this.initTemplate();
           this.initEvent();
+          storeControlComponent(this);
       }
       initTemplate() {
           this.pauseIcon = createSvg(pausePath);
@@ -599,6 +705,7 @@
           this.el.appendChild(this.button);
       }
       initEvent() {
+          this.onClick = this.onClick.bind(this);
           this.player.on("play", (e) => {
               this.el.removeChild(this.button);
               this.button = this.pauseIcon;
@@ -609,14 +716,15 @@
               this.button = this.playIcon;
               this.el.appendChild(this.button);
           });
-          this.el.onclick = (e) => {
-              if (this.player.video.paused) {
-                  this.player.video.play();
-              }
-              else {
-                  this.player.video.pause();
-              }
-          };
+          this.el.onclick = this.onClick.bind(this);
+      }
+      onClick(e) {
+          if (this.player.video.paused) {
+              this.player.video.play();
+          }
+          else {
+              this.player.video.pause();
+          }
       }
   }
 
@@ -674,6 +782,7 @@
       }
       init() {
           this.initTemplate();
+          storeControlComponent(this);
       }
       initTemplate() {
           this.el["aria-label"] = "播放倍速";
@@ -702,6 +811,7 @@
       init() {
           this.initTemplate();
           this.initEvent();
+          storeControlComponent(this);
       }
       initTemplate() {
           this.el["aria-label"] = "音量";
@@ -714,8 +824,8 @@
           this.hideBox.appendChild(this.volumeShow);
           this.hideBox.appendChild(this.volumeProgress);
           addClass(this.iconBox, ["video-icon"]);
-          let svg = createSvgs([volumePath$1, volumePath$2]);
-          this.iconBox.appendChild(svg);
+          this.icon = createSvgs([volumePath$1, volumePath$2]);
+          this.iconBox.appendChild(this.icon);
       }
       initEvent() {
           this.player.on("volume-progress-click", (e, ctx) => {
@@ -746,6 +856,7 @@
       init() {
           this.initTemplate();
           this.initComponent();
+          storeControlComponent(this);
       }
       initTemplate() {
           this.subPlay = $("div.video-subplay");
