@@ -18,4 +18,7 @@ export declare class Progress extends Component implements ComponentItem {
     init(): void;
     initComponent(): void;
     initEvent(): void;
+    onMouseenter(e: MouseEvent): void;
+    onMouseleave(e: MouseEvent): void;
+    onClick(e: MouseEvent): void;
 }

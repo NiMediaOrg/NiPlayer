@@ -1,6 +1,7 @@
 import { Component } from "../../../class/Component";
 import { Player } from "../../../page/player";
 import { ComponentItem, DOMProps, Node} from "../../../types/Player";
+import { storeControlComponent } from "../../../utils/store";
 import { Progress } from "../Progress";
 export class CompletedProgress extends Component implements ComponentItem {
     readonly id = "CompletedProgress";
@@ -8,13 +9,15 @@ export class CompletedProgress extends Component implements ComponentItem {
     player: Player;
     constructor(player:Player,container:HTMLElement,desc?:string,props?:DOMProps,children?:Node[]) {
         super(container, desc, props, children);
-        this.props = props;
+        this.props = props || {};
         this.player = player;
         this.init();
     }
 
     init() {
         this.initEvent();
+
+        storeControlComponent(this);
     }
 
     initEvent() {

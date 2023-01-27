@@ -254,8 +254,6 @@
   height: 50%;
   width: 100%;
   background-color: #00a1d6;
-  position: absolute;
-  left: 0;
 }
 .video-play .video-settings .video-volume .video-volume-set .video-volume-progress .video-volume-dot {
   width: 12px;

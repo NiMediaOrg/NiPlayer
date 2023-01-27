@@ -6,7 +6,7 @@ import { CompletedProgress } from "../../Progress/parts/CompletedProgress";
 import { volumePath$1, volumePath$2 } from "../path/defaultPath";
 import { storeControlComponent } from "../../../utils/store";
 
-export class Volume extends Options{
+export class Volume extends Options {
     readonly id = "Volume";
     volumeProgress: HTMLElement;
     volumeShow: HTMLElement;
@@ -25,6 +25,7 @@ export class Volume extends Options{
     }
 
     initTemplate() {
+        addClass(this.el,["video-volume","video-controller"])
         this.el["aria-label"] = "音量";
         this.hideBox.style.bottom = "41px";
         addClass(this.hideBox,["video-volume-set"]);

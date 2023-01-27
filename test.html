@@ -63,10 +63,12 @@
         // })
         player.use({
             install(player) {
-                player.registerControls("Toolbar",{
-                    id:"Toolbar",
-                    onHideToolBar(e) {
-                        console.log("隐藏工具栏")
+                player.registerControls("Dot",{
+                    id:"Dot",
+                    props:{
+                        style:{
+                            backgroundColor:"blue"
+                        }
                     }
                 })
             }

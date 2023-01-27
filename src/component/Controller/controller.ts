@@ -14,6 +14,7 @@ export class Controller extends Component implements ComponentItem {
   private settings: HTMLElement;
   props: DOMProps = {};
   player: Player;
+  // 控件
   playButton: PlayButton;
   fullscreen: FullScreen;
   volume: Volume;
@@ -40,11 +41,11 @@ export class Controller extends Component implements ComponentItem {
   }
 
   initComponent() {
-    this.playButton = new PlayButton(this.player,this.subPlay,"div.video-start-pause");
+    this.playButton = new PlayButton(this.player,this.subPlay,"div");
     this.playrate = new Playrate(this.player,this.settings,"div")
     this.volume = new Volume(this.player,this.settings,"div");
     this.fullscreen = new FullScreen(this.player,this.settings,"div");
-    addClass(this.volume.el,["video-volume","video-controller"])
+    
   }
   // private template_: HTMLElement | string;
   // private container: HTMLElement;

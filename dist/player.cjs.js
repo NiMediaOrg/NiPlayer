@@ -410,13 +410,14 @@ class Dot extends Component {
     constructor(player, container, desc, props, children) {
         super(container, desc, props, children);
         this.id = "Dot";
-        this.props = props;
+        this.props = props || {};
         this.player = player;
         this.init();
     }
     init() {
         addClass(this.el, ["video-dot", "video-dot-hidden"]);
         this.initEvent();
+        storeControlComponent(this);
     }
     initEvent() {
         this.player.on("progress-mouseenter", (e) => {
@@ -449,12 +450,13 @@ class CompletedProgress extends Component {
     constructor(player, container, desc, props, children) {
         super(container, desc, props, children);
         this.id = "CompletedProgress";
-        this.props = props;
+        this.props = props || {};
         this.player = player;
         this.init();
     }
     init() {
         this.initEvent();
+        storeControlComponent(this);
     }
     initEvent() {
         this.player.on("progress-click", (e, ctx) => {
@@ -478,12 +480,13 @@ class BufferedProgress extends Component {
     constructor(player, container, desc, props, children) {
         super(container, desc, props, children);
         this.id = "BufferedProgress";
-        this.props = props;
+        this.props = props || {};
         this.player = player;
         this.init();
     }
     init() {
         this.initEvent();
+        storeControlComponent(this);
     }
     initEvent() {
         this.player.on("progress-click", (e, ctx) => {
@@ -508,11 +511,13 @@ class Progress extends Component {
         this.id = "Progress";
         this.mouseDown = false;
         this.player = player;
+        this.props = props || {};
         this.init();
     }
     init() {
         this.initComponent();
         this.initEvent();
+        storeControlComponent(this);
     }
     initComponent() {
         this.dot = new Dot(this.player, this.el, "div");
@@ -521,14 +526,23 @@ class Progress extends Component {
     }
     initEvent() {
         this.el.onmouseenter = (e) => {
-            this.player.emit("progress-mouseenter", e, this);
+            this.onMouseenter(e);
         };
         this.el.onmouseleave = (e) => {
-            this.player.emit("progress-mouseleave", e, this);
+            this.onMouseleave(e);
         };
         this.el.onclick = (e) => {
-            this.player.emit("progress-click", e, this);
+            this.onClick(e);
         };
+    }
+    onMouseenter(e) {
+        this.player.emit("progress-mouseenter", e, this);
+    }
+    onMouseleave(e) {
+        this.player.emit("progress-mouseleave", e, this);
+    }
+    onClick(e) {
+        this.player.emit("progress-click", e, this);
     }
 }
 // export class Progress extends BaseEvent {
@@ -715,6 +729,7 @@ class PlayButton extends Component {
         storeControlComponent(this);
     }
     initTemplate() {
+        addClass(this.el, ["video-start-pause"]);
         this.pauseIcon = createSvg(pausePath);
         this.playIcon = createSvg(playPath);
         this.button = this.playIcon;
@@ -836,6 +851,7 @@ class Volume extends Options {
         storeControlComponent(this);
     }
     initTemplate() {
+        addClass(this.el, ["video-volume", "video-controller"]);
         this.el["aria-label"] = "音量";
         this.hideBox.style.bottom = "41px";
         addClass(this.hideBox, ["video-volume-set"]);
@@ -889,11 +905,10 @@ class Controller extends Component {
         this.el.appendChild(this.settings);
     }
     initComponent() {
-        this.playButton = new PlayButton(this.player, this.subPlay, "div.video-start-pause");
+        this.playButton = new PlayButton(this.player, this.subPlay, "div");
         this.playrate = new Playrate(this.player, this.settings, "div");
         this.volume = new Volume(this.player, this.settings, "div");
         this.fullscreen = new FullScreen(this.player, this.settings, "div");
-        addClass(this.volume.el, ["video-volume", "video-controller"]);
     }
 }
 
