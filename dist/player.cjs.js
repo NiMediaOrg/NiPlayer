@@ -262,10 +262,263 @@ class Component extends BaseEvent {
     resetEvent() { }
 }
 
+const playPath = "M254.132978 880.390231c-6.079462 0-12.155854-1.511423-17.643845-4.497431-11.828396-6.482645-19.195178-18.85851-19.195178-32.341592L217.293955 180.465165c0-13.483082 7.366781-25.898857 19.195178-32.346709 11.787464-6.483668 26.226315-5.928013 37.57478 1.363044L789.797957 481.028615c10.536984 6.77531 16.908088 18.456351 16.908088 30.979572 0 12.523221-6.371104 24.203238-16.908088 30.982642L274.063913 874.53385C267.983427 878.403994 261.060761 880.390231 254.132978 880.390231L254.132978 880.390231zM254.132978 880.390231";
+const pausePath = "M304 176h80v672h-80zM712 176h-64c-4.4 0-8 3.6-8 8v656c0 4.4 3.6 8 8 8h64c4.4 0 8-3.6 8-8V184c0-4.4-3.6-8-8-8z";
+const volumePath$1 = "M318.577778 352.711111h-156.444445c-31.288889 0-56.888889 25.6-56.888889 56.888889v206.222222c0 31.288889 25.6 56.888889 56.888889 56.888889h156.444445L512 866.133333c27.022222 27.022222 72.533333 8.533333 72.533333-29.866666V187.733333c0-38.4-45.511111-56.888889-72.533333-29.866666L318.577778 352.711111z m210.488889 448L359.822222 631.466667c-11.377778-11.377778-25.6-17.066667-39.822222-17.066667h-156.444444V409.6h156.444444c15.644444 0 29.866667-5.688889 39.822222-17.066667l169.244445-169.244444v577.422222zM642.844444 341.333333v8.533334c0 7.111111 4.266667 14.222222 9.955556 19.911111 41.244444 34.133333 66.844444 85.333333 66.844444 142.222222s-25.6 108.088889-66.844444 142.222222c-5.688889 4.266667-9.955556 11.377778-9.955556 19.911111v8.533334c0 21.333333 24.177778 32.711111 41.244445 19.911111 56.888889-44.088889 92.444444-112.355556 92.444444-190.577778 0-76.8-35.555556-145.066667-92.444444-190.577778-17.066667-12.8-41.244444-1.422222-41.244445 19.911111z";
+const volumePath$2 = "M642.844444 183.466667c0 11.377778 7.111111 21.333333 17.066667 25.6 118.044444 49.777778 201.955556 166.4 201.955556 301.511111 0 136.533333-83.911111 253.155556-201.955556 301.511111-9.955556 4.266667-17.066667 14.222222-17.066667 25.6 0 19.911111 21.333333 34.133333 39.822223 25.6 137.955556-58.311111 236.088889-194.844444 236.088889-354.133333S822.044444 213.333333 682.666667 155.022222c-18.488889-5.688889-39.822222 8.533333-39.822223 28.444445z";
+const fullscreenPath = "M290 236.4l43.9-43.9c4.7-4.7 1.9-12.8-4.7-13.6L169 160c-5.1-0.6-9.5 3.7-8.9 8.9L179 329.1c0.8 6.6 8.9 9.4 13.6 4.7l43.7-43.7L370 423.7c3.1 3.1 8.2 3.1 11.3 0l42.4-42.3c3.1-3.1 3.1-8.2 0-11.3L290 236.4zM642.7 423.7c3.1 3.1 8.2 3.1 11.3 0l133.7-133.6 43.7 43.7c4.7 4.7 12.8 1.9 13.6-4.7L863.9 169c0.6-5.1-3.7-9.5-8.9-8.9L694.8 179c-6.6 0.8-9.4 8.9-4.7 13.6l43.9 43.9L600.3 370c-3.1 3.1-3.1 8.2 0 11.3l42.4 42.4zM845 694.9c-0.8-6.6-8.9-9.4-13.6-4.7l-43.7 43.7L654 600.3c-3.1-3.1-8.2-3.1-11.3 0l-42.4 42.3c-3.1 3.1-3.1 8.2 0 11.3L734 787.6l-43.9 43.9c-4.7 4.7-1.9 12.8 4.7 13.6L855 864c5.1 0.6 9.5-3.7 8.9-8.9L845 694.9zM381.3 600.3c-3.1-3.1-8.2-3.1-11.3 0L236.3 733.9l-43.7-43.7c-4.7-4.7-12.8-1.9-13.6 4.7L160.1 855c-0.6 5.1 3.7 9.5 8.9 8.9L329.2 845c6.6-0.8 9.4-8.9 4.7-13.6L290 787.6 423.7 654c3.1-3.1 3.1-8.2 0-11.3l-42.4-42.4z";
+const fullscreenExitPath = "M391 240.9c-0.8-6.6-8.9-9.4-13.6-4.7l-43.7 43.7L200 146.3c-3.1-3.1-8.2-3.1-11.3 0l-42.4 42.3c-3.1 3.1-3.1 8.2 0 11.3L280 333.6l-43.9 43.9c-4.7 4.7-1.9 12.8 4.7 13.6L401 410c5.1 0.6 9.5-3.7 8.9-8.9L391 240.9zM401.1 614.1L240.8 633c-6.6 0.8-9.4 8.9-4.7 13.6l43.9 43.9L146.3 824c-3.1 3.1-3.1 8.2 0 11.3l42.4 42.3c3.1 3.1 8.2 3.1 11.3 0L333.7 744l43.7 43.7c4.7 4.7 12.8 1.9 13.6-4.7l18.9-160.1c0.6-5.1-3.7-9.4-8.8-8.8zM622.9 409.9L783.2 391c6.6-0.8 9.4-8.9 4.7-13.6L744 333.6 877.7 200c3.1-3.1 3.1-8.2 0-11.3l-42.4-42.3c-3.1-3.1-8.2-3.1-11.3 0L690.3 279.9l-43.7-43.7c-4.7-4.7-12.8-1.9-13.6 4.7L614.1 401c-0.6 5.2 3.7 9.5 8.8 8.9zM744 690.4l43.9-43.9c4.7-4.7 1.9-12.8-4.7-13.6L623 614c-5.1-0.6-9.5 3.7-8.9 8.9L633 783.1c0.8 6.6 8.9 9.4 13.6 4.7l43.7-43.7L824 877.7c3.1 3.1 8.2 3.1 11.3 0l42.4-42.3c3.1-3.1 3.1-8.2 0-11.3L744 690.4z";
+
+class FullScreen extends Component {
+    constructor(player, container, desc, props, children) {
+        super(container, desc, props, children);
+        this.id = "FullScreen";
+        this.player = player;
+        this.props = props || {};
+        this.init();
+    }
+    init() {
+        this.initTemplate();
+        this.initEvent();
+        storeControlComponent(this);
+    }
+    initTemplate() {
+        addClass(this.el, ["video-fullscreen", "video-controller"]);
+    }
+    initEvent() {
+        this.onClick = this.onClick.bind(this);
+        this.el.onclick = this.onClick;
+        addClass(this.el, ["video-fullscreen", "video-controller"]);
+        this.iconBox = $("div.video-icon");
+        this.icon = createSvg(fullscreenPath);
+        this.iconBox.appendChild(this.icon);
+        this.el.appendChild(this.iconBox);
+    }
+    onClick(e) {
+        if (this.player.container.requestFullscreen && !document.fullscreenElement) {
+            this.player.container.requestFullscreen(); //该函数请求全屏
+            this.iconBox.removeChild(this.icon);
+            this.icon = createSvg(fullscreenExitPath);
+            this.iconBox.appendChild(this.icon);
+        }
+        else if (document.fullscreenElement) {
+            document.exitFullscreen(); //退出全屏函数仅仅绑定在document对象上，该点需要切记！！！
+            this.iconBox.removeChild(this.icon);
+            this.icon = createSvg(fullscreenPath);
+            this.iconBox.appendChild(this.icon);
+        }
+    }
+}
+
+class PlayButton extends Component {
+    constructor(player, container, desc, props, children) {
+        super(container, desc, props, children);
+        this.id = "PlayButton";
+        this.player = player;
+        this.props = props || {};
+        this.init();
+    }
+    init() {
+        this.initTemplate();
+        this.initEvent();
+        storeControlComponent(this);
+    }
+    initTemplate() {
+        addClass(this.el, ["video-start-pause"]);
+        this.pauseIcon = createSvg(pausePath);
+        this.playIcon = createSvg(playPath);
+        this.button = this.playIcon;
+        this.el.appendChild(this.button);
+    }
+    initEvent() {
+        this.onClick = this.onClick.bind(this);
+        this.player.on("play", (e) => {
+            this.el.removeChild(this.button);
+            this.button = this.pauseIcon;
+            this.el.appendChild(this.button);
+        });
+        this.player.on("pause", (e) => {
+            this.el.removeChild(this.button);
+            this.button = this.playIcon;
+            this.el.appendChild(this.button);
+        });
+        this.el.onclick = this.onClick;
+    }
+    resetEvent() {
+        this.onClick = this.onClick.bind(this);
+        this.el.onclick = null;
+        this.el.onclick = this.onClick;
+    }
+    onClick(e) {
+        console.log(this);
+        if (this.player.video.paused) {
+            this.player.video.play();
+        }
+        else {
+            this.player.video.pause();
+        }
+    }
+}
+
+class Options extends Component {
+    constructor(player, container, hideWidth, hideHeight, desc, props, children) {
+        super(container, desc, props, children);
+        this.id = "Options";
+        this.player = player;
+        props ? (this.props = props) : (this.props = {});
+        this.hideHeight = hideHeight;
+        this.hideWidth = hideWidth;
+        this.initBase();
+    }
+    initBase() {
+        this.initBaseTemplate();
+        this.initBaseEvent();
+    }
+    initBaseTemplate() {
+        this.hideBox = $("div", { style: { display: "none" } });
+        if (this.hideHeight && this.hideHeight > 0) {
+            this.hideBox.style.height = this.hideHeight + 'px';
+        }
+        if (this.hideWidth && this.hideWidth > 0) {
+            this.hideBox.style.width = this.hideWidth + 'px';
+        }
+        this.el.appendChild(this.hideBox);
+        this.iconBox = $("div");
+        this.el.appendChild(this.iconBox);
+    }
+    initBaseEvent() {
+        this.el.onmouseenter = (e) => {
+            let ctx = this;
+            ctx.hideBox.style.display = "";
+            document.body.onmousemove = ctx.handleMouseMove.bind(this);
+        };
+    }
+    handleMouseMove(e) {
+        let pX = e.pageX, pY = e.pageY;
+        let ctx = this;
+        if (!checkIsMouseInRange(ctx.el, ctx.hideBox, pX, pY)) {
+            ctx.hideBox.style.display = "none";
+            document.body.onmousemove = null;
+        }
+    }
+}
+
+/**
+ * @description 播放速率的类
+ */
+class Playrate extends Options {
+    constructor(player, container, desc, props, children) {
+        super(player, container, 0, 0, desc);
+        this.id = "Playrate";
+        this.init();
+    }
+    init() {
+        this.initTemplate();
+        storeControlComponent(this);
+    }
+    initTemplate() {
+        this.el["aria-label"] = "播放倍速";
+        addClass(this.el, ["video-playrate", "video-controller"]);
+        this.el.removeChild(this.iconBox);
+        this.iconBox = $("span", null, "倍速");
+        this.el.appendChild(this.iconBox);
+        this.el.removeChild(this.hideBox);
+        this.hideBox = $("ul", { style: { bottom: "41px" }, "aria-label": "播放速度调节" });
+        addClass(this.hideBox, ["video-playrate-set"]);
+        this.el.appendChild(this.hideBox);
+        for (let i = 0; i < 6; i++) {
+            let li = $("li");
+            li.innerText = "2.0x";
+            this.hideBox.appendChild(li);
+        }
+    }
+}
+
+class CompletedProgress extends Component {
+    constructor(player, container, desc, props, children) {
+        super(container, desc, props, children);
+        this.id = "CompletedProgress";
+        this.props = props || {};
+        this.player = player;
+        this.init();
+    }
+    init() {
+        this.initEvent();
+        storeControlComponent(this);
+    }
+    initEvent() {
+        this.player.on("progress-click", (e, ctx) => {
+            this.onChangeSize(e, ctx);
+        });
+        // this.player.on("volume-progress-click",(e:MouseEvent,ctx:))
+    }
+    onChangeSize(e, ctx) {
+        let scale = e.offsetX / ctx.el.offsetWidth;
+        if (scale < 0) {
+            scale = 0;
+        }
+        else if (scale > 1) {
+            scale = 1;
+        }
+        this.el.style.width = scale * 100 + "%";
+    }
+}
+
+class Volume extends Options {
+    constructor(player, container, desc, props, children) {
+        super(player, container, 0, 0, desc);
+        this.id = "Volume";
+        this.init();
+    }
+    init() {
+        this.initTemplate();
+        this.initEvent();
+        storeControlComponent(this);
+    }
+    initTemplate() {
+        addClass(this.el, ["video-volume", "video-controller"]);
+        this.el["aria-label"] = "音量";
+        this.hideBox.style.bottom = "41px";
+        addClass(this.hideBox, ["video-volume-set"]);
+        this.volumeProgress = $("div.video-volume-progress", { style: { height: "70px" } });
+        this.volumeShow = $("div.video-volume-show");
+        this.volumeShow.innerText = "50";
+        this.volumeCompleted = new CompletedProgress(this.player, this.volumeProgress, "div.video-volume-completed");
+        this.hideBox.appendChild(this.volumeShow);
+        this.hideBox.appendChild(this.volumeProgress);
+        addClass(this.iconBox, ["video-icon"]);
+        this.icon = createSvgs([volumePath$1, volumePath$2]);
+        this.iconBox.appendChild(this.icon);
+    }
+    initEvent() {
+        this.player.on("volume-progress-click", (e, ctx) => {
+            let eoffsetY = e.pageY - getDOMPoint(this.volumeProgress).y;
+            let offsetY = this.volumeProgress.clientHeight - eoffsetY;
+            let scale = offsetY / this.volumeProgress.clientHeight;
+            if (scale < 0) {
+                scale = 0;
+            }
+            else if (scale > 1) {
+                scale = 1;
+            }
+            this.volumeCompleted.el.style.height = scale * 100 + "%";
+        });
+        this.volumeProgress.onclick = (e) => {
+            this.player.emit("volume-progress-click", e, this);
+        };
+    }
+}
+
 const CONTROL_COMPONENT_STORE = new Map();
 function storeControlComponent(item) {
     CONTROL_COMPONENT_STORE.set(item.id, item);
 }
+const controllersMapping = {
+    "PlayButton": PlayButton,
+    "Playrate": Playrate,
+    "Volume": Volume,
+    "FullScreen": FullScreen
+};
 
 class Player extends Component {
     constructor(options) {
@@ -443,36 +696,6 @@ class Dot extends Component {
     onChangePos(e, ctx) {
         e.offsetX / ctx.el.offsetWidth;
         this.el.style.left = e.offsetX - getElementSize(this.el).width / 2 + 'px';
-    }
-}
-
-class CompletedProgress extends Component {
-    constructor(player, container, desc, props, children) {
-        super(container, desc, props, children);
-        this.id = "CompletedProgress";
-        this.props = props || {};
-        this.player = player;
-        this.init();
-    }
-    init() {
-        this.initEvent();
-        storeControlComponent(this);
-    }
-    initEvent() {
-        this.player.on("progress-click", (e, ctx) => {
-            this.onChangeSize(e, ctx);
-        });
-        // this.player.on("volume-progress-click",(e:MouseEvent,ctx:))
-    }
-    onChangeSize(e, ctx) {
-        let scale = e.offsetX / ctx.el.offsetWidth;
-        if (scale < 0) {
-            scale = 0;
-        }
-        else if (scale > 1) {
-            scale = 1;
-        }
-        this.el.style.width = scale * 100 + "%";
     }
 }
 
@@ -667,236 +890,58 @@ class Progress extends Component {
 //   }
 // }
 
-const playPath = "M254.132978 880.390231c-6.079462 0-12.155854-1.511423-17.643845-4.497431-11.828396-6.482645-19.195178-18.85851-19.195178-32.341592L217.293955 180.465165c0-13.483082 7.366781-25.898857 19.195178-32.346709 11.787464-6.483668 26.226315-5.928013 37.57478 1.363044L789.797957 481.028615c10.536984 6.77531 16.908088 18.456351 16.908088 30.979572 0 12.523221-6.371104 24.203238-16.908088 30.982642L274.063913 874.53385C267.983427 878.403994 261.060761 880.390231 254.132978 880.390231L254.132978 880.390231zM254.132978 880.390231";
-const pausePath = "M304 176h80v672h-80zM712 176h-64c-4.4 0-8 3.6-8 8v656c0 4.4 3.6 8 8 8h64c4.4 0 8-3.6 8-8V184c0-4.4-3.6-8-8-8z";
-const volumePath$1 = "M318.577778 352.711111h-156.444445c-31.288889 0-56.888889 25.6-56.888889 56.888889v206.222222c0 31.288889 25.6 56.888889 56.888889 56.888889h156.444445L512 866.133333c27.022222 27.022222 72.533333 8.533333 72.533333-29.866666V187.733333c0-38.4-45.511111-56.888889-72.533333-29.866666L318.577778 352.711111z m210.488889 448L359.822222 631.466667c-11.377778-11.377778-25.6-17.066667-39.822222-17.066667h-156.444444V409.6h156.444444c15.644444 0 29.866667-5.688889 39.822222-17.066667l169.244445-169.244444v577.422222zM642.844444 341.333333v8.533334c0 7.111111 4.266667 14.222222 9.955556 19.911111 41.244444 34.133333 66.844444 85.333333 66.844444 142.222222s-25.6 108.088889-66.844444 142.222222c-5.688889 4.266667-9.955556 11.377778-9.955556 19.911111v8.533334c0 21.333333 24.177778 32.711111 41.244445 19.911111 56.888889-44.088889 92.444444-112.355556 92.444444-190.577778 0-76.8-35.555556-145.066667-92.444444-190.577778-17.066667-12.8-41.244444-1.422222-41.244445 19.911111z";
-const volumePath$2 = "M642.844444 183.466667c0 11.377778 7.111111 21.333333 17.066667 25.6 118.044444 49.777778 201.955556 166.4 201.955556 301.511111 0 136.533333-83.911111 253.155556-201.955556 301.511111-9.955556 4.266667-17.066667 14.222222-17.066667 25.6 0 19.911111 21.333333 34.133333 39.822223 25.6 137.955556-58.311111 236.088889-194.844444 236.088889-354.133333S822.044444 213.333333 682.666667 155.022222c-18.488889-5.688889-39.822222 8.533333-39.822223 28.444445z";
-const fullscreenPath = "M290 236.4l43.9-43.9c4.7-4.7 1.9-12.8-4.7-13.6L169 160c-5.1-0.6-9.5 3.7-8.9 8.9L179 329.1c0.8 6.6 8.9 9.4 13.6 4.7l43.7-43.7L370 423.7c3.1 3.1 8.2 3.1 11.3 0l42.4-42.3c3.1-3.1 3.1-8.2 0-11.3L290 236.4zM642.7 423.7c3.1 3.1 8.2 3.1 11.3 0l133.7-133.6 43.7 43.7c4.7 4.7 12.8 1.9 13.6-4.7L863.9 169c0.6-5.1-3.7-9.5-8.9-8.9L694.8 179c-6.6 0.8-9.4 8.9-4.7 13.6l43.9 43.9L600.3 370c-3.1 3.1-3.1 8.2 0 11.3l42.4 42.4zM845 694.9c-0.8-6.6-8.9-9.4-13.6-4.7l-43.7 43.7L654 600.3c-3.1-3.1-8.2-3.1-11.3 0l-42.4 42.3c-3.1 3.1-3.1 8.2 0 11.3L734 787.6l-43.9 43.9c-4.7 4.7-1.9 12.8 4.7 13.6L855 864c5.1 0.6 9.5-3.7 8.9-8.9L845 694.9zM381.3 600.3c-3.1-3.1-8.2-3.1-11.3 0L236.3 733.9l-43.7-43.7c-4.7-4.7-12.8-1.9-13.6 4.7L160.1 855c-0.6 5.1 3.7 9.5 8.9 8.9L329.2 845c6.6-0.8 9.4-8.9 4.7-13.6L290 787.6 423.7 654c3.1-3.1 3.1-8.2 0-11.3l-42.4-42.4z";
-const fullscreenExitPath = "M391 240.9c-0.8-6.6-8.9-9.4-13.6-4.7l-43.7 43.7L200 146.3c-3.1-3.1-8.2-3.1-11.3 0l-42.4 42.3c-3.1 3.1-3.1 8.2 0 11.3L280 333.6l-43.9 43.9c-4.7 4.7-1.9 12.8 4.7 13.6L401 410c5.1 0.6 9.5-3.7 8.9-8.9L391 240.9zM401.1 614.1L240.8 633c-6.6 0.8-9.4 8.9-4.7 13.6l43.9 43.9L146.3 824c-3.1 3.1-3.1 8.2 0 11.3l42.4 42.3c3.1 3.1 8.2 3.1 11.3 0L333.7 744l43.7 43.7c4.7 4.7 12.8 1.9 13.6-4.7l18.9-160.1c0.6-5.1-3.7-9.4-8.8-8.8zM622.9 409.9L783.2 391c6.6-0.8 9.4-8.9 4.7-13.6L744 333.6 877.7 200c3.1-3.1 3.1-8.2 0-11.3l-42.4-42.3c-3.1-3.1-8.2-3.1-11.3 0L690.3 279.9l-43.7-43.7c-4.7-4.7-12.8-1.9-13.6 4.7L614.1 401c-0.6 5.2 3.7 9.5 8.8 8.9zM744 690.4l43.9-43.9c4.7-4.7 1.9-12.8-4.7-13.6L623 614c-5.1-0.6-9.5 3.7-8.9 8.9L633 783.1c0.8 6.6 8.9 9.4 13.6 4.7l43.7-43.7L824 877.7c3.1 3.1 8.2 3.1 11.3 0l42.4-42.3c3.1-3.1 3.1-8.2 0-11.3L744 690.4z";
-
-class FullScreen extends Component {
-    constructor(player, container, desc, props, children) {
-        super(container, desc, props, children);
-        this.id = "FullScreen";
-        this.player = player;
-        this.props = props || {};
-        this.init();
-    }
-    init() {
-        this.initTemplate();
-        this.initEvent();
-        storeControlComponent(this);
-    }
-    initTemplate() {
-        addClass(this.el, ["video-fullscreen", "video-controller"]);
-    }
-    initEvent() {
-        this.onClick = this.onClick.bind(this);
-        this.el.onclick = this.onClick;
-        addClass(this.el, ["video-fullscreen", "video-controller"]);
-        this.iconBox = $("div.video-icon");
-        this.icon = createSvg(fullscreenPath);
-        this.iconBox.appendChild(this.icon);
-        this.el.appendChild(this.iconBox);
-    }
-    onClick(e) {
-        if (this.player.container.requestFullscreen && !document.fullscreenElement) {
-            this.player.container.requestFullscreen(); //该函数请求全屏
-            this.iconBox.removeChild(this.icon);
-            this.icon = createSvg(fullscreenExitPath);
-            this.iconBox.appendChild(this.icon);
-        }
-        else if (document.fullscreenElement) {
-            document.exitFullscreen(); //退出全屏函数仅仅绑定在document对象上，该点需要切记！！！
-            this.iconBox.removeChild(this.icon);
-            this.icon = createSvg(fullscreenPath);
-            this.iconBox.appendChild(this.icon);
-        }
-    }
-}
-
-class PlayButton extends Component {
-    constructor(player, container, desc, props, children) {
-        super(container, desc, props, children);
-        this.id = "PlayButton";
-        this.player = player;
-        this.props = props || {};
-        this.init();
-    }
-    init() {
-        this.initTemplate();
-        this.initEvent();
-        storeControlComponent(this);
-    }
-    initTemplate() {
-        addClass(this.el, ["video-start-pause"]);
-        this.pauseIcon = createSvg(pausePath);
-        this.playIcon = createSvg(playPath);
-        this.button = this.playIcon;
-        this.el.appendChild(this.button);
-    }
-    initEvent() {
-        this.onClick = this.onClick.bind(this);
-        this.player.on("play", (e) => {
-            this.el.removeChild(this.button);
-            this.button = this.pauseIcon;
-            this.el.appendChild(this.button);
-        });
-        this.player.on("pause", (e) => {
-            this.el.removeChild(this.button);
-            this.button = this.playIcon;
-            this.el.appendChild(this.button);
-        });
-        this.el.onclick = this.onClick;
-    }
-    resetEvent() {
-        this.onClick = this.onClick.bind(this);
-        this.el.onclick = null;
-        this.el.onclick = this.onClick;
-    }
-    onClick(e) {
-        console.log(this);
-        if (this.player.video.paused) {
-            this.player.video.play();
-        }
-        else {
-            this.player.video.pause();
-        }
-    }
-}
-
-class Options extends Component {
-    constructor(player, container, hideWidth, hideHeight, desc, props, children) {
-        super(container, desc, props, children);
-        this.id = "Options";
-        this.player = player;
-        props ? (this.props = props) : (this.props = {});
-        this.hideHeight = hideHeight;
-        this.hideWidth = hideWidth;
-        this.initBase();
-    }
-    initBase() {
-        this.initBaseTemplate();
-        this.initBaseEvent();
-    }
-    initBaseTemplate() {
-        this.hideBox = $("div", { style: { display: "none" } });
-        if (this.hideHeight && this.hideHeight > 0) {
-            this.hideBox.style.height = this.hideHeight + 'px';
-        }
-        if (this.hideWidth && this.hideWidth > 0) {
-            this.hideBox.style.width = this.hideWidth + 'px';
-        }
-        this.el.appendChild(this.hideBox);
-        this.iconBox = $("div");
-        this.el.appendChild(this.iconBox);
-    }
-    initBaseEvent() {
-        this.el.onmouseenter = (e) => {
-            let ctx = this;
-            ctx.hideBox.style.display = "";
-            document.body.onmousemove = ctx.handleMouseMove.bind(this);
-        };
-    }
-    handleMouseMove(e) {
-        let pX = e.pageX, pY = e.pageY;
-        let ctx = this;
-        if (!checkIsMouseInRange(ctx.el, ctx.hideBox, pX, pY)) {
-            ctx.hideBox.style.display = "none";
-            document.body.onmousemove = null;
-        }
-    }
-}
-
-/**
- * @description 播放速率的类
- */
-class Playrate extends Options {
-    constructor(player, container, desc, props, children) {
-        super(player, container, 0, 0, desc);
-        this.id = "Playrate";
-        this.init();
-    }
-    init() {
-        this.initTemplate();
-        storeControlComponent(this);
-    }
-    initTemplate() {
-        this.el["aria-label"] = "播放倍速";
-        addClass(this.el, ["video-playrate", "video-controller"]);
-        this.el.removeChild(this.iconBox);
-        this.iconBox = $("span", null, "倍速");
-        this.el.appendChild(this.iconBox);
-        this.el.removeChild(this.hideBox);
-        this.hideBox = $("ul", { style: { bottom: "41px" }, "aria-label": "播放速度调节" });
-        addClass(this.hideBox, ["video-playrate-set"]);
-        this.el.appendChild(this.hideBox);
-        for (let i = 0; i < 6; i++) {
-            let li = $("li");
-            li.innerText = "2.0x";
-            this.hideBox.appendChild(li);
-        }
-    }
-}
-
-class Volume extends Options {
-    constructor(player, container, desc, props, children) {
-        super(player, container, 0, 0, desc);
-        this.id = "Volume";
-        this.init();
-    }
-    init() {
-        this.initTemplate();
-        this.initEvent();
-        storeControlComponent(this);
-    }
-    initTemplate() {
-        addClass(this.el, ["video-volume", "video-controller"]);
-        this.el["aria-label"] = "音量";
-        this.hideBox.style.bottom = "41px";
-        addClass(this.hideBox, ["video-volume-set"]);
-        this.volumeProgress = $("div.video-volume-progress", { style: { height: "70px" } });
-        this.volumeShow = $("div.video-volume-show");
-        this.volumeShow.innerText = "50";
-        this.volumeCompleted = new CompletedProgress(this.player, this.volumeProgress, "div.video-volume-completed");
-        this.hideBox.appendChild(this.volumeShow);
-        this.hideBox.appendChild(this.volumeProgress);
-        addClass(this.iconBox, ["video-icon"]);
-        this.icon = createSvgs([volumePath$1, volumePath$2]);
-        this.iconBox.appendChild(this.icon);
-    }
-    initEvent() {
-        this.player.on("volume-progress-click", (e, ctx) => {
-            let eoffsetY = e.pageY - getDOMPoint(this.volumeProgress).y;
-            let offsetY = this.volumeProgress.clientHeight - eoffsetY;
-            let scale = offsetY / this.volumeProgress.clientHeight;
-            if (scale < 0) {
-                scale = 0;
-            }
-            else if (scale > 1) {
-                scale = 1;
-            }
-            this.volumeCompleted.el.style.height = scale * 100 + "%";
-        });
-        this.volumeProgress.onclick = (e) => {
-            this.player.emit("volume-progress-click", e, this);
-        };
-    }
-}
-
 class Controller extends Component {
+    // playButton: PlayButton;
+    // fullscreen: FullScreen;
+    // volume: Volume;
+    // playrate: Playrate;
     constructor(player, container, desc, props, children) {
         super(container, desc, props, children);
         this.id = "Controller";
         this.props = {};
+        // 控件
+        this.leftControllers = [PlayButton];
+        this.rightController = [Playrate, Volume, FullScreen];
         this.player = player;
         this.props = props || {};
         this.init();
     }
     init() {
+        this.initControllers();
         this.initTemplate();
         this.initComponent();
         storeControlComponent(this);
+    }
+    initControllers() {
+        let leftControllers = this.player.playerOptions.leftControllers;
+        let rightControllers = this.player.playerOptions.rightControllers;
+        if (leftControllers) {
+            this.leftControllers = leftControllers.map(item => {
+                if (typeof item === 'string') {
+                    if (!controllersMapping[item]) {
+                        throw new Error(`传入的组件名${item}错误`);
+                    }
+                    return controllersMapping[item];
+                }
+                else {
+                    return item;
+                }
+            });
+        }
+        if (rightControllers) {
+            this.rightController = rightControllers.map(item => {
+                if (typeof item === 'string') {
+                    if (!controllersMapping[item]) {
+                        throw new Error(`传入的组件名${item}错误`);
+                    }
+                    return controllersMapping[item];
+                }
+                else {
+                    return item;
+                }
+            });
+            console.log(this.rightController);
+        }
     }
     initTemplate() {
         this.subPlay = $("div.video-subplay");
@@ -905,10 +950,14 @@ class Controller extends Component {
         this.el.appendChild(this.settings);
     }
     initComponent() {
-        this.playButton = new PlayButton(this.player, this.subPlay, "div");
-        this.playrate = new Playrate(this.player, this.settings, "div");
-        this.volume = new Volume(this.player, this.settings, "div");
-        this.fullscreen = new FullScreen(this.player, this.settings, "div");
+        this.leftControllers.forEach(ControlConstructor => {
+            let instance = new ControlConstructor(this.player, this.subPlay, "div");
+            this[instance.id] = instance;
+        });
+        this.rightController.forEach(ControlConstructor => {
+            let instance = new ControlConstructor(this.player, this.settings, "div");
+            this[instance.id] = instance;
+        });
     }
 }
 
