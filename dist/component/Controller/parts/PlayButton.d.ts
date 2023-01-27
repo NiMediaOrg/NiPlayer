@@ -12,5 +12,6 @@ export declare class PlayButton extends Component implements ComponentItem {
     init(): void;
     initTemplate(): void;
     initEvent(): void;
+    resetEvent(): void;
     onClick(e: MouseEvent): void;
 }

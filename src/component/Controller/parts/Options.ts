@@ -22,7 +22,7 @@ export class Options extends Component implements ComponentItem {
   ) {
     super(container, desc, props, children);
     this.player = player;
-    props ? (this.props = props) : (this.props = null);
+    props ? (this.props = props) : (this.props = {});
     this.hideHeight = hideHeight;
     this.hideWidth = hideWidth;
     this.initBase();

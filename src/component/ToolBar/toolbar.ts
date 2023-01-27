@@ -8,6 +8,7 @@ import {
   Controller,
 } from "../../index";
 import { addClass, includeClass, removeClass } from "../../utils/domUtils";
+import { storeControlComponent } from "../../utils/store";
 import "./toolbar.less";
 
 export class ToolBar extends Component implements ComponentItem {
@@ -21,7 +22,7 @@ export class ToolBar extends Component implements ComponentItem {
   constructor(player:Player, container:HTMLElement, desc?: string, props?:DOMProps, children?:Node[]) {
     super(container,desc,props,children);
     this.player = player;
-    this.props = props;
+    this.props = props || {};
     this.init();
   }
 
@@ -29,6 +30,7 @@ export class ToolBar extends Component implements ComponentItem {
     this.initTemplate();
     this.initComponent();
     this.initEvent();
+    storeControlComponent(this);
   }
 
   /**
@@ -40,7 +42,7 @@ export class ToolBar extends Component implements ComponentItem {
 
   initComponent() {
     this.progress = new Progress(this.player,this.el,"div.video-progress");
-    this.controller = new Controller(this.player,this.el,"div.video-play")
+    this.controller = new Controller(this.player,this.el,"div.video-play");
   }
 
   initEvent() {

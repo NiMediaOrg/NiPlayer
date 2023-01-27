@@ -88,6 +88,7 @@ class Player extends Component implements ComponentItem {
 
   registerControls(id:string, component:Partial<ComponentItem>) {
     let store = CONTROL_COMPONENT_STORE;
+    console.log(store,id)
     if(store.has(id)) {
       patchComponent(store.get(id),component);
     } else {

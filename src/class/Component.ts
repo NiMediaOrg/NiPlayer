@@ -11,4 +11,10 @@ export class Component extends BaseEvent{
         // 安装组件成功
         container.append(dom);
     }
+
+    init() {}
+    initEvent() {}
+    initTemplate() {}
+    initComponent() {}
+    resetEvent() {}
 }

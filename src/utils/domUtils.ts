@@ -175,11 +175,11 @@ export function createSvgs(d:string[], viewBox = '0 0 1024 1024'): SVGSVGElement
 export function patchComponent(
     target: ComponentItem, 
     another: Partial<ComponentItem>, 
-    options:registerOptions = {replaceElementType:"replaceOuterHTMLOfComponent"}
+    options: registerOptions = {replaceElementType:"replaceOuterHTMLOfComponent"}
 ) {
     if(target.id !== another.id) throw new Error("需要合并的两个组件的id不相同");
-    for(let key in target) {
-        if(another.hasOwnProperty(key)) {
+    for(let key in another) {
+        if(key in target) {
             if(key === 'props') {
                 patchDOMProps(target[key],another[key],target.el);
             } else if(key === 'el') {
@@ -196,7 +196,9 @@ export function patchComponent(
                     if(!(another[key] instanceof Function)) {
                         throw new Error(`属性${key}对应的值应该为函数类型`);
                     }
-                    patchFn(target[key],another[key],target);
+                    console.log("合并函数",another[key])
+                    target[key] = patchFn(target[key],another[key],target);
+                    target.resetEvent();
                 } else if(target[key] instanceof HTMLElement) {
                     if(!(another[key] instanceof HTMLElement) && typeof another[key] !== 'string') {
                         throw new Error(`属性${key}对应的值应该为DOM元素或者字符串类型`);
@@ -212,7 +214,9 @@ export function patchComponent(
                     
                 }
             }
-        } 
+        } else {
+
+        }
     }
 }
 
@@ -254,12 +258,13 @@ export function patchStyle(
     }
 }
 
-export function patchFn<T extends (...args:any[]) => any>(targetFn: T,another : T, context: ComponentItem) {
-    let args = targetFn.arguments;
+export function patchFn<T extends (...args:any[]) => any>(targetFn: T,anotherFn : T, context: ComponentItem) {
+    // let args = targetFn.arguments;
+    console.log(targetFn,anotherFn,context)
     function fn(...args: getFunctionParametersType<T>[]) {
         targetFn.call(context,...args);
-        another.call(context,...args);
+        anotherFn.call(context,...args);
     }
 
-    targetFn = fn as T;
+    return fn.bind(context) as T;
 }

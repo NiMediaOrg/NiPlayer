@@ -43,6 +43,34 @@
             width: "600px",
             height: "400px"
         })
+
+        // player.use({
+        //     install(player) {
+        //         player.registerControls("PlayButton",{
+        //             id:"PlayButton",
+        //             props:{
+        //                 id:"test",
+        //                 style:{
+        //                     backgroundColor:"red"
+        //                 }
+                        
+        //             },
+        //             onClick(e) {
+        //                 console.log(1111);
+        //             }
+        //         })
+        //     }
+        // })
+        player.use({
+            install(player) {
+                player.registerControls("Toolbar",{
+                    id:"Toolbar",
+                    onHideToolBar(e) {
+                        console.log("隐藏工具栏")
+                    }
+                })
+            }
+        })
     </script>
 </body>
 </html>

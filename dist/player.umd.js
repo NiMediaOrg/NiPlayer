@@ -163,8 +163,8 @@
       var _a, _b;
       if (target.id !== another.id)
           throw new Error("需要合并的两个组件的id不相同");
-      for (let key in target) {
-          if (another.hasOwnProperty(key)) {
+      for (let key in another) {
+          if (key in target) {
               if (key === 'props') {
                   patchDOMProps(target[key], another[key], target.el);
               }
@@ -184,7 +184,9 @@
                       if (!(another[key] instanceof Function)) {
                           throw new Error(`属性${key}对应的值应该为函数类型`);
                       }
-                      patchFn(target[key], another[key], target);
+                      console.log("合并函数", another[key]);
+                      target[key] = patchFn(target[key], another[key], target);
+                      target.resetEvent();
                   }
                   else if (target[key] instanceof HTMLElement) {
                       if (!(another[key] instanceof HTMLElement) && typeof another[key] !== 'string') {
@@ -237,13 +239,14 @@
           el.style[key] = targetStyle[key];
       }
   }
-  function patchFn(targetFn, another, context) {
-      targetFn.arguments;
+  function patchFn(targetFn, anotherFn, context) {
+      // let args = targetFn.arguments;
+      console.log(targetFn, anotherFn, context);
       function fn(...args) {
           targetFn.call(context, ...args);
-          another.call(context, ...args);
+          anotherFn.call(context, ...args);
       }
-      targetFn = fn;
+      return fn.bind(context);
   }
 
   class Component extends BaseEvent {
@@ -254,6 +257,11 @@
           // 安装组件成功
           container.append(dom);
       }
+      init() { }
+      initEvent() { }
+      initTemplate() { }
+      initComponent() { }
+      resetEvent() { }
   }
 
   const CONTROL_COMPONENT_STORE = new Map();
@@ -325,6 +333,7 @@
       }
       registerControls(id, component) {
           let store = CONTROL_COMPONENT_STORE;
+          console.log(store, id);
           if (store.has(id)) {
               patchComponent(store.get(id), component);
           }
@@ -345,13 +354,14 @@
           this.id = "Toolbar";
           this.timer = 0;
           this.player = player;
-          this.props = props;
+          this.props = props || {};
           this.init();
       }
       init() {
           this.initTemplate();
           this.initComponent();
           this.initEvent();
+          storeControlComponent(this);
       }
       /**
        * @description 需要注意的是此处元素的class名字是官方用于控制整体toolbar一栏的显示和隐藏
@@ -657,6 +667,7 @@
           super(container, desc, props, children);
           this.id = "FullScreen";
           this.player = player;
+          this.props = props || {};
           this.init();
       }
       init() {
@@ -697,6 +708,7 @@
           super(container, desc, props, children);
           this.id = "PlayButton";
           this.player = player;
+          this.props = props || {};
           this.init();
       }
       init() {
@@ -722,9 +734,15 @@
               this.button = this.playIcon;
               this.el.appendChild(this.button);
           });
-          this.el.onclick = this.onClick.bind(this);
+          this.el.onclick = this.onClick;
+      }
+      resetEvent() {
+          this.onClick = this.onClick.bind(this);
+          this.el.onclick = null;
+          this.el.onclick = this.onClick;
       }
       onClick(e) {
+          console.log(this);
           if (this.player.video.paused) {
               this.player.video.play();
           }
@@ -739,7 +757,7 @@
           super(container, desc, props, children);
           this.id = "Options";
           this.player = player;
-          props ? (this.props = props) : (this.props = null);
+          props ? (this.props = props) : (this.props = {});
           this.hideHeight = hideHeight;
           this.hideWidth = hideWidth;
           this.initBase();
@@ -856,7 +874,9 @@
       constructor(player, container, desc, props, children) {
           super(container, desc, props, children);
           this.id = "Controller";
+          this.props = {};
           this.player = player;
+          this.props = props || {};
           this.init();
       }
       init() {
