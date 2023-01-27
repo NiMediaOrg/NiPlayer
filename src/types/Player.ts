@@ -35,3 +35,6 @@ export type Plugin = {
 export type registerOptions = {
     replaceElementType?: "replaceOuterHTMLOfComponent" | "replaceInnerHTMLOfComponent"
 }
+
+export type getFunctionParametersType<T extends (...args:any[]) => any> = 
+    T extends (...args: (infer T)[]) => infer U ? T : never;

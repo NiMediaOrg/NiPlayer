@@ -45,4 +45,4 @@ export declare function createSvgs(d: string[], viewBox?: string): SVGSVGElement
 export declare function patchComponent(target: ComponentItem, another: Partial<ComponentItem>, options?: registerOptions): void;
 export declare function patchDOMProps(targetProps: DOMProps, anotherProps: DOMProps, el: HTMLElement): void;
 export declare function patchStyle(targetStyle: Partial<CSSStyleDeclaration>, anotherStyle: Partial<CSSStyleDeclaration>, el: HTMLElement): void;
-export declare function patchFn<T extends Function>(targetFn: T, another: T, context: ComponentItem): void;
+export declare function patchFn<T extends (...args: any[]) => any>(targetFn: T, another: T, context: ComponentItem): void;

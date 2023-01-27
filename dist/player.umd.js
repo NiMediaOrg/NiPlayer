@@ -184,7 +184,7 @@
                       if (!(another[key] instanceof Function)) {
                           throw new Error(`属性${key}对应的值应该为函数类型`);
                       }
-                      patchFn(target[key], another[key]);
+                      patchFn(target[key], another[key], target);
                   }
                   else if (target[key] instanceof HTMLElement) {
                       if (!(another[key] instanceof HTMLElement) && typeof another[key] !== 'string') {
@@ -238,6 +238,12 @@
       }
   }
   function patchFn(targetFn, another, context) {
+      targetFn.arguments;
+      function fn(...args) {
+          targetFn.call(context, ...args);
+          another.call(context, ...args);
+      }
+      targetFn = fn;
   }
 
   class Component extends BaseEvent {
