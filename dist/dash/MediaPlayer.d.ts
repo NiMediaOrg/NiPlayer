@@ -33,4 +33,5 @@ declare class MediaPlayer {
     attachVideo(video: HTMLVideoElement): void;
 }
 declare const factory: import("../types/dash/Factory").FactoryFunction<MediaPlayer>;
+export { MediaPlayer };
 export default factory;

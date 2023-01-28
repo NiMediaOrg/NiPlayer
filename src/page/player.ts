@@ -13,6 +13,7 @@ import { Plugin } from "../index";
 import { CONTROL_COMPONENT_STORE } from "../utils/store";
 import { getFileExtension } from "../utils/play";
 import  MpdMediaPlayerFactory  from "../dash/MediaPlayer";
+import Mp4MediaPlayer from "../mp4/MediaPlayer";
 class Player extends Component implements ComponentItem {
   readonly id = "Player";
   // 播放器的默认配置
@@ -31,8 +32,8 @@ class Player extends Component implements ComponentItem {
     super(options.container,"div.video-wrapper");
     this.playerOptions = Object.assign(this.playerOptions, options);
     options.container.className = "video-container";
-    options.container.style.width = this.playerOptions.width + "px";
-    options.container.style.height = this.playerOptions.height + "px"
+    options.container.style.width = this.playerOptions.width;
+    options.container.style.height = this.playerOptions.height;
     this.container = options.container;
     this.init();
   }
@@ -41,7 +42,7 @@ class Player extends Component implements ComponentItem {
     this.video = $("video");
     this.el.appendChild(this.video);
     this.toolBar = new ToolBar(this, this.el, "div");
-    this.attendSource(this.playerOptions.url);
+    this.attachSource(this.playerOptions.url);
     this.initEvent();
     this.initPlugin();
   }
@@ -96,6 +97,7 @@ class Player extends Component implements ComponentItem {
   }
 
   initMp4Player(url:string) {
+    let player = new Mp4MediaPlayer(this.playerOptions.url,this.video);
 
   }
 
@@ -105,13 +107,15 @@ class Player extends Component implements ComponentItem {
     player.attachSource(url);
   }
 
-  attendSource(url: string) {
+  attachSource(url: string) {
     switch(getFileExtension(url)) {
       case "mp4":
       case "mp3":
-        this.video.src = url;
+        this.initMp4Player(url);
       case "mpd":
-        
+        this.initMpdPlayer(url);
+      case "m3u8":
+        // ToDo
     }
   }
 
