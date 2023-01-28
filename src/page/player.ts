@@ -11,6 +11,8 @@ import { Component } from "../class/Component";
 import { $, patchComponent } from "../utils/domUtils";
 import { Plugin } from "../index";
 import { CONTROL_COMPONENT_STORE } from "../utils/store";
+import { getFileExtension } from "../utils/play";
+import  MpdMediaPlayerFactory  from "../dash/MediaPlayer";
 class Player extends Component implements ComponentItem {
   readonly id = "Player";
   // 播放器的默认配置
@@ -37,9 +39,9 @@ class Player extends Component implements ComponentItem {
 
   init() {
     this.video = $("video");
-    this.video.src = this.playerOptions.url || "";
     this.el.appendChild(this.video);
     this.toolBar = new ToolBar(this, this.el, "div");
+    this.attendSource(this.playerOptions.url);
     this.initEvent();
     this.initPlugin();
   }
@@ -93,8 +95,24 @@ class Player extends Component implements ComponentItem {
     }
   }
 
+  initMp4Player(url:string) {
+
+  }
+
+  initMpdPlayer(url:string) {
+    let player = MpdMediaPlayerFactory().create();
+    player.attachVideo(this.video);
+    player.attachSource(url);
+  }
+
   attendSource(url: string) {
-    this.video.src = url;
+    switch(getFileExtension(url)) {
+      case "mp4":
+      case "mp3":
+        this.video.src = url;
+      case "mpd":
+        
+    }
   }
 
   registerControls(id:string, component:Partial<ComponentItem> & registerOptions) {
