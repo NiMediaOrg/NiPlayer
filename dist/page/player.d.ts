@@ -16,7 +16,7 @@ declare class Player extends Component implements ComponentItem {
     initPlugin(): void;
     initMp4Player(url: string): void;
     initMpdPlayer(url: string): void;
-    attendSource(url: string): void;
+    attachSource(url: string): void;
     registerControls(id: string, component: Partial<ComponentItem> & registerOptions): void;
     /**
      * @description 注册对应的组件
