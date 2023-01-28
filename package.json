@@ -42,5 +42,8 @@
     "> 1%",
     "iOS 7",
     "last 3 iOS versions"
-  ]
+  ],
+  "dependencies": {
+    "mp4box": "^0.5.2"
+  }
 }
