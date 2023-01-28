@@ -103,5 +103,5 @@ class MediaPlayer {
 }
 
 const factory = FactoryMaker.getClassFactory(MediaPlayer);
-
+export { MediaPlayer }
 export default factory;
