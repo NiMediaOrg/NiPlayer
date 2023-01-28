@@ -523,6 +523,7 @@ class Player extends Component {
         // 播放器的默认配置
         this.playerOptions = {
             url: "",
+            container: document.body,
             autoplay: false,
             width: "100%",
             height: "100%",
@@ -540,6 +541,7 @@ class Player extends Component {
         this.el.appendChild(this.video);
         this.toolBar = new ToolBar(this, this.el, "div");
         this.initEvent();
+        this.initPlugin();
     }
     initEvent() {
         this.el.onmousemove = (e) => {
@@ -575,6 +577,13 @@ class Player extends Component {
             this.video.paused && this.video.play();
         });
     }
+    initPlugin() {
+        if (this.playerOptions.plugins) {
+            this.playerOptions.plugins.forEach(plugin => {
+                this.use(plugin);
+            });
+        }
+    }
     attendSource(url) {
         this.video.src = url;
     }
@@ -582,7 +591,18 @@ class Player extends Component {
         let store = CONTROL_COMPONENT_STORE;
         console.log(store, id);
         if (store.has(id)) {
-            patchComponent(store.get(id), component);
+            if (component.replaceElementType) {
+                patchComponent(store.get(id), component, { replaceElementType: component.replaceElementType });
+            }
+            else {
+                patchComponent(store.get(id), component);
+            }
+        }
+        else {
+            // 如果该组件实例是用户自创的话
+            if (!component.el)
+                throw new Error(`传入的原创组件${id}没有对应的DOM元素`);
+            this.toolBar.controller.settings.appendChild(component.el);
         }
     }
     /**
@@ -887,10 +907,6 @@ class Progress extends Component {
 // }
 
 class Controller extends Component {
-    // playButton: PlayButton;
-    // fullscreen: FullScreen;
-    // volume: Volume;
-    // playrate: Playrate;
     constructor(player, container, desc, props, children) {
         super(container, desc, props, children);
         this.id = "Controller";
@@ -1102,4 +1118,4 @@ function string2number(s) {
         return null;
 }
 
-export { $warn, BaseEvent, Controller, Player, Progress, ToolBar, addZero, checkAdaptationSet, checkBaseURL, checkInitialization, checkMediaType, checkMpd, checkPeriod, checkRepresentation, checkSegmentBase, checkSegmentList, checkSegmentTemplate, checkSegmentURL, formatTime, parseDuration, string2booolean, string2number, switchToSeconds };
+export { $warn, BaseEvent, BufferedProgress, CompletedProgress, Controller, Dot, FullScreen, Options, PlayButton, Player, Playrate, Progress, ToolBar, Volume, addZero, checkAdaptationSet, checkBaseURL, checkInitialization, checkMediaType, checkMpd, checkPeriod, checkRepresentation, checkSegmentBase, checkSegmentList, checkSegmentTemplate, checkSegmentURL, formatTime, parseDuration, string2booolean, string2number, switchToSeconds };

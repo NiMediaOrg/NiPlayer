@@ -31,11 +31,10 @@ export class Playrate extends Options {
         addClass(this.hideBox,["video-playrate-set"]);
         this.el.appendChild(this.hideBox);
 
-        for(let i = 0;i<6;i++) {
+        for(let i = 0; i < 6; i++) {
             let li = $("li");
             li.innerText = "2.0x";
             this.hideBox.appendChild(li);
         }
     }   
-    
 }

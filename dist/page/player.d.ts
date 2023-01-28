@@ -1,16 +1,11 @@
-import { ComponentItem, DOMProps, PlayerOptions, ToolBar } from "../index";
+import { ComponentItem, DOMProps, PlayerOptions, registerOptions, ToolBar } from "../index";
 import "./player.less";
 import "../main.less";
 import { Component } from "../class/Component";
 import { Plugin } from "../index";
 declare class Player extends Component implements ComponentItem {
     readonly id = "Player";
-    readonly playerOptions: {
-        url: string;
-        autoplay: boolean;
-        width: string;
-        height: string;
-    };
+    readonly playerOptions: PlayerOptions;
     video: HTMLVideoElement;
     toolBar: ToolBar;
     container: HTMLElement;
@@ -18,8 +13,9 @@ declare class Player extends Component implements ComponentItem {
     constructor(options: PlayerOptions);
     init(): void;
     initEvent(): void;
+    initPlugin(): void;
     attendSource(url: string): void;
-    registerControls(id: string, component: Partial<ComponentItem>): void;
+    registerControls(id: string, component: Partial<ComponentItem> & registerOptions): void;
     /**
      * @description 注册对应的组件
      * @param plugin

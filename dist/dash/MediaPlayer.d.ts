@@ -26,6 +26,10 @@ declare class MediaPlayer {
      * @param url
      */
     attachSource(url: string): void;
+    /**
+     * @description 让MediaPlayer类去接管传入的video dom元素
+     * @param video
+     */
     attachVideo(video: HTMLVideoElement): void;
 }
 declare const factory: import("../types/dash/Factory").FactoryFunction<MediaPlayer>;

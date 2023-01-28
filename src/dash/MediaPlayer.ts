@@ -92,7 +92,10 @@ class MediaPlayer {
         this.eventBus.trigger(EventConstants.SOURCE_ATTACHED,url);
         this.urlLoader.load({url,responseType:"text"},"Manifest");
     }
-
+    /**
+     * @description 让MediaPlayer类去接管传入的video dom元素
+     * @param video 
+     */
     public attachVideo(video:HTMLVideoElement) {
         this.video = video;
         this.mediaPlayerController = MediaPlayerControllerFactory({video:video,duration:this.duration}).create();

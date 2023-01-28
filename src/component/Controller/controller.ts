@@ -1,7 +1,7 @@
 import { Component } from "../../class/Component";
 import { Player } from "../../page/player";
 import { ComponentConstructor, ComponentItem, DOMProps,Node, PlayerOptions } from "../../types/Player";
-import { $, addClass } from "../../utils/domUtils";
+import { $ } from "../../utils/domUtils";
 import { controllersMapping, storeControlComponent } from "../../utils/store";
 import "./controller.less";
 import { FullScreen } from "./parts/FullScreen";
@@ -10,17 +10,13 @@ import { Playrate } from "./parts/Playrate";
 import { Volume } from "./parts/Volume";
 export class Controller extends Component implements ComponentItem {
   readonly id = "Controller";
-  private subPlay: HTMLElement;
-  private settings: HTMLElement;
+  subPlay: HTMLElement;
+  settings: HTMLElement;
   props: DOMProps = {};
   player: Player;
   // 控件
   leftControllers: ComponentConstructor[] = [PlayButton];
-  rightController: ComponentConstructor[] = [Playrate,Volume,FullScreen]
-  // playButton: PlayButton;
-  // fullscreen: FullScreen;
-  // volume: Volume;
-  // playrate: Playrate;
+  rightController: ComponentConstructor[] = [Playrate,Volume,FullScreen];
   constructor(player: Player,container:HTMLElement, desc?:string, props?:DOMProps, children?:Node[]) {
     super(container,desc,props,children);
     this.player = player;

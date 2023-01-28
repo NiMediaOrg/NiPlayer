@@ -4,8 +4,8 @@ import { ComponentConstructor, ComponentItem, DOMProps, Node } from "../../types
 import "./controller.less";
 export declare class Controller extends Component implements ComponentItem {
     readonly id = "Controller";
-    private subPlay;
-    private settings;
+    subPlay: HTMLElement;
+    settings: HTMLElement;
     props: DOMProps;
     player: Player;
     leftControllers: ComponentConstructor[];

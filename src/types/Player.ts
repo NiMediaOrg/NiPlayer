@@ -9,6 +9,7 @@ export type PlayerOptions = {
   height?: string;
   leftControllers?: (ComponentConstructor | string)[];
   rightControllers?: (ComponentConstructor | string)[];
+  plugins?:Plugin[]
 };
 
 export type DOMProps = {
