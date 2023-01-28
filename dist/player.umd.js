@@ -1815,6 +1815,11 @@
   }
   const factory = FactoryMaker.getClassFactory(MediaPlayer$1);
 
+  function createCommonjsModule(fn, module) {
+  	return module = { exports: {} }, fn(module, module.exports), module.exports;
+  }
+
+  var mp4box_all = createCommonjsModule(function (module, exports) {
   // file:src/log.js
   /* 
    * Copyright (c) 2012-2013. Telecom ParisTech/TSI/MM/GPAC Cyril Concolato
@@ -1906,7 +1911,7 @@
       return "(empty)";
     }
   };
-  if (typeof exports !== 'undefined') {
+  {
     exports.Log = Log;
   }
   // file:src/stream.js
@@ -2080,7 +2085,7 @@
     }
     return arr;
   };
-  if (typeof exports !== 'undefined') {
+  {
     exports.MP4BoxStream = MP4BoxStream;
   } // file:src/DataStream.js
   /**
@@ -2645,7 +2650,7 @@
   DataStream.prototype.readUint24 = function () {
     return (this.readUint8() << 16) + (this.readUint8() << 8) + this.readUint8();
   };
-  if (typeof exports !== 'undefined') {
+  {
     exports.DataStream = DataStream;
   }
   // file:src/DataStream-write.js
@@ -3710,7 +3715,7 @@
     }
     return this.buffers[this.bufferIndex].fileStart + this.byteLength;
   };
-  if (typeof exports !== 'undefined') {
+  {
     exports.MultiBufferStream = MultiBufferStream;
   } // file:src/descriptor.js
   /*
@@ -3850,7 +3855,7 @@
     classes.SLConfigDescriptor.prototype = new classes.Descriptor();
     return this;
   };
-  if (typeof exports !== 'undefined') {
+  {
     exports.MPEG4DescriptorParser = MPEG4DescriptorParser;
   } // file:src/box.js
   /*
@@ -4061,7 +4066,7 @@
     this[prop].push(value);
     return this;
   };
-  if (typeof exports !== "undefined") {
+  {
     exports.BoxParser = BoxParser;
   }
   // file:src/box-parse.js
@@ -7656,7 +7661,7 @@
     textString = stream.readCString();
     return textString;
   };
-  if (typeof exports !== 'undefined') {
+  {
     exports.XMLSubtitlein4Parser = XMLSubtitlein4Parser;
     exports.Textin4Parser = Textin4Parser;
   }
@@ -8297,7 +8302,7 @@
     }
     return true;
   };
-  if (typeof exports !== 'undefined') {
+  {
     exports.ISOFile = ISOFile;
   }
   // file:src/isofile-advanced-parsing.js
@@ -9611,9 +9616,20 @@
     file.discardMdatData = keepMdatData ? false : true;
     return file;
   };
-  if (typeof exports !== 'undefined') {
+  {
     exports.createFile = MP4Box.createFile;
   }
+  });
+  var mp4box_all_1 = mp4box_all.Log;
+  mp4box_all.MP4BoxStream;
+  mp4box_all.DataStream;
+  mp4box_all.MultiBufferStream;
+  mp4box_all.MPEG4DescriptorParser;
+  mp4box_all.BoxParser;
+  mp4box_all.XMLSubtitlein4Parser;
+  mp4box_all.Textin4Parser;
+  mp4box_all.ISOFile;
+  mp4box_all.createFile;
 
   class MediaPlayer {
       constructor(url, video) {
@@ -9622,10 +9638,59 @@
           this.init();
       }
       init() {
-          this.mp4boxFile = MP4Box.createFile();
+          this.mp4boxfile = mp4box_all.createFile();
           this.initEvent();
       }
       initEvent() {
+          this.mp4boxfile.onMoovStart = function () {
+              mp4box_all_1.info("Application", "Starting to parse movie information");
+          };
+          this.mp4boxfile.onReady = function (info) {
+              debugger;
+              mp4box_all_1.info("Application", "Movie information received");
+              if (info.isFragmented) {
+                  this.mediaSource.duration = info.fragment_duration / info.timescale;
+              }
+              else {
+                  this.mediaSource.duration = info.duration / info.timescale;
+              }
+              this.addSourceBufferListener(info);
+              stop();
+          };
+      }
+      /**
+       * @description 根据传入的媒体轨道的类型构建对应的SourceBuffer
+       * @param mp4track
+       */
+      addBuffer(mp4track) {
+          var track_id = mp4track.id;
+          var codec = mp4track.codec;
+          var mime = 'video/mp4; codecs=\"' + codec + '\"';
+          // var kind = mp4track.kind;
+          var sb;
+          if (MediaSource.isTypeSupported(mime)) {
+              try {
+                  mp4box_all_1.info("MSE - SourceBuffer #" + track_id, "Creation with type '" + mime + "'");
+                  // 根据moov box中解析出来的track去一一创建对应的sourcebuffer
+                  sb = this.mediaSource.addSourceBuffer(mime);
+                  sb.addEventListener("error", function (e) {
+                      mp4box_all_1.error("MSE SourceBuffer #" + track_id, e);
+                  });
+                  sb.ms = this.mediaSource;
+                  sb.id = track_id;
+                  this.mp4boxfile.setSegmentOptions(track_id, sb);
+                  sb.pendingAppends = [];
+              }
+              catch (e) {
+                  mp4box_all_1.error("MSE - SourceBuffer #" + track_id, "Cannot create buffer with type '" + mime + "'" + e);
+              }
+          }
+      }
+      addSourceBufferListener(info) {
+          for (var i = 0; i < info.tracks.length; i++) {
+              var track = info.tracks[i];
+              this.addBuffer(track);
+          }
       }
   }
 

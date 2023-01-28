@@ -51,6 +51,15 @@ declare module 'mp4box' {
         tracks: MP4Track[];
     }
 
+    interface LogInterface {
+        debug: (module: string,msg: string) => void;
+        log: (module: string,msg: string) => void;
+        info: (module: string,msg: string) => void;
+        warn: (module: string,msg: string) => void;
+        error: (module: string,msg: any) => void;
+        [props:string]: any;
+    }
+
     export type MP4ArrayBuffer = ArrayBuffer & {fileStart: number};
 
     export interface MP4File {
@@ -60,11 +69,13 @@ declare module 'mp4box' {
         onError?: (e: string) => void;
 
         appendBuffer(data: MP4ArrayBuffer): number;
+        setSegmentOptions(id:number,sb:SourceBuffer): void;
         start(): void;
         stop(): void;
         flush(): void;
-
     }
+
+    export const Log: LogInterface;
 
     export function createFile(): MP4File;
 
