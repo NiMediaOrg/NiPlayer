@@ -9,4 +9,5 @@ export declare class CompletedProgress extends Component implements ComponentIte
     init(): void;
     initEvent(): void;
     onChangeSize(e: MouseEvent, ctx: Component): void;
+    updatePos(e: Event): void;
 }

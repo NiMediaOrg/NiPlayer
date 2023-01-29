@@ -452,10 +452,24 @@
           this.player.on("progress-click", (e, ctx) => {
               this.onChangeSize(e, ctx);
           });
+          this.player.on("timeupdate", (e) => {
+              this.updatePos(e);
+          });
           // this.player.on("volume-progress-click",(e:MouseEvent,ctx:))
       }
       onChangeSize(e, ctx) {
           let scale = e.offsetX / ctx.el.offsetWidth;
+          if (scale < 0) {
+              scale = 0;
+          }
+          else if (scale > 1) {
+              scale = 1;
+          }
+          this.el.style.width = scale * 100 + "%";
+      }
+      updatePos(e) {
+          let video = e.target;
+          let scale = video.currentTime / video.duration;
           if (scale < 0) {
               scale = 0;
           }
@@ -10169,6 +10183,7 @@
           this.id = "Dot";
           this.props = props || {};
           this.player = player;
+          this.container = container;
           this.init();
       }
       init() {
@@ -10186,6 +10201,9 @@
           this.player.on("progress-click", (e, ctx) => {
               this.onChangePos(e, ctx);
           });
+          this.player.on("timeupdate", (e) => {
+              this.updatePos(e);
+          });
       }
       onShowDot(e) {
           if (includeClass(this.el, "video-dot-hidden")) {
@@ -10200,6 +10218,17 @@
       onChangePos(e, ctx) {
           e.offsetX / ctx.el.offsetWidth;
           this.el.style.left = e.offsetX - getElementSize(this.el).width / 2 + 'px';
+      }
+      updatePos(e) {
+          let video = e.target;
+          let scale = video.currentTime / video.duration;
+          if (scale < 0) {
+              scale = 0;
+          }
+          else if (scale > 1) {
+              scale = 1;
+          }
+          this.el.style.left = scale * this.container.clientWidth - getElementSize(this.el).width / 2 + 'px';
       }
   }
 
