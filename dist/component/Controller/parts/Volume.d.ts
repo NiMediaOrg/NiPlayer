@@ -1,12 +1,12 @@
 import { Options } from "./Options";
 import { Player } from "../../../page/player";
 import { DOMProps, Node } from "../../../types/Player";
-import { CompletedProgress } from "../../Progress/parts/CompletedProgress";
+import { VolumeCompletedProgress } from "./VolumeCompletedProgress";
 export declare class Volume extends Options {
     readonly id = "Volume";
     volumeProgress: HTMLElement;
     volumeShow: HTMLElement;
-    volumeCompleted: CompletedProgress;
+    volumeCompleted: VolumeCompletedProgress;
     icon: SVGSVGElement;
     constructor(player: Player, container: HTMLElement, desc?: string, props?: DOMProps, children?: Node[]);
     init(): void;

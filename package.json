@@ -4,7 +4,8 @@
   "description": "This is a TS library for video player",
   "main": "./dist/player.umd.js",
   "scripts": {
-    "build:rollup": "rollup -cw",
+    "dev": "rollup -c script/rollup.config.dev.js --watch",
+    "build": "rollup -c script/rollup.config.prod.js",
     "build:tsc": "tsc",
     "test": "vitest",
     "coverage": "vitest run --coverage"
@@ -28,7 +29,9 @@
     "rollup-plugin-babel": "^4.4.0",
     "rollup-plugin-commonjs": "^10.1.0",
     "rollup-plugin-dts": "^4.1.0",
+    "rollup-plugin-livereload": "^2.0.5",
     "rollup-plugin-postcss": "^4.0.2",
+    "rollup-plugin-serve": "^2.0.2",
     "rollup-plugin-terser": "^7.0.2",
     "rollup-plugin-typescript2": "^0.34.1",
     "vitest": "^0.27.2"

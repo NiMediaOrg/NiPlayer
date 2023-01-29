@@ -1,13 +1,11 @@
 import { Component } from "../../../class/Component";
-import { Player } from "../../../page/player";
 import { ComponentItem, DOMProps, Node } from "../../../types/Player";
-export declare class CompletedProgress extends Component implements ComponentItem {
-    readonly id = "CompletedProgress";
+import { Player } from "../../../page/player";
+export declare class VolumeCompletedProgress extends Component implements ComponentItem {
+    readonly id = "VolumeCompletedProgress";
     props: DOMProps;
     player: Player;
     constructor(player: Player, container: HTMLElement, desc?: string, props?: DOMProps, children?: Node[]);
     init(): void;
     initEvent(): void;
-    onChangeSize(e: MouseEvent, ctx: Component): void;
-    updatePos(e: Event): void;
 }

@@ -4,14 +4,13 @@ import commonjs from 'rollup-plugin-commonjs'
 import postcss from 'rollup-plugin-postcss'
 import autoprefixer from 'autoprefixer'
 import { defineConfig } from "rollup";
-import nodeResolve from "@rollup/plugin-node-resolve";
+import {nodeResolve} from "@rollup/plugin-node-resolve";
 import { terser } from "rollup-plugin-terser";
 
 const extensions = [".ts","less"];
-export default defineConfig([
-  {
-    input: "./src/index.ts", //入口
 
+export default defineConfig({
+    input:"./src/index.ts",
     output: [
       {
         file: "./dist/player.cjs.js",
@@ -43,10 +42,8 @@ export default defineConfig([
         plugins:[terser()]
       },
     ],
-
-    //插件
-    plugins: [
-      //ts插件让rollup读取ts文件
+    plugins:[
+         //ts插件让rollup读取ts文件
       ts(),
       nodeResolve({
         extensions,
@@ -57,9 +54,7 @@ export default defineConfig([
         plugins:[
           autoprefixer()
         ],
-        // extract: true
         extract: 'css/index.css',
-      })
-    ],
-  },
-]);
+      }),
+    ]
+})
