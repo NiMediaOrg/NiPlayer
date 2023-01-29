@@ -19,50 +19,20 @@
     </style>
 </head>
 <body>
-    <input type="file" id="file">
-    <div class="svg-test" style="margin:0 auto; background-color: aqua; height: 300px; width: 300px;">
-        <svg t="1674479509181" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2676" width="200" height="200">
-            <path d="M 44.8 187.7427 a 10.716 10.716 90 0 1 -10.6667 -10.6867 V 27.744 a 10.6667 10.6667 90 0 1 16.1773 -9.1333 l 123.7333 74.656 a 10.6667 10.6667 90 0 1 0 18.2667 l -123.7333 74.656 a 10.632 10.632 90 0 1 -5.5107 1.5533 z m 0.0093 -162.1333 a 2.196 2.196 90 0 0 -1.0667 0.284 a 2.0933 2.0933 90 0 0 -1.076 1.8507 v 149.312 a 2.1333 2.1333 90 0 0 3.236 1.8267 l 123.7333 -74.656 a 2.1333 2.1333 90 0 0 0 -3.6533 l -123.7333 -74.656 a 2.0773 2.0773 90 0 0 -1.0893 -0.3173 z" fill="#3D3D3D" p-id="2677">
-            </path>
-        </svg>
-    </div>
     <div id="video">
         <!-- <video id="videoPlayer" controls width="500" height="300"></video> -->
     </div>
     <script src="./dist/player.umd.js"></script>
     <script>
-        // (function(){
-        //     var url = "https://dash.akamaized.net/envivio/EnvivioDash3/manifest.mpd";
-        //     var player = dashjs.MediaPlayer().create();
-        //     player.initialize(document.querySelector("#videoPlayer"), url, true);
-        // })();
         let player = new Player.Player({
             // url:"https://dash.akamaized.net/dash264/TestCases/5a/nomor/1.mpd",
-            url:"./video.mp4",
-            container:document.getElementById("video"),
+            url: "https://a0.muscache.com/airbnb/static/Paris-P1-1.mp4",
+            container: document.getElementById("video"),
             width: "600px",
             height: "400px",
             rightControllers:['Volume','Playrate','FullScreen'],
             // leftControllers:[]
         })
-
-        // player.use({
-        //     install(player) {
-        //         player.registerControls("PlayButton",{
-        //             id:"PlayButton",
-        //             props:{
-        //                 id:"test",
-        //                 style:{
-        //                     backgroundColor:"red"
-        //                 }
-                        
-        //             },
-        //             onClick(e) {
-        //                 console.log(1111);
-        //             }
-        //         })
-        //     }
-        // })
         player.use({
             install(player) {
                 player.registerControls("Dot",{
