@@ -38,7 +38,7 @@ declare module 'mp4box' {
 
     type MP4Track = MP4VideoTrack | MP4AudioTrack;
 
-    interface MP4Info {
+    export interface MP4Info {
         duration: number;
         timescale: number;
         fragment_duration: number;
@@ -62,17 +62,35 @@ declare module 'mp4box' {
 
     export type MP4ArrayBuffer = ArrayBuffer & {fileStart: number};
 
+    export type MP4MediaSource = MediaSource & {
+        sb?: MP4SourceBuffer;
+        pendingInits?: number;
+
+    }
+    export type MP4SourceBuffer = SourceBuffer & {
+        ms?: MP4MediaSource,
+        id?: number;
+        segmentIndex?: number;
+        pendingAppends?: any[];
+        sampleNum?: number;
+        is_last?: boolean;
+    }
+
     export interface MP4File {
 
         onMoovStart?: () => void;
         onReady?: (info: MP4Info) => void;
         onError?: (e: string) => void;
-
-        appendBuffer(data: MP4ArrayBuffer): number;
-        setSegmentOptions(id:number,sb:SourceBuffer): void;
+        onSegment?: (id:number, user:MP4SourceBuffer, buffer:MP4ArrayBuffer, sampleNum:number, is_last:boolean) => void;
+        onItem?: (item:any) => void;
+        appendBuffer(data: MP4ArrayBuffer,end?: boolean): number;
+        setSegmentOptions(id:number,sb:SourceBuffer, options?:{ [props:string]:any }): void;
+        initializeSegmentation(): {id:number; user: MP4SourceBuffer; buffer?:ArrayBuffer}[];
+        releaseUsedSamples(id:number,samples:number): void;
         start(): void;
         stop(): void;
         flush(): void;
+        seek(time:number,b:boolean): {offset: number;[props:string]: any};
     }
 
     export const Log: LogInterface;
