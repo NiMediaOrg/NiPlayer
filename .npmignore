@@ -1,3 +1,13 @@
 /node_modules/
-tsconfig.json
 /src/
+/test/
+/assets/
+/.vscode/
+.gitignore
+.npmignore
+.npmrc
+package-lock.json
+package.json
+pnpm-lock.yaml
+vitest.config.ts
+tsconfig.json
