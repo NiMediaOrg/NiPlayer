@@ -4,6 +4,7 @@ specifiers:
   '@babel/core': ^7.20.7
   '@babel/preset-env': ^7.20.2
   '@babel/preset-typescript': ^7.18.6
+  '@rollup/plugin-html': ^1.0.2
   '@rollup/plugin-node-resolve': ^15.0.1
   '@rollup/plugin-typescript': ^10.0.1
   '@vitest/coverage-c8': ^0.27.2
@@ -29,6 +30,7 @@ devDependencies:
   '@babel/core': 7.20.12
   '@babel/preset-env': 7.20.2_@babel+core@7.20.12
   '@babel/preset-typescript': 7.18.6_@babel+core@7.20.12
+  '@rollup/plugin-html': 1.0.2_rollup@2.79.1
   '@rollup/plugin-node-resolve': 15.0.1_rollup@2.79.1
   '@rollup/plugin-typescript': 10.0.1_rollup@2.79.1
   '@vitest/coverage-c8': 0.27.3_less@4.1.3
@@ -1485,6 +1487,18 @@ packages:
     dependencies:
       '@jridgewell/resolve-uri': 3.1.0
       '@jridgewell/sourcemap-codec': 1.4.14
+    dev: true
+
+  /@rollup/plugin-html/1.0.2_rollup@2.79.1:
+    resolution: {integrity: sha512-jGqb45BPj5kwvb/bq1jIzUDLebsm1xmfnY1rwgTIZyjpsMyMKLuQO27n4z5qv6kZmxqxh+CBRD7d1rjAu85Uzg==}
+    engines: {node: '>=14.0.0'}
+    peerDependencies:
+      rollup: ^1.20.0||^2.0.0||^3.0.0
+    peerDependenciesMeta:
+      rollup:
+        optional: true
+    dependencies:
+      rollup: 2.79.1
     dev: true
 
   /@rollup/plugin-node-resolve/15.0.1_rollup@2.79.1:

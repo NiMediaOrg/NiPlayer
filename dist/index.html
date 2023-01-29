@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./css/index.css" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div id="video"></div>
+    <script src="./player.umd.js"></script>
+    <script>
+      let player = new Player.Player({
+        url: "https://a0.muscache.com/airbnb/static/Paris-P1-1.mp4",
+        container: document.getElementById("video"),
+        width: "600px",
+        height: "400px",
+        rightControllers: ["Playrate", "Volume", "FullScreen"],
+      });
+      player.use({
+        install(player) {
+          player.registerControls("Dot", {
+            id: "Dot",
+            props: {
+              style: {
+                backgroundColor: "blue",
+              },
+            },
+          });
+        },
+      });
+    </script>
+  </body>
+</html>
