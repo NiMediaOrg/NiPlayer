@@ -6,32 +6,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <link rel="stylesheet" href="./dist/css/index.css">
-   
-    <style>
-        .svg-test svg {
-            fill :red;
-        }
-        .svg-test svg path{
-            stroke: black;
-            stroke-width: 5px;
-            
-        }
-    </style>
 </head>
 <body>
-    <div id="video">
-        <!-- <video id="videoPlayer" controls width="500" height="300"></video> -->
-    </div>
-    <script src="./dist/player.umd.js"></script>
+    <div id="video"></div>
+    <!-- <script src="./dist/player.umd.js"></script> -->
     <script>
         let player = new Player.Player({
-            // url:"https://dash.akamaized.net/dash264/TestCases/5a/nomor/1.mpd",
             url: "https://a0.muscache.com/airbnb/static/Paris-P1-1.mp4",
             container: document.getElementById("video"),
             width: "600px",
             height: "400px",
             rightControllers:['Playrate','Volume','FullScreen'],
-            // leftControllers:[]
         })
         player.use({
             install(player) {

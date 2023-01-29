@@ -1,5 +1,4 @@
 export * from "./types/Player"
-export * from "./types/EventObject"
 export * from "./types/dash/MpdFile"
 export * from "./class/BaseEvent"
 export * from "./page/player";
