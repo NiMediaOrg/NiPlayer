@@ -5,9 +5,11 @@ import commonjs from 'rollup-plugin-commonjs'
 import postcss from 'rollup-plugin-postcss'
 import autoprefixer from 'autoprefixer'
 import { defineConfig } from "rollup";
-import {nodeResolve} from "@rollup/plugin-node-resolve";
+import { nodeResolve } from "@rollup/plugin-node-resolve";
 import serve from 'rollup-plugin-serve';
 import livereload from 'rollup-plugin-livereload';
+
+const html = require('@rollup/plugin-html');
 
 const extensions = [".ts","less"];
 
@@ -18,6 +20,7 @@ export default defineConfig({
           name: 'Player',
           format: 'umd',
           sourcemap: true,
+          file: "./dist/player.umd.js",
         }
     ],
     plugins:[
@@ -39,8 +42,8 @@ export default defineConfig({
         serve({
             open: true, // 自动打开页面
             port: 5000, 
-            openPage: '../public/index.html', // 打开的页面
-            contentBase: ''
+            host: 'localhost',
+            openPage:"/dist/index.html",
         })
     ]
 })
