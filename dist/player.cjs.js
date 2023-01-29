@@ -423,7 +423,7 @@ class Playrate extends Options {
         this.iconBox = $("span", null, "倍速");
         this.el.appendChild(this.iconBox);
         this.el.removeChild(this.hideBox);
-        this.hideBox = $("ul", { style: { bottom: "41px" }, "aria-label": "播放速度调节" });
+        this.hideBox = $("ul", { style: { bottom: "41px", "display": "none" }, "aria-label": "播放速度调节" });
         addClass(this.hideBox, ["video-playrate-set"]);
         this.el.appendChild(this.hideBox);
         for (let i = 0; i < 6; i++) {
@@ -434,10 +434,10 @@ class Playrate extends Options {
     }
 }
 
-class CompletedProgress extends Component {
+class VolumeCompletedProgress extends Component {
     constructor(player, container, desc, props, children) {
         super(container, desc, props, children);
-        this.id = "CompletedProgress";
+        this.id = "VolumeCompletedProgress";
         this.props = props || {};
         this.player = player;
         this.init();
@@ -447,34 +447,6 @@ class CompletedProgress extends Component {
         storeControlComponent(this);
     }
     initEvent() {
-        this.player.on("progress-click", (e, ctx) => {
-            this.onChangeSize(e, ctx);
-        });
-        this.player.on("timeupdate", (e) => {
-            this.updatePos(e);
-        });
-        // this.player.on("volume-progress-click",(e:MouseEvent,ctx:))
-    }
-    onChangeSize(e, ctx) {
-        let scale = e.offsetX / ctx.el.offsetWidth;
-        if (scale < 0) {
-            scale = 0;
-        }
-        else if (scale > 1) {
-            scale = 1;
-        }
-        this.el.style.width = scale * 100 + "%";
-    }
-    updatePos(e) {
-        let video = e.target;
-        let scale = video.currentTime / video.duration;
-        if (scale < 0) {
-            scale = 0;
-        }
-        else if (scale > 1) {
-            scale = 1;
-        }
-        this.el.style.width = scale * 100 + "%";
     }
 }
 
@@ -497,7 +469,7 @@ class Volume extends Options {
         this.volumeProgress = $("div.video-volume-progress", { style: { height: "70px" } });
         this.volumeShow = $("div.video-volume-show");
         this.volumeShow.innerText = "50";
-        this.volumeCompleted = new CompletedProgress(this.player, this.volumeProgress, "div.video-volume-completed");
+        this.volumeCompleted = new VolumeCompletedProgress(this.player, this.volumeProgress, "div.video-volume-completed");
         this.hideBox.appendChild(this.volumeShow);
         this.hideBox.appendChild(this.volumeProgress);
         addClass(this.iconBox, ["video-icon"]);
@@ -10227,6 +10199,50 @@ class Dot extends Component {
             scale = 1;
         }
         this.el.style.left = scale * this.container.clientWidth - getElementSize(this.el).width / 2 + 'px';
+    }
+}
+
+class CompletedProgress extends Component {
+    constructor(player, container, desc, props, children) {
+        super(container, desc, props, children);
+        this.id = "CompletedProgress";
+        this.props = props || {};
+        this.player = player;
+        this.init();
+    }
+    init() {
+        this.initEvent();
+        storeControlComponent(this);
+    }
+    initEvent() {
+        this.player.on("progress-click", (e, ctx) => {
+            this.onChangeSize(e, ctx);
+        });
+        this.player.on("timeupdate", (e) => {
+            this.updatePos(e);
+        });
+        // this.player.on("volume-progress-click",(e:MouseEvent,ctx:))
+    }
+    onChangeSize(e, ctx) {
+        let scale = e.offsetX / ctx.el.offsetWidth;
+        if (scale < 0) {
+            scale = 0;
+        }
+        else if (scale > 1) {
+            scale = 1;
+        }
+        this.el.style.width = scale * 100 + "%";
+    }
+    updatePos(e) {
+        let video = e.target;
+        let scale = video.currentTime / video.duration;
+        if (scale < 0) {
+            scale = 0;
+        }
+        else if (scale > 1) {
+            scale = 1;
+        }
+        this.el.style.width = scale * 100 + "%";
     }
 }
 

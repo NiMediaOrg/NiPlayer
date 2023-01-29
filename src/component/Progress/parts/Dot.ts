@@ -6,8 +6,8 @@ import { storeControlComponent } from "../../../utils/store";
 import { Progress } from "../Progress";
 export class Dot extends Component implements ComponentItem {
     readonly id = "Dot";
-    props:DOMProps;
-    player:Player;
+    props: DOMProps;
+    player: Player;
     container: HTMLElement;
     constructor(player:Player,container:HTMLElement,desc?:string,props?:DOMProps,children?:Node[]) {
         super(container, desc, props, children);
