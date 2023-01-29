@@ -525,7 +525,7 @@
   function getFileExtension(file) {
       for (let i = file.length - 1; i >= 0; i--) {
           if (file[i] === '.') {
-              return file.slice(i, file.length);
+              return file.slice(i + 1, file.length);
           }
       }
       throw new Error("传入的文件没有扩展名");
@@ -675,6 +675,7 @@
           this.header = config.header;
           this.method = config.method;
           this.responseType = config.responseType;
+          this.xhr = config.xhr;
       }
   }
 
@@ -687,15 +688,21 @@
       setup() { }
       load(config) {
           let request = config.request;
-          let xhr = new XMLHttpRequest();
-          request.xhr = xhr;
+          let xhr;
+          if (request.xhr) {
+              xhr = request.xhr;
+          }
+          else {
+              xhr = new XMLHttpRequest();
+              request.xhr = xhr;
+          }
+          xhr.open(request.method || "get", request.url);
+          xhr.responseType = request.responseType || "arraybuffer";
           if (request.header) {
               for (let key in request.header) {
                   xhr.setRequestHeader(key, request.header[key]);
               }
           }
-          xhr.open(request.method || "get", request.url);
-          xhr.responseType = request.responseType || "arraybuffer";
           xhr.onreadystatechange = (e) => {
               if (xhr.readyState === 4) {
                   if ((xhr.status >= 200 && xhr.status < 300) || (xhr.status === 304)) {
@@ -9631,32 +9638,228 @@
   mp4box_all.ISOFile;
   mp4box_all.createFile;
 
+  class DownLoader {
+      constructor(url) {
+          this.isActive = false;
+          this.realtime = false;
+          // chunkStart指的是请求的Chunk在整个文件中的初始偏移量
+          this.chunkStart = 0;
+          this.chunkSize = 0;
+          this.totalLength = 0;
+          this.chunkTimeout = 1000;
+          this.timeoutID = 0;
+          this.url = "";
+          this.callback = null;
+          this.eof = false;
+          this.url = url || "";
+      }
+      // 从开头去请求文件，也就是初始化文件的请求过程直到所有文件都请求完成
+      start() {
+          mp4box_all_1.info("Downloader", "Starting file download");
+          this.chunkStart = 0;
+          this.resume();
+          return this;
+      }
+      reset() {
+          this.chunkStart = 0;
+          this.totalLength = 0;
+          this.eof = false;
+          return this;
+      }
+      stop() {
+          clearTimeout(this.timeoutID);
+          this.timeoutID = 0;
+          this.isActive = false;
+          return this;
+      }
+      // resume和start不同的是resume可能是在文件的请求暂停后重新设置了chunkStart之后再去重新请求新的chunk
+      resume() {
+          mp4box_all_1.info("Downloader", "Resuming file download");
+          this.isActive = true;
+          if (this.chunkSize === 0) {
+              this.chunkSize = Infinity;
+          }
+          this.getFile();
+          return this;
+      }
+      setUrl(_url) {
+          this.url = _url;
+          return this;
+      }
+      setRealTime(_realtime) {
+          this.realtime = _realtime;
+          return this;
+      }
+      setChunkSize(_size) {
+          this.chunkSize = _size;
+          return this;
+      }
+      setChunkStart(_start) {
+          this.chunkStart = _start;
+          this.eof = false;
+          return this;
+      }
+      setInterval(_timeout) {
+          this.chunkTimeout = _timeout;
+          return this;
+      }
+      setCallback(_callback) {
+          this.callback = _callback;
+          return this;
+      }
+      getFileLength() {
+          return this.totalLength;
+      }
+      isStopped() {
+          return !this.isActive;
+      }
+      initHttpRequest() {
+          let xhr = new XMLHttpRequest();
+          let header = {};
+          xhr.start = this.chunkStart;
+          if (this.chunkStart + this.chunkSize < Infinity) {
+              let endRange = 0;
+              // chunkStart to (chunkStart + chunkSize - 1)
+              let range = 'bytes=' + this.chunkStart + '-';
+              endRange = this.chunkStart + this.chunkSize - 1;
+              range += endRange;
+              header.Range = range;
+          }
+          let request = new HTTPRequest({
+              url: this.url,
+              header: header,
+              method: "get",
+              xhr: xhr
+          });
+          return request;
+      }
+      /**
+      * @description 发送网络请求，请求对应的媒体文件
+      * @returns
+      */
+      getFile() {
+          let ctx = this;
+          // eof为true表示整个媒体文件已经请求完毕
+          if (ctx.totalLength && ctx.chunkStart >= ctx.totalLength) {
+              ctx.eof = true;
+          }
+          if (ctx.eof === true) {
+              mp4box_all_1.info("Downloader", "File download done.");
+              ctx.callback(null, true);
+              return;
+          }
+          let request = this.initHttpRequest();
+          let loader = factory$a({}).getInstance();
+          loader.load({
+              request: request,
+              error: error,
+              success: success
+          });
+          function error(e) {
+              ctx.callback(null, false, true);
+          }
+          function success(res) {
+              let xhr = this;
+              let rangeReceived = xhr.getResponseHeader("Content-Range");
+              mp4box_all_1.info("Downloader", "Received data range: " + rangeReceived);
+              if (!ctx.totalLength && rangeReceived) {
+                  let sizeIndex;
+                  sizeIndex = rangeReceived.indexOf("/");
+                  if (sizeIndex > -1) {
+                      ctx.totalLength = +rangeReceived.slice(sizeIndex + 1);
+                  }
+              }
+              ctx.eof = (xhr.response.byteLength !== ctx.chunkSize) ||
+                  (xhr.response.byteLength === ctx.totalLength);
+              let buffer = xhr.response;
+              buffer.fileStart = xhr.start;
+              // 拿到数据之后执行回调函数
+              ctx.callback(buffer, ctx.eof);
+              // 如果下载器还是处于激活状态且还没全部下载完成的话
+              if (ctx.isActive === true && ctx.eof === false) {
+                  let timeoutDuration = ctx.chunkTimeout;
+                  ctx.timeoutID = window.setTimeout(ctx.getFile.bind(ctx), timeoutDuration);
+              }
+          }
+      }
+  }
+
   class MediaPlayer {
       constructor(url, video) {
+          this.lastSeekTime = 0;
           this.url = url;
           this.video = video;
           this.init();
       }
       init() {
           this.mp4boxfile = mp4box_all.createFile();
+          this.downloader = new DownLoader(this.url);
+          this.mediaSource = new MediaSource();
+          this.video.src = window.URL.createObjectURL(this.mediaSource);
           this.initEvent();
+          this.loadFile();
       }
       initEvent() {
+          let ctx = this;
           this.mp4boxfile.onMoovStart = function () {
               mp4box_all_1.info("Application", "Starting to parse movie information");
           };
           this.mp4boxfile.onReady = function (info) {
-              debugger;
               mp4box_all_1.info("Application", "Movie information received");
+              ctx.mediaInfo = info;
               if (info.isFragmented) {
-                  this.mediaSource.duration = info.fragment_duration / info.timescale;
+                  ctx.mediaSource.duration = info.fragment_duration / info.timescale;
               }
               else {
-                  this.mediaSource.duration = info.duration / info.timescale;
+                  ctx.mediaSource.duration = info.duration / info.timescale;
               }
-              this.addSourceBufferListener(info);
-              stop();
+              // 当请求到了MP4 Box的 moov box之后解析其中包含的视频的元信息，暂停发送进一步的http请求
+              ctx.stop();
+              ctx.initializeAllSourceBuffers();
           };
+          this.mp4boxfile.onSegment = function (id, user, buffer, sampleNum, is_last) {
+              //sb = sourcebuffer
+              var sb = user;
+              // saveBuffer(buffer, 'track-'+id+'-segment-'+sb.segmentIndex+'.m4s');
+              sb.segmentIndex++;
+              sb.pendingAppends.
+                  push({ id: id, buffer: buffer, sampleNum: sampleNum, is_last: is_last });
+              ctx.onUpdateEnd.call(sb, true, false, ctx);
+          };
+          this.mp4boxfile.onItem = function (item) {
+              debugger;
+          };
+          this.video.onseeking = (e) => {
+              var i, start, end;
+              var seek_info;
+              if (this.lastSeekTime !== this.video.currentTime) {
+                  for (i = 0; i < this.video.buffered.length; i++) {
+                      start = this.video.buffered.start(i);
+                      end = this.video.buffered.end(i);
+                      if (this.video.currentTime >= start && this.video.currentTime <= end) {
+                          return;
+                      }
+                  }
+                  this.downloader.stop();
+                  seek_info = this.mp4boxfile.seek(this.video.currentTime, true);
+                  this.downloader.setChunkStart(seek_info.offset);
+                  this.downloader.resume();
+                  this.lastSeekTime = this.video.currentTime;
+              }
+          };
+      }
+      start() {
+          this.downloader.setChunkStart(this.mp4boxfile.seek(0, true).offset);
+          this.mp4boxfile.start();
+          this.downloader.resume();
+      }
+      reset() {
+      }
+      //停止当前还在发送中的http请求
+      stop() {
+          if (!this.downloader.isStopped()) {
+              this.downloader.stop();
+          }
       }
       /**
        * @description 根据传入的媒体轨道的类型构建对应的SourceBuffer
@@ -9670,6 +9873,7 @@
           var sb;
           if (MediaSource.isTypeSupported(mime)) {
               try {
+                  console.log("MSE - SourceBuffer #" + track_id, "Creation with type '" + mime + "'");
                   mp4box_all_1.info("MSE - SourceBuffer #" + track_id, "Creation with type '" + mime + "'");
                   // 根据moov box中解析出来的track去一一创建对应的sourcebuffer
                   sb = this.mediaSource.addSourceBuffer(mime);
@@ -9678,18 +9882,106 @@
                   });
                   sb.ms = this.mediaSource;
                   sb.id = track_id;
-                  this.mp4boxfile.setSegmentOptions(track_id, sb);
+                  this.mp4boxfile.setSegmentOptions(track_id, sb, { nbSamples: 1000 });
                   sb.pendingAppends = [];
               }
               catch (e) {
                   mp4box_all_1.error("MSE - SourceBuffer #" + track_id, "Cannot create buffer with type '" + mime + "'" + e);
               }
           }
+          else {
+              throw new Error(`你的浏览器不支持${mime}媒体类型`);
+          }
       }
-      addSourceBufferListener(info) {
-          for (var i = 0; i < info.tracks.length; i++) {
-              var track = info.tracks[i];
-              this.addBuffer(track);
+      // 开始加载视频文件
+      loadFile() {
+          let ctx = this;
+          if (this.mediaSource.readyState !== "open") {
+              this.mediaSource.onsourceopen = this.loadFile.bind(ctx);
+              return;
+          }
+          // 先写死，之后在修改
+          this.downloader.setInterval(500);
+          this.downloader.setChunkSize(1000000);
+          this.downloader.setUrl(this.url);
+          this.downloader.setCallback(
+          // end表示这一次的请求是否已经将整个视频文件加载过来
+          function (response, end, error) {
+              var nextStart = 0;
+              if (response) {
+                  // 设置文件加载的进度条
+                  nextStart = ctx.mp4boxfile.appendBuffer(response, end);
+              }
+              if (end) {
+                  // 如果存在end的话则意味着所有的chunk已经加载完毕
+                  ctx.mp4boxfile.flush();
+              }
+              else {
+                  ctx.downloader.setChunkStart(nextStart);
+              }
+              if (error) {
+                  ctx.reset();
+              }
+          });
+          this.downloader.start();
+          this.video.play();
+      }
+      initializeAllSourceBuffers() {
+          if (this.mediaInfo) {
+              var info = this.mediaInfo;
+              for (var i = 0; i < info.tracks.length; i++) {
+                  var track = info.tracks[i];
+                  this.addBuffer(track);
+              }
+              this.initializeSourceBuffers();
+          }
+      }
+      initializeSourceBuffers() {
+          var initSegs = this.mp4boxfile.initializeSegmentation();
+          for (var i = 0; i < initSegs.length; i++) {
+              var sb = initSegs[i].user;
+              if (i === 0) {
+                  sb.ms.pendingInits = 0;
+              }
+              this.onInitAppended = this.onInitAppended.bind(this);
+              sb.addEventListener("updateend", this.onInitAppended);
+              mp4box_all_1.info("MSE - SourceBuffer #" + sb.id, "Appending initialization data");
+              sb.appendBuffer(initSegs[i].buffer);
+              sb.segmentIndex = 0;
+              sb.ms.pendingInits++;
+          }
+      }
+      onInitAppended(e) {
+          console.log(this);
+          let ctx = this;
+          var sb = e.target;
+          if (sb.ms.readyState === "open") {
+              sb.sampleNum = 0;
+              sb.removeEventListener('updateend', this.onInitAppended);
+              sb.addEventListener('updateend', this.onUpdateEnd.bind(sb, true, true, ctx));
+              /* In case there are already pending buffers we call onUpdateEnd to start appending them*/
+              this.onUpdateEnd.call(sb, false, true, ctx);
+              sb.ms.pendingInits--;
+              if (sb.ms.pendingInits === 0) {
+                  this.start();
+              }
+          }
+      }
+      onUpdateEnd(isNotInit, isEndOfAppend, ctx) {
+          if (isEndOfAppend === true) {
+              if (this.sampleNum) {
+                  ctx.mp4boxfile.releaseUsedSamples(this.id, this.sampleNum);
+                  delete this.sampleNum;
+              }
+              if (this.is_last) {
+                  this.ms.endOfStream();
+              }
+          }
+          if (this.ms.readyState === "open" && this.updating === false && this.pendingAppends.length > 0) {
+              var obj = this.pendingAppends.shift();
+              this.sampleNum = obj.sampleNum;
+              this.is_last = obj.is_last;
+              this.appendBuffer(obj.buffer);
           }
       }
   }
@@ -9735,6 +10027,7 @@
               this.emit("loadedmetadata", e);
           };
           this.video.ontimeupdate = (e) => {
+              console.log("timeupdate");
               this.emit("timeupdate", e);
           };
           this.video.onplay = (e) => {
@@ -9775,8 +10068,10 @@
               case "mp4":
               case "mp3":
                   this.initMp4Player(url);
+                  break;
               case "mpd":
                   this.initMpdPlayer(url);
+                  break;
               // ToDo
           }
       }

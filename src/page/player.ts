@@ -65,6 +65,7 @@ class Player extends Component implements ComponentItem {
     }
 
     this.video.ontimeupdate = (e) => {
+      console.log("timeupdate")
       this.emit("timeupdate",e);
     }
 
@@ -96,9 +97,8 @@ class Player extends Component implements ComponentItem {
     }
   }
 
-  initMp4Player(url:string) {
+  initMp4Player(url: string) {
     let player = new Mp4MediaPlayer(this.playerOptions.url,this.video);
-
   }
 
   initMpdPlayer(url:string) {
@@ -112,8 +112,10 @@ class Player extends Component implements ComponentItem {
       case "mp4":
       case "mp3":
         this.initMp4Player(url);
+        break;
       case "mpd":
         this.initMpdPlayer(url);
+        break;
       case "m3u8":
         // ToDo
     }

@@ -15,5 +15,6 @@ export default class HTTPRequest {
         this.header = config.header;
         this.method = config.method;
         this.responseType = config.responseType;
+        this.xhr = config.xhr;
     }
 }

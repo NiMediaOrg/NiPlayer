@@ -14,15 +14,20 @@ class XHRLoader {
 
     load(config: XHRConfig) {
         let request = config.request;
-        let xhr = new XMLHttpRequest();
-        request.xhr = xhr;
+        let xhr: XMLHttpRequest;
+        if(request.xhr) {
+            xhr = request.xhr;
+        } else {
+            xhr = new XMLHttpRequest();
+            request.xhr = xhr;
+        }
+        xhr.open(request.method || "get",request.url);
+        xhr.responseType = request.responseType || "arraybuffer";
         if(request.header) {
             for(let key in request.header) {
                 xhr.setRequestHeader(key,request.header[key]);
             }
         }
-        xhr.open(request.method || "get",request.url);
-        xhr.responseType = request.responseType || "arraybuffer";
         xhr.onreadystatechange = (e) => {
             if(xhr.readyState === 4) {
                 if((xhr.status >= 200 && xhr.status < 300) || (xhr.status === 304)) {
