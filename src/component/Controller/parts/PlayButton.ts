@@ -1,7 +1,7 @@
 import { Component } from "../../../class/Component"
 import { Player } from "../../../page/player";
 import { ComponentItem, DOMProps,Node } from "../../../types/Player";
-import { addClass, createSvg } from "../../../utils/domUtils";
+import { $, addClass, createSvg } from "../../../utils/domUtils";
 import { storeControlComponent } from "../../../utils/store";
 import { pausePath, playPath } from "../path/defaultPath";
 
@@ -9,6 +9,7 @@ export class PlayButton extends Component implements ComponentItem {
     readonly id = "PlayButton";
     private pauseIcon: SVGSVGElement | string;
     private playIcon: SVGSVGElement | string;
+    private iconBox: HTMLElement;
     private button: SVGSVGElement;
     props: DOMProps;
     player: Player;
@@ -26,25 +27,27 @@ export class PlayButton extends Component implements ComponentItem {
     }
 
     initTemplate() {
-        addClass(this.el,["video-start-pause"])
+        addClass(this.el,["video-start-pause","video-controller"]);
+        this.iconBox = $("div.video-icon");
+        this.el.appendChild(this.iconBox);
         this.pauseIcon = createSvg(pausePath);
         this.playIcon = createSvg(playPath);
         this.button = this.playIcon as SVGSVGElement;
-        this.el.appendChild(this.button);
+        this.iconBox.appendChild(this.button);
     }
 
     initEvent() {
         this.onClick = this.onClick.bind(this);
         this.player.on("play",(e:Event) => {
-            this.el.removeChild(this.button);
+            this.iconBox.removeChild(this.button);
             this.button = this.pauseIcon as SVGSVGElement;
-            this.el.appendChild(this.button);
+            this.iconBox.appendChild(this.button);
         })
 
         this.player.on("pause",(e:Event) => {
-            this.el.removeChild(this.button);
+            this.iconBox.removeChild(this.button);
             this.button = this.playIcon as SVGSVGElement;
-            this.el.appendChild(this.button);
+            this.iconBox.appendChild(this.button);
         })
 
         this.el.onclick = this.onClick;

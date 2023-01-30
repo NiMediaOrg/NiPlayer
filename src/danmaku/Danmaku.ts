@@ -1,4 +1,5 @@
 import { DanmakuData, Track } from "../types/danmaku";
+import { nextTick } from "../utils/nextTick";
 /**
  * @description 弹幕类
  */
@@ -8,7 +9,7 @@ export class Danmaku {
     private container: HTMLElement;
     private timer: number | null = null;
     private rennderInterval: number = 100;
-    // 每一条弹幕轨道的高度默认为18px
+    // 每一条弹幕轨道的高度默认为20px
     private trackHeight: number = 20;
     private tracks: Array<{
         track: Track;
@@ -38,9 +39,9 @@ export class Danmaku {
     addData(data: any) {
         this.queue.push(this.parseData(data));
         if(this.timer === null) {
-            setTimeout(()=>{
+            nextTick(()=>{
                 this.render();
-            },0)
+            })
         }
     }
 

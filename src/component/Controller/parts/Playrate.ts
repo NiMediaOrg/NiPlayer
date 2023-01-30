@@ -27,7 +27,7 @@ export class Playrate extends Options {
         this.el.appendChild(this.iconBox);
 
         this.el.removeChild(this.hideBox);
-        this.hideBox = $("ul",{style:{bottom: "41px", "display":"none"},"aria-label":"播放速度调节"});
+        // this.hideBox = $("ul",{style:{ display:"none" },"aria-label":"播放速度调节"});
         addClass(this.hideBox,["video-playrate-set"]);
         this.el.appendChild(this.hideBox);
 
