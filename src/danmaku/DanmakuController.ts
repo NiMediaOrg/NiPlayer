@@ -1,21 +1,37 @@
 import { queue } from "../mock/queue";
+import { Player } from "../page/player";
 import { Danmaku } from "./Danmaku";
+import { DanmakuInput } from "./UI/DanmakuInput";
 
 export class DanmakuController {
     private video: HTMLVideoElement;
     private container: HTMLElement;
+    private player: Player;
     private danmaku: Danmaku;
+    private danmakuInput: DanmakuInput;
     private timer: number | null = null;
     private index = 0;
-    constructor(video:HTMLVideoElement,container: HTMLElement) {
-        this.video = video;
-        this.container = container;
+    constructor(player: Player) {
+        this.player = player
+        this.video = player.video;
+        this.container = player.container;
         this.init();
     }
 
     init() {
         this.danmaku = new Danmaku([],this.container);
+        this.initTemlate();
         this.initializeEvent();
+    }
+
+    initTemlate() {
+        let ctx = this;
+        this.danmakuInput = new DanmakuInput(this.player, null,"div");
+        this.player.use({
+            install(player) {
+                player.registerControls(ctx.danmakuInput.id,ctx.danmakuInput,"medium");
+            }
+        })
     }
 
 
@@ -38,9 +54,9 @@ export class DanmakuController {
             this.danmaku.pause();
         })
 
-        this.video.addEventListener("loadedmetadata",(e) => {
-            
-            
+        this.video.addEventListener("loadedmetadata",(e) => {})
+        this.danmakuInput.on("sendData",function(data) {
+            console.log(data);
         })
     }
 
@@ -61,6 +77,6 @@ export class DanmakuController {
     }
 
     onSeeking(e:Event) {
-
+        this.danmaku.flush();
     }
 }

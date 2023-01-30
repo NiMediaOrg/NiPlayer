@@ -56,7 +56,7 @@ export class Danmaku {
         })
     }
 
-    // 恢复弹幕的运动,恢复弹幕运动此处的逻辑有问题
+    // 恢复弹幕的运动,恢复弹幕运动此处的逻辑有问题(已修复)
     resume() {
         this.timer = window.setTimeout(()=>{
             this.render();

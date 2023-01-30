@@ -11,13 +11,14 @@ import { SubSetting } from "./parts/SubSetting";
 import { Volume } from "./parts/Volume";
 export class Controller extends Component implements ComponentItem {
   readonly id = "Controller";
-  subPlay: HTMLElement;
-  settings: HTMLElement;
+  leftArea: HTMLElement; //代表着最左侧的区域
+  mediumArea: HTMLElement;
+  rightArea: HTMLElement; //代表最右侧的区域
   props: DOMProps = {};
   player: Player;
   // 控件
   leftControllers: ComponentConstructor[] = [PlayButton];
-  rightController: ComponentConstructor[] = [Playrate,SubSetting ,Volume,FullScreen];
+  rightController: ComponentConstructor[] = [Playrate,SubSetting,Volume,FullScreen];
   constructor(player: Player,container:HTMLElement, desc?:string, props?:DOMProps, children?:Node[]) {
     super(container,desc,props,children);
     this.player = player;
@@ -63,23 +64,30 @@ export class Controller extends Component implements ComponentItem {
   }
 
   initTemplate() {
-    this.subPlay = $("div.video-subplay");
-    this.settings = $("div.video-settings");
-    this.el.appendChild(this.subPlay);
-    this.el.appendChild(this.settings);
+    this.leftArea = $("div.video-subplay");
+    this.mediumArea = $("div.video-medium")
+    this.rightArea = $("div.video-settings");
+    this.el.appendChild(this.leftArea);
+    this.el.appendChild(this.mediumArea);
+    this.el.appendChild(this.rightArea);
   }
 
   initComponent() {
     this.leftControllers.forEach(ControlConstructor => {
-      let instance = new ControlConstructor(this.player,this.subPlay,"div");
+      let instance = new ControlConstructor(this.player,this.leftArea,"div");
       this[instance.id] = instance;
     })
 
     this.rightController.forEach(ControlConstructor => {
-      let instance = new ControlConstructor(this.player,this.settings,"div");
+      let instance = new ControlConstructor(this.player,this.rightArea,"div");
       this[instance.id] = instance;
     })
-    
+  }
+
+  initEvent() {
+    this.player.on("danmaku-plugin-add",()=>{
+      
+    })
   }
   // private template_: HTMLElement | string;
   // private container: HTMLElement;

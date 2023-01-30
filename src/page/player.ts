@@ -15,7 +15,6 @@ import { getFileExtension } from "../utils/play";
 import  MpdMediaPlayerFactory  from "../dash/MediaPlayer";
 import Mp4MediaPlayer from "../mp4/MediaPlayer";
 import { Danmaku, DanmakuController } from "../danmaku";
-import { queue } from "../mock/queue";
 class Player extends Component implements ComponentItem {
   readonly id = "Player";
   // 播放器的默认配置
@@ -48,7 +47,7 @@ class Player extends Component implements ComponentItem {
     this.initEvent();
     this.initPlugin();
 
-    new DanmakuController(this.video,this.container);
+    new DanmakuController(this);
   }
 
   initEvent() {
@@ -125,9 +124,9 @@ class Player extends Component implements ComponentItem {
     }
   }
 
-  registerControls(id:string, component:Partial<ComponentItem> & registerOptions) {
+  // 注册最右侧的控制栏上的组件
+  registerControls(id:string, component:Partial<ComponentItem> & registerOptions,pos: "left" | "right" | "medium") {
     let store = CONTROL_COMPONENT_STORE;
-    console.log(store,id)
     if(store.has(id)) {
       if(component.replaceElementType) {
         patchComponent(store.get(id),component,{replaceElementType:component.replaceElementType})
@@ -137,7 +136,14 @@ class Player extends Component implements ComponentItem {
     } else {
       // 如果该组件实例是用户自创的话
       if(!component.el) throw new Error(`传入的原创组件${id}没有对应的DOM元素`)
-      this.toolBar.controller.settings.appendChild(component.el);
+      if(pos === "left") {
+        this.toolBar.controller.leftArea.appendChild(component.el);
+      } else if(pos === "right") {
+        let settings = this.toolBar.controller.rightArea
+        settings.insertBefore(component.el,settings.firstChild);
+      } else if(pos === "medium") {
+        this.toolBar.controller.mediumArea.appendChild(component.el);
+      }
     }
   }
 
