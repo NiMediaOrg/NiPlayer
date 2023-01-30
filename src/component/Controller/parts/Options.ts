@@ -47,7 +47,7 @@ export class Options extends Component implements ComponentItem {
 
     this.iconBox = $("div");
     // hideBox距离底部的距离先写死，到时候再做微调
-    this.hideBox.style.bottom = "50px"
+    this.hideBox.style.bottom = "45px"
     addClass(this.iconBox,["video-icon"])
     this.el.appendChild(this.iconBox);
   }
