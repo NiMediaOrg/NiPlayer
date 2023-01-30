@@ -18,4 +18,13 @@ export class BaseEvent {
     this.$events[event] = this.$events[event] || [];
     this.$events[event].push(cb);
   }
+
+  off(event:string,cb:Function) {
+    if(this.$events[event]) {
+      this.$events[event] = this.$events[event].filter(fn=>{
+        if(cb === fn) return false;
+        return true;
+      })
+    }
+  }
 }

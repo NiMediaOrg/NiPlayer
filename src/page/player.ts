@@ -14,6 +14,7 @@ import { CONTROL_COMPONENT_STORE } from "../utils/store";
 import { getFileExtension } from "../utils/play";
 import  MpdMediaPlayerFactory  from "../dash/MediaPlayer";
 import Mp4MediaPlayer from "../mp4/MediaPlayer";
+import { DanmakuController } from "../danmaku";
 class Player extends Component implements ComponentItem {
   readonly id = "Player";
   // 播放器的默认配置
@@ -45,6 +46,8 @@ class Player extends Component implements ComponentItem {
     this.attachSource(this.playerOptions.url);
     this.initEvent();
     this.initPlugin();
+
+    new DanmakuController(this);
   }
 
   initEvent() {
@@ -65,9 +68,9 @@ class Player extends Component implements ComponentItem {
     }
 
     this.video.ontimeupdate = (e) => {
-      console.log("timeupdate")
       this.emit("timeupdate",e);
     }
+
 
     this.video.onplay = (e) => {
       this.emit("play",e);
@@ -86,6 +89,16 @@ class Player extends Component implements ComponentItem {
       }
       this.video.currentTime = Math.floor(scale * this.video.duration);
       this.video.paused && this.video.play();
+    })
+
+    this.on("inputFocus",() => {
+      this.el.onmouseleave = null;
+    })
+
+    this.on("inputBlur",() => {
+      this.el.onmouseleave = (e) => {
+        this.emit("hidetoolbar",e);
+      }
     })
   }
 
@@ -121,9 +134,9 @@ class Player extends Component implements ComponentItem {
     }
   }
 
-  registerControls(id:string, component:Partial<ComponentItem> & registerOptions) {
+  // 注册最右侧的控制栏上的组件
+  registerControls(id:string, component:Partial<ComponentItem> & registerOptions,pos: "left" | "right" | "medium") {
     let store = CONTROL_COMPONENT_STORE;
-    console.log(store,id)
     if(store.has(id)) {
       if(component.replaceElementType) {
         patchComponent(store.get(id),component,{replaceElementType:component.replaceElementType})
@@ -133,7 +146,14 @@ class Player extends Component implements ComponentItem {
     } else {
       // 如果该组件实例是用户自创的话
       if(!component.el) throw new Error(`传入的原创组件${id}没有对应的DOM元素`)
-      this.toolBar.controller.settings.appendChild(component.el);
+      if(pos === "left") {
+        this.toolBar.controller.leftArea.appendChild(component.el);
+      } else if(pos === "right") {
+        let settings = this.toolBar.controller.rightArea
+        settings.insertBefore(component.el,settings.firstChild);
+      } else if(pos === "medium") {
+        this.toolBar.controller.mediumArea.appendChild(component.el);
+      }
     }
   }
 
