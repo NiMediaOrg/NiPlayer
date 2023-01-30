@@ -11,6 +11,7 @@ export class Danmaku {
     private renderInterval: number = 100;
     // 每一条弹幕轨道的高度默认为20px
     private trackHeight: number = 20;
+    private isStopped = true;
     private tracks: Array<{
         track: Track;
         datas: DanmakuData[]
@@ -47,26 +48,36 @@ export class Danmaku {
 
     // 暂停所有的弹幕
     pause() {
+        this.isStopped = true;
         window.clearTimeout(this.timer);
         this.moovingQueue.forEach(data=>{
-            let currentRollDistance = (Date.now() - data.startTime) * data.rollSpeed / 1000;
-            data.rollDistance = currentRollDistance + (data.rollDistance ? data.rollDistance : 0);
-            data.dom.style.transition = "";
-            data.dom.style.transform = `translateX(${-data.rollDistance}px)`;
+            this.pauseOneData(data)
         })
     }
 
     // 恢复弹幕的运动,恢复弹幕运动此处的逻辑有问题(已修复)
     resume() {
+        this.isStopped = false;
         this.timer = window.setTimeout(()=>{
             this.render();
         },this.renderInterval);
         this.moovingQueue.forEach(data=>{
-            data.dom.style.transform = `translateX(${-data.totalDistance}px)`;
-            data.startTime = Date.now();
-            data.rollTime = (data.totalDistance - data.rollDistance) / data.rollSpeed;
-            data.dom.style.transition = `transform ${data.rollTime}s linear`;
+           this.resumeOneData(data);
         })
+    }
+
+    resumeOneData(data:DanmakuData) {
+        data.dom.style.transform = `translateX(${-data.totalDistance}px)`;
+        data.startTime = Date.now();
+        data.rollTime = (data.totalDistance - data.rollDistance) / data.rollSpeed;
+        data.dom.style.transition = `transform ${data.rollTime}s linear`;
+    }
+
+    pauseOneData(data:DanmakuData) {
+        let currentRollDistance = (Date.now() - data.startTime) * data.rollSpeed / 1000;
+        data.rollDistance = currentRollDistance + (data.rollDistance ? data.rollDistance : 0);
+        data.dom.style.transition = "";
+        data.dom.style.transform = `translateX(${-data.rollDistance}px)`;
     }
 
     startDanmaku() {
@@ -126,6 +137,7 @@ export class Danmaku {
         if(!data.dom) {
             let dom = document.createElement("div");
             dom.innerText = data.message;
+            dom.className = "danmaku-box"
             if(data.fontFamily !== "") {
                 dom.style.fontFamily = data.fontFamily;
             }
@@ -136,6 +148,8 @@ export class Danmaku {
             dom.style.left = "100%";
             dom.style.whiteSpace = 'nowrap';
             dom.style.willChange = 'transform';
+            dom.style.cursor = "pointer";
+            
             data.dom = dom;
             this.container.appendChild(dom);
         }
@@ -149,6 +163,15 @@ export class Danmaku {
         data.y = [];
         data.dom.ontransitionstart = (e) => {
             data.startTime = Date.now();
+        }
+
+        data.dom.onmouseenter = () => {
+            if(this.isStopped) return;
+            this.pauseOneData(data);
+        }
+        data.dom.onmouseleave = () => {
+            if(this.isStopped) return;
+            this.resumeOneData(data);
         }
 
         this.addDataToTrack(data);
