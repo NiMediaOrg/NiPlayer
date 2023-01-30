@@ -14,7 +14,7 @@ import { CONTROL_COMPONENT_STORE } from "../utils/store";
 import { getFileExtension } from "../utils/play";
 import  MpdMediaPlayerFactory  from "../dash/MediaPlayer";
 import Mp4MediaPlayer from "../mp4/MediaPlayer";
-import { Danmaku } from "../danmaku";
+import { Danmaku, DanmakuController } from "../danmaku";
 import { queue } from "../mock/queue";
 class Player extends Component implements ComponentItem {
   readonly id = "Player";
@@ -48,11 +48,7 @@ class Player extends Component implements ComponentItem {
     this.initEvent();
     this.initPlugin();
 
-    let danmaku = new Danmaku([],this.el)
-    let i = 0;
-    setInterval(()=>{
-      danmaku.addData(queue[(i++)%queue.length]);
-    },150)
+    new DanmakuController(this.video,this.container);
   }
 
   initEvent() {
@@ -73,9 +69,9 @@ class Player extends Component implements ComponentItem {
     }
 
     this.video.ontimeupdate = (e) => {
-      console.log("timeupdate")
       this.emit("timeupdate",e);
     }
+
 
     this.video.onplay = (e) => {
       this.emit("play",e);
