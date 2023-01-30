@@ -57,11 +57,14 @@ export class DanmakuController {
         this.video.addEventListener("loadedmetadata",(e) => {})
         this.danmakuInput.on("sendData",function(data) {
             console.log(data);
+            queue.push(data);
+            console.log(queue);
         })
     }
 
     start() {
         this.timer = window.setInterval(()=>{
+            // console.log(queue);
             this.danmaku.addData(queue[(this.index++)%queue.length]);
         },50)
     }

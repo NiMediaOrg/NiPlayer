@@ -2,7 +2,6 @@ import { Component } from "../../class/Component";
 import { Player } from "../../page/player";
 import { ComponentItem, DOMProps,Node } from "../../types/Player";
 import { $, addClass } from "../../utils/domUtils";
-import { storeControlComponent } from "../../utils/store";
 import "./index.less"
 export class DanmakuInput extends Component implements ComponentItem{
     readonly id = "DanmakuInput";
@@ -35,6 +34,16 @@ export class DanmakuInput extends Component implements ComponentItem{
         this.sendBox.onclick = (e) => {
             let value = this.inputBox.value;
             this.emit("sendData",value)
-        }        
+            this.inputBox.value = "";
+            this.inputBox.blur();
+        }
+        
+        this.inputBox.addEventListener("focus",()=>{
+            this.player.emit("inputFocus");
+        })
+
+        this.inputBox.addEventListener("blur",()=>{
+            this.player.emit("inputBlur");
+        })
     }
 }

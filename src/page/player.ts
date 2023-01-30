@@ -14,7 +14,7 @@ import { CONTROL_COMPONENT_STORE } from "../utils/store";
 import { getFileExtension } from "../utils/play";
 import  MpdMediaPlayerFactory  from "../dash/MediaPlayer";
 import Mp4MediaPlayer from "../mp4/MediaPlayer";
-import { Danmaku, DanmakuController } from "../danmaku";
+import { DanmakuController } from "../danmaku";
 class Player extends Component implements ComponentItem {
   readonly id = "Player";
   // 播放器的默认配置
@@ -89,6 +89,16 @@ class Player extends Component implements ComponentItem {
       }
       this.video.currentTime = Math.floor(scale * this.video.duration);
       this.video.paused && this.video.play();
+    })
+
+    this.on("inputFocus",() => {
+      this.el.onmouseleave = null;
+    })
+
+    this.on("inputBlur",() => {
+      this.el.onmouseleave = (e) => {
+        this.emit("hidetoolbar",e);
+      }
     })
   }
 
