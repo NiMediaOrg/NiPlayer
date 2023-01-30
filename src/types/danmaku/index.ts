@@ -3,6 +3,7 @@ export type DanmakuData = {
     fontColor?: string;
     fontSize?: number;
     fontFamily?: string;
+    fontWeight?: number;
     dom?: HTMLElement;
     useTracks?: number;
     width?: number;
