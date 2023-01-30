@@ -1,18 +1,17 @@
-import { Component } from "../../../class/Component";
 import { Player } from "../../../page/player";
-import { ComponentItem, DOMProps, Node } from "../../../types/Player";
-import { $, addClass, createSvg } from "../../../utils/domUtils";
+import { DOMProps, Node } from "../../../types/Player";
+import { addClass, createSvg } from "../../../utils/domUtils";
 import { storeControlComponent } from "../../../utils/store";
 import { fullscreenExitPath, fullscreenPath } from "../path/defaultPath";
+import { Options } from "./Options";
 
-export class FullScreen extends Component implements ComponentItem{
+export class FullScreen extends Options{
     readonly id = "FullScreen";
     player: Player;
     props: DOMProps;
-    iconBox: HTMLElement;
     icon: SVGSVGElement;
     constructor(player:Player,container:HTMLElement,desc?:string, props?:DOMProps,children?:Node[]) {
-        super(container,desc,props,children);
+        super(player, container,0,0, desc,props,children);
         this.player = player;
         this.props = props || {};
         this.init();
@@ -32,7 +31,6 @@ export class FullScreen extends Component implements ComponentItem{
         this.onClick = this.onClick.bind(this);
         this.el.onclick = this.onClick;
         addClass(this.el,["video-fullscreen","video-controller"]);
-        this.iconBox = $("div.video-icon");
         this.icon = createSvg(fullscreenPath);
         this.iconBox.appendChild(this.icon);
         this.el.appendChild(this.iconBox);

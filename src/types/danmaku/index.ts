@@ -13,6 +13,7 @@ export type DanmakuData = {
     // 弹幕的位移速度
     rollSpeed?: number;
     startTime?: number;
+    timestamp?: number;
     y?: number[];
 }
 
