@@ -33,8 +33,7 @@ export class DanmakuController {
             }
         })
     }
-
-
+    
     initializeEvent() {
         this.video.addEventListener("timeupdate",(e:Event)=>{
             this.onTimeupdate(e);
