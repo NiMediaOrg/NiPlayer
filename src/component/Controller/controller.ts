@@ -4,6 +4,7 @@ import { ComponentConstructor, ComponentItem, DOMProps,Node, PlayerOptions } fro
 import { $ } from "../../utils/domUtils";
 import { controllersMapping, storeControlComponent } from "../../utils/store";
 import "./controller.less";
+import { FullPage } from "./parts/FullPage";
 import { FullScreen } from "./parts/FullScreen";
 import { PlayButton } from "./parts/PlayButton";
 import { Playrate } from "./parts/Playrate";
@@ -18,7 +19,7 @@ export class Controller extends Component implements ComponentItem {
   player: Player;
   // 控件
   leftControllers: ComponentConstructor[] = [PlayButton];
-  rightController: ComponentConstructor[] = [Playrate,SubSetting,Volume,FullScreen];
+  rightController: ComponentConstructor[] = [Playrate,SubSetting,Volume,FullPage,FullScreen];
   constructor(player: Player,container:HTMLElement, desc?:string, props?:DOMProps, children?:Node[]) {
     super(container,desc,props,children);
     this.player = player;
