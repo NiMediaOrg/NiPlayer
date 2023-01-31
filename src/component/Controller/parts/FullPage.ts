@@ -29,6 +29,9 @@ export class FullPage extends Options {
         this.icon = createSvg(fullPagePath);
         this.iconBox.appendChild(this.icon);
         this.el.appendChild(this.iconBox);
+
+        this.hideBox.innerText = "网页全屏"
+        this.hideBox.style.fontSize = "13px"
     }
     
     initEvent() {
@@ -39,12 +42,18 @@ export class FullPage extends Options {
     onClick(e:MouseEvent) {
         if(!this.isFullPage) {
             addClass(this.player.container,["video-fullpage"])
+            this.player.container.style.position = "fixed"
+            this.player.container.style.width = "100%";
+            this.player.container.style.height = "100%"
             this.iconBox.removeChild(this.icon);
             this.icon = createSvg(fullPageExitPath);
             this.iconBox.appendChild(this.icon)
             
         } else {
             removeClass(this.player.container,["video-fullpage"]);
+            this.player.container.style.position = ""
+            this.player.container.style.width = this.player.playerOptions.width;
+            this.player.container.style.height = this.player.playerOptions.height;
             this.iconBox.removeChild(this.icon);
             this.icon = createSvg(fullPagePath);
             this.iconBox.appendChild(this.icon)

@@ -28,6 +28,9 @@ export class FullScreen extends Options{
         this.icon = createSvg(fullscreenPath);
         this.iconBox.appendChild(this.icon);
         this.el.appendChild(this.iconBox);
+
+        this.hideBox.innerText = "全屏"
+        this.hideBox.style.fontSize = "13px"
     }
     
     initEvent() {

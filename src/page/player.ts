@@ -6,7 +6,6 @@ import {
   ToolBar,
 } from "../index";
 import "./player.less";
-import "../main.less";
 import { Component } from "../class/Component";
 import { $, patchComponent } from "../utils/domUtils";
 import { Plugin } from "../index";

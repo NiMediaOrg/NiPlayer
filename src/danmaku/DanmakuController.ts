@@ -57,7 +57,7 @@ export class DanmakuController {
         this.video.addEventListener("loadedmetadata",(e) => {})
         this.danmakuInput.on("sendData",function(data) {
             // 此处为发送弹幕的逻辑
-            console.log(data);
+            // console.log(data);
             queue.push(data);
             // console.log(queue);
         })
@@ -65,7 +65,7 @@ export class DanmakuController {
 
     start() {
         this.timer = window.setInterval(()=>{
-            console.log(queue);
+            // console.log(queue);
             this.danmaku.addData(queue[(this.index++)%queue.length]);
         },50)
     }
