@@ -48,6 +48,7 @@
     "last 3 iOS versions"
   ],
   "dependencies": {
-    "mp4box": "^0.5.2"
+    "mp4box": "^0.5.2",
+    "nanoid": "^4.0.0"
   }
 }
