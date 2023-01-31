@@ -50,6 +50,13 @@ class Player extends Component implements ComponentItem {
   }
 
   initEvent() {
+    this.video.onclick = (e) => {
+      if(this.video.paused) {
+        this.video.play();
+      } else if(this.video.played) {
+        this.video.pause();
+      }
+    }
     this.el.onmousemove = (e) => {
       this.emit("showtoolbar",e);
     }
@@ -66,9 +73,9 @@ class Player extends Component implements ComponentItem {
       this.emit("loadedmetadata",e);
     }
 
-    this.video.ontimeupdate = (e) => {
+    this.video.addEventListener("timeupdate",(e)=>{
       this.emit("timeupdate",e);
-    }
+    })
 
 
     this.video.onplay = (e) => {
@@ -78,6 +85,10 @@ class Player extends Component implements ComponentItem {
     this.video.onpause = (e) => {
       this.emit("pause",e);
     }
+
+    this.video.addEventListener("ratechange",(e) => {
+      this.emit("ratechange");
+    })
 
     this.on("progress-click",(e,ctx)=>{
       let scale = e.offsetX / ctx.el.offsetWidth;

@@ -4,6 +4,7 @@ import { ComponentConstructor, ComponentItem, DOMProps,Node, PlayerOptions } fro
 import { $ } from "../../utils/domUtils";
 import { controllersMapping, storeControlComponent } from "../../utils/store";
 import "./controller.less";
+import { DutaionShow } from "./parts/DurationShow";
 import { FullPage } from "./parts/FullPage";
 import { FullScreen } from "./parts/FullScreen";
 import { PicInPic } from "./parts/PicInPic";
@@ -11,6 +12,7 @@ import { PlayButton } from "./parts/PlayButton";
 import { Playrate } from "./parts/Playrate";
 import { ScreenShot } from "./parts/ScreenShot";
 import { SubSetting } from "./parts/SubSetting";
+import { VideoShot } from "./parts/VideoShot";
 import { Volume } from "./parts/Volume";
 export class Controller extends Component implements ComponentItem {
   readonly id = "Controller";
@@ -20,8 +22,8 @@ export class Controller extends Component implements ComponentItem {
   props: DOMProps = {};
   player: Player;
   // 控件
-  leftControllers: ComponentConstructor[] = [PlayButton];
-  rightController: ComponentConstructor[] = [Playrate,SubSetting,Volume,ScreenShot,PicInPic,FullPage,FullScreen];
+  leftControllers: ComponentConstructor[] = [PlayButton,Volume, DutaionShow];
+  rightController: ComponentConstructor[] = [Playrate,SubSetting,VideoShot ,ScreenShot,PicInPic,FullPage,FullScreen];
   constructor(player: Player,container:HTMLElement, desc?:string, props?:DOMProps, children?:Node[]) {
     super(container,desc,props,children);
     this.player = player;
