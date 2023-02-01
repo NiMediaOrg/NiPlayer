@@ -34,7 +34,7 @@ export class Options extends Component implements ComponentItem {
   }
 
   initBaseTemplate() {
-    this.hideBox = $("div",{style:{display:"none"}});
+    this.hideBox = $("div",{style:{display:"none",bottom:"48px"}});
     addClass(this.hideBox,["video-set"])
     if(this.hideHeight && this.hideHeight > 0) {
         this.hideBox.style.height = this.hideHeight + 'px';
@@ -59,7 +59,6 @@ export class Options extends Component implements ComponentItem {
     }
 
     this.player.on("oneControllerHover",(controller:ComponentItem) => {
-      console.log(this,controller,this === controller)
       if(this !== controller) {
         if(this.hideBox.style.display !== "none") {
           this.hideBox.style.display = "none";

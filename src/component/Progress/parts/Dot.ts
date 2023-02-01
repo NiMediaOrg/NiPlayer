@@ -9,6 +9,9 @@ export class Dot extends Component implements ComponentItem {
     props: DOMProps;
     player: Player;
     container: HTMLElement;
+    mouseX: number;
+    left = 0;
+    playScale = 0;
     constructor(player:Player,container:HTMLElement,desc?:string,props?:DOMProps,children?:Node[]) {
         super(container, desc, props, children);
         this.props = props || {};
@@ -26,11 +29,15 @@ export class Dot extends Component implements ComponentItem {
 
     initEvent() {
         this.player.on("progress-mouseenter",(e)=>{
-            this.onShowDot(e);
+            if(this.player.enableSeek) {
+                this.onShowDot(e);
+            }
         })
 
         this.player.on("progress-mouseleave",(e)=>{
-            this.onHideDot(e);
+            if(this.player.enableSeek) {
+                this.onHideDot(e);
+            }
         })
 
         this.player.on("progress-click",(e:MouseEvent, ctx:Progress)=>{
@@ -38,8 +45,39 @@ export class Dot extends Component implements ComponentItem {
         })
 
         this.player.on("timeupdate",(e) => {
-            this.updatePos(e);
+            if(this.player.enableSeek) {
+                 this.updatePos(e);
+            }
         })
+
+        this.el.addEventListener("mousedown", (e) => { 
+            e.preventDefault();
+            this.onMouseMove = this.onMouseMove.bind(this);
+            this.player.emit("dotdown")
+            this.mouseX = e.pageX;
+            this.left = parseInt(this.el.style.left);
+            document.body.addEventListener("mousemove",this.onMouseMove);
+            
+            document.body.addEventListener("mouseup",(e) => {
+                this.player.emit("dotup")
+                this.player.video.currentTime = Math.floor(this.playScale * this.player.video.duration);
+                document.body.removeEventListener("mousemove",this.onMouseMove);
+            })
+        })
+    }
+
+    onMouseMove(e) {
+        let scale = (e.pageX -this.mouseX + this.left) / this.container.offsetWidth;
+        if (scale < 0) {
+            scale = 0;
+        } else if (scale > 1) {
+            scale = 1;
+        }
+        this.playScale = scale;
+        this.el.style.left = this.container.offsetWidth * scale - 5 + "px";
+        
+        if (this.player.video.paused) this.player.video.play();
+        this.player.emit("dotdrag",this.container.offsetWidth * scale);
     }
  
     onShowDot(e:MouseEvent) {

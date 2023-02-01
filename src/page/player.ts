@@ -14,12 +14,15 @@ import { getFileExtension } from "../utils/play";
 import  MpdMediaPlayerFactory  from "../dash/MediaPlayer";
 import Mp4MediaPlayer from "../mp4/MediaPlayer";
 import { DanmakuController } from "../danmaku";
+import { Loading } from "../component/Loading/Loading";
+import { TimeLoading } from "../component/Loading/parts/TimeLoading";
+import { ErrorLoading } from "../component/Loading/parts/ErrorLoading";
 class Player extends Component implements ComponentItem {
   readonly id = "Player";
   // 播放器的默认配置
   readonly playerOptions:PlayerOptions = {
     url: "",
-    container:document.body,
+    container: document.body,
     autoplay: false,
     width: "100%",
     height: "100%",
@@ -28,6 +31,9 @@ class Player extends Component implements ComponentItem {
   toolBar: ToolBar;
   container: HTMLElement;
   props: DOMProps;
+  loading: TimeLoading;
+  error: ErrorLoading;
+  enableSeek = true;
   constructor(options: PlayerOptions) {
     super(options.container,"div.video-wrapper");
     this.playerOptions = Object.assign(this.playerOptions, options);
@@ -41,15 +47,27 @@ class Player extends Component implements ComponentItem {
   init() {
     this.video = $("video");
     this.el.appendChild(this.video);
-    this.toolBar = new ToolBar(this, this.el, "div");
     this.attachSource(this.playerOptions.url);
     this.initEvent();
     this.initPlugin();
+    this.initComponent()
+  }
 
-    new DanmakuController(this);
+  initComponent(): void {
+    //  new DanmakuController(this);
+     this.loading = new TimeLoading(this,"视频加载中，请稍等....",this.el);
+     this.error = new ErrorLoading(this,"视频加载发送错误",this.el);
+     this.toolBar = new ToolBar(this, this.el, "div");
   }
 
   initEvent() {
+    this.video.onclick = (e) => {
+      if(this.video.paused) {
+        this.video.play();
+      } else if(this.video.played) {
+        this.video.pause();
+      }
+    }
     this.el.onmousemove = (e) => {
       this.emit("showtoolbar",e);
     }
@@ -66,9 +84,9 @@ class Player extends Component implements ComponentItem {
       this.emit("loadedmetadata",e);
     }
 
-    this.video.ontimeupdate = (e) => {
+    this.video.addEventListener("timeupdate",(e)=>{
       this.emit("timeupdate",e);
-    }
+    })
 
 
     this.video.onplay = (e) => {
@@ -78,6 +96,33 @@ class Player extends Component implements ComponentItem {
     this.video.onpause = (e) => {
       this.emit("pause",e);
     }
+
+    this.video.addEventListener("seeking",(e) => {
+      if(this.enableSeek) {
+        this.emit("seeking",e);
+      }
+    })
+
+    this.video.addEventListener("waiting",(e) => {
+      this.emit("waiting",e);
+    })
+
+    this.video.addEventListener("canplay",(e) => {
+      this.emit("canplay",e);
+    })
+
+    this.video.addEventListener("error", (e) => {
+      this.emit("videoError");
+    })
+
+    this.video.addEventListener("abort", (e) => {
+      this.emit("videoError")
+    })
+
+    this.video.addEventListener("ratechange",(e) => {
+      this.emit("ratechange");
+    })
+
 
     this.on("progress-click",(e,ctx)=>{
       let scale = e.offsetX / ctx.el.offsetWidth;
@@ -99,6 +144,15 @@ class Player extends Component implements ComponentItem {
         this.emit("hidetoolbar",e);
       }
     })
+
+    this.on("dotdown",()=>{
+      console.log("dotdown")
+      this.enableSeek = false;
+    })
+    this.on("dotup",() => {
+      console.log("dotup")
+      this.enableSeek = true;
+    })
   }
 
   initPlugin() {
@@ -110,7 +164,7 @@ class Player extends Component implements ComponentItem {
   }
 
   initMp4Player(url: string) {
-    let player = new Mp4MediaPlayer(this.playerOptions.url,this.video);
+    new Mp4MediaPlayer(this.playerOptions.url,this);
   }
 
   initMpdPlayer(url:string) {

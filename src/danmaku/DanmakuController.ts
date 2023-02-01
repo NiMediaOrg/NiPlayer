@@ -33,8 +33,7 @@ export class DanmakuController {
             }
         })
     }
-
-
+    
     initializeEvent() {
         this.video.addEventListener("timeupdate",(e:Event)=>{
             this.onTimeupdate(e);
@@ -60,6 +59,10 @@ export class DanmakuController {
             // console.log(data);
             queue.push(data);
             // console.log(queue);
+        })
+
+        this.player.on("dotdrag",(e)=>{
+            this.danmaku.flush();
         })
     }
 

@@ -26,9 +26,14 @@ export class CompletedProgress extends Component implements ComponentItem {
         })
 
         this.player.on("timeupdate",(e) => {
-            this.updatePos(e);
+            if(this.player.enableSeek) {
+                this.updatePos(e);
+            }
         })
-        // this.player.on("volume-progress-click",(e:MouseEvent,ctx:))
+       
+        this.player.on("dotdrag",(len:number)=>{
+            this.el.style.width = len + "px";
+        })
     }
 
     onChangeSize(e:MouseEvent,ctx:Component) {
