@@ -10,7 +10,7 @@ class DownLoader {
 	chunkSize: number = 0;
 	totalLength: number = 0;
 	chunkTimeout: number = 1000;
-    timeoutID: number = 0;
+    timeoutID: number | null = null;
 	url: string = "";
 	callback: Function = null;
 	eof: boolean = false;
@@ -35,8 +35,8 @@ class DownLoader {
     }
 
     stop() {
-        clearTimeout(this.timeoutID);
-        this.timeoutID = 0;
+        window.clearTimeout(this.timeoutID);
+        this.timeoutID = null;
         this.isActive = false;
         return this;
     }
@@ -120,8 +120,9 @@ class DownLoader {
 
     getFile() {
         let ctx = this;
+        if(this.isStopped()) return;
         // eof为true表示整个媒体文件已经请求完毕
-        if(ctx.totalLength && ctx.chunkStart >= ctx.totalLength) {
+        if(ctx.totalLength !== 0 && ctx.chunkStart >= ctx.totalLength) {
             ctx.eof = true;
         }
         if(ctx.eof === true) {
@@ -131,12 +132,12 @@ class DownLoader {
         }
         let request = this.initHttpRequest();
         let loader = XHRLoaderFactory({}).getInstance();
+        console.log("当前发送请求的范围为: ",request.header.Range)
         loader.load({
             request:request,
             error: error,
             success: success
         })
-
 
         function error(e) {
             ctx.callback(null, false, true);
@@ -145,8 +146,7 @@ class DownLoader {
         function success(res) {
             let xhr = this;
             let rangeReceived = xhr.getResponseHeader("Content-Range");
-			Log.info("Downloader", "Received data range: "+rangeReceived);
-            if (!ctx.totalLength && rangeReceived) {
+            if (ctx.totalLength === 0 && rangeReceived) {
 				let sizeIndex;
 				sizeIndex = rangeReceived.indexOf("/");
 				if (sizeIndex > -1) {
@@ -157,6 +157,7 @@ class DownLoader {
                 (xhr.response.byteLength === ctx.totalLength);
             let buffer = xhr.response;
             buffer.fileStart = xhr.start;
+            console.log("成功拿到请求:",buffer);
             // 拿到数据之后执行回调函数
             ctx.callback(buffer,ctx.eof);
             // 如果下载器还是处于激活状态且还没全部下载完成的话

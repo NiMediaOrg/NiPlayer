@@ -22,12 +22,14 @@ class MediaPlayer {
         this.mediaSource = new MediaSource();
         this.video.src = window.URL.createObjectURL(this.mediaSource);
         this.initEvent();
-
-        this.loadFile();
     }
 
     initEvent() {
         let ctx = this;
+        this.mediaSource.addEventListener("sourceopen",(e) => {
+            this.loadFile()
+        })
+
         this.mp4boxfile.onMoovStart = function () {
             Log.info("Application", "Starting to parse movie information");
         }
@@ -45,17 +47,11 @@ class MediaPlayer {
         }
 
         this.mp4boxfile.onSegment = function(id,user,buffer,sampleNum,is_last) { 
-            //sb = sourcebuffer
             var sb = user;
-		    // saveBuffer(buffer, 'track-'+id+'-segment-'+sb.segmentIndex+'.m4s');
             sb.segmentIndex++;
             sb.pendingAppends.
                 push({ id: id, buffer: buffer, sampleNum: sampleNum, is_last: is_last });
             ctx.onUpdateEnd.call(sb, true, false, ctx);
-        }
-
-        this.mp4boxfile.onItem = function(item) {
-            debugger
         }
 
         this.video.onseeking = (e) => {
@@ -80,6 +76,8 @@ class MediaPlayer {
 
     start() {
         this.downloader.setChunkStart(this.mp4boxfile.seek(0, true).offset);
+        this.downloader.setChunkSize(1000000);
+        this.downloader.setInterval(1000);
         this.mp4boxfile.start();
         this.downloader.resume();
     }
@@ -101,12 +99,10 @@ class MediaPlayer {
         var track_id = mp4track.id;
         var codec = mp4track.codec;
         var mime = 'video/mp4; codecs=\"'+ codec +'\"';
-        // var kind = mp4track.kind;
         var sb: MP4SourceBuffer;
         if (MediaSource.isTypeSupported(mime)) {
             try {
                 console.log("MSE - SourceBuffer #"+track_id,"Creation with type '"+mime+"'")
-                Log.info("MSE - SourceBuffer #"+track_id,"Creation with type '"+mime+"'");
                 // 根据moov box中解析出来的track去一一创建对应的sourcebuffer
                 sb = this.mediaSource.addSourceBuffer(mime);
                 sb.addEventListener("error", function(e) {
@@ -114,7 +110,7 @@ class MediaPlayer {
                 });
                 sb.ms = this.mediaSource;
                 sb.id = track_id;
-                this.mp4boxfile.setSegmentOptions(track_id, sb, { nbSamples: 1000 });
+                this.mp4boxfile.setSegmentOptions(track_id, sb);
                 sb.pendingAppends = [];
             } catch (e) {
                 Log.error("MSE - SourceBuffer #" + track_id,"Cannot create buffer with type '" + mime + "'" + e);
@@ -128,7 +124,6 @@ class MediaPlayer {
     loadFile() {
         let ctx = this;
         if(this.mediaSource.readyState !== "open") {
-            this.mediaSource.onsourceopen = this.loadFile.bind(ctx);
             return;
         }
         // 先写死，之后在修改
@@ -141,7 +136,8 @@ class MediaPlayer {
                 var nextStart = 0;
                 if (response) {
                     // 设置文件加载的进度条
-                    nextStart = ctx.mp4boxfile.appendBuffer(response, end);
+                    // console.log(response)
+                    nextStart = ctx.mp4boxfile.appendBuffer(response, end)
                 }
                 if (end) {
                     // 如果存在end的话则意味着所有的chunk已经加载完毕
@@ -178,7 +174,7 @@ class MediaPlayer {
                 sb.ms.pendingInits = 0;
             }
             this.onInitAppended = this.onInitAppended.bind(this);
-            sb.addEventListener("updateend", this.onInitAppended);
+            sb.onupdateend = this.onInitAppended;
             Log.info("MSE - SourceBuffer #" + sb.id, "Appending initialization data");
             sb.appendBuffer(initSegs[i].buffer);
             sb.segmentIndex = 0;
@@ -187,12 +183,12 @@ class MediaPlayer {
     }
 
     onInitAppended(e:Event) {
-        console.log(this);
+        console.log("@@@@",this);
         let ctx = this;
         var sb = e.target as MP4SourceBuffer;
 	    if (sb.ms.readyState === "open") {
             sb.sampleNum = 0;
-            sb.removeEventListener('updateend', this.onInitAppended);
+            sb.onupdateend = null;
             sb.addEventListener('updateend', this.onUpdateEnd.bind(sb, true, true, ctx));
             /* In case there are already pending buffers we call onUpdateEnd to start appending them*/
             this.onUpdateEnd.call(sb, false, true, ctx);
@@ -205,9 +201,6 @@ class MediaPlayer {
 
     onUpdateEnd(isNotInit: boolean, isEndOfAppend: boolean, ctx: MediaPlayer) {
         if (isEndOfAppend === true) {
-            if (isNotInit === true) {
-                // updateBufferedString(this, "Update ended");
-            }
             if ((this as unknown as MP4SourceBuffer).sampleNum) {
                 ctx.mp4boxfile.releaseUsedSamples((this as unknown as MP4SourceBuffer).id, (this as unknown as MP4SourceBuffer).sampleNum);
                 delete (this as unknown as MP4SourceBuffer).sampleNum;
