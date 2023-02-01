@@ -26,7 +26,9 @@ export class CompletedProgress extends Component implements ComponentItem {
         })
 
         this.player.on("timeupdate",(e) => {
-            this.updatePos(e);
+            if(this.player.enableSeek) {
+                this.updatePos(e);
+            }
         })
        
         this.player.on("dotdrag",(len:number)=>{

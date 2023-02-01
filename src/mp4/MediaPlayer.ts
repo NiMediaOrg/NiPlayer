@@ -1,18 +1,19 @@
 import MP4Box ,{ MP4File, Log, MP4ArrayBuffer, MP4Info, MP4SourceBuffer, MP4MediaSource } from "mp4box"
+import { Player } from "../page/player";
 import { FactoryObject } from "../types/dash/Factory";
 import { MoovBoxInfo, MediaTrack } from "../types/mp4";
 import { DownLoader } from "./net/DownLoader";
 class MediaPlayer {
     url: string;
-    video: HTMLVideoElement;
+    player:Player;
     mp4boxfile: MP4File;
     mediaSource: MediaSource;
     mediaInfo: MoovBoxInfo;
     downloader: DownLoader;
     lastSeekTime: number = 0;
-    constructor(url:string, video:HTMLVideoElement) {
+    constructor(url:string, player:Player) {
         this.url = url;
-        this.video = video;
+        this.player = player;
         this.init()
     }
 
@@ -20,7 +21,7 @@ class MediaPlayer {
         this.mp4boxfile = MP4Box.createFile();
         this.downloader = new DownLoader(this.url);
         this.mediaSource = new MediaSource();
-        this.video.src = window.URL.createObjectURL(this.mediaSource);
+        this.player.video.src = window.URL.createObjectURL(this.mediaSource);
         this.initEvent();
     }
 
@@ -54,24 +55,26 @@ class MediaPlayer {
             ctx.onUpdateEnd.call(sb, true, false, ctx);
         }
 
-        this.video.onseeking = (e) => {
+        this.player.on("seeking",(e) => {
+            console.log("seeking")
             var i, start, end;
             var seek_info;
-            if (this.lastSeekTime !== this.video.currentTime) {
-                for (i = 0; i < this.video.buffered.length; i++) {
-                    start = this.video.buffered.start(i);
-                    end = this.video.buffered.end(i);
-                    if (this.video.currentTime >= start && this.video.currentTime <= end) {
+            var video = this.player.video;
+            if (this.lastSeekTime !== video.currentTime) {
+                for (i = 0; i < video.buffered.length; i++) {
+                    start = video.buffered.start(i);
+                    end = video.buffered.end(i);
+                    if (video.currentTime >= start && video.currentTime <= end) {
                         return;
                     }
                 }
                 this.downloader.stop();
-                seek_info = this.mp4boxfile.seek(this.video.currentTime, true);
+                seek_info = this.mp4boxfile.seek(video.currentTime, true);
                 this.downloader.setChunkStart(seek_info.offset);
                 this.downloader.resume();
-                this.lastSeekTime = this.video.currentTime;
+                this.lastSeekTime = video.currentTime;
             }
-        }
+        })
     }
 
     start() {
@@ -152,7 +155,7 @@ class MediaPlayer {
         )
 
         this.downloader.start();
-        this.video.play();
+        this.player.video.play();
     }
 
     initializeAllSourceBuffers() {

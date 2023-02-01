@@ -33,6 +33,7 @@ class Player extends Component implements ComponentItem {
   props: DOMProps;
   loading: TimeLoading;
   error: ErrorLoading;
+  enableSeek = true;
   constructor(options: PlayerOptions) {
     super(options.container,"div.video-wrapper");
     this.playerOptions = Object.assign(this.playerOptions, options);
@@ -96,6 +97,12 @@ class Player extends Component implements ComponentItem {
       this.emit("pause",e);
     }
 
+    this.video.addEventListener("seeking",(e) => {
+      if(this.enableSeek) {
+        this.emit("seeking",e);
+      }
+    })
+
     this.video.addEventListener("waiting",(e) => {
       this.emit("waiting",e);
     })
@@ -137,6 +144,15 @@ class Player extends Component implements ComponentItem {
         this.emit("hidetoolbar",e);
       }
     })
+
+    this.on("dotdown",()=>{
+      console.log("dotdown")
+      this.enableSeek = false;
+    })
+    this.on("dotup",() => {
+      console.log("dotup")
+      this.enableSeek = true;
+    })
   }
 
   initPlugin() {
@@ -148,7 +164,7 @@ class Player extends Component implements ComponentItem {
   }
 
   initMp4Player(url: string) {
-    let player = new Mp4MediaPlayer(this.playerOptions.url,this.video);
+    new Mp4MediaPlayer(this.playerOptions.url,this);
   }
 
   initMpdPlayer(url:string) {
