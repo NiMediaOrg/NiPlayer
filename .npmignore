@@ -3,11 +3,13 @@
 /test/
 /assets/
 /.vscode/
+/script/
+/dist/index.html
+/assets/
+.babelrc
 .gitignore
 .npmignore
 .npmrc
-package-lock.json
-package.json
-pnpm-lock.yaml
 vitest.config.ts
 tsconfig.json
+

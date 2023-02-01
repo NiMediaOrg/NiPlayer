@@ -1,4 +1,5 @@
 /node_modules/
 video.mp4
 /dist/
+/assets/
 index.html
