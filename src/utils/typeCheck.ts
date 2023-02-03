@@ -9,8 +9,9 @@ import {
   SegmentTemplate,
   SegmentURL,
   Mpd,
-  Period
+  Period,
 } from "../types/dash/MpdFile";
+import { BuiltInComponentID } from "../types/Player";
 
 /**
  * @description 类型守卫函数
@@ -28,12 +29,12 @@ export function checkMediaType(s: any): s is MediaType {
   );
 }
 
-export function checkMpd(s:any): s is Mpd {
-  if(s.tag === "MPD") return true;
+export function checkMpd(s: any): s is Mpd {
+  if (s.tag === "MPD") return true;
   return false;
 }
 
-export function checkPeriod(s:any): s is Period {
+export function checkPeriod(s: any): s is Period {
   return s.tag === "Period";
 }
 
@@ -60,24 +61,40 @@ export function checkSegmentTemplate(s: any): s is SegmentTemplate {
 /**
  * @description 类型守卫函数
  */
-export function checkRepresentation(s:any): s is Representation {
+export function checkRepresentation(s: any): s is Representation {
   return s.tag === "Representation";
 }
 /**
  * @description 类型守卫函数
  */
-export function checkSegmentList(s:any):s is SegmentList {
+export function checkSegmentList(s: any): s is SegmentList {
   return s.tag === "SegmentList";
 }
- 
-export function checkInitialization(s:any):s is Initialization {
-  return s.tag === "Initialization"
+
+export function checkInitialization(s: any): s is Initialization {
+  return s.tag === "Initialization";
 }
 
-export function checkSegmentURL(s:any):s is SegmentURL {
+export function checkSegmentURL(s: any): s is SegmentURL {
   return s.tag === "SegmentURL";
 }
 
-export function checkSegmentBase(s:any):s is SegmentBase {
+export function checkSegmentBase(s: any): s is SegmentBase {
   return s.tag === "SegmentBase";
+}
+
+export function checkBuiltInComponentID(s: any): s is BuiltInComponentID {
+  return [
+    "PlayButton",
+    "Playrate",
+    "Volume",
+    "FullScreen",
+    "DutaionShow",
+    "SubSetting",
+    "VideoShot",
+    "ScreenShot",
+    "PicInPic",
+    "FullPage",
+    "FullScreen",
+  ].includes(s);
 }
