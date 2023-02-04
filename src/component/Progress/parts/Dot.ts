@@ -74,7 +74,7 @@ export class Dot extends Component implements ComponentItem {
             scale = 1;
         }
         this.playScale = scale;
-        this.el.style.left = this.container.offsetWidth * scale - 5 + "px";
+        this.el.style.left = this.container.offsetWidth * scale - getElementSize(this.el).width / 2 + "px";
         
         if (this.player.video.paused) this.player.video.play();
         this.player.emit("dotdrag",this.container.offsetWidth * scale);

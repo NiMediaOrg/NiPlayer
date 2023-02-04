@@ -82,6 +82,7 @@ export type BottomToolBarOptions = {
 // 注册组件时的选项
 export type RegisterComponentOptions = {
   mode: TopToolBarOptions | BottomToolBarOptions;
+  index?: number;
 };
 
 // 更新组件时的选项

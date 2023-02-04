@@ -10,7 +10,6 @@ import { storeControlComponent } from "../../utils/store";
 
 export class Progress extends Component implements ComponentItem {
   readonly id = "Progress";
-  private mouseDown: boolean = false;
   props: DOMProps;
   player:Player;
   dot: Dot;

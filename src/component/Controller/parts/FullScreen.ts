@@ -45,11 +45,14 @@ export class FullScreen extends Options{
             this.iconBox.removeChild(this.icon);
             this.icon = createSvg(fullscreenExitPath);
             this.iconBox.appendChild(this.icon)
+            this.player.emit("enterFullscreen")
         } else if (document.fullscreenElement) {
             document.exitFullscreen(); //退出全屏函数仅仅绑定在document对象上，该点需要切记！！！
             this.iconBox.removeChild(this.icon);
             this.icon = createSvg(fullscreenPath);
             this.iconBox.appendChild(this.icon)
+            this.player.emit("leaveFullscreen")
         }
+        
     }
 }
