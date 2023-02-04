@@ -19,6 +19,8 @@ export class Component extends BaseEvent{
 
     init() {}
     initEvent() {}
+    initPCEvent(){}
+    initMobileEvent(){}
     initTemplate() {}
     initComponent() {}
     resetEvent() {}

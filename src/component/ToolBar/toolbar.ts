@@ -17,6 +17,7 @@ export class ToolBar extends Component implements ComponentItem {
   player: Player;
   progress: Progress;
   controller: Controller;
+  status: "show" | "hidden" = "hidden";
   private timer: number = 0;
   // 先初始化播放器的默认样式，暂时不考虑用户的自定义样式
   constructor(player:Player, container:HTMLElement, desc?: string, props?:DOMProps, children?:Node[]) {
@@ -58,12 +59,14 @@ export class ToolBar extends Component implements ComponentItem {
   private hideToolBar() {
     if(!includeClass(this.el,"video-controls-hidden")) {
       addClass(this.el,["video-controls-hidden"]);
+      this.status = "hidden";
     }
   }
 
   private showToolBar(e:MouseEvent) {
     if(includeClass(this.el,"video-controls-hidden")) {
       removeClass(this.el,["video-controls-hidden"]);
+      this.status = "show";
     }
 
     if(e.target === this.player.video) {

@@ -79,9 +79,13 @@ export type BottomToolBarOptions = {
   pos: "left" | "right" | "medium";
 };
 
+export type AnyPositionOptions = {
+  type: "AnyPosition";
+}
+
 // 注册组件时的选项
 export type RegisterComponentOptions = {
-  mode: TopToolBarOptions | BottomToolBarOptions;
+  mode: TopToolBarOptions | BottomToolBarOptions | AnyPositionOptions;
   index?: number;
 };
 

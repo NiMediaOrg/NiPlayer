@@ -1,3 +1,4 @@
+import proto from "../MobileEvent";
 import {
   ComponentItem,
   DOMProps,
@@ -79,9 +80,13 @@ export function $<T extends HTMLElement>(
   let el: HTMLElement = match[0]
     ? document.createElement(match[0])
     : document.createElement("div");
+  let prototype = (el as any).__proto__;
+  // 坑点！！！
+  el = Object.setPrototypeOf(el,Object.setPrototypeOf(Object.assign({},proto),prototype));
   if (match[1]) {
     el.id = match[1];
   }
+
   match[2] && addClass(el, [match[2]]);
   for (let key in props) {
     if (typeof props[key] === "object") {
