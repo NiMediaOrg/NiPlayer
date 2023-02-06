@@ -132,7 +132,6 @@ class DownLoader {
         }
         let request = this.initHttpRequest();
         let loader = XHRLoaderFactory({}).getInstance();
-        console.log("当前发送请求的范围为: ",request.header.Range)
         loader.load({
             request:request,
             error: error,

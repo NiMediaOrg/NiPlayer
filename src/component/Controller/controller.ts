@@ -23,7 +23,7 @@ export class Controller extends Component implements ComponentItem {
   player: Player;
   // 控件
   leftControllers: ComponentConstructor[] = [PlayButton,Volume, DutaionShow];
-  rightController: ComponentConstructor[] = [Playrate,SubSetting,VideoShot ,ScreenShot,PicInPic,FullPage,FullScreen];
+  rightController: ComponentConstructor[] = [Playrate,SubSetting,VideoShot,ScreenShot,PicInPic,FullPage,FullScreen];
   constructor(player: Player,container:HTMLElement, desc?:string, props?:DOMProps, children?:Node[]) {
     super(container,desc,props,children);
     this.player = player;

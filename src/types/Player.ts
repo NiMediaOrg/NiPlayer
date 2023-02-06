@@ -9,7 +9,7 @@ export type PlayerOptions = {
   height?: string;
   leftControllers?: (ComponentConstructor | string)[];
   rightControllers?: (ComponentConstructor | string)[];
-  plugins?:Plugin[]
+  plugins?: Plugin[];
 };
 
 export type DOMProps = {
@@ -23,7 +23,8 @@ export type DOMProps = {
 export interface ComponentItem {
   id: string;
   el: HTMLElement;
-  props: DOMProps;
+  container?: HTMLElement;
+  props?: DOMProps;
   [props: string]: any;
 }
 
@@ -36,11 +37,9 @@ export type Plugin = {
   install: (player: Player) => any;
 };
 
-export type registerOptions = {
-  replaceElementType?:
-    | "replaceOuterHTMLOfComponent"
-    | "replaceInnerHTMLOfComponent";
-};
+
+
+
 
 export type getFunctionParametersType<T extends (...args: any[]) => any> =
   T extends (...args: (infer T)[]) => infer U ? T : never;
@@ -54,3 +53,43 @@ export interface ComponentConstructor {
     children?: string | Node[]
   ): Component & ComponentItem;
 }
+
+// 存储内置组件的ID，用于在用户注册组件时区分是自定义组件还是内置组件
+export type BuiltInComponentID =
+  | "PlayButton"
+  | "Playrate"
+  | "Volume"
+  | "FullScreen"
+  | "DutaionShow"
+  | "SubSetting"
+  | "VideoShot"
+  | "ScreenShot"
+  | "PicInPic"
+  | "FullPage"
+  | "FullScreen";
+
+//对应最顶层的ToolBar的注册选项
+export type TopToolBarOptions = {
+  type: "TopToolBar";
+  pos: "left" | "right";
+};
+
+export type BottomToolBarOptions = {
+  type: "BottomToolBar";
+  pos: "left" | "right" | "medium";
+};
+
+export type AnyPositionOptions = {
+  type: "AnyPosition";
+}
+
+// 注册组件时的选项
+export type RegisterComponentOptions = {
+  mode: TopToolBarOptions | BottomToolBarOptions | AnyPositionOptions;
+  index?: number;
+};
+
+// 更新组件时的选项
+export type UpdateComponentOptions = {
+  replaceElType?: "replaceOuterHTMLOfComponent" | "replaceInnerHTMLOfComponent";
+};

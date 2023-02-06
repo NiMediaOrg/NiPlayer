@@ -5,20 +5,17 @@ import {
   ComponentItem,
   DOMProps,
   Player,
-  Progress,
-  Controller,
 } from "../../index";
-import { addClass, includeClass, removeClass } from "../../utils/domUtils";
+import { $, addClass, includeClass, removeClass } from "../../utils/domUtils";
 import { storeControlComponent } from "../../utils/store";
-import "./toolbar.less";
+import "./topbar.less";
 
-export class ToolBar extends Component implements ComponentItem {
-  readonly id: string = "Toolbar";
+export class TopBar extends Component implements ComponentItem {
+  readonly id: string = "TopBar";
+  leftArea: HTMLElement;
+  rightArea: HTMLElement;
   props: DOMProps;
   player: Player;
-  progress: Progress;
-  controller: Controller;
-  status: "show" | "hidden" = "hidden";
   private timer: number = 0;
   // 先初始化播放器的默认样式，暂时不考虑用户的自定义样式
   constructor(player:Player, container:HTMLElement, desc?: string, props?:DOMProps, children?:Node[]) {
@@ -39,12 +36,16 @@ export class ToolBar extends Component implements ComponentItem {
    * @description 需要注意的是此处元素的class名字是官方用于控制整体toolbar一栏的显示和隐藏
    */
   initTemplate() {
-    addClass(this.el,["video-controls","video-controls-hidden"]);
+    addClass(this.el,["video-topbar","video-topbar-hidden"]);
+    this.leftArea = $("div.video-topbar-left")
+    this.rightArea = $("div.video-topbar-right")
+    this.el.appendChild(this.leftArea)
+    this.el.appendChild(this.rightArea)
   }
 
+
   initComponent() {
-    this.progress = new Progress(this.player,this.el,"div.video-progress");
-    this.controller = new Controller(this.player,this.el,"div.video-play");
+    
   }
 
   initEvent() {
@@ -58,16 +59,14 @@ export class ToolBar extends Component implements ComponentItem {
   }
 
   private hideToolBar() {
-    if(!includeClass(this.el,"video-controls-hidden")) {
-      addClass(this.el,["video-controls-hidden"]);
-      this.status = "hidden";
+    if(!includeClass(this.el,"video-topbar-hidden")) {
+      addClass(this.el,["video-topbar-hidden"]);
     }
   }
 
   private showToolBar(e: Event | SingleTapEvent) {
-    if(includeClass(this.el,"video-controls-hidden")) {
-      removeClass(this.el,["video-controls-hidden"]);
-      this.status = "show";
+    if(includeClass(this.el,"video-topbar-hidden")) {
+      removeClass(this.el,["video-topbar-hidden"]);
     }
     let target;
     if(e instanceof Event) target = e.target;
