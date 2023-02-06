@@ -1,3 +1,4 @@
+import { SingleTapEvent } from "ntouch.js";
 import { Component } from "../../class/Component";
 import {
   Node,
@@ -63,19 +64,22 @@ export class TopBar extends Component implements ComponentItem {
     }
   }
 
-  private showToolBar(e:MouseEvent) {
+  private showToolBar(e: Event | SingleTapEvent) {
     if(includeClass(this.el,"video-topbar-hidden")) {
       removeClass(this.el,["video-topbar-hidden"]);
     }
+    let target;
+    if(e instanceof Event) target = e.target;
+    else target = (e as SingleTapEvent).e.target;
 
-    if(e.target === this.player.video) {
+    if(target === this.player.video) {
       this.timer = window.setTimeout(()=>{
         this.hideToolBar();
       },3000)
     }
   }
 
-  onShowToolBar(e:MouseEvent) {
+  onShowToolBar(e: Event | SingleTapEvent) {
     if(this.timer) {
       window.clearTimeout(this.timer);
       this.timer = null;
