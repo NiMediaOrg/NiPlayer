@@ -1,3 +1,4 @@
+import { wrap } from "ntouch.js";
 import screenfull from "screenfull";
 import { Player } from "../../../page/player";
 import { DOMProps, Node } from "../../../types/Player";
@@ -8,14 +9,9 @@ import { Options } from "./Options";
 
 export class FullScreen extends Options{
     readonly id = "FullScreen";
-    player: Player;
-    props: DOMProps;
-    icon: SVGSVGElement;
     enterFullScreen: boolean = false;
     constructor(player:Player,container:HTMLElement,desc?:string, props?:DOMProps,children?:Node[]) {
-        super(player, container,0,0, desc,props,children);
-        this.player = player;
-        this.props = props || {};
+        super(player, container,0,0, desc,props,children);;
         this.init();
     }
 
@@ -36,16 +32,12 @@ export class FullScreen extends Options{
     }
     
     initEvent() {
-        if(this.player.env === "PC") {
-            this.initPCEvent();
-        } else {
-            this.initMobileEvent()
-        }
-    }
-
-    initPCEvent() {
         this.onClick = this.onClick.bind(this);
-        this.el.onclick = this.onClick;
+        if(this.player.env === "PC") {
+            this.el.onclick = this.onClick;
+        } else {
+            wrap(this.el).addEventListener("singleTap",this.onClick);
+        }
     }
 
     onClick(e:Event) {
@@ -92,12 +84,4 @@ export class FullScreen extends Options{
         }
         
     }
-
-    initMobileEvent(): void {
-        this.el.addEventListener("singleTap",async (e) => {
-            this.onClick(e);
-        })
-    }
-
-
 }

@@ -1,3 +1,4 @@
+import { wrap } from "ntouch.js";
 import { Player } from "../../../page/player";
 import { DOMProps, Node } from "../../../types/Player";
 import { addClass, createSvg, removeClass } from "../../../utils/domUtils";
@@ -7,13 +8,8 @@ import { Options } from "./Options";
 
 export class PicInPic extends Options {
     readonly id = "PicInPic";
-    player: Player;
-    props: DOMProps;
-    icon: SVGSVGElement;
     constructor(player:Player,container:HTMLElement,desc?:string, props?:DOMProps,children?:Node[]) {
         super(player, container,0,0, desc,props,children);
-        this.player = player;
-        this.props = props || {};
         this.init();
     }
 
@@ -35,10 +31,14 @@ export class PicInPic extends Options {
     
     initEvent() {
         this.onClick = this.onClick.bind(this);
-        this.el.onclick = this.onClick;
+        if(this.player.env === "Mobile") {
+            wrap(this.el).addEventListener("singleTap",this.onClick);
+        } else {
+            this.el.onclick = this.onClick;
+        }
     }
 
-    onClick(e:MouseEvent) {
+    onClick(e: Event) {
         if (document.pictureInPictureElement) { // 当前画中画的元素
             document.exitPictureInPicture();
         } else {

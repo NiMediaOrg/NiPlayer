@@ -11,6 +11,7 @@ export class Options extends Component implements ComponentItem {
   hideHeight: number;
   hideBox: HTMLElement;
   iconBox: HTMLElement;
+  icon: Element;
   constructor(
     player: Player,
     container: HTMLElement,
@@ -65,15 +66,25 @@ export class Options extends Component implements ComponentItem {
         }
       }
     })
+
+    this.player.on("videoClick",()=>{
+      this.hideBox.style.display = "none";
+    })
   }
 
-  handleMouseMove(e:MouseEvent) {
+  handleMouseMove(e: MouseEvent) {
     let pX = e.pageX,pY = e.pageY;
     let ctx = this;
     if(!checkIsMouseInRange(ctx.el,ctx.hideBox,pX,pY)) {
         ctx.hideBox.style.display = "none"
-        document.body.onmousemove = null;
-        
+        document.body.onmousemove = null; 
     }
   }
+
+  replaceIcon(icon: Element) {
+    this.iconBox.removeChild(this.icon);
+    this.iconBox.appendChild(icon);
+    this.icon = icon;
+  }
+
 }

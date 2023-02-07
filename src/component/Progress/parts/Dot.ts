@@ -1,3 +1,4 @@
+import { MoveEvent, SwipeEvent, wrap } from "ntouch.js";
 import { Component } from "../../../class/Component";
 import { Player } from "../../../page/player";
 import { ComponentItem, DOMProps, Node} from "../../../types/Player";
@@ -44,12 +45,20 @@ export class Dot extends Component implements ComponentItem {
             this.onChangePos(e,ctx);
         })
 
-        this.player.on("timeupdate",(e) => {
+        this.player.on("timeupdate",(e: Event) => {
             if(this.player.enableSeek) {
                  this.updatePos(e);
             }
         })
+        if(this.player.env === "PC") {
+            this.initPCEvent()
+        } else {
+            this.initMobileEvent()
+        }
+        
+    }
 
+    initPCEvent(): void {
         this.el.addEventListener("mousedown", (e) => { 
             e.preventDefault();
             this.onMouseMove = this.onMouseMove.bind(this);
@@ -66,7 +75,41 @@ export class Dot extends Component implements ComponentItem {
         })
     }
 
-    onMouseMove(e) {
+    initMobileEvent(): void {
+
+        this.player.video.addEventListener("touchstart",(e) => {
+            e.preventDefault();
+            this.player.emit("dotdown")
+            this.left = parseInt(this.el.style.left);
+        })
+
+        this.player.video.addEventListener("touchend",(e) => {
+            this.player.emit("dotup")
+        })
+
+        this.player.on("moveHorizontal",(e: MoveEvent) => {
+            let scale = (this.left + e.deltaX) / this.container.clientWidth;
+
+            if (scale < 0) {
+                scale = 0;
+            } else if (scale > 1) {
+                scale = 1;
+            }
+            this.playScale = scale;
+            this.el.style.left = this.container.clientWidth * scale - getElementSize(this.el).width / 2 + "px";
+            
+
+            if (this.player.video.paused) this.player.video.play();
+            this.player.emit("dotdrag", scale, e);
+        })
+
+        this.player.on("slideHorizontal",(e: SwipeEvent) => {
+            this.player.emit("dotup");
+            this.player.video.currentTime = Math.floor(this.playScale * this.player.video.duration);
+        }) 
+    }
+
+    onMouseMove(e: MouseEvent) {
         let scale = (e.pageX -this.mouseX + this.left) / this.container.offsetWidth;
         if (scale < 0) {
             scale = 0;
@@ -77,7 +120,7 @@ export class Dot extends Component implements ComponentItem {
         this.el.style.left = this.container.offsetWidth * scale - getElementSize(this.el).width / 2 + "px";
         
         if (this.player.video.paused) this.player.video.play();
-        this.player.emit("dotdrag",this.container.offsetWidth * scale);
+        this.player.emit("dotdrag", scale ,e);
     }
  
     onShowDot(e:MouseEvent) {

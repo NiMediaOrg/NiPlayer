@@ -28,7 +28,7 @@ import { ErrorLoading } from "../component/Loading/parts/ErrorLoading";
 import { TopBar } from "../component/TopBar/TopBar";
 import { Env } from "../utils/env";
 import { MobileVolume } from "../component/Mobile/MobileVolume";
-import { wrap } from "ntouch.js";
+import { MoveEvent, wrap } from "ntouch.js";
 class Player extends Component implements ComponentItem {
   readonly id = "Player";
   // 播放器的默认配置
@@ -226,13 +226,16 @@ class Player extends Component implements ComponentItem {
     });
 
     this.on("dotdown", () => {
-      console.log("dotdown");
       this.enableSeek = false;
     });
+    
     this.on("dotup", () => {
-      console.log("dotup");
       this.enableSeek = true;
     });
+
+    this.on("dotdrag",(val:number, e: Event | MoveEvent)=>{
+      this.emit("showtoolbar",e);
+    })
 
     this.on("enterFullscreen", () => {
       document.querySelectorAll(".video-controller").forEach(el => {
@@ -277,13 +280,12 @@ class Player extends Component implements ComponentItem {
   initMobileEvent(): void {
 
     wrap(this.video).addEventListener("singleTap",(e) => {
-      console.log("singletap")
-      console.log(e)
       if(this.toolBar.status === "hidden") {
         this.emit("showtoolbar",e);
       } else {
         this.emit("hidetoolbar",e);
       }
+      this.emit("videoClick");
     })
 
     wrap(this.video).addEventListener("doubleTap",(e) => {
@@ -297,16 +299,20 @@ class Player extends Component implements ComponentItem {
     wrap(this.video).addEventListener("move",(e)=>{
       let dx = e.deltaX;
       let dy = e.deltaY;
-      if(Math.abs(dx) <= 20 && Math.abs(dx) < Math.abs(dy)) {
+      if(Math.abs(dx) <= 5 && Math.abs(dx) < Math.abs(dy) && Math.abs(dy) >= 20) {
         this.emit("moveVertical",e);
+      } else if(Math.abs(dy) <= 5 && Math.abs(dx) > Math.abs(dy) && Math.abs(dx) >= 20) {
+        this.emit("moveHorizontal",e);
       }
     })
 
     wrap(this.video).addEventListener("swipe",(e) => {
       let dx = e.endPos.x - e.startPos.x;
       let dy = e.endPos.y - e.startPos.y;
-      if(Math.abs(dx) <= 20 && Math.abs(dx) < Math.abs(dy)) {
+      if(Math.abs(dx) <= 5 && Math.abs(dx) < Math.abs(dy) && Math.abs(dy) >= 20) {
         this.emit("slideVertical", e);
+      } else if(Math.abs(dy) <= 5 && Math.abs(dx) > Math.abs(dy) && Math.abs(dx) >= 20) {
+        this.emit("slideHorizontal",e);
       }
     })
   }

@@ -1,3 +1,4 @@
+import { wrap } from "ntouch.js";
 import { Player } from "../../../page/player";
 import { DOMProps, Node } from "../../../types/Player";
 import { addClass, createSvg } from "../../../utils/domUtils";
@@ -36,11 +37,16 @@ export class VideoShot extends Options {
     }
     
     initEvent() {
-        this.onMouseDown = this.onMouseDown.bind(this);
-        this.el.onmousedown = this.onMouseDown;
+        this.onDown = this.onDown.bind(this);
+        if(this.player.env === "PC") {
+            this.el.onmousedown = this.onDown;
+        } else {
+            this.el.ontouchstart = this.onDown;
+        }
+        
     }
 
-    onMouseDown(e:MouseEvent) {
+    onDown() {
         if(this.player.video.played) {
             this.videoShot();
         }
@@ -82,8 +88,14 @@ export class VideoShot extends Options {
             this.countDown--;
         },1000)
 
-        this.el.onmouseup = (e) => {
-            this.stop(recorder);
+        if(this.player.env === "Mobile") {
+            this.el.ontouchend = (e) => {
+                this.stop(recorder);
+            }
+        } else {
+            this.el.onmouseup = (e) => {
+                this.stop(recorder);
+            }
         }
     }
 
@@ -93,6 +105,7 @@ export class VideoShot extends Options {
         window.clearInterval(this.timer);
         this.timer = 0;
         this.el.onmouseup = null;
+        this.el.ontouchend = null;
         this.countDown = 30;
     }
 }

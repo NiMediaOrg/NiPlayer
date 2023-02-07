@@ -7,14 +7,14 @@ import { storeControlComponent } from "../../../utils/store";
 
 export class DutaionShow extends Component implements ComponentItem {
     readonly id = "DurationShow";
-    player:Player;
-    props:DOMProps;
     currentTime: string = "00:00";
     totalTime: string = "00:00";
+    props:DOMProps;
+    player:Player;
     constructor(player:Player,container:HTMLElement,desc?:string,props?:DOMProps,children?:Node[]) {
         super(container,desc,props,children);
         this.player = player;
-        this.props = props || {};
+        this.props = props;
         this.init();
     }
 
