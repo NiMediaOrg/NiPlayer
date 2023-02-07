@@ -4,10 +4,9 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/niplayer@1.0.3/dist/css/index.css" /> -->
-    <!-- <script src="https://cdn.jsdelivr.net/npm/niplayer@1.0.3/dist/player.umd.js"></script> -->
-    <script src="./dist/player.umd.js"></script>
-    <link rel="stylesheet" href="./dist/css/index.css">
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/niplayer@1.0.3/dist/css/index.css" />
+    <script src="https://cdn.jsdelivr.net/npm/niplayer@1.0.3/dist/player.umd.js"></script>
     <title>NiPlayer</title>
     <style>
       html,body {
@@ -21,7 +20,7 @@
     <div id="video"></div>
     <script>
       let player = new Player.Player({
-        url: "https://novaex.cc/demo.mp4",
+        url: "https://novaex.cc/monster.mp4",
         container: document.getElementById("video"),
         width: "400px",
         height: "200px",
