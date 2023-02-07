@@ -4,6 +4,7 @@ import { Player } from "../page/player";
 export type PlayerOptions = {
   url?: string;
   container?: HTMLElement;
+  video?: HTMLVideoElement;
   autoPlay?: boolean;
   streamPlay?: boolean;
   leftBottomBarControllers?: (ComponentConstructor | string)[];

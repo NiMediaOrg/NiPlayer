@@ -5,10 +5,10 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/niplayer@1.1.0/dist/css/index.css" />
-    <script src="https://cdn.jsdelivr.net/npm/niplayer@1.1.0/dist/player.umd.js"></script>
-    <!-- <script src="./dist/player.umd.js"></script>
-    <link rel="stylesheet" href="./dist/css/index.css"> -->
+    <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/niplayer@1.1.0/dist/css/index.css" /> -->
+    <!-- <script src="https://cdn.jsdelivr.net/npm/niplayer@1.1.0/dist/player.umd.js"></script> -->
+    <script src="./dist/player.umd.js"></script>
+    <link rel="stylesheet" href="./dist/css/index.css">
     <title>NiPlayer</title>
     <style>
       html,body {
@@ -23,13 +23,12 @@
     </style>
   </head>
   <body>
-    <div id="video"></div>
+    <div id="video">
+      <!-- <video playsinline="true" x5-video-player-type = "true" src="https://novaex.cc/monster.mp4"></video> -->
+    </div>
     <script>
-      let player = new Player.Player({
-        url: "https://novaex.cc/monster.mp4",
-        container: document.getElementById("video"),
-        streamPlay: true
-      });
+      let video = document.getElementsByTagName("video")[0]
+      let player = new Player.Player({url:"https://novaex.cc/monster.mp4" , container: document.querySelector("#video"),streamPlay:true});
     </script>
   </body>
 </html>

@@ -57,10 +57,15 @@ class Player extends Component implements ComponentItem {
   }
 
   init() {
-    this.video = $("video");
-    this.video["playsinline"] = true;
-    this.video["x5-video-player-type"] = "h5";
-
+    if(this.playerOptions.video) {
+      this.video = this.playerOptions.video;
+      this.video.parentNode && this.video.parentNode.removeChild(this.video);
+    } else {
+      this.video = $("video");
+      this.video["playsinline"] = true;
+      this.video["x5-video-player-type"] = "h5";
+    }
+    
     this.el.appendChild(this.video);
     this.playerOptions?.url && this.attachSource(this.playerOptions.url);
     this.initEvent();
