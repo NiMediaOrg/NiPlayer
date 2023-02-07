@@ -1,14 +1,9 @@
-import { FactoryFunction, FactoryObject } from "../../types/dash/Factory";
-import { XHRConfig } from "../../types/dash/Net";
-import FactoryMaker from "../FactoryMaker";
+import { XHRConfig } from "../../types/mp4";
 
-class XHRLoader {
-    private config:FactoryObject = {};
+export class XHRLoader {
+
     
-    constructor(ctx:FactoryObject,...args:any[]) {
-        this.config = ctx.context;
-        this.setup();
-    }
+    constructor() {}
 
     setup() {}
 
@@ -22,7 +17,7 @@ class XHRLoader {
             request.xhr = xhr;
         }
         xhr.open(request.method || "get",request.url);
-        xhr.responseType = request.responseType || "arraybuffer";
+        xhr.responseType  = request.responseType as XMLHttpRequestResponseType;
         if(request.header) {
             for(let key in request.header) {
                 xhr.setRequestHeader(key,request.header[key]);
@@ -53,7 +48,3 @@ class XHRLoader {
         xhr.send();
     }
 }
-
-const factory = FactoryMaker.getSingleFactory(XHRLoader);
-export default factory;
-export {XHRLoader}

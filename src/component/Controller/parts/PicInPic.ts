@@ -1,7 +1,7 @@
 import { wrap } from "ntouch.js";
 import { Player } from "../../../page/player";
 import { DOMProps, Node } from "../../../types/Player";
-import { addClass, createSvg, removeClass } from "../../../utils/domUtils";
+import { addClass, createSvg } from "../../../utils/domUtils";
 import { storeControlComponent } from "../../../utils/store";
 import { picInPicPath } from "../path/defaultPath";
 import { Options } from "./Options";

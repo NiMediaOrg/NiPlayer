@@ -1,5 +1,4 @@
-import { FactoryObject } from "../../types/dash/Factory";
-import { ContentType, RequestHeader, RequestMethod, ResponseType } from "../../types/dash/Net";
+import { RequestHeader, RequestMethod } from "../../types/mp4";
 
 export default class HTTPRequest {
     sendRequestTime: number | null;
@@ -9,12 +8,11 @@ export default class HTTPRequest {
     url:string = "";
     responseType: ResponseType | null;
     xhr?:XMLHttpRequest;
-    constructor(config: FactoryObject){
-        this.sendRequestTime = new Date().getTime();
+    constructor(config: {[props:string]:any}){
         this.url = config.url;
         this.header = config.header;
         this.method = config.method;
-        this.responseType = config.responseType;
+        this.responseType = config.responseType || "arraybuffer";
         this.xhr = config.xhr;
     }
 }

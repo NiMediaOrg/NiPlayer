@@ -1,3 +1,4 @@
+import { EVENT } from "../../../events";
 import { Player } from "../../../page/player";
 import { addClass } from "../../../utils/domUtils";
 import { Loading } from "../Loading";
@@ -11,11 +12,11 @@ export class ErrorLoading extends Loading {
     }
 
     initEvent(): void {
-        this.player.on("videoError",() => {
+        this.player.on(EVENT.ERROR,() => {
             this.addLoading();
         })
 
-        this.player.on("canplay",() => {
+        this.player.on(EVENT.CAN_PLAY,() => {
             this.removeLoading();
         })
     }

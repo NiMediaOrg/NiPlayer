@@ -8,21 +8,14 @@ import {
 } from "../index";
 import "./player.less";
 import { Component } from "../class/Component";
-import {
-  $,
-  addClass,
-  patchComponent,
-  removeClass,
-} from "../utils/domUtils";
-import {computeAngle} from "../utils/play"
+import { $, addClass, patchComponent, removeClass } from "../utils/domUtils";
+import { computeAngle } from "../index";
 import { Plugin } from "../index";
 import {
   COMPONENT_STORE,
   HIDEEN_COMPONENT_STORE,
   ONCE_COMPONENT_STORE,
 } from "../utils/store";
-import { getFileExtension } from "../utils/play";
-import MpdMediaPlayerFactory from "../dash/MediaPlayer";
 import Mp4MediaPlayer from "../mp4/MediaPlayer";
 import { TimeLoading } from "../component/Loading/parts/TimeLoading";
 import { ErrorLoading } from "../component/Loading/parts/ErrorLoading";
@@ -30,18 +23,14 @@ import { TopBar } from "../component/TopBar/TopBar";
 import { Env } from "../utils/env";
 import { MobileVolume } from "../component/Mobile/MobileVolume";
 import { MoveEvent, wrap } from "ntouch.js";
+import { EVENT } from "../events";
 class Player extends Component implements ComponentItem {
   readonly id = "Player";
   // 播放器的默认配置
-  readonly playerOptions: PlayerOptions = {
-    url: "",
-    container: document.body,
-    autoplay: false,
-    width: "100%",
-    height: "100%",
-  };
+  readonly playerOptions: PlayerOptions;
+  enableSeek = true;
   env = Env.env;
-  fullScreenMode: "Vertical" | "Horizontal" = "Horizontal"
+  fullScreenMode: "Vertical" | "Horizontal" = "Horizontal";
   video: HTMLVideoElement;
   container: HTMLElement;
   props: DOMProps;
@@ -49,14 +38,21 @@ class Player extends Component implements ComponentItem {
   topbar: TopBar;
   loading: TimeLoading;
   error: ErrorLoading;
-  enableSeek = true;
-  constructor(options: PlayerOptions) {
+  containerWidth: number;
+  containerHeight: number;
+
+  constructor(options?: PlayerOptions) {
     super(options.container, "div.video-wrapper");
-    this.playerOptions = Object.assign(this.playerOptions, options);
-    options.container.className = "video-container";
-    options.container.style.width = this.playerOptions.width;
-    options.container.style.height = this.playerOptions.height;
+    this.playerOptions = Object.assign(
+      {
+        autoPlay: false,
+        streamPlay: false,
+      },
+      options
+    );
     this.container = options.container;
+    this.containerHeight = options.container.clientHeight;
+    this.containerWidth = options.container.clientWidth;
     this.init();
   }
 
@@ -66,7 +62,7 @@ class Player extends Component implements ComponentItem {
     this.video["x5-video-player-type"] = "h5";
 
     this.el.appendChild(this.video);
-    this.attachSource(this.playerOptions.url);
+    this.playerOptions?.url && this.attachSource(this.playerOptions.url);
     this.initEvent();
     this.initPlugin();
     this.initComponent();
@@ -76,17 +72,20 @@ class Player extends Component implements ComponentItem {
   }
 
   initTemplate(): void {
-    if(this.env === "Mobile") {
+    if (this.env === "Mobile") {
       // 如果是在移动端，则音量的调节使用手势决定的.
-      this.unmountComponent("Volume")
-      new MobileVolume(this,this.el,"div");
+      this.unmountComponent("Volume");
+      new MobileVolume(this, this.el, "div");
     }
   }
 
   initComponent(): void {
-    //  new DanmakuController(this);
-    this.loading = new TimeLoading(this,"视频姬正在努力加载中(⑅˃◡˂⑅)",this.el);
-    this.error = new ErrorLoading(this,"你的网络罢工啦Q_Q",this.el);
+    this.loading = new TimeLoading(
+      this,
+      "视频姬正在努力加载中(⑅˃◡˂⑅)",
+      this.el
+    );
+    this.error = new ErrorLoading(this, "你的网络罢工啦Q_Q", this.el);
     this.toolBar = new ToolBar(this, this.el, "div");
     this.topbar = new TopBar(this, this.el, "div");
   }
@@ -97,7 +96,7 @@ class Player extends Component implements ComponentItem {
   initResizeObserver() {
     const resizeObserver = new ResizeObserver((entries) => {
       // 触发尺寸变化事件
-      this.emit("resize", entries);
+      this.emit(EVENT.RESIZE, entries);
       let width = entries[0].contentRect.width;
       let subsetting;
       // 当尺寸发生变化的时候视频库只调整基本的内置组件，其余用户自定义的组件响应式需要自己实现
@@ -105,9 +104,8 @@ class Player extends Component implements ComponentItem {
         // 默认在小屏幕的情况下只将SubSetting移动到上端，其余在底部注册的控件需要隐藏
         COMPONENT_STORE.forEach((value, key) => {
           if (["SubSetting"].indexOf(key) !== -1) {
-            subsetting = ONCE_COMPONENT_STORE.get(key)
+            subsetting = ONCE_COMPONENT_STORE.get(key);
             this.unmountComponent(key);
-            
           } else if (
             [
               "PicInPic",
@@ -117,37 +115,40 @@ class Player extends Component implements ComponentItem {
               "VideoShot",
             ].indexOf(key) !== -1
           ) {
-            if(!HIDEEN_COMPONENT_STORE.get(key)) {
+            if (!HIDEEN_COMPONENT_STORE.get(key)) {
               this.hideComponent(key);
             }
           }
-        })
+        });
 
-        this.mountComponent(subsetting.id,subsetting , {
+        this.mountComponent(subsetting.id, subsetting, {
           mode: {
             type: "TopToolBar",
             pos: "right",
           },
-        })
-        addClass(subsetting.el,["video-subsettings","video-topbar-controller"]);
+        });
+        addClass(subsetting.el, [
+          "video-subsettings",
+          "video-topbar-controller",
+        ]);
       } else {
         // 展示之前隐藏的组件
-        HIDEEN_COMPONENT_STORE.forEach((value,key)=>{
+        HIDEEN_COMPONENT_STORE.forEach((value, key) => {
           this.showComponent(key);
-        })
-        if(COMPONENT_STORE.has("SubSetting")) {
+        });
+        if (COMPONENT_STORE.has("SubSetting")) {
           let key = "SubSetting";
-          let component = ONCE_COMPONENT_STORE.get(key)
+          let component = ONCE_COMPONENT_STORE.get(key);
           // 如果SubSetting已经挂载到视图上，需要先卸载
           this.unmountComponent(key);
-          this.mountComponent(key,component,{
-            mode:{
-              type:"BottomToolBar",
-              pos: "right"
+          this.mountComponent(key, component, {
+            mode: {
+              type: "BottomToolBar",
+              pos: "right",
             },
-            index: 1
-          })
-          addClass(component.el,["video-subsettings","video-controller"])
+            index: 1,
+          });
+          addClass(component.el, ["video-subsettings", "video-controller"]);
         }
       }
     });
@@ -156,55 +157,55 @@ class Player extends Component implements ComponentItem {
   }
 
   initEvent() {
-    if(this.env === "Mobile") {
+    if (this.env === "Mobile") {
       this.initMobileEvent();
     } else {
       this.initPCEvent();
     }
 
     this.video.onloadedmetadata = (e) => {
-      this.emit("loadedmetadata", e);
+      this.emit(EVENT.LOADED_META_DATA, e);
     };
 
     this.video.addEventListener("timeupdate", (e) => {
-      this.emit("timeupdate", e);
+      this.emit(EVENT.TIME_UPDATE, e);
     });
 
     this.video.onplay = (e) => {
-      this.emit("play", e);
+      this.emit(EVENT.PLAY, e);
     };
 
     this.video.onpause = (e) => {
-      this.emit("pause", e);
+      this.emit(EVENT.PAUSE, e);
     };
 
     this.video.addEventListener("seeking", (e) => {
       if (this.enableSeek) {
-        this.emit("seeking", e);
+        this.emit(EVENT.SEEKING, e);
       }
     });
 
     this.video.addEventListener("waiting", (e) => {
-      this.emit("waiting", e);
+      this.emit(EVENT.WAITING, e);
     });
 
     this.video.addEventListener("canplay", (e) => {
-      this.emit("canplay", e);
+      this.emit(EVENT.CAN_PLAY, e);
     });
 
     this.video.addEventListener("error", (e) => {
-      this.emit("videoError");
+      this.emit(EVENT.ERROR);
     });
 
     this.video.addEventListener("abort", (e) => {
-      this.emit("videoError");
+      this.emit(EVENT.ERROR);
     });
 
     this.video.addEventListener("ratechange", (e) => {
-      this.emit("ratechange");
+      this.emit(EVENT.RATE_CHANGE);
     });
 
-    this.on("progress-click", (e, ctx) => {
+    this.on(EVENT.VIDEO_PROGRESS_CLICK, (e, ctx) => {
       let scale = e.offsetX / ctx.el.offsetWidth;
       if (scale < 0) {
         scale = 0;
@@ -215,45 +216,45 @@ class Player extends Component implements ComponentItem {
       this.video.paused && this.video.play();
     });
 
-    this.on("inputFocus", () => {
+    this.on(EVENT.DANMAKU_INPUT_FOCUS, () => {
       this.el.onmouseleave = null;
     });
 
-    this.on("inputBlur", () => {
+    this.on(EVENT.DANMAKU_INPUT_BLUR, () => {
       this.el.onmouseleave = (e) => {
         this.emit("hidetoolbar", e);
       };
     });
 
-    this.on("dotdown", () => {
+    this.on(EVENT.DOT_DOWN, () => {
       this.enableSeek = false;
     });
-    
-    this.on("dotup", () => {
+
+    this.on(EVENT.DOT_UP, () => {
       this.enableSeek = true;
     });
 
-    this.on("dotdrag",(val:number, e: Event | MoveEvent)=>{
-      this.emit("showtoolbar",e);
-    })
+    this.on(EVENT.DOT_DRAG, (val: number, e: Event | MoveEvent) => {
+      this.emit("showtoolbar", e);
+    });
 
-    this.on("enterFullscreen", () => {
-      document.querySelectorAll(".video-controller").forEach(el => {
+    this.on(EVENT.ENTER_FULLSCREEN, () => {
+      document.querySelectorAll(".video-controller").forEach((el) => {
         (el as HTMLElement).style.marginRight = "10px";
-      })
-      document.querySelectorAll(".video-topbar-controller").forEach(el => {
+      });
+      document.querySelectorAll(".video-topbar-controller").forEach((el) => {
         (el as HTMLElement).style.marginRight = "10px";
-      })
-    })
+      });
+    });
 
-    this.on("leaveFullscreen",()=>{
-      document.querySelectorAll(".video-controller").forEach(el => {
+    this.on(EVENT.LEAVE_FULLSCREEN, () => {
+      document.querySelectorAll(".video-controller").forEach((el) => {
         (el as HTMLElement).style.marginRight = "";
-      })
-      document.querySelectorAll(".video-topbar-controller").forEach(el => {
+      });
+      document.querySelectorAll(".video-topbar-controller").forEach((el) => {
         (el as HTMLElement).style.marginRight = "";
-      })
-    })
+      });
+    });
   }
 
   initPCEvent(): void {
@@ -278,43 +279,42 @@ class Player extends Component implements ComponentItem {
   }
 
   initMobileEvent(): void {
-
-    wrap(this.video).addEventListener("singleTap",(e) => {
-      if(this.toolBar.status === "hidden") {
-        this.emit("showtoolbar",e);
+    wrap(this.video).addEventListener("singleTap", (e) => {
+      if (this.toolBar.status === "hidden") {
+        this.emit(EVENT.SHOW_TOOLBAR, e);
       } else {
-        this.emit("hidetoolbar",e);
+        this.emit(EVENT.HIDE_TOOLBAR, e);
       }
-      this.emit("videoClick");
-    })
+      this.emit(EVENT.VIDEO_CLICK);
+    });
 
-    wrap(this.video).addEventListener("doubleTap",(e) => {
+    wrap(this.video).addEventListener("doubleTap", (e) => {
       if (this.video.paused) {
         this.video.play();
       } else if (this.video.played) {
         this.video.pause();
       }
-    })
+    });
 
-    wrap(this.video).addEventListener("move",(e)=>{
+    wrap(this.video).addEventListener("move", (e) => {
       let dx = e.deltaX;
       let dy = e.deltaY;
-      if(computeAngle(dx,dy) >= 75) {
-        this.emit("moveVertical", e);
-      } else if(computeAngle(dx,dy) <= 15) {
-        this.emit("moveHorizontal",e);
+      if (computeAngle(dx, dy) >= 75) {
+        this.emit(EVENT.MOVE_VERTICAL, e);
+      } else if (computeAngle(dx, dy) <= 15) {
+        this.emit(EVENT.MOVE_HORIZONTAL, e);
       }
-    })
+    });
 
-    wrap(this.video).addEventListener("swipe",(e) => {
+    wrap(this.video).addEventListener("swipe", (e) => {
       let dx = e.endPos.x - e.startPos.x;
       let dy = e.endPos.y - e.startPos.y;
-      if(computeAngle(dx,dy) >= 75) {
-        this.emit("slideVertical", e);
-      } else if(computeAngle(dx,dy) <= 15) {
-        this.emit("slideHorizontal",e);
+      if (computeAngle(dx, dy) >= 75) {
+        this.emit(EVENT.SLIDE_VERTICAL, e);
+      } else if (computeAngle(dx, dy) <= 15) {
+        this.emit(EVENT.SLIDE_HORIZONTAL, e);
       }
-    })
+    });
   }
 
   initPlugin() {
@@ -325,32 +325,16 @@ class Player extends Component implements ComponentItem {
     }
   }
 
-  initMp4Player(url: string) {
-    new Mp4MediaPlayer(this.playerOptions.url, this);
-  }
-
-  initMpdPlayer(url: string) {
-    let player = MpdMediaPlayerFactory().create();
-    player.attachVideo(this.video);
-    player.attachSource(url);
-  }
-
   attachSource(url: string) {
-    switch (getFileExtension(url)) {
-      case "mp4":
-      case "mp3":
-        this.initMp4Player(url);
-        break;
-      case "mpd":
-        this.initMpdPlayer(url);
-        break;
-      case "m3u8":
-      // ToDo
+    // 是否启动流式播放
+    if (this.playerOptions.streamPlay) {
+      new Mp4MediaPlayer(url, this);
+    } else {
+      this.video.src = url;
     }
   }
 
-  checkFullScreenMode() {
-  } 
+  checkFullScreenMode() {}
 
   // 注册/挂载自己的组件,其中的id为组件实例的名称，分为内置和用户自定义这两种情况；注意，id是唯一的，不能存在两个具有相同id的组件实例!!!
   mountComponent(
@@ -385,11 +369,11 @@ class Player extends Component implements ComponentItem {
           area = this.toolBar.controller.mediumArea;
         }
         let children = [...area.children];
-        if(!options.index) area.appendChild(component.el);
+        if (!options.index) area.appendChild(component.el);
         else {
-          if(options.index < 0) throw new Error("index不能传入负值");
-          area.insertBefore(component.el, children[options.index] || null)
-        } 
+          if (options.index < 0) throw new Error("index不能传入负值");
+          area.insertBefore(component.el, children[options.index] || null);
+        }
       } else if (mode.type === "TopToolBar") {
         let area: HTMLElement;
         if (mode.pos === "left") {
@@ -398,12 +382,12 @@ class Player extends Component implements ComponentItem {
           area = this.topbar.rightArea;
         }
         let children = [...area.children];
-        if(!options.index) area.appendChild(component.el);
+        if (!options.index) area.appendChild(component.el);
         else {
-          if(options.index < 0) throw new Error("index不能传入负值");
-          area.insertBefore(component.el, children[options.index] || null)
-        } 
-      } else if(mode.type === "AnyPosition") {
+          if (options.index < 0) throw new Error("index不能传入负值");
+          area.insertBefore(component.el, children[options.index] || null);
+        }
+      } else if (mode.type === "AnyPosition") {
         this.el.appendChild(component.el);
       }
       // 给组件中的container赋予新的值
@@ -456,7 +440,7 @@ class Player extends Component implements ComponentItem {
     }
     let instance = COMPONENT_STORE.get(id);
     instance.el.parentElement.removeChild(instance.el);
-    removeClass(instance.el,[...instance.el.classList])
+    removeClass(instance.el, [...instance.el.classList]);
     COMPONENT_STORE.delete(id);
   }
 
@@ -467,7 +451,6 @@ class Player extends Component implements ComponentItem {
     }
     ONCE_COMPONENT_STORE.delete(id);
   }
-
 
   /**
    * @description 注册对应的组件

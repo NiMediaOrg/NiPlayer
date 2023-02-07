@@ -14,7 +14,6 @@ export class Component extends BaseEvent{
         if(container) {
             container.appendChild(dom);
         }
-        
     }
 
     init() {}
