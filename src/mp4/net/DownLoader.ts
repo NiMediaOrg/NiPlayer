@@ -1,7 +1,7 @@
 import { Log } from "mp4box";
-import HTTPRequest from "../../dash/net/HTTPRequest";
-import  XHRLoaderFactory  from "../../dash/net/XHRLoader";
-import { RequestHeader } from "../../types/dash/Net";
+import { RequestHeader } from "../../types/mp4";
+import HTTPRequest from "./HTTPRequest";
+import  {XHRLoader}  from "./XHRLoader";
 class DownLoader {
     isActive: boolean = false;
 	realtime: boolean = false;
@@ -14,9 +14,10 @@ class DownLoader {
 	url: string = "";
 	callback: Function = null;
 	eof: boolean = false;
-
+    loader: XHRLoader;
     constructor(url?:string) {
         this.url = url || "";
+        this.loader = new XHRLoader();
     }
 
     // 从开头去请求文件，也就是初始化文件的请求过程直到所有文件都请求完成
@@ -131,8 +132,7 @@ class DownLoader {
 		    return;
         }
         let request = this.initHttpRequest();
-        let loader = XHRLoaderFactory({}).getInstance();
-        loader.load({
+        this.loader.load({
             request:request,
             error: error,
             success: success
