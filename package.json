@@ -1,6 +1,6 @@
 {
   "name": "niplayer",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "This is a TS library for video player",
   "main": "./dist/player.umd.js",
   "scripts": {
