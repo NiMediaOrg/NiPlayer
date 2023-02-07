@@ -113,8 +113,11 @@
     padding-bottom: 8px;
   }
   svg {
-    transition: fill .15s ease-in-out;
+    transition: transform .5s ease;
   }
+}
+.video-subsettings-animate {
+  transform: rotate(360deg);
 }
 
 .video-volume {
@@ -219,7 +222,23 @@
       border-radius: 2px;
       padding: 5px 5px;
       left: 50%;
+      white-space: nowrap;
       transform: translateX(-50%);
+      animation: slideIn .5s ease;
+      bottom: 48px;
+  }
+
+  .video-set-hidden {
+    display: none;
+  }
+
+  @keyframes slideIn {
+    from {
+      transform: translate(-50%,10px);
+    }
+    to {
+      transform: translate(-50%,0);
+    }
   }
 }
 
