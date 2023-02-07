@@ -9,9 +9,9 @@ export class Loading extends Component implements ComponentItem {
     player: Player;
     container: HTMLElement;
     loadingBox: HTMLElement;
-    msgBox: HTMLElement;
+    messageBox: HTMLElement;
     message: string;
-    constructor(player:Player,msg:string, container:HTMLElement,desc?:string, props?:DOMProps,children?:Node[]) {
+    constructor(player:Player, msg:string, container:HTMLElement,desc?:string, props?:DOMProps,children?:Node[]) {
         super(null,desc,props,children);
         this.props = props || {};
         this.player = player;
@@ -28,10 +28,11 @@ export class Loading extends Component implements ComponentItem {
     initTemplate(): void {
         addClass(this.el,["video-loading"]);
         this.loadingBox = $("div");
-        this.msgBox = $("div.video-loading-msgbox"); 
-        this.msgBox.innerText = this.message;
+        this.messageBox = $("div");
+        this.messageBox.innerText = this.message;
+        addClass(this.messageBox ,["video-loading-msgbox"])
         this.el.appendChild(this.loadingBox);
-        this.el.appendChild(this.msgBox);   
+        this.el.appendChild(this.messageBox);
     }
 
     initEvent(): void {}
