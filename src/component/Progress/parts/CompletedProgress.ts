@@ -26,7 +26,6 @@ export class CompletedProgress extends Component implements ComponentItem {
         })
 
         this.player.on("timeupdate",(e:Event) => {
-            console.log(e,this.player.enableSeek)
             if(this.player.enableSeek) {
                 this.updatePos(e);
             }
