@@ -14,6 +14,7 @@ import {
   patchComponent,
   removeClass,
 } from "../utils/domUtils";
+import {computeAngle} from "../utils/play"
 import { Plugin } from "../index";
 import {
   COMPONENT_STORE,
@@ -299,9 +300,9 @@ class Player extends Component implements ComponentItem {
     wrap(this.video).addEventListener("move",(e)=>{
       let dx = e.deltaX;
       let dy = e.deltaY;
-      if(Math.abs(dx) <= 5 && Math.abs(dx) < Math.abs(dy) && Math.abs(dy) >= 20) {
-        this.emit("moveVertical",e);
-      } else if(Math.abs(dy) <= 5 && Math.abs(dx) > Math.abs(dy) && Math.abs(dx) >= 20) {
+      if(computeAngle(dx,dy) >= 75) {
+        this.emit("moveVertical", e);
+      } else if(computeAngle(dx,dy) <= 15) {
         this.emit("moveHorizontal",e);
       }
     })
@@ -309,9 +310,9 @@ class Player extends Component implements ComponentItem {
     wrap(this.video).addEventListener("swipe",(e) => {
       let dx = e.endPos.x - e.startPos.x;
       let dy = e.endPos.y - e.startPos.y;
-      if(Math.abs(dx) <= 5 && Math.abs(dx) < Math.abs(dy) && Math.abs(dy) >= 20) {
+      if(computeAngle(dx,dy) >= 75) {
         this.emit("slideVertical", e);
-      } else if(Math.abs(dy) <= 5 && Math.abs(dx) > Math.abs(dy) && Math.abs(dx) >= 20) {
+      } else if(computeAngle(dx,dy) <= 15) {
         this.emit("slideHorizontal",e);
       }
     })
