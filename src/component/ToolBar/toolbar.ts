@@ -73,7 +73,7 @@ export class ToolBar extends Component implements ComponentItem {
     if(e instanceof Event) target = e.target;
     else target = (e as SingleTapEvent).e.target;
 
-    if(target === this.player.video) {
+    if(target === this.player.video && this.player.env === "PC") {
       this.timer = window.setTimeout(()=>{
         this.hideToolBar();
       },3000)

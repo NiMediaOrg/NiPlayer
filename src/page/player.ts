@@ -277,13 +277,12 @@ class Player extends Component implements ComponentItem {
   initMobileEvent(): void {
 
     wrap(this.video).addEventListener("singleTap",(e) => {
-      console.log("singletap")
-      console.log(e)
       if(this.toolBar.status === "hidden") {
         this.emit("showtoolbar",e);
       } else {
         this.emit("hidetoolbar",e);
       }
+      this.emit("videoClick");
     })
 
     wrap(this.video).addEventListener("doubleTap",(e) => {
