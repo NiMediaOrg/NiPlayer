@@ -102,7 +102,7 @@ export class Dot extends Component implements ComponentItem {
       this.player.emit(EVENT.DOT_UP);
     });
 
-    this.player.on("moveHorizontal", (e: MoveEvent) => {
+    this.player.on(EVENT.MOVE_HORIZONTAL, (e: MoveEvent) => {
       let scale = (this.left + e.deltaX) / this.container.clientWidth;
 
       if (scale < 0) {
@@ -120,7 +120,7 @@ export class Dot extends Component implements ComponentItem {
       this.player.emit(EVENT.DOT_DRAG, scale, e);
     });
 
-    this.player.on("slideHorizontal", (e: SwipeEvent) => {
+    this.player.on(EVENT.SLIDE_HORIZONTAL, (e: SwipeEvent) => {
       this.player.emit(EVENT.DOT_UP);
       this.player.video.currentTime = Math.floor(
         this.playScale * this.player.video.duration
