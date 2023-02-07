@@ -54,7 +54,6 @@ export class CompletedProgress extends Component implements ComponentItem {
         } else if(scale > 1) {
             scale = 1;
         }
-        console.log(scale);
         this.el.style.width = scale * 100 + "%";
     }
 }

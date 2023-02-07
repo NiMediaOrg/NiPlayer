@@ -65,5 +65,9 @@ export class MobileVolume extends Component implements ComponentItem {
                 this.el.style.display = "none";
             },600)
         })
+
+        this.player.on("videoClick",()=>{
+            this.el.style.display = "none";
+        })
     }
 }

@@ -6,3 +6,9 @@ export function getFileExtension(file:string): string | never {
     }
     throw new Error("传入的文件没有扩展名")
 }
+
+export function computeAngle(dx:number,dy:number): number {
+    if(dx === 0) return 90;
+    if(dy === 0) return 0;
+    return Math.round(Math.atan(Math.abs(dy)/Math.abs(dx)) * 180 / Math.PI);
+}
