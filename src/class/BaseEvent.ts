@@ -1,4 +1,6 @@
-import { EventObject } from "../types/EventObject";
+export type EventObject = {
+  [props:string]: Function[];
+}
 
 export class BaseEvent {
   $events: EventObject = {};

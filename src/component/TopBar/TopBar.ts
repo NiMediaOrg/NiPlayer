@@ -1,5 +1,6 @@
 import { SingleTapEvent } from "ntouch.js";
 import { Component } from "../../class/Component";
+import { EVENT } from "../../events";
 import {
   Node,
   ComponentItem,
@@ -27,7 +28,6 @@ export class TopBar extends Component implements ComponentItem {
 
   init() {
     this.initTemplate();
-    this.initComponent();
     this.initEvent();
     storeControlComponent(this);
   }
@@ -43,18 +43,13 @@ export class TopBar extends Component implements ComponentItem {
     this.el.appendChild(this.rightArea)
   }
 
-
-  initComponent() {
-    
-  }
-
   initEvent() {
-    this.player.on("showtoolbar",(e)=>{
+    this.player.on(EVENT.SHOW_TOOLBAR,(e: SingleTapEvent | Event)=>{
       this.onShowToolBar(e);
     })
 
-    this.player.on("hidetoolbar",(e)=>{
-      this.onHideToolBar(e);
+    this.player.on(EVENT.HIDE_TOOLBAR,(e)=>{
+      this.onHideToolBar();
     })
   }
 
@@ -87,7 +82,7 @@ export class TopBar extends Component implements ComponentItem {
     this.showToolBar(e);
   }
 
-  onHideToolBar(e:MouseEvent) {
+  onHideToolBar() {
     this.hideToolBar();
   }
 }

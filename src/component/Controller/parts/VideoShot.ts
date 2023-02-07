@@ -43,7 +43,6 @@ export class VideoShot extends Options {
         } else {
             this.el.ontouchstart = this.onDown;
         }
-        
     }
 
     onDown() {

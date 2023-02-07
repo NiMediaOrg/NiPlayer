@@ -2,13 +2,14 @@ import { Component } from "../class/Component";
 import { Player } from "../page/player";
 
 export type PlayerOptions = {
-  url: string;
-  container: HTMLElement;
-  autoplay?: boolean;
-  width?: string;
-  height?: string;
-  leftControllers?: (ComponentConstructor | string)[];
-  rightControllers?: (ComponentConstructor | string)[];
+  url?: string;
+  container?: HTMLElement;
+  autoPlay?: boolean;
+  streamPlay?: boolean;
+  leftBottomBarControllers?: (ComponentConstructor | string)[];
+  rightBottomBarControllers?: (ComponentConstructor | string)[];
+  leftTopBarControllers?: (ComponentConstructor | string)[];
+  rightTopBarController?: (ComponentConstructor | string)[];
   plugins?: Plugin[];
 };
 
@@ -36,10 +37,6 @@ export interface Node {
 export type Plugin = {
   install: (player: Player) => any;
 };
-
-
-
-
 
 export type getFunctionParametersType<T extends (...args: any[]) => any> =
   T extends (...args: (infer T)[]) => infer U ? T : never;

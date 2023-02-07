@@ -52,8 +52,8 @@ export class FullPage extends Options {
         } else {
             removeClass(this.player.container,["video-fullpage"]);
             this.player.container.style.position = ""
-            this.player.container.style.width = this.player.playerOptions.width;
-            this.player.container.style.height = this.player.playerOptions.height;
+            this.player.container.style.width = this.player.containerWidth + "px";
+            this.player.container.style.height = this.player.containerHeight + "px";
             this.iconBox.removeChild(this.icon);
             this.icon = createSvg(fullPagePath);
             this.iconBox.appendChild(this.icon)

@@ -1,4 +1,5 @@
 import { Component } from "../../../class/Component";
+import { EVENT } from "../../../events";
 import { Player } from "../../../page/player";
 import { ComponentItem, DOMProps, Node } from "../../../types/Player";
 import { $, addClass, checkIsMouseInRange } from "../../../utils/domUtils";
@@ -67,7 +68,7 @@ export class Options extends Component implements ComponentItem {
       }
     })
 
-    this.player.on("videoClick",()=>{
+    this.player.on(EVENT.VIDEO_CLICK,() => {
       this.hideBox.style.display = "none";
     })
   }
@@ -86,5 +87,4 @@ export class Options extends Component implements ComponentItem {
     this.iconBox.appendChild(icon);
     this.icon = icon;
   }
-
 }

@@ -3,7 +3,6 @@ import { Player } from "../../page/player";
 import { ComponentConstructor, ComponentItem, DOMProps,Node, PlayerOptions } from "../../types/Player";
 import { $ } from "../../utils/domUtils";
 import { controllersMapping, storeControlComponent } from "../../utils/store";
-import "./controller.less";
 import { DutaionShow } from "./parts/DurationShow";
 import { FullPage } from "./parts/FullPage";
 import { FullScreen } from "./parts/FullScreen";
@@ -14,6 +13,7 @@ import { ScreenShot } from "./parts/ScreenShot";
 import { SubSetting } from "./parts/SubSetting";
 import { VideoShot } from "./parts/VideoShot";
 import { Volume } from "./parts/Volume";
+import "./controller.less";
 export class Controller extends Component implements ComponentItem {
   readonly id = "Controller";
   leftArea: HTMLElement; //代表着最左侧的区域
@@ -40,8 +40,8 @@ export class Controller extends Component implements ComponentItem {
   }
 
   initControllers() {
-    let leftControllers = (this.player.playerOptions as PlayerOptions).leftControllers;
-    let rightControllers = (this.player.playerOptions as PlayerOptions).rightControllers;
+    let leftControllers = this.player.playerOptions.leftBottomBarControllers || null;
+    let rightControllers = this.player.playerOptions.rightBottomBarControllers || null;
     if(leftControllers) {
       this.leftControllers = leftControllers.map(item=>{
         if(typeof item === 'string') {
@@ -90,8 +90,8 @@ export class Controller extends Component implements ComponentItem {
   }
 
   initEvent() {
-    this.player.on("danmaku-plugin-add",()=>{
+    // this.player.on("danmaku-plugin-add",()=>{
       
-    })
+    // })
   }
 }

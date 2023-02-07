@@ -4,14 +4,13 @@ import { DOMProps, Node } from "../../../types/Player";
 import { $, addClass, createSvg, getDOMPoint } from "../../../utils/domUtils";
 import { volumePath$1 } from "../path/defaultPath";
 import { storeControlComponent } from "../../../utils/store";
-import { VolumeCompletedProgress } from "./VolumeCompletedProgress";
+import { EVENT } from "../../../events";
 
 export class Volume extends Options {
     readonly id = "Volume";
     volumeProgress: HTMLElement;
     volumeShow: HTMLElement;
-    volumeCompleted: VolumeCompletedProgress;
-    icon: SVGSVGElement;
+    volumeCompleted: HTMLElement;
     volume: number = 0.5;
     constructor(player: Player,container: HTMLElement, desc?: string, props?: DOMProps,children?: Node[]) {
         super(player,container,0,0,desc);
@@ -32,7 +31,7 @@ export class Volume extends Options {
         this.volumeProgress = $("div.video-volume-progress",{style:{height:"70px"}});
         this.volumeShow = $("div.video-volume-show");
         this.volumeShow.innerText = (this.volume * 100).toFixed(0);
-        this.volumeCompleted = new VolumeCompletedProgress(this.player,this.volumeProgress,"div.video-volume-completed");
+        this.volumeCompleted = $("div.video-volume-completed");
         this.hideBox.appendChild(this.volumeShow);
         this.hideBox.appendChild(this.volumeProgress);
         this.icon = createSvg(volumePath$1);
@@ -41,7 +40,7 @@ export class Volume extends Options {
     }
 
     initEvent() {
-        this.player.on("volume-progress-click",(e: MouseEvent,ctx: Volume) => {
+        this.player.on(EVENT.VOLUME_PROGRESS_CLICK,(e: MouseEvent,ctx: Volume) => {
             let eoffsetY = e.pageY - getDOMPoint(this.volumeProgress).y;
             let offsetY = this.volumeProgress.clientHeight - eoffsetY;
             let scale = offsetY / this.volumeProgress.clientHeight;
@@ -50,14 +49,14 @@ export class Volume extends Options {
             } else if (scale > 1) {
                 scale = 1;
             }
-            this.volumeCompleted.el.style.height = scale * 100 + "%";
+            this.volumeCompleted.style.height = scale * 100 + "%";
             this.volume = scale;
             this.volumeShow.innerText = (this.volume * 100).toFixed(0);
             this.player.video.volume = this.volume;
         })
 
         this.volumeProgress.onclick = (e) => {
-            this.player.emit("volume-progress-click",e,this);
+            this.player.emit(EVENT.VOLUME_PROGRESS_CLICK,e,this);
         }
     }
 }

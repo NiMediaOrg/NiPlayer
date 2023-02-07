@@ -1,6 +1,5 @@
 import MP4Box ,{ MP4File, Log, MP4ArrayBuffer, MP4Info, MP4SourceBuffer, MP4MediaSource } from "mp4box"
 import { Player } from "../page/player";
-import { FactoryObject } from "../types/dash/Factory";
 import { MoovBoxInfo, MediaTrack } from "../types/mp4";
 import { DownLoader } from "./net/DownLoader";
 class MediaPlayer {
