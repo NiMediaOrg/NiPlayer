@@ -3,7 +3,7 @@
   height: 100%;
   position: absolute;
   z-index: 1001;
-  background-color: #000;
+  background-color: rgba(0,0,0,0.4);
   left: 0;
   top: 0;
   display: flex;
@@ -11,8 +11,8 @@
   justify-content: center;
   align-items: center;
   .video-loading-loadingbox {
-    height: 50px;
-    width: 50px;
+    height: 30px;
+    width: 30px;
     border: 2px solid #fff;
     border-top-color: transparent;
     border-radius: 100%;
@@ -20,19 +20,19 @@
   }
 
   .video-loading-errorbox {
-    height: 50px;
-    width: 50px;
+    height: 30px;
+    width: 30px;
     background-color: red;
   }
   
   .video-loading-msgbox {
     padding: 0px 5px;
     color: #fff;
-    font-size: 16px;
+    font-size: 13px;
     margin-top: 10px;
   }
 }
-// 转转转动画
+// 转转动画
 @keyframes circle {
   0% {
     transform: rotate(0);

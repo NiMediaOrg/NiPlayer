@@ -61,7 +61,6 @@ class Player extends Component implements ComponentItem {
   }
 
   init() {
-    
     this.video = $("video");
     this.video["playsinline"] = true;
     this.video["x5-video-player-type"] = "h5";
@@ -86,8 +85,8 @@ class Player extends Component implements ComponentItem {
 
   initComponent(): void {
     //  new DanmakuController(this);
-    this.loading = new TimeLoading(this, "视频加载中，请稍等....", this.el);
-    this.error = new ErrorLoading(this, "视频加载发送错误", this.el);
+    this.loading = new TimeLoading(this,"视频姬正在努力加载中(⑅˃◡˂⑅)",this.el);
+    this.error = new ErrorLoading(this,"你的网络罢工啦Q_Q",this.el);
     this.toolBar = new ToolBar(this, this.el, "div");
     this.topbar = new TopBar(this, this.el, "div");
   }

@@ -4,21 +4,19 @@ import { Loading } from "../Loading";
 
 export class TimeLoading extends Loading {
     readonly id = "timeloading";
-    constructor(player:Player, msg:string, container:HTMLElement) {
+    constructor(player:Player,msg:string, container:HTMLElement) {
         super(player, msg, container);
         addClass(this.loadingBox,["video-loading-loadingbox"]);
         this.initEvent();
     }
 
     initEvent(): void {
-        this.player.on("waiting",(e) => {
+        this.player.on("waiting",() => {
             this.addLoading();
-            console.log("waiting");
         })
     
-        this.player.on("canplay",(e) => {
+        this.player.on("canplay",() => {
             this.removeLoading();
-            console.log("canplay");
         })
     }
 }
