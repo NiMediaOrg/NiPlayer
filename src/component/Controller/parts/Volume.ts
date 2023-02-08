@@ -32,6 +32,7 @@ export class Volume extends Options {
         this.volumeShow = $("div.video-volume-show");
         this.volumeShow.innerText = (this.volume * 100).toFixed(0);
         this.volumeCompleted = $("div.video-volume-completed");
+        this.volumeProgress.appendChild(this.volumeCompleted);
         this.hideBox.appendChild(this.volumeShow);
         this.hideBox.appendChild(this.volumeProgress);
         this.icon = createSvg(volumePath$1);

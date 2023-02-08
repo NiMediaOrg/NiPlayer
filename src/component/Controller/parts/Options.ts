@@ -2,7 +2,7 @@ import { Component } from "../../../class/Component";
 import { EVENT } from "../../../events";
 import { Player } from "../../../page/player";
 import { ComponentItem, DOMProps, Node } from "../../../types/Player";
-import { $, addClass, checkIsMouseInRange } from "../../../utils/domUtils";
+import { $, addClass, checkIsMouseInRange, includeClass, removeClass } from "../../../utils/domUtils";
 
 export class Options extends Component implements ComponentItem {
   id = "Options";
@@ -13,6 +13,7 @@ export class Options extends Component implements ComponentItem {
   hideBox: HTMLElement;
   iconBox: HTMLElement;
   icon: Element;
+  bottom: number = 48;
   constructor(
     player: Player,
     container: HTMLElement,
@@ -36,8 +37,8 @@ export class Options extends Component implements ComponentItem {
   }
 
   initBaseTemplate() {
-    this.hideBox = $("div",{style:{display:"none",bottom:"48px"}});
-    addClass(this.hideBox,["video-set"])
+    this.hideBox = $("div");
+    addClass(this.hideBox,["video-set","video-set-hidden"])
     if(this.hideHeight && this.hideHeight > 0) {
         this.hideBox.style.height = this.hideHeight + 'px';
     }
@@ -55,29 +56,29 @@ export class Options extends Component implements ComponentItem {
   initBaseEvent() {
     this.el.onmouseenter = (e) => {
         let ctx = this;
-        ctx.hideBox.style.display = "block";
+        removeClass(this.hideBox,["video-set-hidden"])
         document.body.onmousemove = ctx.handleMouseMove.bind(this);
         this.player.emit("oneControllerHover",this);
     }
 
     this.player.on("oneControllerHover",(controller:ComponentItem) => {
       if(this !== controller) {
-        if(this.hideBox.style.display !== "none") {
-          this.hideBox.style.display = "none";
+        if(!includeClass(this.hideBox,"video-set-hidden")) {
+          addClass(this.hideBox,["video-set-hidden"])
         }
       }
     })
 
     this.player.on(EVENT.VIDEO_CLICK,() => {
-      this.hideBox.style.display = "none";
+      addClass(this.hideBox,["video-set-hidden"])
     })
   }
 
   handleMouseMove(e: MouseEvent) {
     let pX = e.pageX,pY = e.pageY;
     let ctx = this;
-    if(!checkIsMouseInRange(ctx.el,ctx.hideBox,pX,pY)) {
-        ctx.hideBox.style.display = "none"
+    if(!checkIsMouseInRange(ctx.el,ctx.hideBox,this.bottom, pX,pY)) {
+        addClass(this.hideBox,["video-set-hidden"])
         document.body.onmousemove = null; 
     }
   }
