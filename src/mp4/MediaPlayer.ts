@@ -185,7 +185,6 @@ class MediaPlayer {
     }
 
     onInitAppended(e:Event) {
-        console.log("@@@@",this);
         let ctx = this;
         var sb = e.target as MP4SourceBuffer;
 	    if (sb.ms.readyState === "open") {
