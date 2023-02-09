@@ -156,7 +156,6 @@ class DownLoader {
                 (xhr.response.byteLength === ctx.totalLength);
             let buffer = xhr.response;
             buffer.fileStart = xhr.start;
-            console.log("成功拿到请求:",buffer);
             // 拿到数据之后执行回调函数
             ctx.callback(buffer,ctx.eof);
             // 如果下载器还是处于激活状态且还没全部下载完成的话
