@@ -6,7 +6,7 @@ import { addClass, createSvg } from "../../../utils/domUtils";
 import { storeControlComponent } from "../../../utils/store";
 import { fullscreenExitPath, fullscreenPath } from "../path/defaultPath";
 import { Options } from "./Options";
-import screenfull from "screenfull";
+import screenfull from "screenfull/dist/screenfull";
 
 export class FullScreen extends Options {
   readonly id = "FullScreen";
@@ -48,7 +48,7 @@ export class FullScreen extends Options {
   }
 
   onClick(e: Event | SingleTapEvent) {
-    if (screenfull.isEnabled && !screenfull.isFullscreen) {
+    if (screenfull.isEnabled && !document.fullscreenElement) {
       // 调用浏览器提供的全屏API接口去请求元素的全屏，原生全屏分为  竖屏全屏 + 横屏全屏
       screenfull.request(this.player.container);
       this.iconBox.removeChild(this.icon);
@@ -57,8 +57,8 @@ export class FullScreen extends Options {
       this.player.container.addEventListener("fullscreenchange", (e) => {
         this.player.emit(EVENT.ENTER_FULLSCREEN);
       });
-    } else if (screenfull.isFullscreen) {
-      screenfull.exit();
+    } else if (screenfull.isEnabled && document.fullscreenElement) {
+      document.exitFullscreen();
       this.iconBox.removeChild(this.icon);
       this.icon = createSvg(fullscreenPath);
       this.iconBox.appendChild(this.icon);
