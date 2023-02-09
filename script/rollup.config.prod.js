@@ -53,8 +53,7 @@ export default defineConfig({
       postcss({
         plugins:[
           autoprefixer()
-        ],
-        extract: 'css/index.css',
+        ]
       }),
     ]
 })

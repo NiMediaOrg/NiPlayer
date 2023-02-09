@@ -3,6 +3,7 @@
   "version": "1.1.1",
   "description": "This is a TS library for video player",
   "main": "./dist/player.es.js",
+  "types": "./dist/index.d.ts",
   "scripts": {
     "dev": "rollup -c script/rollup.config.dev.js --watch",
     "build": "rollup -c script/rollup.config.prod.js",
