@@ -1,6 +1,6 @@
 {
   "name": "niplayer",
-  "version": "1.1.2",
+  "version": "1.1.4",
   "description": "This is a TS library for video player",
   "main": "./dist/player.es.js",
   "types": "./dist/index.d.ts",
@@ -49,9 +49,8 @@
     "last 3 iOS versions"
   ],
   "dependencies": {
+    "be-full": "^0.1.4",
     "mp4box": "^0.5.2",
-    "nanoid": "^4.0.0",
-    "ntouch.js": "^1.0.6",
-    "screenfull": "^6.0.2"
+    "ntouch.js": "^1.0.6"
   }
 }
