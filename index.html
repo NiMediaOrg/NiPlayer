@@ -30,11 +30,11 @@
   </head>
   <body>
     <div id="video">
-      <video playsinline="true" x5-video-player-type = "true" src="https://novaex.cc/OnePiece.mp4"></video>
+      <video playsinline="true" x5-video-player-type = "true"></video>
     </div>
     <script defer>
       let video = document.getElementsByTagName("video")[0]
-      let player = new Player.default({video,container: document.querySelector("#video")});
+      let player = new Player.default({video, url: "https://novaex.cc/OnePiece.mp4"});
 
     </script>
   </body>
