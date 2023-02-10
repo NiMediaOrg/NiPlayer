@@ -9,7 +9,7 @@ import {
 } from "../types/Player";
 export function getDOMPoint(dom: HTMLElement): { x: number; y: number } {
   let rect = dom.getBoundingClientRect();
-  return {x:rect.top,y:rect.left}
+  return {x:rect.left,y:rect.top}
 }
 
 /**
@@ -43,10 +43,10 @@ export function checkIsMouseInRange(
   if (pageX >= allLeft && pageX <= allRight && pageY <= y && pageY >= allTop)
     return true;
   if (
-    pageX >= parentLeft &&
-    pageX <= parentRight &&
-    pageY >= y &&
-    pageY <= allBottom
+    pageX >= parentLeft - 5 &&
+    pageX <= parentRight + 5&&
+    pageY >= y - 5 &&
+    pageY <= allBottom + 5
   )
     return true;
   return false;
