@@ -1,9 +1,11 @@
 import { wrap } from "ntouch.js";
 import { Player } from "../../../page/player";
 import { DOMProps, Node } from "../../../types/Player";
-import { addClass, createSvg } from "../../../utils/domUtils";
+import { $, addClass, createSvg, removeClass } from "../../../utils/domUtils";
+import { nextTick } from "../../../utils/nextTick";
 import { storeControlComponent } from "../../../utils/store";
-import { videoShotPath } from "../path/defaultPath";
+import { Toast } from "../../Toast/Toast";
+import { confirmPath, countdownPath, videoShotPath } from "../path/defaultPath";
 import { Options } from "./Options";
  
 export class VideoShot extends Options {
@@ -11,6 +13,9 @@ export class VideoShot extends Options {
     player: Player;
     props: DOMProps;
     icon: SVGSVGElement;
+    warnIcon: SVGSVGElement;
+    successIcon: SVGSVGElement;
+    inProgressIcon: SVGSVGElement;
     countDown = 30;
     timer: number | null = null;
     constructor(player:Player,container:HTMLElement,desc?:string, props?:DOMProps,children?:Node[]) {
@@ -45,13 +50,17 @@ export class VideoShot extends Options {
         }
     }
 
+    // 当鼠标或者手指按下的时刻开始启动录屏
     onDown() {
+        addClass(this.icon,["video-videoshot-animate"])
         if(this.player.video.played) {
             this.videoShot();
         }
     }
 
     videoShot() {
+        let inProgressToast = this.createInProgressToast();
+
         let recorder = new MediaRecorder(
             (this.player.video as HTMLMediaElement as HTMLMediaElementWithCaputreStream).captureStream(60)
         )
@@ -80,6 +89,7 @@ export class VideoShot extends Options {
 
         this.timer = window.setInterval(()=>{
             console.log(this.countDown);
+            inProgressToast.el.querySelector("span").innerText = `开始录屏，最多录制30秒; 还剩${this.countDown}秒`;
             if(this.countDown === 0) {
                 this.stop(recorder);
                 return;
@@ -93,7 +103,16 @@ export class VideoShot extends Options {
             }
         } else {
             this.el.onmouseup = (e) => {
+                removeClass(this.icon,["video-videoshot-animate"])
                 this.stop(recorder);
+                // 销毁toast组件
+                inProgressToast.dispose();
+                inProgressToast = null;
+                let successToast = this.createSuccessToast();
+                window.setTimeout(() => {
+                    successToast.dispose();
+                    successToast = null;
+                },2000)
             }
         }
     }
@@ -106,5 +125,29 @@ export class VideoShot extends Options {
         this.el.onmouseup = null;
         this.el.ontouchend = null;
         this.countDown = 30;
+    }
+
+    createInProgressToast(): Toast {
+        let inProgressIcon = createSvg(countdownPath,'0 0 1024 1024');
+        let dom = $("div.video-videoshot-inprogress-toast");
+        let span = $("span");
+        span.innerText = `开始录屏，最多录制30秒; 还剩${this.countDown}秒`;
+        dom.appendChild(inProgressIcon);
+        dom.appendChild(span);
+        let toast = new Toast(this.player,dom);
+
+        return toast;
+    }
+
+    createSuccessToast(): Toast {
+        let successIcon = createSvg(confirmPath,'0 0 1024 1024')
+        let dom = $("div.video-videoshot-success-toast");
+        let span = $("span");
+        span.innerText = `录制成功!`;
+        dom.appendChild(successIcon);
+        dom.appendChild(span);
+        let toast = new Toast(this.player,dom);
+
+        return toast;
     }
 }

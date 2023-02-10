@@ -5,8 +5,8 @@ import {
   Node,
   ComponentItem,
   DOMProps,
-  Player,
 } from "../../index";
+import { Player } from "../../page/player";
 import { $, addClass, includeClass, removeClass } from "../../utils/domUtils";
 import { storeControlComponent } from "../../utils/store";
 import "./topbar.less";

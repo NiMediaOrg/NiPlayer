@@ -5,10 +5,10 @@ import {
   Node,
   ComponentItem,
   DOMProps,
-  Player,
   Progress,
   Controller,
 } from "../../index";
+import { Player } from "../../page/player";
 import { addClass, includeClass, removeClass } from "../../utils/domUtils";
 import { storeControlComponent } from "../../utils/store";
 import "./toolbar.less";

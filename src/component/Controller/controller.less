@@ -2,7 +2,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 10px 5px 0 5px;
+    padding: 5px 5px 0 5px;
     position: relative;
     .video-subplay {
       display: flex;
@@ -93,8 +93,8 @@
     li {
       color: #fff;
       text-align: center;
-      height: 36px;
-      line-height: 36px;
+      height: 26px;
+      line-height: 26px;
       font-size: 12px;
       font-weight: 500;
       cursor: pointer;
@@ -103,21 +103,6 @@
       }
     }
   }
-}
-
-.video-subsettings {
-  // margin-right: 5px;
-  .video-subsettings-set {
-    width: 102px;
-    height: 140px;
-    padding-bottom: 8px;
-  }
-  svg {
-    transition: transform .5s ease;
-  }
-}
-.video-subsettings-animate {
-  transform: rotate(360deg);
 }
 
 .video-volume {
@@ -140,7 +125,7 @@
     }
     .video-volume-progress {
       border-radius: 2px;
-      width: 5px;
+      width: 3px;
       padding-top: 5px;
       height: calc(100% - 15px - 5px);
       margin-left: 50%;
@@ -161,7 +146,8 @@
         background-color: #00a1d6;
         position: absolute;
         left: 50%;
-        transform: translateX(-50%);
+        top: 50%;
+        transform: translate(-50%,-50%);
         z-index: 1003;
       }
     }
@@ -179,12 +165,130 @@
 
 .video-picInpic {}
 
+
+.video-subsettings {
+  // margin-right: 5px;
+  .video-subsettings-set {
+    width: 102px;
+    padding-bottom: 8px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    .video-subsettings-item {
+      &:hover {
+        color: #00a1d6;
+      }
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      padding: 5px 0px;
+      box-sizing: border-box;
+      height: 32px;
+      font-size: 13px;
+      user-select: none;
+      .video-subsettings-itemleft {
+        text-align: center;
+        line-height: 20px;
+        height: 100%;
+      }
+      .video-subsettings-itemright {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        input {
+          vertical-align: middle;
+          background-color: #007aff;
+        }
+      }
+    }
+  }
+  svg {
+    transition: transform .5s ease;
+  }
+}
+.video-subsettings-animate {
+  transform: rotate(360deg);
+}
+
+.video-screenshot {
+  svg {
+    transition: transform .25s ease;
+  }
+}
+.video-screenshot-animate {
+  transform: scale(0.85);
+}
+.video-screenshot-toast {
+  text-align: center;
+  color: #fff;
+  font-size: 14px;
+  border-radius: 5px;
+  padding: 10px 20px;
+  display: flex;
+  align-items: center;
+  svg {
+    width: 24px;
+    height: 24px;
+    fill: #fff;
+    margin-right: 10px;
+  }
+}
+
+.video-videoshot {
+  svg {
+    transition: transform .3s ease;
+  }
+}
+.video-videoshot-animate {
+  transform: scale(0.75);
+}
+.video-videoshot-inprogress-toast, .video-videoshot-success-toast {
+  text-align: center;
+  color: #fff;
+  font-size: 14px;
+  border-radius: 5px;
+  padding: 10px  20px;
+  display: flex;
+  align-items: center;
+
+  svg {
+    width: 24px;
+    height: 24px;
+    fill: #fff;
+    margin-right: 10px;
+  }
+}
+
+.video-videoshot-inprogress-toast {
+  svg {
+    animation: countdown .5s ease infinite;
+  }
+}
+
+@keyframes countdown {
+  0% {
+    transform: rotate(0);
+  }
+
+  50% {
+    transform: rotate(180deg);
+  }
+
+  100% {
+    transform: rotate(180deg);
+  }
+}
 // 将公有的类抽离出来单独写样式，video-controller绑定在所有的原子组件上，所谓的原子组件也就是不包含子组件的单个组件，例如全屏，音量这些组件
 .video-controller {
   box-sizing: border-box;
   min-width: 30px;
   display: flex;
-  padding: 3px;
+  padding: 4px;
   height: 100%; 
   justify-content: center;
   align-items: center;    
@@ -192,24 +296,32 @@
   color: #fff;
   opacity: .9;
   position: relative;
-  span {
+  &:hover {
+    svg {
+        opacity: 1!important;
+    }
+    .video-controller-span {
+      opacity: 1;
+    }
+  }
+  .video-controller-span {
     width: 100%;
     height: 100%;
     font-weight:550;
     color: #fff;
     padding:0 5px;
-    font-size: 16px;
+    font-size: 14px;
+    line-height: 22px;
+    opacity: .85;
   }
 
   .video-icon {
     height: 100%;
     width: 100%;
-    &:hover {
-      background-color: #007aff;
-    }
     svg {
       height: 100%;
       width: 100%;
+      opacity: .85;
       path {
         fill: #fff;
       }
@@ -240,6 +352,16 @@
       transform: translate(-50%,0);
     }
   }
+}
+
+.fullscreen-mask {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  background: #000;
+  z-index: 1001;
 }
 
 

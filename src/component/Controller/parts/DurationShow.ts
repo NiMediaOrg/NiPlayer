@@ -42,5 +42,10 @@ export class DutaionShow extends Component implements ComponentItem {
             this.currentTime = formatTime(video.currentTime);
             this.el.innerText = `${this.currentTime}/${this.totalTime}`;
         })
+
+        this.player.on(EVENT.DOT_DRAG,(scale: number,e: MouseEvent) => {
+            this.currentTime = formatTime(this.player.video.duration * scale);
+            this.el.innerText = `${this.currentTime}/${this.totalTime}`;
+        })
     }
 }
