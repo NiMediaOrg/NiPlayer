@@ -265,10 +265,10 @@ class Player extends Component implements ComponentItem {
 
     this.on(EVENT.ENTER_FULLSCREEN, () => {
       document.querySelectorAll(".video-controller").forEach((el) => {
-        (el as HTMLElement).style.marginRight = "10px";
+        (el as HTMLElement).style.marginRight = "15px";
       });
       document.querySelectorAll(".video-topbar-controller").forEach((el) => {
-        (el as HTMLElement).style.marginRight = "10px";
+        (el as HTMLElement).style.marginRight = "15px";
       });
     });
 
@@ -459,6 +459,7 @@ class Player extends Component implements ComponentItem {
   }
 
   //卸载某一个component组件，所谓卸载一个组件指的是仅仅将其DOM元素从视图上移除，但是不会删除其实例对象，还可以继续挂载
+  // 注意：卸载一个组件会清除该组件上挂载的class和id，意味着之后用户可以将组件挂载到任何位置
   unmountComponent(id: string) {
     if (!COMPONENT_STORE.has(id)) {
       throw new Error("该组件不存在或者已经被卸载");

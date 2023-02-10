@@ -32,7 +32,7 @@ export class Playrate extends Options {
     addClass(this.el, ["video-playrate", "video-controller"]);
 
     this.el.removeChild(this.iconBox);
-    this.iconBox = $("span", null, "倍速");
+    this.iconBox = $("span.video-controller-span", null, "倍速");
     this.el.appendChild(this.iconBox);
 
     this.el.removeChild(this.hideBox);
