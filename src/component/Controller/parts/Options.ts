@@ -75,7 +75,7 @@ export class Options extends Component implements ComponentItem {
   }
 
   handleMouseMove(e: MouseEvent) {
-    let pX = e.pageX,pY = e.pageY;
+    let pX = e.clientX,pY = e.clientY;
     let ctx = this;
     if(!checkIsMouseInRange(ctx.el, ctx.hideBox, this.bottom, pX,pY)) {
         addClass(this.hideBox,["video-set-hidden"])

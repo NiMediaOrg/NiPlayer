@@ -5,29 +5,37 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests" />
-    <script src="https://cdn.jsdelivr.net/npm/niplayer@1.1.5/dist/player.umd.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/niplayer@1.1.6/dist/player.umd.js"></script>
+    
+    <!-- <script src="./dist/player.umd.js"></script> -->
     
     <title>NiPlayer</title>
     <style>
       html,body {
         width: 100%;
         height: 100%;
-        background-color: aquamarine;
       }
       #video {
         height: 300px;
         width: 400px;
+        resize: both;
+        overflow: auto;
+       
+      }
+      #t {
+        height: 800px;
+        background-color: aqua;
       }
     </style>
   </head>
   <body>
     <div id="video">
-      <!-- <video playsinline="true" x5-video-player-type = "true" src="https://novaex.cc/monster.mp4"></video> -->
+      <video playsinline="true" x5-video-player-type = "true" src="https://novaex.cc/OnePiece.mp4"></video>
     </div>
-    <script>
-      console.log(Player)
+    <script defer>
       let video = document.getElementsByTagName("video")[0]
-      let player = new Player.default({url:"https://novaex.cc/OnePiece.mp4" , container: document.querySelector("#video"),streamPlay:true});
+      let player = new Player.default({video,container: document.querySelector("#video")});
+
     </script>
   </body>
 </html>
