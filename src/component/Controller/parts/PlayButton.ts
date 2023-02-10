@@ -66,6 +66,7 @@ export class PlayButton extends Component implements ComponentItem {
     }
 
     onClick(e: Event) {
+        e.stopPropagation();
         if(this.player.video.paused) {
             this.player.video.play();
         } else {

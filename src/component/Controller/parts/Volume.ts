@@ -57,6 +57,7 @@ export class Volume extends Options {
         })
 
         this.volumeProgress.onclick = (e) => {
+            e.stopPropagation();
             this.player.emit(EVENT.VOLUME_PROGRESS_CLICK,e,this);
         }
     }

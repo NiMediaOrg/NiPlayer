@@ -81,13 +81,14 @@ export class Dot extends Component implements ComponentItem {
       this.left = parseInt(this.el.style.left);
       document.body.addEventListener("mousemove", this.onMouseMove);
 
-      document.body.addEventListener("mouseup", (e) => {
+      document.body.onmouseup =  (e) => {
         this.player.emit(EVENT.DOT_UP);
         this.player.video.currentTime = Math.floor(
           this.playScale * this.player.video.duration
         );
         document.body.removeEventListener("mousemove", this.onMouseMove);
-      });
+        document.body.onmouseup = null;
+      };
     });
   }
 
