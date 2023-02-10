@@ -5,9 +5,9 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests" />
-    <script src="https://cdn.jsdelivr.net/npm/niplayer@1.1.6/dist/player.umd.js"></script>
+    <!-- <script src="https://cdn.jsdelivr.net/npm/niplayer@1.1.7/dist/player.umd.js"></script> -->
     
-    <!-- <script src="./dist/player.umd.js"></script> -->
+    <script src="./dist/player.umd.js"></script>
     
     <title>NiPlayer</title>
     <style>
@@ -30,12 +30,18 @@
   </head>
   <body>
     <div id="video">
-      <video playsinline="true" x5-video-player-type = "true" src="https://novaex.cc/OnePiece.mp4"></video>
+      <!-- <video playsinline="true" x5-video-player-type = "true"></video> -->
     </div>
-    <script defer>
-      let video = document.getElementsByTagName("video")[0]
-      let player = new Player.default({video,container: document.querySelector("#video")});
-
+    <script>
+      window.onload = function() {
+        let player = new Player.default({
+            url: "https://novaex.cc/OnePiece.mp4", 
+            container:document.getElementById("video"),
+            // streamPlay:true,
+            autoPlay:true
+        });
+      }
+      
     </script>
   </body>
 </html>

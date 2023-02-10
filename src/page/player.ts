@@ -66,6 +66,7 @@ class Player extends Component implements ComponentItem {
       this.video["playsinline"] = true;
       this.video["x5-video-player-type"] = "h5";
     }
+    this.video.crossOrigin = "anonymous"
     
     this.el.appendChild(this.video);
     this.playerOptions?.url && this.attachSource(this.playerOptions.url);
@@ -282,11 +283,15 @@ class Player extends Component implements ComponentItem {
 
   initPCEvent(): void {
     this.el.onclick = (e) => {
-      if (this.video.paused) {
-        this.video.play();
-      } else if (this.video.played) {
-        this.video.pause();
+      // 防止事件冒泡
+      if(e.target === this.el || e.target === this.video) {
+        if (this.video.paused) {
+          this.video.play();
+        } else if (this.video.played) {
+          this.video.pause();
+        }
       }
+      
     };
     this.el.onmousemove = (e) => {
       this.emit("showtoolbar", e);
