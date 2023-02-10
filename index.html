@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests" />
-    <!-- <script src="https://cdn.jsdelivr.net/npm/niplayer@1.1.7/dist/player.umd.js"></script> -->
+    <!-- <script src="https://cdn.jsdelivr.net/npm/niplayer@1.1.8/dist/player.umd.js"></script> -->
     
     <script src="./dist/player.umd.js"></script>
     
@@ -17,14 +17,10 @@
       }
       #video {
         height: 300px;
-        width: 400px;
+        width: 600px;
         resize: both;
         overflow: auto;
-       
-      }
-      #t {
-        height: 800px;
-        background-color: aqua;
+        margin: 100px auto;
       }
     </style>
   </head>
@@ -37,11 +33,8 @@
         let player = new Player.default({
             url: "https://novaex.cc/OnePiece.mp4", 
             container:document.getElementById("video"),
-            // streamPlay:true,
-            autoPlay:true
         });
       }
-      
     </script>
   </body>
 </html>

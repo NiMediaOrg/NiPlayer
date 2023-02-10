@@ -41,19 +41,13 @@ export class FullPage extends Options {
 
     onClick(e: Event) {
         if(!this.isFullPage) {
-            addClass(this.player.container,["video-fullpage"])
-            this.player.container.style.position = "fixed"
-            this.player.container.style.width = "100%";
-            this.player.container.style.height = "100%"
+            addClass(this.player.el,["video-wrapper-fullpage"])
             this.iconBox.removeChild(this.icon);
             this.icon = createSvg(fullPageExitPath);
             this.iconBox.appendChild(this.icon)
             
         } else {
-            removeClass(this.player.container,["video-fullpage"]);
-            this.player.container.style.position = ""
-            this.player.container.style.width = this.player.containerWidth + "px";
-            this.player.container.style.height = this.player.containerHeight + "px";
+            removeClass(this.player.el,["video-wrapper-fullpage"]);
             this.iconBox.removeChild(this.icon);
             this.icon = createSvg(fullPagePath);
             this.iconBox.appendChild(this.icon)
