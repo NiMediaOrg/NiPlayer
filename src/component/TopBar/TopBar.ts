@@ -45,11 +45,11 @@ export class TopBar extends Component implements ComponentItem {
   }
 
   initEvent() {
-    this.player.on(EVENT.SHOW_TOOLBAR, (e: SingleTapEvent | Event) => {
-      this.onShowToolBar(e);
+    this.player.on(EVENT.SHOW_TOOLBAR, () => {
+      this.onShowToolBar();
     });
 
-    this.player.on(EVENT.HIDE_TOOLBAR, (e) => {
+    this.player.on(EVENT.HIDE_TOOLBAR, () => {
       this.onHideToolBar();
     });
   }
@@ -60,27 +60,22 @@ export class TopBar extends Component implements ComponentItem {
     }
   }
 
-  private showToolBar(e: Event | SingleTapEvent) {
+  private showToolBar() {
     if (includeClass(this.el, "video-topbar-hidden")) {
       removeClass(this.el, ["video-topbar-hidden"]);
     }
-    let target;
-    if (e instanceof Event) target = e.target;
-    else target = (e as SingleTapEvent).e.target;
 
-    if (target === this.player.video) {
-      this.timer = window.setTimeout(() => {
-        this.hideToolBar();
-      }, 3000);
-    }
+    this.timer = window.setTimeout(() => {
+      this.hideToolBar();
+    }, 3000);
   }
 
-  onShowToolBar(e: Event | SingleTapEvent) {
+  onShowToolBar() {
     if (this.timer) {
       window.clearTimeout(this.timer);
       this.timer = null;
     }
-    this.showToolBar(e);
+    this.showToolBar();
   }
 
   onHideToolBar() {
