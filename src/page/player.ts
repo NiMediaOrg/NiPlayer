@@ -232,24 +232,13 @@ class Player extends Component implements ComponentItem {
       this.emit(EVENT.RATE_CHANGE);
     });
 
-    this.on(EVENT.VIDEO_PROGRESS_CLICK, (e, ctx) => {
-      let scale = e.offsetX / ctx.el.offsetWidth;
-      if (scale < 0) {
-        scale = 0;
-      } else if (scale > 1) {
-        scale = 1;
-      }
-      this.video.currentTime = Math.floor(scale * this.video.duration);
-      this.video.paused && this.video.play();
-    });
-
     this.on(EVENT.DANMAKU_INPUT_FOCUS, () => {
       this.el.onmouseleave = null;
     });
 
     this.on(EVENT.DANMAKU_INPUT_BLUR, () => {
       this.el.onmouseleave = (e) => {
-        this.emit("hidetoolbar", e);
+        this.emit(EVENT.HIDE_TOOLBAR, e);
       };
     });
 
@@ -262,7 +251,7 @@ class Player extends Component implements ComponentItem {
     });
 
     this.on(EVENT.DOT_DRAG, (val: number, e: Event | MoveEvent) => {
-      this.emit("showtoolbar", e);
+      this.emit(EVENT.SHOW_TOOLBAR, e);
     });
 
     this.on(EVENT.ENTER_FULLSCREEN, () => {
