@@ -2,7 +2,6 @@ import { Component } from "../../class/Component";
 import { Player } from "../../page/player";
 import { ComponentItem, DOMProps,Node } from "../../types/Player";
 import { $, addClass } from "../../utils/domUtils";
-import "./loading.less"
 export class Loading extends Component implements ComponentItem {
     id = "Loading";
     props: DOMProps;

@@ -1,8 +1,8 @@
-import { Component } from "../../class/Component";
-import { Player } from "../../page/player";
-import { ComponentConstructor, ComponentItem, DOMProps,Node, PlayerOptions } from "../../types/Player";
-import { $ } from "../../utils/domUtils";
-import { controllersMapping, storeControlComponent } from "../../utils/store";
+import { Component } from "../../../class/Component";
+import { Player } from "../../../page/player";
+import { ComponentConstructor, ComponentItem, DOMProps,Node } from "../../../types/Player";
+import { $ } from "../../../utils/domUtils";
+import { controllersMapping, storeControlComponent } from "../../../utils/store";
 import { DutaionShow } from "./parts/DurationShow";
 import { FullPage } from "./parts/FullPage";
 import { FullScreen } from "./parts/FullScreen";
@@ -13,21 +13,18 @@ import { ScreenShot } from "./parts/ScreenShot";
 import { SubSetting } from "./parts/SubSetting";
 import { VideoShot } from "./parts/VideoShot";
 import { Volume } from "./parts/Volume";
-import "./controller.less";
 export class Controller extends Component implements ComponentItem {
   readonly id = "Controller";
   leftArea: HTMLElement; //代表着最左侧的区域
   mediumArea: HTMLElement;
   rightArea: HTMLElement; //代表最右侧的区域
-  props: DOMProps = {};
   player: Player;
   // 控件
   leftControllers: ComponentConstructor[] = [PlayButton,Volume, DutaionShow];
   rightController: ComponentConstructor[] = [Playrate,SubSetting,VideoShot,ScreenShot,PicInPic,FullPage,FullScreen];
-  constructor(player: Player,container:HTMLElement, desc?:string, props?:DOMProps, children?:Node[]) {
-    super(container,desc,props,children);
+  constructor(player: Player,container:HTMLElement,desc?:string) {
+    super(container,desc);
     this.player = player;
-    this.props = props || {};
     this.init();
   }
 
@@ -69,9 +66,9 @@ export class Controller extends Component implements ComponentItem {
   }
 
   initTemplate() {
-    this.leftArea = $("div.video-subplay");
-    this.mediumArea = $("div.video-medium")
-    this.rightArea = $("div.video-settings");
+    this.leftArea = $("div.video-bottombar-left");
+    this.mediumArea = $("div.video-bottombar-medium")
+    this.rightArea = $("div.video-bottombar-right");
     this.el.appendChild(this.leftArea);
     this.el.appendChild(this.mediumArea);
     this.el.appendChild(this.rightArea);
@@ -87,11 +84,5 @@ export class Controller extends Component implements ComponentItem {
       let instance = new ControlConstructor(this.player,this.rightArea,"div");
       this[instance.id] = instance;
     })
-  }
-
-  initEvent() {
-    // this.player.on("danmaku-plugin-add",()=>{
-      
-    // })
   }
 }

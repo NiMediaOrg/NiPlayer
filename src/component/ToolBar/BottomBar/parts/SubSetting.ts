@@ -1,9 +1,9 @@
 import { Options } from "./Options";
-import { Player } from "../../../page/player";
-import { DOMProps, Node } from "../../../types/Player";
-import { storeControlComponent } from "../../../utils/store";
-import { subSettingPath } from "../path/defaultPath";
-import { $, addClass, createSvg, includeClass, removeClass } from "../../../utils/domUtils";
+import { Player } from "../../../../page/player";
+import { DOMProps, Node } from "../../../../types/Player";
+import { storeControlComponent } from "../../../../utils/store";
+import { subSettingPath } from "../../../../svg";
+import { $, addClass, createSvg, includeClass, removeClass } from "../../../../utils/domUtils";
 import { wrap } from "ntouch.js";
 import { SubsettingItem } from "./SubsettingItem";
 

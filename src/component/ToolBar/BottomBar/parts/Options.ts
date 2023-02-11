@@ -1,8 +1,8 @@
-import { Component } from "../../../class/Component";
-import { EVENT } from "../../../events";
-import { Player } from "../../../page/player";
-import { ComponentItem, DOMProps, Node } from "../../../types/Player";
-import { $, addClass, checkIsMouseInRange, includeClass, removeClass } from "../../../utils/domUtils";
+import { Component } from "../../../../class/Component";
+import { EVENT } from "../../../../events";
+import { Player } from "../../../../page/player";
+import { ComponentItem, DOMProps, Node } from "../../../../types/Player";
+import { $, addClass, checkIsMouseInRange, includeClass, removeClass } from "../../../../utils/domUtils";
 
 export class Options extends Component implements ComponentItem {
   id = "Options";
@@ -16,7 +16,7 @@ export class Options extends Component implements ComponentItem {
   bottom: number = 48;
   constructor(
     player: Player,
-    container: HTMLElement,
+    container?: HTMLElement,
     hideWidth?: number,
     hideHeight?: number,
     desc?: string,

@@ -1,66 +1,133 @@
-import { Node } from "../../types/Player";
 import { Component } from "../../class/Component";
 import { Player } from "../../page/player";
-import { ComponentItem, DOMProps } from "../../types/Player";
-import { Dot } from "./parts/Dot";
-import { CompletedProgress } from "./parts/CompletedProgress";
-import { BufferedProgress } from "./parts/BufferedProgress";
-import { storeControlComponent } from "../../utils/store";
+import { ComponentItem } from "../../types/Player";
 import { EVENT } from "../../events";
-import "./progress.less";
+import { $, getDOMPoint } from "../../utils/domUtils";
+import { SingleTapEvent, wrap } from "ntouch.js";
 
 export class Progress extends Component implements ComponentItem {
-  readonly id = "Progress";
-  props: DOMProps;
+  id = "Progress";
   player: Player;
-  dot: Dot;
-  completedProgress: CompletedProgress;
-  bufferedProgress: BufferedProgress;
+  dot: HTMLElement;
+  completedProgress: HTMLElement;
+  bufferProgress: HTMLElement;
+  mouseX: number = 0;
+  dotLeft: number = 0;
   constructor(
     player: Player,
-    container: HTMLElement,
+    container?: HTMLElement,
     desc?: string,
-    props?: DOMProps,
-    children?: Node[]
   ) {
-    super(container, desc, props, children);
+    super(container, desc);
     this.player = player;
-    this.props = props || {};
-    this.init();
+    this.initBase();
   }
 
-  init() {
-    this.initComponent();
-    this.initEvent();
-
-    storeControlComponent(this);
+  initBase() {
+    this.initBaseTemplate();
+    this.initBaseEvent()
+    
   }
 
-  initComponent() {
-    this.dot = new Dot(this.player, this.el, "div");
-    this.completedProgress = new CompletedProgress(
-      this.player,
-      this.el,
-      "div.video-completed"
-    );
-    this.bufferedProgress = new BufferedProgress(
-      this.player,
-      this.el,
-      "div.video-buffered"
-    );
+  initBaseTemplate() {
+    this.dot = $("div");
+    this.completedProgress = $("div");
+    this.bufferProgress = $("div");
+
+    this.el.append(this.dot,this.completedProgress,this.bufferProgress);
   }
 
-  initEvent() {
+  initBaseEvent() {
+    this.onMouseMove = this.onMouseMove.bind(this);
+    if(this.player.env === "PC") {
+      this.initBasePCEvent();
+    } else {
+      this.initBaseMobileEvent()
+    }
+
+    this.on(EVENT.PROGRESS_CLICK, (dx: number, ctx: Progress) => {
+      let scale = dx / this.el.clientWidth;
+      if (scale < 0) {
+        scale = 0;
+      } else if (scale > 1) {
+        scale = 1;
+      }
+      this.dot.style.left = scale * 100 + "%";
+      this.completedProgress.style.width = scale * 100 + "%";
+    })
+
+    this.on(EVENT.DOT_DRAG,(dx: number, ctx: Progress) => {
+      let scale = (dx + this.dotLeft) / this.el.clientWidth;
+      if (scale < 0) {
+        scale = 0;
+      } else if (scale > 1) {
+        scale = 1;
+      }
+      this.dot.style.left = scale * 100 + "%";
+      this.completedProgress.style.width = scale * 100 + "%";
+    })
+  }
+
+  initBasePCEvent() {
+    let ctx = this;
+    
     this.el.onmouseenter = (e: Event) => {
-      this.player.emit(EVENT.VIDEO_PROGRESS_MOUSE_ENTER, e, this);
+      this.emit(EVENT.PROGRESS_MOUSE_ENTER, e, ctx)
     };
 
     this.el.onmouseleave = (e: Event) => {
-      this.player.emit(EVENT.VIDEO_PROGRESS_MOUSE_LEAVE, e, this);
+      this.emit(EVENT.PROGRESS_MOUSE_LEAVE,e, ctx);
     };
 
-    this.el.onclick = (e: Event) => {
-      this.player.emit(EVENT.VIDEO_PROGRESS_CLICK, e, this);
+    this.el.onclick = (e: MouseEvent) => {
+      this.emit(EVENT.PROGRESS_CLICK ,e.offsetX, ctx)
     };
+
+    this.dot.addEventListener("mousedown",(e: MouseEvent) => {
+      e.preventDefault();
+      this.emit(EVENT.DOT_DOWN);
+      this.mouseX = e.pageX;
+      this.dotLeft = parseInt(this.dot.style.left) / 100 * this.el.clientWidth;
+      document.body.addEventListener("mousemove", ctx.onMouseMove);
+
+      document.body.onmouseup =  (e: MouseEvent) => {
+        this.emit(EVENT.DOT_UP, this.completedProgress.clientWidth / this.el.clientWidth, ctx);
+        document.body.removeEventListener("mousemove", ctx.onMouseMove);
+        document.body.onmouseup = null;
+      };
+    })
+  }
+
+  initBaseMobileEvent() {
+    let ctx = this;
+    wrap(this.el).addEventListener("singleTap",(e: SingleTapEvent) => {
+      let dx = e.e.touches[0].clientX - getDOMPoint(this.el).x;
+      this.emit(EVENT.PROGRESS_CLICK, dx, ctx);
+    })
+
+    wrap(this.dot).addEventListener("touchstart",(e: TouchEvent) => {
+      e.preventDefault();
+      this.emit(EVENT.DOT_DOWN);
+      this.mouseX = e.touches[0].clientX;
+      this.dotLeft = parseInt(this.el.style.left);
+
+      document.body.addEventListener("touchmove",this.onMouseMove);
+
+      document.body.ontouchend = (e: TouchEvent) => {
+        this.emit(EVENT.DOT_UP, this.completedProgress.clientWidth / this.el.clientWidth, ctx);
+        document.body.removeEventListener("touchmove",this.onMouseMove);
+        document.body.ontouchend = null;
+      }
+    })
+  }
+
+  onMouseMove(e: MouseEvent | TouchEvent) {
+    if(e instanceof MouseEvent) {
+      let dx = e.pageX - this.mouseX;
+      this.emit(EVENT.DOT_DRAG, dx, this)
+    } else {
+      let dx = e.touches[0].clientX - this.mouseX;
+      this.emit(EVENT.DOT_DRAG, dx, this)
+    }
   }
 }

@@ -1,10 +1,10 @@
-import { Component } from "../../../class/Component"
-import { EVENT } from "../../../events";
-import { Player } from "../../../page/player";
-import { ComponentItem, DOMProps,Node } from "../../../types/Player";
-import { addClass } from "../../../utils/domUtils";
-import { formatTime } from "../../../utils/math";
-import { storeControlComponent } from "../../../utils/store";
+import { Component } from "../../../../class/Component"
+import { EVENT } from "../../../../events";
+import { Player } from "../../../../page/player";
+import { ComponentItem, DOMProps,Node } from "../../../../types/Player";
+import { addClass } from "../../../../utils/domUtils";
+import { formatTime } from "../../../../utils/math";
+import { storeControlComponent } from "../../../../utils/store";
 
 export class DutaionShow extends Component implements ComponentItem {
     readonly id = "DurationShow";
@@ -43,7 +43,7 @@ export class DutaionShow extends Component implements ComponentItem {
             this.el.innerText = `${this.currentTime}/${this.totalTime}`;
         })
 
-        this.player.on(EVENT.DOT_DRAG,(scale: number,e: MouseEvent) => {
+        this.player.on(EVENT.VIDEO_DOT_DRAG,(scale: number) => {
             this.currentTime = formatTime(this.player.video.duration * scale);
             this.el.innerText = `${this.currentTime}/${this.totalTime}`;
         })

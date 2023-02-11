@@ -5,19 +5,18 @@ import {
   Node,
   ComponentItem,
   DOMProps,
-  Progress,
   Controller,
 } from "../../index";
 import { Player } from "../../page/player";
 import { addClass, includeClass, removeClass } from "../../utils/domUtils";
 import { storeControlComponent } from "../../utils/store";
-import "./toolbar.less";
+import { MediumBar } from "./MediumBar/MediumBar";
 
 export class ToolBar extends Component implements ComponentItem {
   readonly id: string = "Toolbar";
   props: DOMProps;
   player: Player;
-  progress: Progress;
+  mediumbar: MediumBar;
   controller: Controller;
   status: "show" | "hidden" = "hidden";
   private timer: number = 0;
@@ -40,17 +39,17 @@ export class ToolBar extends Component implements ComponentItem {
    * @description 需要注意的是此处元素的class名字是官方用于控制整体toolbar一栏的显示和隐藏
    */
   initTemplate() {
-    addClass(this.el,["video-controls","video-controls-hidden"]);
+    addClass(this.el,["video-toolbar","video-toolbar-hidden"]);
   }
 
   initComponent() {
-    this.progress = new Progress(this.player,this.el,"div.video-progress");
-    this.controller = new Controller(this.player,this.el,"div.video-play");
+    this.mediumbar = new MediumBar(this.player,this.el,"div.video-mediumbar");
+    this.controller = new Controller(this.player,this.el,"div.video-bottombar");
   }
 
   initEvent() {
-    this.player.on(EVENT.SHOW_TOOLBAR, (e: SingleTapEvent | Event | MoveEvent)=>{
-      this.onShowToolBar(e);
+    this.player.on(EVENT.SHOW_TOOLBAR, ()=>{
+      this.onShowToolBar();
     })
 
     this.player.on(EVENT.HIDE_TOOLBAR, ()=>{
@@ -59,34 +58,30 @@ export class ToolBar extends Component implements ComponentItem {
   }
 
   private hideToolBar() {
-    if(!includeClass(this.el,"video-controls-hidden")) {
-      addClass(this.el,["video-controls-hidden"]);
+    if(!includeClass(this.el,"video-toolbar-hidden")) {
+      addClass(this.el,["video-toolbar-hidden"]);
       this.status = "hidden";
     }
   }
 
-  private showToolBar(e: Event | SingleTapEvent | MoveEvent) {
-    if(includeClass(this.el,"video-controls-hidden")) {
-      removeClass(this.el,["video-controls-hidden"]);
+  private showToolBar() {
+    if(includeClass(this.el,"video-toolbar-hidden")) {
+      removeClass(this.el,["video-toolbar-hidden"]);
       this.status = "show";
     }
-    let target;
-    if(e instanceof Event) target = e.target;
-    else target = (e as (SingleTapEvent | MoveEvent)).e.target;
 
-    if(target === this.player.video && this.player.env === "PC") {
-      this.timer = window.setTimeout(()=>{
-        this.hideToolBar();
-      },3000)
-    }
+    this.timer = window.setTimeout(()=>{
+      this.hideToolBar();
+    },3000)
+    
   }
 
-  onShowToolBar(e: Event | SingleTapEvent | MoveEvent) {
+  onShowToolBar() {
     if(this.timer) {
       window.clearTimeout(this.timer);
       this.timer = null;
     }
-    this.showToolBar(e);
+    this.showToolBar();
   }
 
   onHideToolBar() {

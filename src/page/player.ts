@@ -1,12 +1,12 @@
 import {
   ComponentItem,
+  DanmakuController,
   DOMProps,
   PlayerOptions,
   RegisterComponentOptions,
   ToolBar,
   UpdateComponentOptions,
 } from "../index";
-import "./player.less";
 import { Component } from "../class/Component";
 import { $, addClass, patchComponent, removeClass } from "../utils/domUtils";
 import { computeAngle } from "../index";
@@ -44,7 +44,7 @@ class Player extends Component implements ComponentItem {
   mediaProportion: number = 9 / 16;
 
   constructor(options?: PlayerOptions) {
-    super(options.container, "div.video-wrapper");
+    super(options.container, "div.Niplayer_video-wrapper");
     this.playerOptions = Object.assign(
       {
         autoPlay: false,
@@ -97,6 +97,8 @@ class Player extends Component implements ComponentItem {
     this.error = new ErrorLoading(this, "你的网络罢工啦Q_Q", this.el);
     this.toolBar = new ToolBar(this, this.el, "div");
     this.topbar = new TopBar(this, this.el, "div");
+
+    new DanmakuController(this);
   }
 
   /**
@@ -230,24 +232,13 @@ class Player extends Component implements ComponentItem {
       this.emit(EVENT.RATE_CHANGE);
     });
 
-    this.on(EVENT.VIDEO_PROGRESS_CLICK, (e, ctx) => {
-      let scale = e.offsetX / ctx.el.offsetWidth;
-      if (scale < 0) {
-        scale = 0;
-      } else if (scale > 1) {
-        scale = 1;
-      }
-      this.video.currentTime = Math.floor(scale * this.video.duration);
-      this.video.paused && this.video.play();
-    });
-
     this.on(EVENT.DANMAKU_INPUT_FOCUS, () => {
       this.el.onmouseleave = null;
     });
 
     this.on(EVENT.DANMAKU_INPUT_BLUR, () => {
       this.el.onmouseleave = (e) => {
-        this.emit("hidetoolbar", e);
+        this.emit(EVENT.HIDE_TOOLBAR, e);
       };
     });
 
@@ -259,8 +250,8 @@ class Player extends Component implements ComponentItem {
       this.enableSeek = true;
     });
 
-    this.on(EVENT.DOT_DRAG, (val: number, e: Event | MoveEvent) => {
-      this.emit("showtoolbar", e);
+    this.on(EVENT.VIDEO_DOT_DRAG, (val: number, e: Event | MoveEvent) => {
+      this.emit(EVENT.SHOW_TOOLBAR, e);
     });
 
     this.on(EVENT.ENTER_FULLSCREEN, () => {

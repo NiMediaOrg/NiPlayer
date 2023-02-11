@@ -1,10 +1,10 @@
 import { wrap } from "ntouch.js";
-import { Component } from "../../../class/Component"
-import { Player } from "../../../page/player";
-import { ComponentItem, DOMProps,Node } from "../../../types/Player";
-import { $, addClass, createSvg } from "../../../utils/domUtils";
-import { storeControlComponent } from "../../../utils/store";
-import { pausePath, playPath } from "../path/defaultPath";
+import { Component } from "../../../../class/Component"
+import { Player } from "../../../../page/player";
+import { ComponentItem, DOMProps,Node } from "../../../../types/Player";
+import { $, addClass, createSvg } from "../../../../utils/domUtils";
+import { storeControlComponent } from "../../../../utils/store";
+import { pausePath, playPath } from "../../../../svg/index";
 
 export class PlayButton extends Component implements ComponentItem {
     readonly id = "PlayButton";
