@@ -1,17 +1,14 @@
-import { Node } from "../../types/Player";
 import { Component } from "../../class/Component";
 import { Player } from "../../page/player";
-import { ComponentItem, DOMProps } from "../../types/Player";
+import { ComponentItem } from "../../types/Player";
 import { Dot } from "./parts/Dot";
 import { CompletedProgress } from "./parts/CompletedProgress";
 import { BufferedProgress } from "./parts/BufferedProgress";
 import { storeControlComponent } from "../../utils/store";
 import { EVENT } from "../../events";
-import "./progress.less";
 
 export class Progress extends Component implements ComponentItem {
   readonly id = "Progress";
-  props: DOMProps;
   player: Player;
   dot: Dot;
   completedProgress: CompletedProgress;
@@ -20,12 +17,9 @@ export class Progress extends Component implements ComponentItem {
     player: Player,
     container: HTMLElement,
     desc?: string,
-    props?: DOMProps,
-    children?: Node[]
   ) {
-    super(container, desc, props, children);
+    super(container, desc);
     this.player = player;
-    this.props = props || {};
     this.init();
   }
 
@@ -37,30 +31,33 @@ export class Progress extends Component implements ComponentItem {
   }
 
   initComponent() {
-    this.dot = new Dot(this.player, this.el, "div");
+    this.dot = new Dot(this, this.player, this.el);
     this.completedProgress = new CompletedProgress(
       this.player,
       this.el,
-      "div.video-completed"
+      "div.completed-progress"
     );
     this.bufferedProgress = new BufferedProgress(
       this.player,
       this.el,
-      "div.video-buffered"
+      "div.buffered-progress"
     );
   }
 
   initEvent() {
     this.el.onmouseenter = (e: Event) => {
-      this.player.emit(EVENT.VIDEO_PROGRESS_MOUSE_ENTER, e, this);
+      this.player.emit(EVENT.PROGRESS_MOUSE_ENTER, e, this);
+      this.emit(EVENT.PROGRESS_MOUSE_ENTER, e, this)
     };
 
     this.el.onmouseleave = (e: Event) => {
-      this.player.emit(EVENT.VIDEO_PROGRESS_MOUSE_LEAVE, e, this);
+      this.player.emit(EVENT.PROGRESS_MOUSE_LEAVE, e, this);
+      this.emit(EVENT.PROGRESS_MOUSE_LEAVE,e, this);
     };
 
     this.el.onclick = (e: Event) => {
-      this.player.emit(EVENT.VIDEO_PROGRESS_CLICK, e, this);
+      this.player.emit(EVENT.PROGRESS_CLICK, e, this);
+      this.emit(EVENT.PROGRESS_CLICK ,e, this)
     };
   }
 }

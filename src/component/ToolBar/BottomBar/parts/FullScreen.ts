@@ -1,10 +1,10 @@
 import { SingleTapEvent, wrap } from "ntouch.js";
-import { EVENT } from "../../../events";
-import { Player } from "../../../page/player";
-import { DOMProps, Node } from "../../../types/Player";
-import { addClass, createSvg } from "../../../utils/domUtils";
-import { storeControlComponent } from "../../../utils/store";
-import { fullscreenExitPath, fullscreenPath } from "../path/defaultPath";
+import { EVENT } from "../../../../events";
+import { Player } from "../../../../page/player";
+import { DOMProps, Node } from "../../../../types/Player";
+import { addClass, createSvg } from "../../../../utils/domUtils";
+import { storeControlComponent } from "../../../../utils/store";
+import { fullscreenExitPath, fullscreenPath } from "../../../../svg/index";
 import { Options } from "./Options";
 import {beFull, exitFull, isFull} from 'be-full';
 

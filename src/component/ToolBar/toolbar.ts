@@ -11,13 +11,13 @@ import {
 import { Player } from "../../page/player";
 import { addClass, includeClass, removeClass } from "../../utils/domUtils";
 import { storeControlComponent } from "../../utils/store";
-import "./toolbar.less";
+import { MediumBar } from "./MediumBar/MediumBar";
 
 export class ToolBar extends Component implements ComponentItem {
   readonly id: string = "Toolbar";
   props: DOMProps;
   player: Player;
-  progress: Progress;
+  mediumbar: MediumBar;
   controller: Controller;
   status: "show" | "hidden" = "hidden";
   private timer: number = 0;
@@ -40,12 +40,12 @@ export class ToolBar extends Component implements ComponentItem {
    * @description 需要注意的是此处元素的class名字是官方用于控制整体toolbar一栏的显示和隐藏
    */
   initTemplate() {
-    addClass(this.el,["video-controls","video-controls-hidden"]);
+    addClass(this.el,["video-toolbar","video-toolbar-hidden"]);
   }
 
   initComponent() {
-    this.progress = new Progress(this.player,this.el,"div.video-progress");
-    this.controller = new Controller(this.player,this.el,"div.video-play");
+    this.mediumbar = new MediumBar(this.player,this.el,"div.video-mediumbar");
+    this.controller = new Controller(this.player,this.el,"div.video-bottombar");
   }
 
   initEvent() {

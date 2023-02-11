@@ -1,12 +1,12 @@
 import {
   ComponentItem,
+  DanmakuController,
   DOMProps,
   PlayerOptions,
   RegisterComponentOptions,
   ToolBar,
   UpdateComponentOptions,
 } from "../index";
-import "./player.less";
 import { Component } from "../class/Component";
 import { $, addClass, patchComponent, removeClass } from "../utils/domUtils";
 import { computeAngle } from "../index";
@@ -44,7 +44,7 @@ class Player extends Component implements ComponentItem {
   mediaProportion: number = 9 / 16;
 
   constructor(options?: PlayerOptions) {
-    super(options.container, "div.video-wrapper");
+    super(options.container, "div.Niplayer_video-wrapper");
     this.playerOptions = Object.assign(
       {
         autoPlay: false,
@@ -97,6 +97,8 @@ class Player extends Component implements ComponentItem {
     this.error = new ErrorLoading(this, "你的网络罢工啦Q_Q", this.el);
     this.toolBar = new ToolBar(this, this.el, "div");
     this.topbar = new TopBar(this, this.el, "div");
+
+    new DanmakuController(this);
   }
 
   /**

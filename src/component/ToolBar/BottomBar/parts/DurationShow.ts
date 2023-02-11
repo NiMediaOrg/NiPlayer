@@ -1,10 +1,10 @@
-import { Component } from "../../../class/Component"
-import { EVENT } from "../../../events";
-import { Player } from "../../../page/player";
-import { ComponentItem, DOMProps,Node } from "../../../types/Player";
-import { addClass } from "../../../utils/domUtils";
-import { formatTime } from "../../../utils/math";
-import { storeControlComponent } from "../../../utils/store";
+import { Component } from "../../../../class/Component"
+import { EVENT } from "../../../../events";
+import { Player } from "../../../../page/player";
+import { ComponentItem, DOMProps,Node } from "../../../../types/Player";
+import { addClass } from "../../../../utils/domUtils";
+import { formatTime } from "../../../../utils/math";
+import { storeControlComponent } from "../../../../utils/store";
 
 export class DutaionShow extends Component implements ComponentItem {
     readonly id = "DurationShow";

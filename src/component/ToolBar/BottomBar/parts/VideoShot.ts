@@ -1,11 +1,9 @@
-import { wrap } from "ntouch.js";
-import { Player } from "../../../page/player";
-import { DOMProps, Node } from "../../../types/Player";
-import { $, addClass, createSvg, removeClass } from "../../../utils/domUtils";
-import { nextTick } from "../../../utils/nextTick";
-import { storeControlComponent } from "../../../utils/store";
-import { Toast } from "../../Toast/Toast";
-import { confirmPath, countdownPath, videoShotPath } from "../path/defaultPath";
+import { Player } from "../../../../page/player";
+import { DOMProps, Node } from "../../../../types/Player";
+import { $, addClass, createSvg, removeClass } from "../../../../utils/domUtils";
+import { storeControlComponent } from "../../../../utils/store";
+import { Toast } from "../../../Toast/Toast";
+import { confirmPath, countdownPath, videoShotPath } from "../../../../svg/index";
 import { Options } from "./Options";
  
 export class VideoShot extends Options {

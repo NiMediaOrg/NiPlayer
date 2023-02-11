@@ -1,9 +1,9 @@
 import { wrap } from "ntouch.js";
-import { Player } from "../../../page/player";
-import { DOMProps, Node } from "../../../types/Player";
-import { addClass, createSvg, removeClass } from "../../../utils/domUtils";
-import { storeControlComponent } from "../../../utils/store";
-import { fullPagePath, fullPageExitPath } from "../path/defaultPath";
+import { Player } from "../../../../page/player";
+import { DOMProps, Node } from "../../../../types/Player";
+import { addClass, createSvg, removeClass } from "../../../../utils/domUtils";
+import { storeControlComponent } from "../../../../utils/store";
+import { fullPagePath, fullPageExitPath } from "../../../../svg/index";
 import { Options } from "./Options";
 
 export class FullPage extends Options {
