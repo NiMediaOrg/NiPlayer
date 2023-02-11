@@ -250,7 +250,7 @@ class Player extends Component implements ComponentItem {
       this.enableSeek = true;
     });
 
-    this.on(EVENT.DOT_DRAG, (val: number, e: Event | MoveEvent) => {
+    this.on(EVENT.VIDEO_DOT_DRAG, (val: number, e: Event | MoveEvent) => {
       this.emit(EVENT.SHOW_TOOLBAR, e);
     });
 

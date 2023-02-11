@@ -5,7 +5,6 @@ import {
   Node,
   ComponentItem,
   DOMProps,
-  Progress,
   Controller,
 } from "../../index";
 import { Player } from "../../page/player";
@@ -59,15 +58,15 @@ export class ToolBar extends Component implements ComponentItem {
   }
 
   private hideToolBar() {
-    if(!includeClass(this.el,"video-controls-hidden")) {
-      addClass(this.el,["video-controls-hidden"]);
+    if(!includeClass(this.el,"video-toolbar-hidden")) {
+      addClass(this.el,["video-toolbar-hidden"]);
       this.status = "hidden";
     }
   }
 
   private showToolBar(e: Event | SingleTapEvent | MoveEvent) {
-    if(includeClass(this.el,"video-controls-hidden")) {
-      removeClass(this.el,["video-controls-hidden"]);
+    if(includeClass(this.el,"video-toolbar-hidden")) {
+      removeClass(this.el,["video-toolbar-hidden"]);
       this.status = "show";
     }
     let target;

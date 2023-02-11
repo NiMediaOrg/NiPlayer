@@ -68,7 +68,7 @@ export class Controller extends Component implements ComponentItem {
   initTemplate() {
     this.leftArea = $("div.video-bottombar-left");
     this.mediumArea = $("div.video-bottombar-medium")
-    this.rightArea = $("div.video-bottom-right");
+    this.rightArea = $("div.video-bottombar-right");
     this.el.appendChild(this.leftArea);
     this.el.appendChild(this.mediumArea);
     this.el.appendChild(this.rightArea);

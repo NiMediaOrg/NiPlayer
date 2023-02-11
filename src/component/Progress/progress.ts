@@ -15,7 +15,7 @@ export class Progress extends Component implements ComponentItem {
   dotLeft: number = 0;
   constructor(
     player: Player,
-    container: HTMLElement,
+    container?: HTMLElement,
     desc?: string,
   ) {
     super(container, desc);

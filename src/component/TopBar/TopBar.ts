@@ -5,7 +5,6 @@ import { Node, ComponentItem, DOMProps } from "../../index";
 import { Player } from "../../page/player";
 import { $, addClass, includeClass, removeClass } from "../../utils/domUtils";
 import { storeControlComponent } from "../../utils/store";
-import "./topbar.less";
 
 export class TopBar extends Component implements ComponentItem {
   readonly id: string = "TopBar";
