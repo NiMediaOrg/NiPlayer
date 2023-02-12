@@ -67,9 +67,12 @@ export class VideoProgress extends Progress {
         })
 
         this.player.video.addEventListener("timeupdate",(e) => {
-            let scale = this.player.video.currentTime / this.player.video.duration;
-            this.dot.style.left = scale * 100 + "%";
-            this.completedProgress.style.width = scale * 100 + "%";
+            if(this.player.enableSeek) {
+                let scale = this.player.video.currentTime / this.player.video.duration;
+                this.dot.style.left = scale * 100 + "%";
+                this.completedProgress.style.width = scale * 100 + "%";
+            }
+            
         })
     }
 

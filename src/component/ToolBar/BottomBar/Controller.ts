@@ -10,7 +10,7 @@ import { PicInPic } from "./parts/PicInPic";
 import { PlayButton } from "./parts/PlayButton";
 import { Playrate } from "./parts/Playrate";
 import { ScreenShot } from "./parts/ScreenShot";
-import { SubSetting } from "./parts/SubSetting";
+import { SubSetting } from "./parts/Subsettings/SubSetting";
 import { VideoShot } from "./parts/VideoShot";
 import { Volume } from "./parts/Volume";
 export class Controller extends Component implements ComponentItem {
@@ -21,7 +21,7 @@ export class Controller extends Component implements ComponentItem {
   player: Player;
   // 控件
   leftControllers: ComponentConstructor[] = [PlayButton,Volume, DutaionShow];
-  rightController: ComponentConstructor[] = [Playrate,SubSetting,VideoShot,ScreenShot,PicInPic,FullPage,FullScreen];
+  rightController: ComponentConstructor[] = [SubSetting,VideoShot,ScreenShot,PicInPic,FullPage,FullScreen];
   constructor(player: Player,container:HTMLElement,desc?:string) {
     super(container,desc);
     this.player = player;

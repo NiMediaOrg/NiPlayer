@@ -105,7 +105,6 @@ export class DanmakuController {
 
   onTimeupdate(e: Event) {
     let video = e.target as HTMLVideoElement;
-    console.log(video.currentTime);
     for (let i = 0; i < 30; i++) {
       this.danmaku.addData(queue[i % queue.length]);
     }
