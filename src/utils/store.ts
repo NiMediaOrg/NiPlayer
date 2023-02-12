@@ -1,6 +1,5 @@
 import { FullScreen } from "../component/ToolBar/BottomBar/parts/FullScreen";
 import { PlayButton } from "../component/ToolBar/BottomBar/parts/PlayButton";
-import { Playrate } from "../component/ToolBar/BottomBar/parts/Playrate";
 import { Volume } from "../component/ToolBar/BottomBar/parts/Volume";
 import { ComponentItem } from "../types/Player";
 
@@ -35,10 +34,3 @@ export function storeControlComponent(item: ComponentItem) {
   COMPONENT_STORE.set(item.id, item);
   ONCE_COMPONENT_STORE.set(item.id, item);
 }
-
-export const controllersMapping = {
-  PlayButton: PlayButton,
-  Playrate: Playrate,
-  Volume: Volume,
-  FullScreen: FullScreen,
-};

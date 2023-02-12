@@ -173,7 +173,7 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 5px 5px 0 5px;
+      padding: 10px 5px 0 5px;
       position: relative;
       height: @bottombarHeight;
       .video-bottombar-left {
@@ -261,6 +261,10 @@
         position: relative;
         margin-right: 10px;
         height: 100%;
+
+        .video-controller {
+          margin-left: 5px;
+        }
 
         // 播放速率的组件
         .video-playrate {
@@ -439,6 +443,7 @@
     height: auto;
     max-height: 300px;
     background-color: #000000e6;
+    backdrop-filter: saturate(180%) blur(20px);
     border-radius: 3px;
     font-size: 13px;
     transition: all .2s;

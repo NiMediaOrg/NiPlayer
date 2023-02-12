@@ -142,11 +142,11 @@ export function includeClass(dom: Element, className: string): boolean {
 }
 
 export function containsDOM(dom: Element, child: Element): boolean {
-  if(dom.childNodes.length) {
+  if(dom.childNodes.length > 0) {
     dom.childNodes.forEach(node => {
       if(node !== child) {
-        if(containsDOM(node as Element,child)) return true;
-      }
+        if(containsDOM(node as Element,child) === true) return true;
+      } else return true;
     })
   }
   return false;

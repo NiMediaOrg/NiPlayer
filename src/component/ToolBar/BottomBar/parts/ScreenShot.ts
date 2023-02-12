@@ -11,7 +11,7 @@ import {
 } from "../../../../utils/domUtils";
 import { storeControlComponent } from "../../../../utils/store";
 import { Toast } from "../../../Toast/Toast";
-import { confirmPath, screenShot$1, screenShot$2 } from "../../../../svg/index"
+import { confirmPath, screenShotPath } from "../../../../svg/index"
 import { Options } from "./Options";
 
 export class ScreenShot extends Options {
@@ -38,7 +38,7 @@ export class ScreenShot extends Options {
     this.confirmIcon = createSvg(confirmPath ,"0 0 1024 1024");
 
     addClass(this.el, ["video-screenshot", "video-controller"]);
-    this.icon = createSvgs([screenShot$1, screenShot$2], "0 0 1024 1024");
+    this.icon = createSvg( screenShotPath, "0 0 1024 1024");
     this.iconBox.appendChild(this.icon);
     this.el.appendChild(this.iconBox);
 

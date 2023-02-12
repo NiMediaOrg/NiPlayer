@@ -22,7 +22,7 @@ export class FullPage extends Options {
 
     initTemplate() {
         addClass(this.el,["video-fullpage","video-controller"])
-        this.icon = createSvg(fullPagePath);
+        this.icon = createSvg(fullPagePath,'0 0 1024 1024');
         this.iconBox.appendChild(this.icon);
         this.el.appendChild(this.iconBox);
 
@@ -43,13 +43,13 @@ export class FullPage extends Options {
         if(!this.isFullPage) {
             addClass(this.player.el,["video-wrapper-fullpage"])
             this.iconBox.removeChild(this.icon);
-            this.icon = createSvg(fullPageExitPath);
+            this.icon = createSvg(fullPageExitPath,'0 0 1024 1024');
             this.iconBox.appendChild(this.icon)
             
         } else {
             removeClass(this.player.el,["video-wrapper-fullpage"]);
             this.iconBox.removeChild(this.icon);
-            this.icon = createSvg(fullPagePath);
+            this.icon = createSvg(fullPagePath,'0 0 1024 1024');
             this.iconBox.appendChild(this.icon)
         }
         this.isFullPage = !this.isFullPage;

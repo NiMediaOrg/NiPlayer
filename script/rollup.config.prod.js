@@ -22,12 +22,12 @@ export default defineConfig({
         plugins:[terser()]
       },
       {
-        file: "./dist/player.es.js",
-        format: "es",
+        file: "./dist/player.esm.js",
+        format: "esm",
       },
       {
-        file: "./dist/player.min.es.js",
-        format: "es",
+        file: "./dist/player.min.esm.js",
+        format: "esm",
         plugins:[terser()]
       },
       {
