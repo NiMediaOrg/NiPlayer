@@ -16,7 +16,7 @@
   position: relative;
   overflow: hidden;
   user-select: none;
-
+  transform: all .5s ease;
   .flex-vertical-horizontal-center;
 
   &:focus {
@@ -54,21 +54,28 @@
     top: 0;
     left: 0;
     width: 100%;
+    height: 35px;
     color: @commonColor;
     transition: all 0.3s ease;
     z-index: 2001;
-    padding: 5px 5px;
+    padding: 5px 5px 0px 5px;
     display: flex;
     justify-content: space-between;
     box-sizing: border-box;
     .video-topbar-right {
       display: flex;
       flex-direction: row-reverse;
-
-      .video-subsettings-set {
-        right: 0;
-        left: auto !important;
-        transform: translateX(0) !important;
+      height: 100%;
+      .video-subsettings {
+        .Nplayer_subsettings;
+        .video-subsettings-set {
+          right: 0;
+          left: auto !important;
+          transform: translateX(0) !important;
+        }
+      }
+      .video-subsettings-animate {
+        transform: rotate(360deg);
       }
     }
   }
@@ -232,8 +239,13 @@
         .video-duration-time {
           .flex-vertical-center;
           font-size: @smallSizeFont;
+          opacity: .7;
           margin-left: 5px;
           height: 100%;
+
+          &:hover {
+            opacity: 1;
+          }
         }
       }
 
@@ -280,47 +292,7 @@
 
         // 在bottombar中的控制按钮；
         .video-subsettings {
-          // margin-right: 5px;
-          .video-subsettings-set {
-            width: 102px;
-            padding-bottom: 8px;
-
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            .video-subsettings-item {
-              &:hover {
-                color: @plainBlue;
-              }
-              .flex-vertical-horizontal-center;
-              cursor: pointer;
-              width: 100%;
-              padding: 5px 0px;
-              box-sizing: border-box;
-              height: 32px;
-              font-size: 13px;
-              user-select: none;
-              .video-subsettings-itemleft {
-                text-align: center;
-                line-height: 20px;
-                height: 100%;
-              }
-              .video-subsettings-itemright {
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                height: 100%;
-                input {
-                  vertical-align: middle;
-                  background-color: @navyBlue;
-                }
-              }
-            }
-          }
-          svg {
-            transition: transform 0.5s ease;
-          }
+          .Nplayer_subsettings;
         }
         .video-subsettings-animate {
           transform: rotate(360deg);
@@ -449,7 +421,7 @@
     svg {
       height: 100%;
       width: 100%;
-      opacity: 0.85;
+      opacity: 0.8;
       path {
         fill: @commonColor;
       }
@@ -458,6 +430,94 @@
 
   .video-set-hidden {
     display: none!important;
+  }
+}
+
+// settings的基本样式，因为在内置组件中当播放器尺寸缩小时候，subsettings组件会移动到顶部去
+.Nplayer_subsettings {
+  .video-subsettings-set {
+    height: auto;
+    max-height: 300px;
+    background-color: #000000e6;
+    border-radius: 3px;
+    font-size: 13px;
+    transition: all .2s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    .video-subsettings-main {
+      width: 100%;
+    }
+    .video-subsettings-playrate {
+      width: 100%;
+    }
+    .video-subsettings-item {
+      &:hover {
+        color: @plainBlue;
+      }
+      .flex-vertical-horizontal-center;
+      height: 35px;
+      cursor: pointer;
+      color: #fffc;
+      justify-content: space-between;
+      align-items: center;
+      line-height: 1;
+      display: flex;
+      overflow: hidden;
+      width: 100%;
+      .video-subsettings-itemleft {
+        white-space: nowrap;
+        align-items: center;
+        display: flex;
+
+        .video-subsettings-itemleft-icon {
+          height: 24px;
+          width: 24px;
+          justify-content: center;
+          align-items: center;
+          margin-right: 10px;
+          display: flex;
+
+          svg {
+            height: 100%;
+            width: 100%;
+            fill: #fff;
+          }
+        }
+        .video-subsettings-itemleft-text {
+          box-sizing: border-box;
+          margin: 0;
+          padding: 0;
+        }
+      }
+      .video-subsettings-itemright {
+        align-items: center;
+        display: flex;
+
+        .video-subsettings-itemright-tip{
+          white-space: nowrap;
+          color: #ffffff80;
+          margin-right: 5px;
+          font-size: 12px;
+        }
+
+        .video-subsettings-itemright-icon {
+          justify-content: center;
+          align-items: center;
+          display: flex;
+          height: 24px;
+          svg {
+            width: 100%;
+            height: 100%;
+            fill: #fff;
+          }
+        }
+      }
+    }
+  }
+  svg {
+    transition: transform 0.5s ease;
   }
 }
 

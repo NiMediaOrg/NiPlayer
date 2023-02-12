@@ -141,6 +141,17 @@ export function includeClass(dom: Element, className: string): boolean {
   return false;
 }
 
+export function containsDOM(dom: Element, child: Element): boolean {
+  if(dom.childNodes.length) {
+    dom.childNodes.forEach(node => {
+      if(node !== child) {
+        if(containsDOM(node as Element,child)) return true;
+      }
+    })
+  }
+  return false;
+}
+
 export function getElementSize(dom: HTMLElement): {
   width: number;
   height: number;
