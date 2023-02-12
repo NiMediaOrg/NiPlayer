@@ -1,14 +1,13 @@
 import { Component } from "../../../class/Component";
 import { Player } from "../../../page/player";
-import { ComponentConstructor, ComponentItem, DOMProps,Node } from "../../../types/Player";
+import { ComponentConstructor, ComponentItem } from "../../../types/Player";
 import { $ } from "../../../utils/domUtils";
-import { controllersMapping, storeControlComponent } from "../../../utils/store";
+import { storeControlComponent } from "../../../utils/store";
 import { DutaionShow } from "./parts/DurationShow";
 import { FullPage } from "./parts/FullPage";
 import { FullScreen } from "./parts/FullScreen";
 import { PicInPic } from "./parts/PicInPic";
 import { PlayButton } from "./parts/PlayButton";
-import { Playrate } from "./parts/Playrate";
 import { ScreenShot } from "./parts/ScreenShot";
 import { SubSetting } from "./parts/Subsettings/SubSetting";
 import { VideoShot } from "./parts/VideoShot";
@@ -37,32 +36,12 @@ export class Controller extends Component implements ComponentItem {
   }
 
   initControllers() {
-    let leftControllers = this.player.playerOptions.leftBottomBarControllers || null;
-    let rightControllers = this.player.playerOptions.rightBottomBarControllers || null;
-    if(leftControllers) {
-      this.leftControllers = leftControllers.map(item=>{
-        if(typeof item === 'string') {
-          if(!controllersMapping[item]) {
-            throw new Error(`传入的组件名${item}错误`);
-          }
-          return controllersMapping[item];
-        } else {
-          return item;
-        }
-      })
-    } 
-    if(rightControllers) {
-      this.rightController = rightControllers.map(item=>{
-        if(typeof item === 'string') {
-          if(!controllersMapping[item]) {
-            throw new Error(`传入的组件名${item}错误`);
-          }
-          return controllersMapping[item];
-        } else {
-          return item;
-        }
-      })
-    }
+    let leftControllers = this.player.playerOptions.leftBottomBarControllers;
+    let rightControllers = this.player.playerOptions.rightBottomBarControllers;
+    if(leftControllers) this.leftControllers = leftControllers;
+  
+    if(rightControllers) this.rightController = rightControllers;
+    
   }
 
   initTemplate() {

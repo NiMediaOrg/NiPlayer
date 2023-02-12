@@ -9,10 +9,10 @@ export type PlayerOptions = {
   post?:string;
   autoPlay?: boolean;
   streamPlay?: boolean;
-  leftBottomBarControllers?: (ComponentConstructor | string)[];
-  rightBottomBarControllers?: (ComponentConstructor | string)[];
-  leftTopBarControllers?: (ComponentConstructor | string)[];
-  rightTopBarController?: (ComponentConstructor | string)[];
+  leftBottomBarControllers?: ComponentConstructor[];
+  rightBottomBarControllers?: ComponentConstructor[];
+  leftTopBarControllers?: ComponentConstructor[];
+  rightTopBarController?: ComponentConstructor[];
   plugins?: Plugin[];
 };
 

@@ -41,6 +41,7 @@ class Player extends Component implements ComponentItem {
   mask: HTMLElement;
   containerWidth: number;
   containerHeight: number;
+  // 视频的比例 默认为16： 9
   mediaProportion: number = 9 / 16;
 
   constructor(options?: PlayerOptions) {
@@ -98,7 +99,7 @@ class Player extends Component implements ComponentItem {
     this.toolBar = new ToolBar(this, this.el, "div");
     this.topbar = new TopBar(this, this.el, "div");
 
-    new DanmakuController(this);
+    // new DanmakuController(this);
   }
 
   /**
