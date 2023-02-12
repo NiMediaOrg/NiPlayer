@@ -40,7 +40,7 @@ export class SubSetting extends Options {
     addClass(this.el, ["video-subsettings", "video-controller"]);
     addClass(this.hideBox, ["video-subsettings-set"]);
     this.el["aria-label"] = "设置";
-    this.icon = createSvg(subSettingPath);
+    this.icon = createSvg(subSettingPath, '0 0 1024 1024');
     this.iconBox.appendChild(this.icon);
     this.el.appendChild(this.iconBox);
     this.el.appendChild(this.hideBox);

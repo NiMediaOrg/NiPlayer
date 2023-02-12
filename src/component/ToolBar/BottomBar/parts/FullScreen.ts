@@ -30,7 +30,7 @@ export class FullScreen extends Options {
 
   initTemplate() {
     addClass(this.el, ["video-fullscreen", "video-controller"]);
-    this.icon = createSvg(fullscreenPath);
+    this.icon = createSvg(fullscreenPath,'0 0 1024 1024');
     this.iconBox.appendChild(this.icon);
     this.el.appendChild(this.iconBox);
 
@@ -52,7 +52,7 @@ export class FullScreen extends Options {
       // 调用浏览器提供的全屏API接口去请求元素的全屏，原生全屏分为  竖屏全屏 + 横屏全屏
       beFull(this.player.container);
       this.iconBox.removeChild(this.icon);
-      this.icon = createSvg(fullscreenExitPath);
+      this.icon = createSvg(fullscreenExitPath,'0 0 1024 1024');
       this.iconBox.appendChild(this.icon);
       this.player.container.addEventListener("fullscreenchange", (e) => {
         this.player.emit(EVENT.ENTER_FULLSCREEN);
@@ -60,7 +60,7 @@ export class FullScreen extends Options {
     } else if (isFull(this.player.container)) {
       exitFull();
       this.iconBox.removeChild(this.icon);
-      this.icon = createSvg(fullscreenPath);
+      this.icon = createSvg(fullscreenPath,'0 0 1024 1024');
       this.iconBox.appendChild(this.icon);
       this.player.container.addEventListener("fullscreenchange", (e) => {
         this.player.emit(EVENT.LEAVE_FULLSCREEN);

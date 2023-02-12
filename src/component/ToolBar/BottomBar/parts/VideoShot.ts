@@ -1,9 +1,9 @@
 import { Player } from "../../../../page/player";
 import { DOMProps, Node } from "../../../../types/Player";
-import { $, addClass, createSvg, removeClass } from "../../../../utils/domUtils";
+import { $, addClass, createSvg, createSvgs, removeClass } from "../../../../utils/domUtils";
 import { storeControlComponent } from "../../../../utils/store";
 import { Toast } from "../../../Toast/Toast";
-import { confirmPath, countdownPath, videoShotPath } from "../../../../svg/index";
+import { confirmPath, countdownPath, videoShotPath$1, videoShotPath$2 } from "../../../../svg/index";
 import { Options } from "./Options";
  
 export class VideoShot extends Options {
@@ -31,7 +31,7 @@ export class VideoShot extends Options {
 
     initTemplate() {
         addClass(this.el,["video-videoshot","video-controller"])
-        this.icon = createSvg(videoShotPath,"0 0 1024 1024")
+        this.icon = createSvg(videoShotPath$1,"0 0 1024 1024")
         this.iconBox.appendChild(this.icon);
         this.el.appendChild(this.iconBox);
 
