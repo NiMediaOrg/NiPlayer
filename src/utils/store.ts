@@ -1,6 +1,3 @@
-import { FullScreen } from "../component/ToolBar/BottomBar/parts/FullScreen";
-import { PlayButton } from "../component/ToolBar/BottomBar/parts/PlayButton";
-import { Volume } from "../component/ToolBar/BottomBar/parts/Volume";
 import { ComponentItem } from "../types/Player";
 
 // COMPONENT_STORE存储目前还展示在视图上的组件，也就是没用卸载或者删除的组件

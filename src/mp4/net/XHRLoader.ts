@@ -26,7 +26,7 @@ export class XHRLoader {
         xhr.onreadystatechange = (e) => {
             if(xhr.readyState === 4) {
                 if((xhr.status >= 200 && xhr.status < 300) || (xhr.status === 304)) {
-                    config.success && config.success.call(xhr,xhr.response);
+                    config.success && config.success.call(xhr, xhr.response);
                 } else {
                     config.error && config.error.call(xhr,e);
                 }

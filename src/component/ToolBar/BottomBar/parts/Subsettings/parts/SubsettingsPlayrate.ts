@@ -6,6 +6,7 @@ import { $, containsDOM, createSvg } from "../../../../../../utils/domUtils";
 import { SubsettingItem } from "../SubsettingItem";
 
 export class SubsettingsPlayrate extends BaseEvent{
+    leadItem: SubsettingsItem;
     el: HTMLElement;
     readonly player: Player;
     readonly SubsettingsItem: SubsettingsItem[] = [

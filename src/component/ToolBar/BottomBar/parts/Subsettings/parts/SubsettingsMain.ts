@@ -1,8 +1,8 @@
 import { BaseEvent } from "../../../../../../class/BaseEvent";
 import { Player } from "../../../../../../page/player";
-import { flipPath, playratePath, propotionPath$1, propotionPath$2, rightarrowPath } from "../../../../../../svg";
+import { flipPath, playratePath, propotionPath$1, propotionPath$2, rightarrowPath, subtitlePath$1, subtitlePath$2 } from "../../../../../../svg";
 import { SubsettingsItem } from "../../../../../../types/Player";
-import { $, containsDOM, createSvg, createSvgs } from "../../../../../../utils/domUtils";
+import { $, createSvg, createSvgs } from "../../../../../../utils/domUtils";
 import { SubsettingItem } from "../SubsettingItem";
 
 export class SubsettingsMain extends BaseEvent {
@@ -25,6 +25,12 @@ export class SubsettingsMain extends BaseEvent {
             leftIcon: createSvg(flipPath,'0 0 1024 1024'),
             leftText: "画面翻转",
             rightTip: "正常",
+            rightIcon: createSvg(rightarrowPath,'0 0 1024 1024')
+        },
+        {
+            leftIcon: createSvgs([subtitlePath$1,subtitlePath$2],'0 0 1024 1024'),
+            leftText: "字幕设置",
+            rightTip: "默认",
             rightIcon: createSvg(rightarrowPath,'0 0 1024 1024')
         }
     ]
@@ -66,5 +72,9 @@ export class SubsettingsMain extends BaseEvent {
                 this.SubsettingsItem[0].instance.rightTipBox.innerText = playrate;
             }
         })
+
+        this.player.on("SubsettingsSubtitleChange",(item:SubsettingsItem) => {
+            
+        });
     }
 }
