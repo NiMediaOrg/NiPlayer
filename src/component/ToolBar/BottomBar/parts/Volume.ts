@@ -67,6 +67,7 @@ export class Volume extends Options {
         }
 
         this.volumeDot.onmousedown = (e: MouseEvent) => {
+            e.stopPropagation();
            this.mouseY = e.pageY;
            let top = parseInt(getComputedStyle(this.volumeDot).top)
            document.body.onmousemove = (e: MouseEvent) => {

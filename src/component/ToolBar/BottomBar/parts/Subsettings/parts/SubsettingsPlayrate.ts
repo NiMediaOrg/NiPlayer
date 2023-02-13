@@ -62,7 +62,8 @@ export class SubsettingsPlayrate extends BaseEvent{
     initEvent() {
         for(let i = 1; i<this.SubsettingsItem.length; i++) {
             let item = this.SubsettingsItem[i];
-            item.instance.el.addEventListener("click", () => {
+            item.instance.el.addEventListener("click", (e) => {
+                e.stopPropagation();
                 item.leftIcon = createSvg(settingsConfirmPath,'0 0 1024 1024');
                 item.instance.leftIconBox.innerHTML = ""
                 item.instance.leftIconBox.appendChild(item.leftIcon);
@@ -79,7 +80,8 @@ export class SubsettingsPlayrate extends BaseEvent{
             })
         }
 
-        this.SubsettingsItem[0].instance.el.addEventListener("click",() => {
+        this.SubsettingsItem[0].instance.el.addEventListener("click",(e) => {
+            e.stopPropagation();
             this.player.emit("SubsettingsPlayrateClick",this.SubsettingsItem[0], 0);
         })
     }

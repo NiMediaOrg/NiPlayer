@@ -103,7 +103,9 @@ class Player extends Component implements ComponentItem {
     if(this.playerOptions.subtitles && this.playerOptions.subtitles.length > 0) {
       new Subtitle(this,this.playerOptions.subtitles);
     }
-    // new DanmakuController(this);
+    if(this.playerOptions.danmaku && this.playerOptions.danmaku.open) {
+      new DanmakuController(this, this.playerOptions.danmaku);
+    }
   }
 
   /**
@@ -279,7 +281,10 @@ class Player extends Component implements ComponentItem {
   }
 
   initPCEvent(): void {
-    this.video.onclick = (e) => {
+    this.el.onclick = (e) => {
+      if(e.target === this.toolBar.el || e.target === this.toolBar.controller.el) {
+        return;
+      }
       if (this.video.paused) {
         this.video.play();
       } else if (this.video.played) {

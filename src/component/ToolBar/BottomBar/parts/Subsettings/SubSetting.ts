@@ -71,6 +71,7 @@ export class SubSetting extends Options {
 
     this.el.onmouseenter = null;
     wrap(this.iconBox).addEventListener(this.clickOrTap, (e) => {
+      e.stopPropagation();
       if (!includeClass(this.icon, "video-subsettings-animate")) {
         addClass(this.icon, ["video-subsettings-animate"]);
       } else {

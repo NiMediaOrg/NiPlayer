@@ -35,3 +35,29 @@
 .danmaku-box {
     cursor: pointer;
 }
+
+
+.video-danmaku-container {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: transparent;
+    left: 0;
+    top: 0;
+    z-index: 1001;
+
+    .video-danmaku-message {
+        user-select: none;
+        white-space: pre;
+        pointer-events: none;
+        perspective: 500px;
+        display: inline-block;
+        will-change: transform;
+        font-weight: normal;
+        line-height: 1.125;
+        font-family: SimHei, "Microsoft JhengHei", Arial, Helvetica, sans-serif;
+        text-shadow: rgb(0 0 0) 1px 0px 1px, rgb(0 0 0) 0px 1px 1px, rgb(0 0 0) 0px -1px 1px, rgb(0 0 0) -1px 0px 1px;
+        opacity: 1;
+        margin-left: 0px;
+    }
+}

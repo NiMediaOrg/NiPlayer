@@ -17,8 +17,15 @@ export type PlayerOptions = {
   mediumMediumBarController?: ComponentConstructor[];
   rightMediumBarController?: ComponentConstructor[];
   subtitles?: Subtitles[];
+  danmaku?: DanmakuOptions;
   plugins?: Plugin[];
 };
+
+export type DanmakuOptions = {
+  open: boolean;
+  api?: string;
+  type?: "websocket" | "http"
+}
 
 export type Subtitles = {
   default?: boolean;

@@ -40,7 +40,8 @@ export class DanmakuOpenClose extends Options {
   }
 
   initEvent(): void {
-      this.iconBox.addEventListener("click",() => {
+      this.iconBox.addEventListener("click",(e) => {
+        e.stopPropagation();
         if(this.status === "open") {
             this.replaceIcon(createSvg(danmakuClosePath,'0 0 1024 1024'))
             this.status = "close"

@@ -38,18 +38,25 @@ export class DanmakuInput extends Component implements ComponentItem {
 
   initEvent(): void {
     this.sendBox.onclick = (e) => {
+      e.stopPropagation();
       let value = this.inputBox.value;
       this.emit("sendData", value);
       this.inputBox.value = "";
       this.inputBox.blur();
     };
 
-    this.inputBox.addEventListener("focus", () => {
+    this.inputBox.addEventListener("focus", (e) => {
+      e.stopPropagation();
       this.player.emit("inputFocus");
     });
 
-    this.inputBox.addEventListener("blur", () => {
+    this.inputBox.addEventListener("blur", (e) => {
+      e.stopPropagation();
       this.player.emit("inputBlur");
     });
+
+    this.inputBox.addEventListener("click",(e) => {
+      e.stopPropagation()
+    })
   }
 }

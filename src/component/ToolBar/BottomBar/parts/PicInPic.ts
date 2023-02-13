@@ -39,6 +39,7 @@ export class PicInPic extends Options {
     }
 
     onClick(e: Event) {
+        e.stopPropagation();
         if (document.pictureInPictureElement) { // 当前画中画的元素
             document.exitPictureInPicture();
         } else {

@@ -63,7 +63,8 @@ export class SubsettingsSubtitle {
 
   initEvent() {
     for (let i = 0; i < this.SubsettingsItem.length; i++) {
-        this.SubsettingsItem[i].instance.el.onclick = () => {
+        this.SubsettingsItem[i].instance.el.onclick = (e) => {
+            e.stopPropagation();
             if(i === 1) {
                 if(this.status === "show") {
                     this.player.emit("HideSubtitle")
@@ -99,6 +100,7 @@ export class SubsettingsSubtitle {
     this.el.appendChild(instance.el);
 
     instance.el.addEventListener("click",(e) => {
+        e.stopPropagation();
         this.player.emit("SubsettingsSubtitleClick", item, this.SubsettingsItem.length - 1);
 
         if(item.click) item.click(item);

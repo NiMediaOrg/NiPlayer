@@ -49,7 +49,8 @@ export class VideoShot extends Options {
     }
 
     // 当鼠标或者手指按下的时刻开始启动录屏
-    onDown() {
+    onDown(e: Event) {
+        e.stopPropagation();
         addClass(this.icon,["video-videoshot-animate"])
         if(this.player.video.played) {
             this.videoShot();
