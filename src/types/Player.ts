@@ -13,8 +13,19 @@ export type PlayerOptions = {
   rightBottomBarControllers?: ComponentConstructor[];
   leftTopBarControllers?: ComponentConstructor[];
   rightTopBarController?: ComponentConstructor[];
+  leftMediumBarController?: ComponentConstructor[];
+  mediumMediumBarController?: ComponentConstructor[];
+  rightMediumBarController?: ComponentConstructor[];
+  subtitles?: Subtitles[];
   plugins?: Plugin[];
 };
+
+export type Subtitles = {
+  default?: boolean;
+  tip: string;
+  source: string;
+  lang: "zh" | "en" | "jp";
+}
 
 export type DOMProps = {
   className?: string[];

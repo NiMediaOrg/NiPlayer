@@ -32,6 +32,23 @@
             url: "https://novaex.cc/fireworks.mp4", 
             container:document.getElementById("video"),
             // streamPlay: true
+            subtitles:[
+                {
+                    source: "http://127.0.0.1:5501/assets/subtitle.vtt",
+                    tip: "Bilingual",
+                    lang: "en"
+                },
+                {
+                    source: "http://127.0.0.1:5501/assets/subtitle.zn.vtt",
+                    tip:"Chinese",
+                    lang: "zh"
+                },
+                {
+                    source: "http://127.0.0.1:5501/assets/subtitle.jp.vtt",
+                    tip:"Japanese",
+                    lang: "jp"
+                }
+            ]
         });
       }
     </script>

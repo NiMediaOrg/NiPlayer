@@ -24,6 +24,7 @@ import { Env } from "../utils/env";
 import { MobileVolume } from "../component/Mobile/MobileVolume";
 import { MoveEvent, wrap } from "ntouch.js";
 import { EVENT } from "../events";
+import { Subtitle } from "../component/Subtitle/Subtitle";
 class Player extends Component implements ComponentItem {
   readonly id = "Player";
   // 播放器的默认配置
@@ -98,7 +99,10 @@ class Player extends Component implements ComponentItem {
     this.error = new ErrorLoading(this, "你的网络罢工啦Q_Q", this.el);
     this.toolBar = new ToolBar(this, this.el, "div");
     this.topbar = new TopBar(this, this.el, "div");
-
+    console.log(this.playerOptions.subtitles)
+    if(this.playerOptions.subtitles && this.playerOptions.subtitles.length > 0) {
+      new Subtitle(this,this.playerOptions.subtitles);
+    }
     // new DanmakuController(this);
   }
 
