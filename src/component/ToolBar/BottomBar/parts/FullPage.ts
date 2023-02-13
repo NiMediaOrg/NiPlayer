@@ -40,6 +40,7 @@ export class FullPage extends Options {
     }
 
     onClick(e: Event) {
+        e.stopPropagation();
         if(!this.isFullPage) {
             addClass(this.player.el,["video-wrapper-fullpage"])
             this.iconBox.removeChild(this.icon);

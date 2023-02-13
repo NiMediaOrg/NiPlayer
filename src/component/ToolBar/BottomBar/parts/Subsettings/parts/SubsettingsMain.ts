@@ -58,7 +58,8 @@ export class SubsettingsMain extends BaseEvent {
 
     initEvent() {
         this.SubsettingsItem.forEach((item, index) => {
-            item.instance.el.addEventListener("click",() => {
+            item.instance.el.addEventListener("click",(e) => {
+                e.stopPropagation()
                 this.player.emit("MainSubsettingsItemClick",item, index);
             })
         })
