@@ -72,5 +72,9 @@ export class SubsettingsMain extends BaseEvent {
                 this.SubsettingsItem[0].instance.rightTipBox.innerText = playrate;
             }
         })
+
+        this.player.on("SubsettingsSubtitleChange",(item:SubsettingsItem) => {
+            
+        });
     }
 }

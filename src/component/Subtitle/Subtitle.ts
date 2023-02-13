@@ -20,6 +20,7 @@ export class Subtitle {
   textTrack: TextTrack; //一个textTrack对应一个字幕文件
   xhrLoader: XHRLoader;
   subsettingsSubtitle: SubsettingsSubtitle;
+  currentSource: string;
   el: HTMLElement;
   constructor(player: Player, subtitles: Subtitles[]) {
     this.player = player;
@@ -47,6 +48,8 @@ export class Subtitle {
           leftIcon: leftIcon,
           leftText: item.tip,
           click(value: SubsettingsItem) {
+            ctx.player.emit("SubsettingsSubtitleChange",value);
+            ctx.subsettingsSubtitle.leadItem.instance.rightTipBox.innerText = item.tip;
             ctx.trackElement.src = item.source;
             for (let index in ctx.subtitles) {
               ctx.subtitles[index].instance.leftIconBox.innerHTML = "";
@@ -87,6 +90,16 @@ export class Subtitle {
     this.trackElement = document.createElement("track");
 
     this.player.video.appendChild(this.trackElement);
+
+    this.player.on("HideSubtitle",() => {
+        this.currentSource = this.trackElement.src;
+        this.trackElement.src = ""
+        this.el.innerHTML = ""
+    }) 
+
+    this.player.on("ShowSubtitle",() => {
+        this.trackElement.src = this.currentSource;
+    })
     this.loadVTTFile(this.defaultSubtitle.source);
   }
 
