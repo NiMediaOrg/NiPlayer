@@ -1,7 +1,8 @@
-<p align=center><img src="https://user-images.githubusercontent.com/69229785/218654066-f782c71a-acef-4cca-9d79-9994ac3d7f12.png" /><p/>
+<p align=center><img src="https://user-images.githubusercontent.com/69229785/218659902-9f5f15b7-59ba-4920-92a6-e8f7da0e9589.png" /><p/>
 <h1 align=center>Niplayer</h1>
 
 ## :bell: 预览
+
 <img src="https://user-images.githubusercontent.com/69229785/218453758-a594b343-00b3-4480-9b81-39e4993eea35.png">
 <img src="https://user-images.githubusercontent.com/69229785/218454710-15d92548-3188-4aa7-b1c9-63a52e0b916a.png">
 
