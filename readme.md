@@ -1,4 +1,3 @@
-# :100: NiPlayer
 <p align=center><img src="https://user-images.githubusercontent.com/69229785/218654066-f782c71a-acef-4cca-9d79-9994ac3d7f12.png" /><p/>
 <h1 align=center>Niplayer</h1>
 
