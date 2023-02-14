@@ -1,8 +1,6 @@
 # :100: NiPlayer
-<div align=center>
-  <img src="https://user-images.githubusercontent.com/69229785/218654066-f782c71a-acef-4cca-9d79-9994ac3d7f12.png"><br/>
-  <h1 style="color:red">NiPlayer</h1>
-</div>
+<p align=center><img src="https://user-images.githubusercontent.com/69229785/218654066-f782c71a-acef-4cca-9d79-9994ac3d7f12.png" /><p/>
+<h1 align=center>Niplayer</h1>
 
 ## :bell: 预览
 <img src="https://user-images.githubusercontent.com/69229785/218453758-a594b343-00b3-4480-9b81-39e4993eea35.png">
