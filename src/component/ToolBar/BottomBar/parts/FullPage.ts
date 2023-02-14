@@ -24,7 +24,6 @@ export class FullPage extends Options {
         addClass(this.el,["video-fullpage","video-controller"])
         this.icon = createSvg(fullPagePath,'0 0 1024 1024');
         this.iconBox.appendChild(this.icon);
-        this.el.appendChild(this.iconBox);
 
         this.hideBox.innerText = "网页全屏"
         this.hideBox.style.fontSize = "13px"

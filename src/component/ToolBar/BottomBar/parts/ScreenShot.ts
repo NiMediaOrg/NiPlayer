@@ -40,7 +40,6 @@ export class ScreenShot extends Options {
     addClass(this.el, ["video-screenshot", "video-controller"]);
     this.icon = createSvg( screenShotPath, "0 0 1024 1024");
     this.iconBox.appendChild(this.icon);
-    this.el.appendChild(this.iconBox);
 
     this.hideBox.innerText = "截图";
     this.hideBox.style.fontSize = "13px";

@@ -44,7 +44,7 @@ class Player extends Component implements ComponentItem {
   containerHeight: number;
   // 视频的比例 默认为16： 9
   mediaProportion: number = 9 / 16;
-
+  static player = this;
   constructor(options?: PlayerOptions) {
     super(options.container, "div.Niplayer_video-wrapper");
     this.playerOptions = Object.assign(

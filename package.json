@@ -1,8 +1,8 @@
 {
   "name": "niplayer",
-  "version": "1.2.2",
+  "version": "1.2.4",
   "description": "This is a TS library for video player",
-  "main": "./dist/player.es.js",
+  "main": "./dist/player.esm.js",
   "types": "./dist/index.d.ts",
   "scripts": {
     "dev": "rollup -c script/rollup.config.dev.js --watch",

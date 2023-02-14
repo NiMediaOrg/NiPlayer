@@ -32,7 +32,6 @@ export class FullScreen extends Options {
     addClass(this.el, ["video-fullscreen", "video-controller"]);
     this.icon = createSvg(fullscreenPath,'0 0 1024 1024');
     this.iconBox.appendChild(this.icon);
-    this.el.appendChild(this.iconBox);
 
     this.hideBox.innerText = "全屏";
     this.hideBox.style.fontSize = "13px";
