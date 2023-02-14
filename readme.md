@@ -1,5 +1,5 @@
 <p align=center><img src="https://user-images.githubusercontent.com/69229785/218659902-9f5f15b7-59ba-4920-92a6-e8f7da0e9589.png" /><p/>
-<h1 align=center>Niplayer</h1>
+<h2 align=center>Niplayer</h2>
 
 ## :bell: 预览
 
