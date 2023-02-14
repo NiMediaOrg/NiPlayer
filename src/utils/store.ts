@@ -7,7 +7,7 @@ export const ONCE_COMPONENT_STORE = new Map<string, ComponentItem>();
 // 存储需要隐藏的元素，但不进行卸载
 export const HIDEEN_COMPONENT_STORE = new Map<string, ComponentItem>();
 
-// 内置的Controller原子组件
+// 内置的原子组件
 export const BuiltInControllerComponent = [
   "DurationShow",
   "FullPage",
@@ -18,15 +18,8 @@ export const BuiltInControllerComponent = [
   "ScreenShot",
   "SubSetting",
   "VideoShot",
-  "Volume",
-  "VolumeCompletedProgress",
+  "Toast"
 ];
-//内置的Progress原子组件
-export const BuiltInProgressComponent = [
-    "BufferedProgress",
-    "CompletedProgress",
-    "Dot"
-]
 export function storeControlComponent(item: ComponentItem) {
   COMPONENT_STORE.set(item.id, item);
   ONCE_COMPONENT_STORE.set(item.id, item);

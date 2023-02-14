@@ -23,7 +23,6 @@ export class PicInPic extends Options {
         addClass(this.el,["video-picInpic","video-controller"])
         this.icon = createSvg(picInPicPath,"0 0 1024 1024");
         this.iconBox.appendChild(this.icon);
-        this.el.appendChild(this.iconBox);
 
         this.hideBox.innerText = "画中画"
         this.hideBox.style.fontSize = "13px"

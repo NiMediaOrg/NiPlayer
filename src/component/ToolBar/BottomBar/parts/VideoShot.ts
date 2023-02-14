@@ -33,7 +33,6 @@ export class VideoShot extends Options {
         addClass(this.el,["video-videoshot","video-controller"])
         this.icon = createSvg(videoShotPath$1,"0 0 1024 1024")
         this.iconBox.appendChild(this.icon);
-        this.el.appendChild(this.iconBox);
 
         this.hideBox.innerText = "视频录制"
         this.hideBox.style.fontSize = "13px"

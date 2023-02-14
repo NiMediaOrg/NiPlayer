@@ -2,7 +2,7 @@ import { Component } from "../../../class/Component";
 import { Player } from "../../../page/player";
 import { ComponentConstructor, ComponentItem } from "../../../types/Player";
 import { $ } from "../../../utils/domUtils";
-import { storeControlComponent } from "../../../utils/store";
+import { ONCE_COMPONENT_STORE, storeControlComponent } from "../../../utils/store";
 import { DutaionShow } from "./parts/DurationShow";
 import { FullPage } from "./parts/FullPage";
 import { FullScreen } from "./parts/FullScreen";
@@ -56,11 +56,13 @@ export class Controller extends Component implements ComponentItem {
   initComponent() {
     this.leftControllers.forEach(ControlConstructor => {
       let instance = new ControlConstructor(this.player,this.leftArea,"div");
+      if(!ONCE_COMPONENT_STORE.get(instance.id)) storeControlComponent(instance);
       this[instance.id] = instance;
     })
 
     this.rightController.forEach(ControlConstructor => {
       let instance = new ControlConstructor(this.player,this.rightArea,"div");
+      if(!ONCE_COMPONENT_STORE.get(instance.id)) storeControlComponent(instance);
       this[instance.id] = instance;
     })
   }
