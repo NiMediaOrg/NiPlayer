@@ -62,7 +62,6 @@ export class Subtitle {
               }
             }
           }
-          
         });
 
         item.instance = subsettingsItem.instance;
