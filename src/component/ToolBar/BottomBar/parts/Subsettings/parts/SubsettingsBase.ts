@@ -30,9 +30,7 @@ export class SubsettingsBase extends BaseEvent {
 
   // target表示点击你这个item，需要跳转到哪一个SubsettingsBase
   registerSubsettingsItem(
-    item: SubsettingsItem & {
-      click?: (item: SubsettingsItem) => any;
-    },
+    item: SubsettingsItem
   ) {
     let base = null;
     if (item.target) {

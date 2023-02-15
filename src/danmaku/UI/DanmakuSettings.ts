@@ -1,35 +1,36 @@
-import { Options } from "../../component";
-import { danmakuSettingPath } from "../../svg";
+import { Options, SubsettingsMain } from "../../component";
+import { SubsettingsDanmakuMain } from "../../component/ToolBar/BottomBar/parts/Subsettings/parts/danmaku/SubsettingsDanmakuMain";
+import { SubsettingsBase } from "../../component/ToolBar/BottomBar/parts/Subsettings/parts/SubsettingsBase";
 import { Player } from "../../page/player";
-import { DOMProps, Node } from "../../types/Player";
-import { addClass, createSvg } from "../../utils/domUtils";
+import { rightarrowPath } from "../../svg";
+import { SubsettingsBaseConstructor } from "../../types/Player";
+import { createSvg, ONCE_COMPONENT_STORE } from "../../utils";
 
-export class DanmakuSettings extends Options {
+export class DanmakuSettings {
   readonly id = "DanmakuSettings";
   player: Player;
-  props: DOMProps;
-
+  subsettingsMain: SubsettingsMain;
   constructor(
     player: Player,
-    container?: HTMLElement,
-    desc?: string,
-    props?: DOMProps,
-    children?: Node[]
   ) {
-    super(player, container, 0, 0 ,desc, props, children);
-    this.props = props || {};
     this.player = player;
     this.init();
   }
 
   init(): void {
-      this.initTemplate()
+    this.initTemplate();
   }
 
   initTemplate(): void {
-      addClass(this.el,["video-danmaku-settings","video-controller"])
-      // 设置画布大小为1024 * 1024
-      this.icon = createSvg(danmakuSettingPath,'0 0 1024 1024');
-      this.iconBox.appendChild(this.icon)
+    this.subsettingsMain = (SubsettingsMain as SubsettingsBaseConstructor)
+      .instance as SubsettingsMain;
+
+    this.subsettingsMain.registerSubsettingsItem({
+      leftIcon: createSvg("","0 0 1024 1024"),
+      leftText: "弹幕设置",
+      rightTip: "更多",
+      rightIcon: createSvg(rightarrowPath, '0 0 1024 1024'),
+      target: SubsettingsDanmakuMain
+    })
   }
 }

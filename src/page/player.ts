@@ -42,6 +42,7 @@ class Player extends Component implements ComponentItem {
   mask: HTMLElement;
   containerWidth: number;
   containerHeight: number;
+  danmakuController: DanmakuController;
   // 视频的比例 默认为16： 9
   mediaProportion: number = 9 / 16;
   static player = this;
@@ -105,7 +106,7 @@ class Player extends Component implements ComponentItem {
       new Subtitle(this,this.playerOptions.subtitles);
     }
     if(this.playerOptions.danmaku && this.playerOptions.danmaku.open) {
-      new DanmakuController(this, this.playerOptions.danmaku);
+      this.danmakuController = new DanmakuController(this, this.playerOptions.danmaku);
     }
   }
 

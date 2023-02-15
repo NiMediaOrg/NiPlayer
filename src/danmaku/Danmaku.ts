@@ -13,8 +13,11 @@ export class Danmaku {
   private player: Player;
   private timer: number | null = null;
   private renderInterval: number = 100;
-  // 每一条弹幕轨道的高度默认为20px
+  // 每一条弹幕轨道的高度默认为 10px
   private trackHeight: number = 10;
+  // 总共的轨道数目
+  private trackNumber: number;
+  private opacity: number = 1;
   private isStopped = true;
   private isHidden = false;
   private tracks: Array<{
@@ -32,7 +35,7 @@ export class Danmaku {
     this.queue = new PriorityQueue<DanmakuData>();
     this.container = container;
     this.player = player;
-
+    this.trackNumber = this.container.clientHeight / 2 / this.trackHeight;
     this.tracks = new Array(this.container.clientHeight / this.trackHeight)
     this.init();
   }
@@ -49,7 +52,7 @@ export class Danmaku {
       }
       this.tracks[i].track = {
         id: i,
-        priority: 15 - i,
+        priority: 15 - i, //轨道的优先级
       };
     }
   }
@@ -165,23 +168,39 @@ export class Danmaku {
       dom.style.whiteSpace = "nowrap";
       dom.style.willChange = "transform";
       dom.style.cursor = "pointer";
-
+      dom.style.opacity = this.opacity + "";
       dom.style.visibility = this.isHidden ? "hidden" : "";
       data.dom = dom;
-      this.container.appendChild(dom);
+      
     }
+    this.container.appendChild(data.dom);
     data.totalDistance = this.container.clientWidth + data.dom.clientWidth;
     data.width = data.dom.clientWidth;
+    // 弹幕的运动时间
     data.rollTime =
       data.rollTime ||
       Math.floor(data.totalDistance * 0.0058 * (Math.random() * 0.3 + 0.7));
+    // 弹幕的移动速度
     data.rollSpeed = parseFloat(
       (data.totalDistance / data.rollTime).toFixed(2)
     );
+    
     // useTracks描述的是该弹幕占用了多少个轨道
     data.useTracks = Math.ceil(data.dom.clientHeight / this.trackHeight);
     // 重点，此处数组y的作用是表明该弹幕占的轨道的id数组
     data.y = [];
+    
+    this.addDataToTrack(data);
+    if (data.y.length === 0) {
+      if ([...this.container.childNodes].includes(data.dom)) {
+        this.container.removeChild(data.dom);
+      }
+      this.queue.push(data);
+    } else {
+      data.dom.style.top = data.y[0] * this.trackHeight + "px";
+      this.startAnimate(data); //开启弹幕的动画
+    }
+
     data.dom.ontransitionstart = (e) => {
       data.startTime = Date.now();
     };
@@ -194,23 +213,13 @@ export class Danmaku {
       if (this.isStopped) return;
       this.resumeOneData(data);
     };
-
-    this.addDataToTrack(data);
-    if (data.y.length === 0) {
-      if ([...this.container.childNodes].includes(data.dom)) {
-        this.container.removeChild(data.dom);
-      }
-      this.queue.push(data);
-    } else {
-      data.dom.style.top = data.y[0] * this.trackHeight + "px";
-      this.startAnimate(data);
-    }
   }
 
   //将指定的data添加到弹幕轨道上
   addDataToTrack(data: DanmakuData) {
     let y = [];
-    for (let i = 0; i < this.tracks.length; i++) {
+    console.log(this.trackNumber)
+    for (let i = 0; i < this.trackNumber; i++) {
       let track = this.tracks[i];
       let datas = track.datas;
       if (datas.length === 0) {
@@ -255,6 +264,8 @@ export class Danmaku {
   }
 
   startAnimate(data: DanmakuData) {
+    if(this.isStopped) return;
+    // moovingQueue中存储的都是在运动中的弹幕
     this.moovingQueue.push(data);
     data.dom.style.transition = `transform ${data.rollTime}s linear`;
     data.dom.style.transform = `translateX(-${data.totalDistance}px)`;
@@ -313,5 +324,16 @@ export class Danmaku {
         data.dom.style.visibility = "";
       }
     });
+  }
+
+  setOpacity(opacity: number) {
+    this.opacity = opacity;
+    this.moovingQueue.forEach(data => {
+      data.dom.style.opacity = opacity + "";
+    })
+  }
+
+  setTrackNumber(num: number) {
+    this.trackNumber = this.container.clientHeight / this.trackHeight * num;
   }
 }

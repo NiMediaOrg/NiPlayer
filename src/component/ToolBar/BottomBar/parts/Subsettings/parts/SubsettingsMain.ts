@@ -37,7 +37,7 @@ export class SubsettingsMain extends SubsettingsBase {
   constructor(subsetting: SubSetting, player: Player) {
     super(subsetting, player);
     this.init()
-}
+  }
 
   init() {
     this.el = $("div.video-subsettings-main");
