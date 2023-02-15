@@ -49,7 +49,7 @@ export class SubsettingsDanmakuOpacity extends SubsettingsBase {
     }
 
     initTemplate() {
-        this.el = $("div.video-subsettings-danamku-opacity");
+        this.el = $("div.video-subsettings-danmaku-opacity");
         this.el.dataset.width = "200";
         this.el.style.display = "none"
     }

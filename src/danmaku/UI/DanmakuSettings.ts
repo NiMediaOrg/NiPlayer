@@ -2,9 +2,9 @@ import { Options, SubsettingsMain } from "../../component";
 import { SubsettingsDanmakuMain } from "../../component/ToolBar/BottomBar/parts/Subsettings/parts/danmaku/SubsettingsDanmakuMain";
 import { SubsettingsBase } from "../../component/ToolBar/BottomBar/parts/Subsettings/parts/SubsettingsBase";
 import { Player } from "../../page/player";
-import { rightarrowPath } from "../../svg";
+import { danmakuPath$1, danmakuPath$2, rightarrowPath } from "../../svg";
 import { SubsettingsBaseConstructor } from "../../types/Player";
-import { createSvg, ONCE_COMPONENT_STORE } from "../../utils";
+import { createSvg, createSvgs, ONCE_COMPONENT_STORE } from "../../utils";
 
 export class DanmakuSettings {
   readonly id = "DanmakuSettings";
@@ -26,7 +26,7 @@ export class DanmakuSettings {
       .instance as SubsettingsMain;
 
     this.subsettingsMain.registerSubsettingsItem({
-      leftIcon: createSvg("","0 0 1024 1024"),
+      leftIcon: createSvgs([danmakuPath$1,danmakuPath$2],"0 0 1024 1024"),
       leftText: "弹幕设置",
       rightTip: "更多",
       rightIcon: createSvg(rightarrowPath, '0 0 1024 1024'),

@@ -57,7 +57,7 @@ export class SubsettingsDanmakuMain extends SubsettingsBase {
     }
 
     initTemplate() {
-        this.el = $("div.video-subsettings-danamku-main");
+        this.el = $("div.video-subsettings-danmaku-main");
         this.el.dataset.width = "250";
         this.el.style.display = "none"
     }
