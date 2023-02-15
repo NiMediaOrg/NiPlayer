@@ -11,18 +11,15 @@ import {
 } from "../../../../../utils/domUtils";
 import { wrap } from "ntouch.js";
 import { SubsettingsMain } from "./parts/SubsettingsMain";
-import { SubsettingsPlayrate } from "./parts/SubsettingsPlayrate";
-import { SubsettingsItem } from "../../../../../types/Player";
-import { SubsettingsSubtitle } from "./parts/SubsettingsSubtitle";
+import { SubsettingsBaseConstructor, SubsettingsItem } from "../../../../../types/Player";;
+import { SubsettingsBase } from "./parts/SubsettingsBase";
 
 export class SubSetting extends Options {
   readonly id = "SubSetting";
   clickOrTap: "click" | "singleTap";
   mask: HTMLElement;
+  subsettingsBaseGraph: Map<SubsettingsBase,SubsettingsBase[] | null> = new Map();
   subsettingsMain: SubsettingsMain;
-  subsettingsPlayrate: SubsettingsPlayrate;
-  subsettingsSubtitle: SubsettingsSubtitle;
-  currentShow: HTMLElement;
 
   constructor(
     player: Player,
@@ -48,18 +45,13 @@ export class SubSetting extends Options {
     this.el.appendChild(this.iconBox);
     this.el.appendChild(this.hideBox);
 
-    this.initSubSettingTemplate();
+    this.initSubSettingBase();
   }
 
-  initSubSettingTemplate() {
-    this.subsettingsMain = new SubsettingsMain(this.player);
-    this.subsettingsPlayrate = new SubsettingsPlayrate(this.player);
-    this.subsettingsSubtitle = new SubsettingsSubtitle(this.player);
-    this.hideBox.appendChild(this.subsettingsMain.el);
-    this.hideBox.appendChild(this.subsettingsPlayrate.el);
-    this.hideBox.appendChild(this.subsettingsSubtitle.el);
-    this.currentShow = this.subsettingsMain.el;
-    this.hideBox.style.width = this.subsettingsMain.el.dataset.width + "px";
+  initSubSettingBase() {
+   this.subsettingsMain = new SubsettingsMain(this,this.player);
+
+   this.registerSubsettingsBase(this.subsettingsMain);
   }
 
   initEvent(): void {
@@ -84,41 +76,6 @@ export class SubSetting extends Options {
       }
       this.player.emit("oneControllerHover", this);
     });
-
-    this.player.on("MainSubsettingsItemClick",(item: SubsettingsItem, index: number) => {
-      if(item.instance.el.dataset.SubsettingsMainType === "播放速度") { //展示播放速率的设置界面
-        this.currentShow.style.display = "none";
-        this.subsettingsPlayrate.el.style.display = "";
-        this.subsettingsPlayrate.leadItem = item;
-        this.hideBox.style.width = this.subsettingsPlayrate.el.dataset.width + "px"
-        this.currentShow = this.subsettingsPlayrate.el; 
-      } else if( item.instance.el.dataset.SubsettingsMainType === "画面比例") {
-        
-      } else if(item.instance.el.dataset.SubsettingsMainType === "字幕设置") {
-        this.currentShow.style.display = "none";
-        this.subsettingsSubtitle.el.style.display = "";
-        this.subsettingsSubtitle.leadItem = item;
-        this.hideBox.style.width = this.subsettingsSubtitle.el.dataset.width + "px"
-        this.currentShow = this.subsettingsSubtitle.el; 
-      }
-    })
-
-    this.player.on("SubsettingsPlayrateClick", (item: SubsettingsItem,index: number) => {
-      this.currentShow.style.display = "none";
-      this.currentShow = this.subsettingsMain.el;
-      this.currentShow.style.display = "";
-      this.hideBox.style.width = this.currentShow.dataset.width + "px";
-      if(item.instance.el.dataset.SubsettingsPlayrate !== "0") {
-        this.player.video.playbackRate = Number(item.instance.el.dataset.SubsettingsPlayrate);
-      }
-    })
-
-    this.player.on("SubsettingsSubtitleClick",(item: SubsettingsItem,index: number) => {
-      this.currentShow.style.display = "none";
-      this.currentShow = this.subsettingsMain.el;
-      this.currentShow.style.display = "";
-      this.hideBox.style.width = this.currentShow.dataset.width + "px";
-    })
   }
 
   initPCEvent(): void {
@@ -127,5 +84,15 @@ export class SubSetting extends Options {
 
   initMobileEvent(): void {
     this.clickOrTap = "singleTap";
+  }
+
+  // 注册基础的子设置项
+  registerSubsettingsBase(baseCons: SubsettingsBaseConstructor | SubsettingsBase) {
+    if(baseCons instanceof SubsettingsBase) {
+      this.hideBox.appendChild(baseCons.el);
+    } else {
+      let base = new baseCons(this,this.player)
+      this.hideBox.appendChild(base.el);
+    }
   }
 }

@@ -21,13 +21,18 @@
         overflow: auto;
         margin: 100px auto;
       }
+
+      iframe {
+        display: none;
+      }
     </style>
   </head>
   <body>
     <div id="video"></div>
     <script>
-      console.log(Player)
+      
       window.onload = function() {
+
         let player = new Player.default({
             url: "https://novaex.cc/fireworks.mp4", 
             container:document.getElementById("video"),
