@@ -42,6 +42,7 @@ class Player extends Component implements ComponentItem {
   mask: HTMLElement;
   containerWidth: number;
   containerHeight: number;
+  danmakuController: DanmakuController;
   // 视频的比例 默认为16： 9
   mediaProportion: number = 9 / 16;
   static player = this;
@@ -72,6 +73,8 @@ class Player extends Component implements ComponentItem {
     this.video.crossOrigin = "anonymous"
     
     this.el.appendChild(this.video);
+
+    // 初始化媒体的播放源
     this.playerOptions?.url && this.attachSource(this.playerOptions.url);
     
     this.initComponent();
@@ -99,93 +102,11 @@ class Player extends Component implements ComponentItem {
     this.error = new ErrorLoading(this, "你的网络罢工啦Q_Q", this.el);
     this.toolBar = new ToolBar(this, this.el, "div");
     this.topbar = new TopBar(this, this.el, "div");
-    console.log(this.playerOptions.subtitles)
     if(this.playerOptions.subtitles && this.playerOptions.subtitles.length > 0) {
       new Subtitle(this,this.playerOptions.subtitles);
     }
     if(this.playerOptions.danmaku && this.playerOptions.danmaku.open) {
-      new DanmakuController(this, this.playerOptions.danmaku);
-    }
-  }
-
-  /**
-   * @@description 监听视频播放器大小的变化
-   */
-  initResizeObserver() {
-    const resizeObserver = new ResizeObserver((entries) => {
-      // 触发尺寸变化事件
-      this.emit(EVENT.RESIZE, entries);
-      this.adjustMediaSize();
-
-      let width = entries[0].contentRect.width;
-      let subsetting;
-      // 当尺寸发生变化的时候视频库只调整基本的内置组件，其余用户自定义的组件响应式需要自己实现
-      if (width <= 500) {
-        // 默认在小屏幕的情况下只将SubSetting移动到上端，其余在底部注册的控件需要隐藏
-        COMPONENT_STORE.forEach((value, key) => {
-          if (["SubSetting"].indexOf(key) !== -1) {
-            subsetting = ONCE_COMPONENT_STORE.get(key);
-            this.unmountComponent(key);
-          } else if (
-            [
-              "PicInPic",
-              "Playrate",
-              "ScreenShot",
-              "SubSetting",
-              "VideoShot",
-            ].indexOf(key) !== -1
-          ) {
-            if (!HIDEEN_COMPONENT_STORE.get(key)) {
-              this.hideComponent(key);
-            }
-          }
-        });
-
-        this.mountComponent(subsetting.id, subsetting, {
-          mode: {
-            type: "TopToolBar",
-            pos: "right",
-          },
-        });
-        addClass(subsetting.el, [
-          "video-subsettings",
-          "video-topbar-controller",
-        ]);
-      } else {
-        // 展示之前隐藏的组件
-        HIDEEN_COMPONENT_STORE.forEach((value, key) => {
-          this.showComponent(key);
-        });
-        if (COMPONENT_STORE.has("SubSetting")) {
-          let key = "SubSetting";
-          let component = ONCE_COMPONENT_STORE.get(key);
-          // 如果SubSetting已经挂载到视图上，需要先卸载
-          this.unmountComponent(key);
-          this.mountComponent(key, component, {
-            mode: {
-              type: "BottomToolBar",
-              pos: "right",
-            },
-            index: 1,
-          });
-          addClass(component.el, ["video-subsettings", "video-controller"]);
-        }
-      }
-    });
-
-    resizeObserver.observe(this.el);
-  }
-
-  //调整video的尺寸
-  adjustMediaSize() {
-    if(this.mediaProportion !== 0) {
-      if(this.el.clientHeight / this.el.clientWidth > this.mediaProportion) {
-       this.video.style.width = "100%";
-       this.video.style.height = this.el.clientWidth  * this.mediaProportion + 0.05 * this.el.clientWidth + "px" 
-      } else {
-        this.video.style.height = "100%";
-        this.video.style.width = this.el.clientHeight / this.mediaProportion + "px"
-      }
+      this.danmakuController = new DanmakuController(this, this.playerOptions.danmaku);
     }
   }
 
@@ -357,6 +278,87 @@ class Player extends Component implements ComponentItem {
       new Mp4MediaPlayer(url, this);
     } else {
       this.video.src = url;
+    }
+  }
+
+  /**
+   * @@description 监听视频播放器大小的变化
+   */
+  initResizeObserver() {
+    const resizeObserver = new ResizeObserver((entries) => {
+      // 触发尺寸变化事件
+      this.emit(EVENT.RESIZE, entries);
+      this.adjustMediaSize();
+
+      let width = entries[0].contentRect.width;
+      let subsetting;
+      // 当尺寸发生变化的时候视频库只调整基本的内置组件，其余用户自定义的组件响应式需要自己实现
+      if (width <= 500) {
+        // 默认在小屏幕的情况下只将SubSetting移动到上端，其余在底部注册的控件需要隐藏
+        COMPONENT_STORE.forEach((value, key) => {
+          if (["SubSetting"].indexOf(key) !== -1) {
+            subsetting = ONCE_COMPONENT_STORE.get(key);
+            this.unmountComponent(key);
+          } else if (
+            [
+              "PicInPic",
+              "Playrate",
+              "ScreenShot",
+              "SubSetting",
+              "VideoShot",
+            ].indexOf(key) !== -1
+          ) {
+            if (!HIDEEN_COMPONENT_STORE.get(key)) {
+              this.hideComponent(key);
+            }
+          }
+        });
+
+        this.mountComponent(subsetting.id, subsetting, {
+          mode: {
+            type: "TopToolBar",
+            pos: "right",
+          },
+        });
+        addClass(subsetting.el, [
+          "video-subsettings",
+          "video-topbar-controller",
+        ]);
+      } else {
+        // 展示之前隐藏的组件
+        HIDEEN_COMPONENT_STORE.forEach((value, key) => {
+          this.showComponent(key);
+        });
+        if (COMPONENT_STORE.has("SubSetting")) {
+          let key = "SubSetting";
+          let component = ONCE_COMPONENT_STORE.get(key);
+          // 如果SubSetting已经挂载到视图上，需要先卸载
+          this.unmountComponent(key);
+          this.mountComponent(key, component, {
+            mode: {
+              type: "BottomToolBar",
+              pos: "right",
+            },
+            index: 1,
+          });
+          addClass(component.el, ["video-subsettings", "video-controller"]);
+        }
+      }
+    });
+
+    resizeObserver.observe(this.el);
+  }
+
+  //调整video的尺寸
+  adjustMediaSize() {
+    if(this.mediaProportion !== 0) {
+      if(this.el.clientHeight / this.el.clientWidth > this.mediaProportion) {
+       this.video.style.width = "100%";
+       this.video.style.height = this.el.clientWidth  * this.mediaProportion + 0.05 * this.el.clientWidth + "px" 
+      } else {
+        this.video.style.height = "100%";
+        this.video.style.width = this.el.clientHeight / this.mediaProportion + "px"
+      }
     }
   }
 

@@ -1,111 +1,91 @@
 import { Player } from "../../../../../../page/player";
-import { leftarrowPath, subtitleShowPath, switchOffPath, switchOnPath } from "../../../../../../svg";
+import {
+  leftarrowPath,
+  subtitleShowPath,
+  switchOffPath,
+  switchOnPath,
+} from "../../../../../../svg";
 import { SubsettingsItem } from "../../../../../../types/Player";
+import { storeControlComponent } from "../../../../../../utils";
 import { $, addClass, createSvg } from "../../../../../../utils/domUtils";
-import { storeControlComponent } from "../../../../../../utils/store";
-import { SubsettingItem } from "../SubsettingItem";
+import { SubSetting } from "../SubSetting";
+import { SubsettingsBase } from "./SubsettingsBase";
+import { SubsettingsMain } from "./SubsettingsMain";
 
-export class SubsettingsSubtitle {
+export class SubsettingsSubtitle extends SubsettingsBase {
   readonly id = "SubsettingsSubtitle";
-  readonly player: Player;
   leadItem: SubsettingsItem;
   el: HTMLElement;
-  switchOnIcon: SVGSVGElement = createSvg(switchOffPath,'0 0 1024 1024');
-  switchOffIcon: SVGSVGElement = createSvg(switchOnPath,'0 0 1024 1024');
+  switchOnIcon: SVGSVGElement = createSvg(switchOffPath, "0 0 1024 1024");
+  switchOffIcon: SVGSVGElement = createSvg(switchOnPath, "0 0 1024 1024");
   status: "show" | "hide" = "show";
   SubsettingsItem: SubsettingsItem[] = [
     {
       leftIcon: createSvg(leftarrowPath, "0 0 1024 1024"),
       leftText: "字幕设置",
+      target: SubsettingsMain
     },
     {
-      leftIcon: createSvg(subtitleShowPath,'0 0 1024 1024'),  
+      leftIcon: createSvg(subtitleShowPath, "0 0 1024 1024"),
       leftText: "字幕显示",
       rightTip: "Show",
-      rightIcon: this.switchOnIcon
+      rightIcon: this.switchOnIcon,
     },
   ];
-  constructor(player: Player) {
-    this.player = player;
+  constructor(subsetting: SubSetting, player: Player) {
+    super(subsetting, player);
     this.init();
-
-    storeControlComponent(this);
   }
 
   init() {
     this.el = $("div.video-subsettings-subtitle");
     this.el.dataset.width = "180";
     this.el.style.display = "none";
-    addClass(this.switchOffIcon,["video-switch-off"])
-    addClass(this.switchOnIcon,["video-switch-on"])
+    addClass(this.switchOffIcon, ["video-switch-off"]);
+    addClass(this.switchOnIcon, ["video-switch-on"]);
     this.initSubsettingsItem();
     this.initEvent();
+
+    storeControlComponent(this);
   }
 
   initSubsettingsItem() {
+    this.initBaseSubsettingsItem();
 
-    this.SubsettingsItem.forEach((item) => {
-      let instance = new SubsettingItem(
-        this.player,
-        item.leftIcon,
-        item.leftText,
-        item.rightTip,
-        item.rightIcon
-      );
-      this.el.appendChild(instance.el);
-      item.instance = instance;
-      instance.el.dataset.SubsettingsSubtitleType = item.leftText;
-    });
-
-    this.SubsettingsItem[1].instance.rightElementBox.appendChild(this.switchOffIcon)
+    this.SubsettingsItem[1].instance.rightElementBox.appendChild(
+      this.switchOffIcon
+    );
     this.switchOffIcon.style.display = "none";
   }
 
   initEvent() {
     for (let i = 0; i < this.SubsettingsItem.length; i++) {
-        this.SubsettingsItem[i].instance.el.onclick = (e) => {
-            e.stopPropagation();
-            if(i === 1) {
-                if(this.status === "show") {
-                    this.player.emit("HideSubtitle")
-                    this.switchOffIcon.style.display = ""
-                    this.switchOnIcon.style.display = "none"
-                    this.status = "hide"
-                    this.SubsettingsItem[i].instance.rightTipBox.innerText = "Hide"
-                } else {
-                    this.player.emit("ShowSubtitle")
-                    this.switchOffIcon.style.display = "none"
-                    this.switchOnIcon.style.display = ""
-                    this.status = "show";
-                    this.SubsettingsItem[i].instance.rightTipBox.innerText = "Show"
-                }
-                return;
-            }
-            this.player.emit("SubsettingsSubtitleClick", this.SubsettingsItem[i], i);
-            
-        };
-    }    
-  }
-
-  // 在Subtitle设置中注册一个选项
-  registerSubsettingsItem(
-    item: SubsettingsItem & {
-        click?: (item: SubsettingsItem) => any
-    }
-  ): SubsettingsItem {
-    this.SubsettingsItem.push(item);
-
-    let instance = new SubsettingItem(this.player,item.leftIcon,item.leftText,item.rightTip,item.rightIcon);
-    item.instance = instance;
-    this.el.appendChild(instance.el);
-
-    instance.el.addEventListener("click",(e) => {
+      this.SubsettingsItem[i].instance.el.onclick = (e) => {
         e.stopPropagation();
-        this.player.emit("SubsettingsSubtitleClick", item, this.SubsettingsItem.length - 1);
+        if (i === 1) {
+          if (this.status === "show") {
+            this.player.emit("HideSubtitle");
+            this.switchOffIcon.style.display = "";
+            this.switchOnIcon.style.display = "none";
+            this.status = "hide";
+            this.SubsettingsItem[i].instance.rightTipBox.innerText = "Hide";
+          } else {
+            this.player.emit("ShowSubtitle");
+            this.switchOffIcon.style.display = "none";
+            this.switchOnIcon.style.display = "";
+            this.status = "show";
+            this.SubsettingsItem[i].instance.rightTipBox.innerText = "Show";
+          }
+          return;
+        }
+        this.player.emit(
+          "SubsettingsSubtitleClick",
+          this.SubsettingsItem[i],
+          i
+        );
+      };
+    }
 
-        if(item.click) item.click(item);
-    })
-
-    return item;
+    
   }
 }

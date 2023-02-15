@@ -1,4 +1,6 @@
 import { Component } from "../class/Component";
+import { SubSetting } from "../component";
+import { SubsettingsBase } from "../component/ToolBar/BottomBar/parts/Subsettings/parts/SubsettingsBase";
 import { SubsettingItem } from "../component/ToolBar/BottomBar/parts/Subsettings/SubsettingItem";
 import { Player } from "../page/player";
 
@@ -19,6 +21,7 @@ export type PlayerOptions = {
   subtitles?: Subtitles[];
   danmaku?: DanmakuOptions;
   plugins?: Plugin[];
+  bilibiliMode?: boolean;
 };
 
 export type DanmakuOptions = {
@@ -56,7 +59,15 @@ export interface SubsettingsItem {
   leftText?: string;
   rightTip?: string;
   rightIcon?: SVGSVGElement | HTMLElement;
-  instance? : SubsettingItem;
+  instance? : SubsettingItem; //自身item对应的实例
+  click?: (item: SubsettingsItem) => any;
+  target?: SubsettingsBase | SubsettingsBaseConstructor; //该item对应的点击后需要跳转的SubsettingsBase实例对象
+}
+
+export interface SubsettingsBaseConstructor {
+  new (subsetting:SubSetting,player:Player): SubsettingsBase;
+
+  instance?: SubsettingsBase;
 }
 
 export interface Node {

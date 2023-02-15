@@ -1,88 +1,88 @@
-import { BaseEvent } from "../../../../../../class/BaseEvent";
 import { Player } from "../../../../../../page/player";
 import { leftarrowPath, settingsConfirmPath } from "../../../../../../svg";
 import { SubsettingsItem } from "../../../../../../types/Player";
-import { $, containsDOM, createSvg } from "../../../../../../utils/domUtils";
-import { SubsettingItem } from "../SubsettingItem";
+import { $, createSvg } from "../../../../../../utils/domUtils";
+import { SubSetting } from "../SubSetting";
+import { SubsettingsBase } from "./SubsettingsBase";
+import { SubsettingsMain } from "./SubsettingsMain";
 
-export class SubsettingsPlayrate extends BaseEvent{
-    leadItem: SubsettingsItem;
-    el: HTMLElement;
-    readonly player: Player;
-    readonly SubsettingsItem: SubsettingsItem[] = [
-        {
-            leftIcon: createSvg(leftarrowPath,'0 0 1024 1024'),
-            leftText: "播放速度",
-        },
-        {
-            leftText: "0.5"
-        },
-        {
-            leftText: "0.75"
-        },
-        {
-            leftIcon: createSvg(settingsConfirmPath,'0 0 1024 1024'),
-            leftText: "正常"
-        },
-        {
-            leftText: "1.5"
-        },
-        {
-            leftText: "2"
-        }
-    ]
-    constructor(player: Player) {
-        super();
-        this.player = player;
-        this.init()
-    }
+export class SubsettingsPlayrate extends SubsettingsBase {
+  readonly id = "SubsettingsPlayrate"
+  readonly SubsettingsItem: SubsettingsItem[] = [
+    {
+      leftIcon: createSvg(leftarrowPath, "0 0 1024 1024"),
+      leftText: "播放速度",
+      target: SubsettingsMain
+    },
+    {
+      leftText: "0.5",
+      target: SubsettingsMain
+    },
+    {
+      leftText: "0.75",
+      target: SubsettingsMain
+    },
+    {
+      leftIcon: createSvg(settingsConfirmPath, "0 0 1024 1024"),
+      leftText: "正常",
+      target: SubsettingsMain
+    },
+    {
+      leftText: "1.5",
+      target: SubsettingsMain
+    },
+    {
+      leftText: "2",
+      target: SubsettingsMain
+    },
+  ];
+  constructor(subsetting: SubSetting, player: Player) {
+    super(subsetting, player);
+    this.init();
+  }
 
-    init() {
-        this.el = $("div.video-subsettings-playrate");
-        this.el.dataset.width = "170";
-        this.el.style.display = "none"
-        this.initSubsettingsItem()
-        this.initEvent()
-    }
+  init() {
+    this.el = $("div.video-subsettings-playrate");
+    this.el.dataset.width = "170";
+    this.el.style.display = "none";
+    this.initSubsettingsItem();
+    this.initEvent();
+  }
 
-    initSubsettingsItem() {
-        this.SubsettingsItem.forEach(item => {
-            let instance = new SubsettingItem(this.player,item.leftIcon,item.leftText)
-            item.instance = instance;
-            if(item.leftText === "播放速度") instance.el.dataset.SubsettingsPlayrate = "0"
-            else if(item.leftText === "正常") instance.el.dataset.SubsettingsPlayrate = "1";
-            else {
-                instance.el.dataset.SubsettingsPlayrate = item.leftText;
-                
-            }
-            this.el.append(instance.el);
-        })
-    }
+  initSubsettingsItem() {
+    this.initBaseSubsettingsItem();
+  }
 
-    initEvent() {
-        for(let i = 1; i<this.SubsettingsItem.length; i++) {
-            let item = this.SubsettingsItem[i];
-            item.instance.el.addEventListener("click", (e) => {
-                e.stopPropagation();
-                item.leftIcon = createSvg(settingsConfirmPath,'0 0 1024 1024');
-                item.instance.leftIconBox.innerHTML = ""
-                item.instance.leftIconBox.appendChild(item.leftIcon);
+  initEvent() {
+    this.SubsettingsItem.forEach((item, index) => {
+      item.instance.el.onclick = (e: MouseEvent) => {
+        e.stopPropagation();
 
-                for(let index in this.SubsettingsItem) {
-                    console.log(index);
-                    if(index !== "0" && this.SubsettingsItem[index] !== item && this.SubsettingsItem[index].leftIcon) {
-                        this.SubsettingsItem[index].instance.leftIconBox.removeChild(this.SubsettingsItem[index].leftIcon);
-                        delete this.SubsettingsItem[index].leftIcon;
-                    }
-                }
+        if (item.leftText === "播放速度") {
+          this.el.style.display = "none";
 
-                this.player.emit("SubsettingsPlayrateClick",item, i);
-            })
+          let instance = this.subsetting.subsettingsBaseGraph.get(this)[0];
+          instance.el.style.display = "";
+
+          return;
+        } else {
+          if (item.leftText === "正常") {
+            this.player.video.playbackRate = 1;
+          } else {
+            this.player.video.playbackRate = Number(item.leftText);
+          }
         }
 
-        this.SubsettingsItem[0].instance.el.addEventListener("click",(e) => {
-            e.stopPropagation();
-            this.player.emit("SubsettingsPlayrateClick",this.SubsettingsItem[0], 0);
-        })
-    }
+        item.leftIcon = createSvg(settingsConfirmPath, "0 0 1024 1024");
+        item.instance.leftIconBox.innerHTML = "";
+        item.instance.leftIconBox.appendChild(item.leftIcon);
+
+        for (let another of this.SubsettingsItem) {
+          if (another !== item) {
+            another.instance.leftIconBox.innerHTML = "";
+          }
+        }
+      };
+    });
+  }
 }

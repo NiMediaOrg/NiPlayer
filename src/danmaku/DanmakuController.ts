@@ -17,10 +17,10 @@ export class DanmakuController {
   private player: Player;
   private danmaku: Danmaku;
   private danmakuInput: DanmakuInput;
-  private danmakuSettings: DanmakuSettings;
   private danmakuOpenClose: DanmakuOpenClose;
   private options: DanmakuOptions;
   private el: HTMLElement;
+  danmakuSettings: DanmakuSettings;
   constructor(player: Player, options: DanmakuOptions) {
     this.player = player;
     this.video = player.video;
@@ -78,18 +78,11 @@ export class DanmakuController {
   initTemlate() {
     let ctx = this;
     this.danmakuInput = new DanmakuInput(this.player, null, "div");
-    this.danmakuSettings = new DanmakuSettings(this.player, null, "div");
+    this.danmakuSettings = new DanmakuSettings(this.player);
     this.danmakuOpenClose = new DanmakuOpenClose(this.player, null, "div");
     this.player.use({
       install(player) {
         player.mountComponent(ctx.danmakuOpenClose.id, ctx.danmakuOpenClose, {
-          mode: {
-            type: "BottomToolBar",
-            pos: "medium",
-          },
-        });
-
-        player.mountComponent(ctx.danmakuSettings.id, ctx.danmakuSettings, {
           mode: {
             type: "BottomToolBar",
             pos: "medium",
@@ -157,5 +150,13 @@ export class DanmakuController {
 
   onSeeking(e: Event) {
     this.danmaku.flush();
+  }
+
+  setTrackNumber(num: number) {
+    this.danmaku.setTrackNumber(num);
+  }
+
+  setOpacity(opacity: number) {
+    this.danmaku.setOpacity(opacity);
   }
 }
