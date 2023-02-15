@@ -45,8 +45,8 @@ export class Subtitle {
           leftIcon: leftIcon,
           leftText: item.tip,
           target: SubsettingsMain,
-          click(value: SubsettingsItem) {
-            this.leadItem.instance.rightTip.innerText = value.leftText;
+          click: (value: SubsettingsItem) => {
+            this.leadItem.instance.rightTipBox.innerText = value.leftText;
             ctx.trackElement.src = item.source;
             for (let index in ctx.subtitles) {
               ctx.subtitles[index].instance.leftIconBox.innerHTML = "";
