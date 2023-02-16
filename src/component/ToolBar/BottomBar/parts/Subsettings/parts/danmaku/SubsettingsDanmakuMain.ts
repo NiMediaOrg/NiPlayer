@@ -7,6 +7,7 @@ import { SubsettingsBase } from "../SubsettingsBase";
 import { SubsettingsMain } from "../SubsettingsMain";
 import { SubsettingsDanmakuOpacity } from "./SubSettingsDanmakuOpacity";
 import { SubsettingsDanmakuRange } from "./SubsettingsDanmakuRange";
+import { SubsettingsDanmakuSize } from "./SubsettingsDanmakuSize";
 
 export class SubsettingsDanmakuMain extends SubsettingsBase {
     readonly id = "SubsettingsDanmakuMain";
@@ -30,7 +31,8 @@ export class SubsettingsDanmakuMain extends SubsettingsBase {
         {
             leftText: "字体大小",
             rightTip: "适中",
-            rightIcon: createSvg(rightarrowPath,'0 0 1024 1024')
+            rightIcon: createSvg(rightarrowPath,'0 0 1024 1024'),
+            target: SubsettingsDanmakuSize
         },
         {
             leftText: "显示范围",
@@ -89,7 +91,7 @@ export class SubsettingsDanmakuMain extends SubsettingsBase {
                 size = 0.5;
             } else if(leftText === "小") {
                 size = 0.75
-            } else if(leftText === "正常") {
+            } else if(leftText === "适中") {
                 size = 1;
             } else if(leftText === "大") {
                 size = 1.25;
@@ -97,7 +99,7 @@ export class SubsettingsDanmakuMain extends SubsettingsBase {
                 size = 1.5
             }
             this.player.danmakuController.setTrackNumber(size);
-            this.SubsettingsItem[2].instance.rightTipBox.innerText = leftText;
+            this.SubsettingsItem[3].instance.rightTipBox.innerText = leftText;
         })
     }
 

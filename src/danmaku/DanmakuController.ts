@@ -7,7 +7,7 @@ import { DanmakuOpenClose } from "./UI/DanmakuOpenClose";
 import { DanmakuSettings } from "./UI/DanmakuSettings";
 import io from "socket.io-client/dist/socket.io";
 import "../utils/polyfill";
-import { $ } from "../utils/domUtils";
+import { $, addClass, removeClass } from "../utils/domUtils";
 /**
  * @description 控制弹幕的类 Controller层
  */
@@ -20,6 +20,7 @@ export class DanmakuController {
   private danmakuOpenClose: DanmakuOpenClose;
   private options: DanmakuOptions;
   private el: HTMLElement;
+  private danmakuLoading: HTMLElement;
   danmakuSettings: DanmakuSettings;
   constructor(player: Player, options: DanmakuOptions) {
     this.player = player;
@@ -37,7 +38,12 @@ export class DanmakuController {
 
   init() {
     this.el = $("div.video-danmaku-container");
+    this.el.style.backgroundColor = "#000";
+    this.danmakuLoading = $("div");
+    addClass(this.danmakuLoading,["video-danmaku-loading-base","video-danmaku-loading","video-danmaku-shaking"])
+    this.danmakuLoading.innerHTML = "<span>弹幕数据加载中...</span>"
     this.container.appendChild(this.el)
+    this.el.appendChild(this.danmakuLoading)
     this.danmaku = new Danmaku(this.el, this.player);
     this.initTemlate();
     this.initializeEvent();
@@ -48,13 +54,20 @@ export class DanmakuController {
     }
   }
 
+  //TODO 初始化websocket连接
   initWebSocket() {
     const socket = io(this.options.api, {
       transports: ["websocket", "polling"],
     });
 
     socket.on("connect", () => {
+      this.el.style.backgroundColor = "";
+      (this.danmakuLoading.childNodes[0] as HTMLElement).innerText = '弹幕加载成功';
 
+      setTimeout(() => {
+        addClass(this.danmakuLoading,["video-danmaku-loading-hide"])
+      }, 3000);
+      removeClass(this.danmakuLoading,["video-danmaku-loading","video-danmaku-shaking"]);
       this.player.video.addEventListener("timeupdate",(e) => {
         socket.emit(EVENT.REQUEST_DANMAKU_DATA,{
           time: this.player.video.currentTime
@@ -70,10 +83,22 @@ export class DanmakuController {
       })
     });
 
+    socket.io.on("error", () => {
+      this.el.style.backgroundColor = "";
+      (this.danmakuLoading.childNodes[0] as HTMLElement).innerText = '弹幕加载失败';
+      removeClass(this.danmakuLoading,["video-danmaku-loading","video-danmaku-shaking"]);
+
+      setTimeout(() => {
+        addClass(this.danmakuLoading,["video-danmaku-loading-hide"])
+      }, 3000);
+    });
+
     socket.connect();
   }
 
-  initHTTP() {}
+  initHTTP() {
+    //TODO  初始化http轮询连接
+  }
 
   initTemlate() {
     let ctx = this;

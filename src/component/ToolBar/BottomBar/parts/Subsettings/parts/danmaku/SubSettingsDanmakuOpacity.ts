@@ -58,7 +58,7 @@ export class SubsettingsDanmakuOpacity extends SubsettingsBase {
         this.SubsettingsItem.forEach((item,index) => {
             if(index === 0) return;
             item.instance.el.onclick = () => {
-                this.subsetting.emit("OpacityChange",parseInt(item.leftText) * 0.01)
+                this.subsetting.emit("OpacityChange", parseFloat(item.leftText) * 0.01)
             }
         })
     }

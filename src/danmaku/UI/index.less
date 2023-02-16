@@ -1,3 +1,4 @@
+@backgroundColor: hsla(0,0%,100%,.15);
 .danmaku-input-wrapper {
     box-sizing: border-box;
     padding: 0 5px;
@@ -5,7 +6,7 @@
     align-items: center;
     height: 100%;
     flex: 1;
-    background-color: hsla(0,0%,100%,.15);
+    background-color: @backgroundColor;
     border-radius: 2px;
     .danmaku-input {
         background-color: transparent;
@@ -44,7 +45,7 @@
     background-color: transparent;
     left: 0;
     top: 0;
-    z-index: 1001;
+    z-index: 3001;
 
     .video-danmaku-message {
         user-select: none;
@@ -60,4 +61,68 @@
         opacity: 1;
         margin-left: 0px;
     }
+
+    .video-danmaku-loading-base {
+        position: absolute;
+        z-index: 3001;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: @backgroundColor;
+        padding: 10px 10px;
+        box-sizing: content-box;
+        color: #fff;
+        border-radius: 5px;
+        left: 5px;
+        bottom: 60px;
+        overflow: hidden;
+        transition: all 1.5s ease;
+        font-size: 14px;
+    }
+
+    .video-danmaku-loading {
+        left: 50%;
+        bottom: 50%;
+        transform: translate(-50%,50%);
+    }
+
+    .video-danmaku-shaking {
+        animation: shake 2.5s 0.15s linear infinite;
+    }
+
+    .video-danmaku-loading-hide {
+        transform: scale(0);
+        opacity: 0;
+    }
+}
+@keyframes shake {
+    10% {
+        transform: rotate(15deg) translate(-50%,50%);
+    }
+    20% {
+        transform: rotate(-10deg) translate(-50%,50%);
+    }
+    30% {
+        transform: rotate(5deg) translate(-50%,50%);
+    }
+    40% {
+        transform: rotate(-5deg) translate(-50%,50%);
+    }
+    50% {
+        transform: rotate(10deg) translate(-50%,50%);
+    }
+    60% {
+        transform: rotate(-15deg) translate(-50%,50%);
+    }
+    70% {
+        transform: rotate(10deg) translate(-50%,50%);
+    }
+    80% {
+        transform: rotate(-5deg) translate(-50%,50%);
+    }
+    90%,
+    100% {
+        transform: rotate(0deg) translate(-50%,50%);
+    }
+
 }

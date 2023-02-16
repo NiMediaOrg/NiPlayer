@@ -24,7 +24,7 @@ export class SubsettingsDanmakuSize extends SubsettingsBase {
             target: SubsettingsDanmakuMain
         },
         {
-            leftText: "正常",
+            leftText: "适中",
             target: SubsettingsDanmakuMain
         },
         {

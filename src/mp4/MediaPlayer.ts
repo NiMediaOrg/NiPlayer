@@ -154,7 +154,6 @@ class MediaPlayer {
         )
 
         this.downloader.start();
-        this.player.video.play();
     }
 
     initializeAllSourceBuffers() {

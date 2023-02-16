@@ -213,15 +213,15 @@ class Player extends Component implements ComponentItem {
       }
     };
     this.el.onmousemove = (e) => {
-      this.emit("showtoolbar", e);
+      this.emit(EVENT.SHOW_TOOLBAR, e);
     };
 
     this.el.onmouseenter = (e) => {
-      this.emit("showtoolbar", e);
+      this.emit(EVENT.SHOW_TOOLBAR, e);
     };
 
     this.el.onmouseleave = (e) => {
-      this.emit("hidetoolbar", e);
+      if(!this.video.paused) this.emit(EVENT.HIDE_TOOLBAR, e);
     };
   }
 
