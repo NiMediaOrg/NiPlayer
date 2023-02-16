@@ -1,14 +1,13 @@
 import ts from "rollup-plugin-typescript2";
-import babel from "rollup-plugin-babel";
-import resolve from 'rollup-plugin-node-resolve';
-import commonjs from 'rollup-plugin-commonjs'
 import postcss from 'rollup-plugin-postcss'
 import autoprefixer from 'autoprefixer'
 import { defineConfig } from "rollup";
 import { nodeResolve } from "@rollup/plugin-node-resolve";
-import { terser } from "rollup-plugin-terser";
 import nodePolyfills from 'rollup-plugin-node-polyfills';
-
+import json from '@rollup/plugin-json';
+import commonjs from '@rollup/plugin-commonjs';
+import { babel } from '@rollup/plugin-babel';
+import terser from '@rollup/plugin-terser';
 const extensions = [".ts","less"];
 
 export default defineConfig({
@@ -49,13 +48,15 @@ export default defineConfig({
       ts(),
       nodeResolve({
         extensions,
-        preferBuiltins: false,
+        preferBuiltins: true,
         
       }),
+      nodePolyfills({
+        exclude: ["/node_modules/.pnpm/axios@1.3.3"]
+      }),
+      json(),
       babel(),
-      resolve(),
       commonjs(),
-      nodePolyfills(),
       postcss({
         plugins:[
           autoprefixer()

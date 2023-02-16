@@ -39,7 +39,7 @@ export class ToolBar extends Component implements ComponentItem {
    * @description 需要注意的是此处元素的class名字是官方用于控制整体toolbar一栏的显示和隐藏
    */
   initTemplate() {
-    addClass(this.el,["video-toolbar","video-toolbar-hidden"]);
+    addClass(this.el,["video-toolbar"]);
   }
 
   initComponent() {
