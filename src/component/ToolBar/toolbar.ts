@@ -58,7 +58,7 @@ export class ToolBar extends Component implements ComponentItem {
   }
 
   private hideToolBar() {
-    if(!includeClass(this.el,"video-toolbar-hidden")) {
+    if(!includeClass(this.el,"video-toolbar-hidden") && !this.player.video.paused) {
       addClass(this.el,["video-toolbar-hidden"]);
       this.status = "hidden";
     }
@@ -71,7 +71,7 @@ export class ToolBar extends Component implements ComponentItem {
     }
 
     this.timer = window.setTimeout(()=>{
-      this.hideToolBar();
+      if(!this.player.video.paused) this.hideToolBar();
     },3000)
     
   }

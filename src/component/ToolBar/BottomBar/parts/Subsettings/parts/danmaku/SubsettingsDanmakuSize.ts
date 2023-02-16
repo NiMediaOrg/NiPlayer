@@ -6,29 +6,33 @@ import { SubSetting } from "../../SubSetting";
 import { SubsettingsBase } from "../SubsettingsBase";
 import { SubsettingsDanmakuMain } from "./SubsettingsDanmakuMain";
 
-export class SubsettingsDanmakuOpacity extends SubsettingsBase {
-    readonly id = "SubsettingsDanmakuOpacity";
+export class SubsettingsDanmakuSize extends SubsettingsBase {
+    readonly id = "SubsettingsDanmakuSize";
     readonly SubsettingsItem: SubsettingsItem[] = [
         {
             leftIcon: createSvg(leftarrowPath, "0 0 1024 1024"),
-            leftText: "弹幕透明度",
+            leftText: "字体大小",
             target: SubsettingsDanmakuMain
         },
         {
-            leftText: "100%",
+            leftText: "极小",
             leftIcon: createSvg(settingsConfirmPath,'0 0 1024 1024'),
             target: SubsettingsDanmakuMain
         },
         {
-            leftText: "75%",
+            leftText: "小",
             target: SubsettingsDanmakuMain
         },
         {
-            leftText: "50%",
+            leftText: "适中",
             target: SubsettingsDanmakuMain
         },
         {
-            leftText: "0",
+            leftText: "大",
+            target: SubsettingsDanmakuMain
+        },
+        {
+            leftText: "极大",
             target: SubsettingsDanmakuMain
         }
     ]
@@ -49,7 +53,7 @@ export class SubsettingsDanmakuOpacity extends SubsettingsBase {
     }
 
     initTemplate() {
-        this.el = $("div.video-subsettings-danmaku-opacity");
+        this.el = $("div.video-subsettings-danmaku-size");
         this.el.dataset.width = "200";
         this.el.style.display = "none"
     }
@@ -58,7 +62,7 @@ export class SubsettingsDanmakuOpacity extends SubsettingsBase {
         this.SubsettingsItem.forEach((item,index) => {
             if(index === 0) return;
             item.instance.el.onclick = () => {
-                this.subsetting.emit("OpacityChange", parseFloat(item.leftText) * 0.01)
+                this.subsetting.emit("SizeChange", item.leftText)
             }
         })
     }

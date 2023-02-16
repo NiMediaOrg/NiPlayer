@@ -18,8 +18,10 @@ export class Danmaku {
   // 总共的轨道数目
   private trackNumber: number;
   private opacity: number = 1;
+  private fontSizeScale: number = 1;
   private isStopped = true;
   private isHidden = false;
+
   private tracks: Array<{
     track: Track;
     datas: DanmakuData[];
@@ -161,7 +163,7 @@ export class Danmaku {
         dom.style.fontFamily = data.fontFamily;
       }
       dom.style.color = data.fontColor;
-      dom.style.fontSize = data.fontSize + "px";
+      dom.style.fontSize = data.fontSize * this.fontSizeScale + "px";
       dom.style.fontWeight = data.fontWeight + "";
       dom.style.position = "absolute";
       dom.style.left = "100%";
@@ -218,7 +220,6 @@ export class Danmaku {
   //将指定的data添加到弹幕轨道上
   addDataToTrack(data: DanmakuData) {
     let y = [];
-    console.log(this.trackNumber)
     for (let i = 0; i < this.trackNumber; i++) {
       let track = this.tracks[i];
       let datas = track.datas;
@@ -335,5 +336,12 @@ export class Danmaku {
 
   setTrackNumber(num: number) {
     this.trackNumber = this.container.clientHeight / this.trackHeight * num;
+  }
+
+  setFontSize(scale: number) {
+    this.fontSizeScale = scale;
+    this.moovingQueue.forEach(data => {
+      data.dom.style.fontSize = data.fontSize * this.fontSizeScale + "px";
+    })
   }
 }
