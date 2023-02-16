@@ -3,6 +3,7 @@ import { SubSetting } from "../component";
 import { SubsettingsBase } from "../component/ToolBar/BottomBar/parts/Subsettings/parts/SubsettingsBase";
 import { SubsettingItem } from "../component/ToolBar/BottomBar/parts/Subsettings/SubsettingItem";
 import { Player } from "../page/player";
+import { RequestHeader } from "./mp4";
 
 export type PlayerOptions = {
   url?: string;
@@ -131,3 +132,14 @@ export type RegisterComponentOptions = {
 export type UpdateComponentOptions = {
   replaceElType?: "replaceOuterHTMLOfComponent" | "replaceInnerHTMLOfComponent";
 };
+
+export type AxiosConfig = {
+  baseURL?: string;
+  header?: RequestHeader;
+  timeout?: number;
+}
+
+export type AxiosOptions = {
+  header?: RequestHeader;
+  query?: {[props:string]: any}
+}

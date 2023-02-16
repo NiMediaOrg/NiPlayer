@@ -61,3 +61,4 @@ export type XHRConfig = {
   error?: Function;
   load?: Function;
 };
+
