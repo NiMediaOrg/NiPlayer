@@ -26,7 +26,7 @@ export class SubsettingsSubtitle extends SubsettingsBase {
       target: SubsettingsMain
     },
     {
-      leftIcon: createSvg(subtitleShowPath, "0 0 1024 1024"),
+      leftIcon: createSvg(subtitleShowPath),
       leftText: "字幕显示",
       rightTip: "Show",
       rightIcon: this.switchOnIcon,
