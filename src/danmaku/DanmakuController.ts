@@ -155,7 +155,7 @@ export class DanmakuController {
 
   initializeEvent() {
 
-    this.video.addEventListener("seeking", (e: Event) => {
+    this.video.addEventListener("seeked", (e: Event) => {
       this.onSeeking(e);
     });
 
