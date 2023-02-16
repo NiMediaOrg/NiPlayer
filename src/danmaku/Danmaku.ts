@@ -19,7 +19,6 @@ export class Danmaku {
   private trackNumber: number;
   private opacity: number = 1;
   private fontSizeScale: number = 1;
-  private isStopped = true;
   private isHidden = false;
 
   private tracks: Array<{
@@ -61,8 +60,6 @@ export class Danmaku {
 
   // 暂停所有的弹幕
   pause() {
-    this.isStopped = true;
-    window.clearTimeout(this.timer);
     this.moovingQueue.forEach((data) => {
       this.pauseOneData(data);
     });
@@ -70,7 +67,6 @@ export class Danmaku {
 
   // 恢复弹幕的运动,恢复弹幕运动此处的逻辑有问题(已修复)
   resume() {
-    this.isStopped = false;
     this.timer = window.setTimeout(() => {
       this.render();
     }, this.renderInterval);
@@ -104,10 +100,9 @@ export class Danmaku {
   addData(data: any) {
     this.queue.push(this.parseData(data));
     // 如果检测到缓冲区弹幕为0,也就是定时器被关闭的话就重新开启定时器
-    if (this.timer === null) {
-      nextTick(() => {
-        this.render();
-      });
+    console.log(this.timer)
+    if(this.timer === null) {
+      this.render()
     }
   }
 
@@ -207,14 +202,6 @@ export class Danmaku {
       data.startTime = Date.now();
     };
 
-    data.dom.onmouseenter = () => {
-      if (this.isStopped) return;
-      this.pauseOneData(data);
-    };
-    data.dom.onmouseleave = () => {
-      if (this.isStopped) return;
-      this.resumeOneData(data);
-    };
   }
 
   //将指定的data添加到弹幕轨道上
@@ -265,8 +252,11 @@ export class Danmaku {
   }
 
   startAnimate(data: DanmakuData) {
-    if(this.isStopped) return;
     // moovingQueue中存储的都是在运动中的弹幕
+    if(this.player.video.paused) {
+      this.queue.add(data);
+      return;
+    }
     this.moovingQueue.push(data);
     data.dom.style.transition = `transform ${data.rollTime}s linear`;
     data.dom.style.transform = `translateX(-${data.totalDistance}px)`;
@@ -279,6 +269,7 @@ export class Danmaku {
 
   //清空所有的弹幕，包括正在运动中的或者还在缓冲区未被释放的
   flush() {
+    console.log("flush")
     this.moovingQueue.forEach((data) => {
       data.dom.parentNode?.removeChild(data.dom);
       data.dom.ontransitionend = null;
@@ -298,6 +289,10 @@ export class Danmaku {
     });
     this.moovingQueue = [];
     this.queue.clear();
+
+
+    window.clearTimeout(this.timer)
+    this.timer = null;
   }
 
   //隐藏所有的弹幕
