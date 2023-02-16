@@ -16,7 +16,7 @@ export class SubsettingsDanmakuOpacity extends SubsettingsBase {
         },
         {
             leftText: "100%",
-            leftIcon: createSvg(settingsConfirmPath,'0 0 1024 1024'),
+            leftIcon: createSvg(settingsConfirmPath),
             target: SubsettingsDanmakuMain
         },
         {
@@ -59,6 +59,16 @@ export class SubsettingsDanmakuOpacity extends SubsettingsBase {
             if(index === 0) return;
             item.instance.el.onclick = () => {
                 this.subsetting.emit("OpacityChange", parseFloat(item.leftText) * 0.01)
+
+                item.instance.leftIconBox.innerHTML = ""
+                item.instance.leftIconBox.appendChild(createSvg(settingsConfirmPath))
+
+                for(let i = 1;i<this.SubsettingsItem.length;i++) {
+                    let another = this.SubsettingsItem[i];
+                    if(another !== item) {
+                        another.instance.leftIconBox.innerHTML = "";
+                    }
+                }
             }
         })
     }

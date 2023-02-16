@@ -36,7 +36,7 @@ export class SubsettingsDanmakuMain extends SubsettingsBase {
         },
         {
             leftText: "显示范围",
-            rightTip: "1/2",
+            rightTip: "半屏",
             rightIcon: createSvg(rightarrowPath,'0 0 1024 1024'),
             target: SubsettingsDanmakuRange
         }
@@ -82,7 +82,7 @@ export class SubsettingsDanmakuMain extends SubsettingsBase {
                 range = 3/4;
             }
             this.player.danmakuController.setTrackNumber(range);
-            this.SubsettingsItem[2].instance.rightTipBox.innerText = leftText;
+            this.SubsettingsItem[4].instance.rightTipBox.innerText = leftText;
         })
 
         this.subsetting.on("SizeChange",(leftText: string) => {
@@ -98,7 +98,7 @@ export class SubsettingsDanmakuMain extends SubsettingsBase {
             } else if(leftText === "极大") {
                 size = 1.5
             }
-            this.player.danmakuController.setTrackNumber(size);
+            this.player.danmakuController.setFontSize(size);
             this.SubsettingsItem[3].instance.rightTipBox.innerText = leftText;
         })
     }

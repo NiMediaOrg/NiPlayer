@@ -16,7 +16,6 @@ export class SubsettingsDanmakuSize extends SubsettingsBase {
         },
         {
             leftText: "极小",
-            leftIcon: createSvg(settingsConfirmPath,'0 0 1024 1024'),
             target: SubsettingsDanmakuMain
         },
         {
@@ -25,6 +24,7 @@ export class SubsettingsDanmakuSize extends SubsettingsBase {
         },
         {
             leftText: "适中",
+            leftIcon: createSvg(settingsConfirmPath),
             target: SubsettingsDanmakuMain
         },
         {
@@ -63,6 +63,16 @@ export class SubsettingsDanmakuSize extends SubsettingsBase {
             if(index === 0) return;
             item.instance.el.onclick = () => {
                 this.subsetting.emit("SizeChange", item.leftText)
+
+                item.instance.leftIconBox.innerHTML = ""
+                item.instance.leftIconBox.appendChild(createSvg(settingsConfirmPath))
+
+                for(let i = 1;i<this.SubsettingsItem.length;i++) {
+                    let another = this.SubsettingsItem[i];
+                    if(another !== item) {
+                        another.instance.leftIconBox.innerHTML = "";
+                    }
+                }
             }
         })
     }
