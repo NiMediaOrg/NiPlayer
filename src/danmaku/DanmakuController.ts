@@ -201,7 +201,6 @@ export class DanmakuController {
         time: this.player.video.currentTime
       }
     }).then((value: DanmakuData[]) => {
-      console.log(value)
       for(let data of value) {
         this.danmaku.addData(data);
       }

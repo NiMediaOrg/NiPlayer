@@ -100,7 +100,6 @@ export class Danmaku {
   addData(data: any) {
     this.queue.push(this.parseData(data));
     // 如果检测到缓冲区弹幕为0,也就是定时器被关闭的话就重新开启定时器
-    console.log(this.timer)
     if(this.timer === null) {
       this.render()
     }
