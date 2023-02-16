@@ -82,6 +82,23 @@ export class SubsettingsDanmakuMain extends SubsettingsBase {
             this.player.danmakuController.setTrackNumber(range);
             this.SubsettingsItem[2].instance.rightTipBox.innerText = leftText;
         })
+
+        this.subsetting.on("SizeChange",(leftText: string) => {
+            let size = null;
+            if(leftText === "极小") {
+                size = 0.5;
+            } else if(leftText === "小") {
+                size = 0.75
+            } else if(leftText === "正常") {
+                size = 1;
+            } else if(leftText === "大") {
+                size = 1.25;
+            } else if(leftText === "极大") {
+                size = 1.5
+            }
+            this.player.danmakuController.setTrackNumber(size);
+            this.SubsettingsItem[2].instance.rightTipBox.innerText = leftText;
+        })
     }
 
 }

@@ -152,11 +152,17 @@ export class DanmakuController {
     this.danmaku.flush();
   }
 
+  //* 设置弹幕轨道是数目
   setTrackNumber(num: number) {
     this.danmaku.setTrackNumber(num);
   }
 
+  //* 设置弹幕的透明度
   setOpacity(opacity: number) {
     this.danmaku.setOpacity(opacity);
+  }
+
+  setFontSize(scale: number) {
+    this.danmaku.setFontSize(scale);
   }
 }
