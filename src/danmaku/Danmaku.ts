@@ -1,7 +1,6 @@
 import { Player } from "../page/player";
 import { DanmakuData, Track } from "../types/danmaku";
 import { $ } from "../utils/domUtils";
-import { nextTick } from "../utils/nextTick";
 import { PriorityQueue } from "./utils/PriorityQueue";
 /**
  * @description 弹幕类，只专注于实现弹幕的基本逻辑，View层
@@ -267,6 +266,9 @@ export class Danmaku {
       this.queue.add(data);
       this.removeDataFromTrack(data)
       return;
+    }
+    if(this.isHidden) {
+      data.dom.style.visibility = "hidden"
     }
     this.moovingQueue.push(data);
     data.dom.style.transition = `transform ${data.rollTime}s linear`;

@@ -6,7 +6,7 @@ import { addClass, createSvg } from "../../../../utils/domUtils";
 import { storeControlComponent } from "../../../../utils/store";
 import { fullscreenExitPath, fullscreenPath } from "../../../../svg/index";
 import { Options } from "./Options";
-import {beFull, exitFull, isFull} from 'be-full';
+import { beFull, exitFull, isFull } from "be-full";
 
 export class FullScreen extends Options {
   readonly id = "FullScreen";
@@ -30,7 +30,7 @@ export class FullScreen extends Options {
 
   initTemplate() {
     addClass(this.el, ["video-fullscreen", "video-controller"]);
-    this.icon = createSvg(fullscreenPath,'0 0 1024 1024');
+    this.icon = createSvg(fullscreenPath, "0 0 1024 1024");
     this.iconBox.appendChild(this.icon);
 
     this.hideBox.innerText = "全屏";
@@ -38,23 +38,25 @@ export class FullScreen extends Options {
   }
 
   initEvent() {
-    this.onClick = this.onClick.bind(this);
+    this.requestFullScreen = this.requestFullScreen.bind(this);
     if (this.player.env === "PC") {
-      this.el.onclick = this.onClick;
+      this.el.onclick = this.requestFullScreen;
     } else {
-      wrap(this.el).addEventListener("singleTap", this.onClick,{stopPropagation: true});
+      wrap(this.el).addEventListener("singleTap", this.requestFullScreen, {
+        stopPropagation: true,
+      });
     }
   }
 
-  onClick(e: Event | SingleTapEvent) {
-    if(e instanceof Event) {
+  requestFullScreen(e?: Event | SingleTapEvent) {
+    if (e instanceof Event) {
       e.stopPropagation();
     }
     if (!isFull(this.player.container)) {
       // 调用浏览器提供的全屏API接口去请求元素的全屏，原生全屏分为  竖屏全屏 + 横屏全屏
       beFull(this.player.container);
       this.iconBox.removeChild(this.icon);
-      this.icon = createSvg(fullscreenExitPath,'0 0 1024 1024');
+      this.icon = createSvg(fullscreenExitPath, "0 0 1024 1024");
       this.iconBox.appendChild(this.icon);
       this.player.container.addEventListener("fullscreenchange", (e) => {
         this.player.emit(EVENT.ENTER_FULLSCREEN);
@@ -62,7 +64,7 @@ export class FullScreen extends Options {
     } else if (isFull(this.player.container)) {
       exitFull();
       this.iconBox.removeChild(this.icon);
-      this.icon = createSvg(fullscreenPath,'0 0 1024 1024');
+      this.icon = createSvg(fullscreenPath, "0 0 1024 1024");
       this.iconBox.appendChild(this.icon);
       this.player.container.addEventListener("fullscreenchange", (e) => {
         this.player.emit(EVENT.LEAVE_FULLSCREEN);

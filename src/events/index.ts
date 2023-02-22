@@ -4,6 +4,7 @@ export enum EVENT {
     PLAY = "play",
     PAUSE = "pause",
     SEEKING = "seeking",
+    SEEKED = "seeked",
     WAITING = "waiting",
     CAN_PLAY = "canplay",
     ERROR = "videoError",

@@ -2,6 +2,7 @@ import {
   ComponentItem,
   DanmakuController,
   DOMProps,
+  FullScreen,
   PlayerOptions,
   RegisterComponentOptions,
   ToolBar,
@@ -24,11 +25,18 @@ import { Env } from "../utils/env";
 import { MobileVolume } from "../component/Mobile/MobileVolume";
 import { EVENT } from "../events";
 import { Subtitle } from "../component/Subtitle/Subtitle";
-import { DoubleTapEvent, MoveEvent, SingleTapEvent, SwipeEvent, wrap } from "ntouch.js"
+import {
+  DoubleTapEvent,
+  MoveEvent,
+  SingleTapEvent,
+  SwipeEvent,
+  wrap,
+} from "ntouch.js";
 class Player extends Component implements ComponentItem {
   readonly id = "Player";
   // 播放器的默认配置
   readonly playerOptions: PlayerOptions;
+  private isFullscreen = false;
   enableSeek = true;
   env = Env.env;
   fullScreenMode: "Vertical" | "Horizontal" = "Horizontal";
@@ -44,7 +52,7 @@ class Player extends Component implements ComponentItem {
   containerHeight: number;
   danmakuController: DanmakuController;
   // 视频的比例 默认为16： 9
-  mediaProportion: number = 9 / 16;
+  private mediaProportion: number = 9 / 16;
   static player = this;
   constructor(options?: PlayerOptions) {
     super(options.container, "div.Niplayer_video-wrapper");
@@ -62,21 +70,22 @@ class Player extends Component implements ComponentItem {
   }
 
   init() {
-    if(this.playerOptions.video) {
+    if (this.playerOptions.video) {
       this.video = this.playerOptions.video;
       this.video.parentNode && this.video.parentNode.removeChild(this.video);
     } else {
+      // 兼容移动端设置的属性
       this.video = $("video");
       this.video["playsinline"] = true;
       this.video["x5-video-player-type"] = "h5";
     }
-    this.video.crossOrigin = "anonymous"
-    
+    this.video.crossOrigin = "anonymous";
+
     this.el.appendChild(this.video);
 
     // 初始化媒体的播放源
     this.playerOptions?.url && this.attachSource(this.playerOptions.url);
-    
+
     this.initComponent();
     this.initTemplate();
     this.initEvent();
@@ -102,11 +111,17 @@ class Player extends Component implements ComponentItem {
     this.error = new ErrorLoading(this, "你的网络罢工啦Q_Q", this.el);
     this.toolBar = new ToolBar(this, this.el, "div");
     this.topbar = new TopBar(this, this.el, "div");
-    if(this.playerOptions.subtitles && this.playerOptions.subtitles.length > 0) {
-      new Subtitle(this,this.playerOptions.subtitles);
+    if (
+      this.playerOptions.subtitles &&
+      this.playerOptions.subtitles.length > 0
+    ) {
+      new Subtitle(this, this.playerOptions.subtitles);
     }
-    if(this.playerOptions.danmaku && this.playerOptions.danmaku.open) {
-      this.danmakuController = new DanmakuController(this, this.playerOptions.danmaku);
+    if (this.playerOptions.danmaku && this.playerOptions.danmaku.open) {
+      this.danmakuController = new DanmakuController(
+        this,
+        this.playerOptions.danmaku
+      );
     }
   }
 
@@ -117,27 +132,31 @@ class Player extends Component implements ComponentItem {
       this.initPCEvent();
     }
 
-    this.video.addEventListener("loadedmetadata",(e)=>{
+    this.video.addEventListener("loadedmetadata", (e) => {
       this.emit(EVENT.LOADED_META_DATA, e);
       this.adjustMediaSize();
-    })
-      
+    });
+
     this.video.addEventListener("timeupdate", (e) => {
       this.emit(EVENT.TIME_UPDATE, e);
     });
 
-    this.video.addEventListener("play",(e)=>{
+    this.video.addEventListener("play", (e) => {
       this.emit(EVENT.PLAY, e);
-    })
+    });
 
-    this.video.addEventListener("pause",(e)=>{
+    this.video.addEventListener("pause", (e) => {
       this.emit(EVENT.PAUSE, e);
-    })
+    });
 
     this.video.addEventListener("seeking", (e) => {
       if (this.enableSeek) {
         this.emit(EVENT.SEEKING, e);
       }
+    });
+
+    this.video.addEventListener("seeked", (e) => {
+      this.emit(EVENT.SEEKED, e);
     });
 
     this.video.addEventListener("waiting", (e) => {
@@ -189,6 +208,8 @@ class Player extends Component implements ComponentItem {
       document.querySelectorAll(".video-topbar-controller").forEach((el) => {
         (el as HTMLElement).style.marginRight = "15px";
       });
+
+      this.isFullscreen = true;
     });
 
     this.on(EVENT.LEAVE_FULLSCREEN, () => {
@@ -198,6 +219,7 @@ class Player extends Component implements ComponentItem {
       document.querySelectorAll(".video-topbar-controller").forEach((el) => {
         (el as HTMLElement).style.marginRight = "";
       });
+      this.isFullscreen = false;
     });
   }
 
@@ -218,14 +240,52 @@ class Player extends Component implements ComponentItem {
     };
 
     this.el.onmouseleave = (e) => {
-      if(!this.video.paused) this.emit(EVENT.HIDE_TOOLBAR, e);
+      if (!this.video.paused) this.emit(EVENT.HIDE_TOOLBAR, e);
     };
+
+    
+    // 键盘事件
+    document.addEventListener("keyup", (e) => {
+      console.log(e.key);
+      switch (e.key) {
+        case "f":
+          (
+            ONCE_COMPONENT_STORE.get("FullScreen") as FullScreen
+          ).requestFullScreen();
+          break;
+        case "ArrowRight":
+          if (this.video.paused) this.video.play();
+          if (this.video.currentTime + 5 <= this.video.duration) {
+            this.video.currentTime += 5;
+          }
+          break;
+        case "ArrowLeft":
+          if (this.video.paused) this.video.play();
+          if (this.video.currentTime - 5 >= 0) {
+            this.video.currentTime -= 5;
+          }
+          break;
+        case "ArrowTop":
+          
+        case "ArrowDown":
+
+        case "":
+          if (this.isFullscreen) {
+            if (this.video.played) {
+              this.video.pause();
+            } else {
+              this.video.play();
+            }
+          }
+          break;
+      }
+    });
   }
 
   initMobileEvent(): void {
-    wrap(this.el).addEventListener("touchstart",() => {
+    wrap(this.el).addEventListener("touchstart", () => {
       this.emit(EVENT.DOT_DOWN);
-    })
+    });
 
     wrap(this.el).addEventListener("singleTap", (e: SingleTapEvent) => {
       if (this.toolBar.status === "hidden") {
@@ -266,7 +326,7 @@ class Player extends Component implements ComponentItem {
     });
   }
 
-  initPlugin() {
+  private initPlugin() {
     if (this.playerOptions.plugins) {
       this.playerOptions.plugins.forEach((plugin) => {
         this.use(plugin);
@@ -286,12 +346,12 @@ class Player extends Component implements ComponentItem {
   /**
    * @@description 监听视频播放器大小的变化
    */
-  initResizeObserver() {
+  private initResizeObserver() {
     const resizeObserver = new ResizeObserver((entries) => {
       // 触发尺寸变化事件
       this.emit(EVENT.RESIZE, {
         width: entries[0].contentRect.width,
-        height: entries[0].contentRect.height
+        height: entries[0].contentRect.height,
       });
       this.adjustMediaSize();
 
@@ -355,14 +415,18 @@ class Player extends Component implements ComponentItem {
   }
 
   //调整video的尺寸
-  adjustMediaSize() {
-    if(this.mediaProportion !== 0) {
-      if(this.el.clientHeight / this.el.clientWidth > this.mediaProportion) {
-       this.video.style.width = "100%";
-       this.video.style.height = this.el.clientWidth  * this.mediaProportion + 0.05 * this.el.clientWidth + "px" 
+  private adjustMediaSize() {
+    if (this.mediaProportion !== 0) {
+      if (this.el.clientHeight / this.el.clientWidth > this.mediaProportion) {
+        this.video.style.width = "100%";
+        this.video.style.height =
+          this.el.clientWidth * this.mediaProportion +
+          0.05 * this.el.clientWidth +
+          "px";
       } else {
         this.video.style.height = "100%";
-        this.video.style.width = this.el.clientHeight / this.mediaProportion + "px"
+        this.video.style.width =
+          this.el.clientHeight / this.mediaProportion + "px";
       }
     }
   }
