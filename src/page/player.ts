@@ -203,6 +203,8 @@ class Player extends Component implements ComponentItem {
 
   initPCEvent(): void {
     this.el.onclick = (e) => {
+      
+      console.log("触发点击事件")
       if (this.video.paused) {
         this.video.play();
       } else if (this.video.played) {
@@ -284,7 +286,10 @@ class Player extends Component implements ComponentItem {
   initResizeObserver() {
     const resizeObserver = new ResizeObserver((entries) => {
       // 触发尺寸变化事件
-      this.emit(EVENT.RESIZE, entries);
+      this.emit(EVENT.RESIZE, {
+        width: entries[0].contentRect.width,
+        height: entries[0].contentRect.height
+      });
       this.adjustMediaSize();
 
       let width = entries[0].contentRect.width;

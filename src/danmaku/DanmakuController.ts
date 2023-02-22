@@ -156,11 +156,12 @@ export class DanmakuController {
   initializeEvent() {
 
     this.video.addEventListener("seeked", (e: Event) => {
-      this.onSeeking(e);
+      this.onSeeked(e);
     });
 
     this.video.addEventListener("pause", () => {
       //暂停所有的弹幕
+      console.log("pause")
       this.danmaku.pause();
     });
 
@@ -173,15 +174,21 @@ export class DanmakuController {
     })
 
     this.video.addEventListener("play", () => {
+      console.log("play")
       this.danmaku.resume();
     });
 
+    this.video.addEventListener("canplay",() => {
+      console.log("canplay")
+      this.danmaku.resume()
+    })
+
+    this.video.addEventListener("timeupdate",() => {
+      this.danmaku.setPaused(false)
+    })
+
     this.danmakuInput.on("sendData", function (data) {
       //TODO 此处为发送弹幕的逻辑
-    });
-
-    this.player.on(EVENT.DOT_DRAG, () => {
-      this.danmaku.flush();
     });
 
     this.player.on("closeDanmaku", () => {
@@ -191,6 +198,10 @@ export class DanmakuController {
     this.player.on("openDanmaku", () => {
       this.danmaku.open();
     });
+
+    this.player.on(EVENT.RESIZE,() => {
+      this.setTrackNumber();
+    })
   }
 
   onTimeupdate(e: Event) {
@@ -207,13 +218,13 @@ export class DanmakuController {
     })
   }
 
-  onSeeking(e: Event) {
+  onSeeked(e: Event) {
     this.danmaku.flush();
   }
 
   //* 设置弹幕轨道是数目
-  setTrackNumber(num: number) {
-    this.danmaku.setTrackNumber(num);
+  setTrackNumber(num?: number) {
+    this.danmaku.setTrackNumber(num || null);
   }
 
   //* 设置弹幕的透明度
