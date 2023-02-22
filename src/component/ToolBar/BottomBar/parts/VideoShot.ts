@@ -5,6 +5,7 @@ import { storeControlComponent } from "../../../../utils/store";
 import { Toast } from "../../../Toast/Toast";
 import { confirmPath, countdownPath, videoShotPath$1, videoShotPath$2 } from "../../../../svg/index";
 import { Options } from "./Options";
+import { SingleTapEvent } from "ntouch.js";
  
 export class VideoShot extends Options {
     readonly id = "VideoShot";
@@ -97,7 +98,16 @@ export class VideoShot extends Options {
 
         if(this.player.env === "Mobile") {
             this.el.ontouchend = (e) => {
+                removeClass(this.icon,["video-videoshot-animate"])
                 this.stop(recorder);
+                // 销毁toast组件
+                inProgressToast.dispose();
+                inProgressToast = null;
+                let successToast = this.createSuccessToast();
+                window.setTimeout(() => {
+                    successToast.dispose();
+                    successToast = null;
+                },2000)
             }
         } else {
             this.el.onmouseup = (e) => {
