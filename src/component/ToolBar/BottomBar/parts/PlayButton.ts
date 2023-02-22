@@ -1,4 +1,4 @@
-import { wrap } from "ntouch.js";
+import { SingleTapEvent, wrap } from "ntouch.js";
 import { Component } from "../../../../class/Component"
 import { Player } from "../../../../page/player";
 import { ComponentItem, DOMProps,Node } from "../../../../types/Player";
@@ -62,11 +62,13 @@ export class PlayButton extends Component implements ComponentItem {
     }
 
     initMobileEvent(): void {
-        wrap(this.el).addEventListener("singleTap",this.onClick);
+        wrap(this.el).addEventListener("singleTap",this.onClick,{stopPropagation:true});
     }
 
-    onClick(e: Event) {
-        e.stopPropagation();
+    onClick(e: Event | SingleTapEvent) {
+        if(e instanceof Event) {
+            e.stopPropagation();
+        }
         if(this.player.video.paused) {
             this.player.video.play();
         } else {

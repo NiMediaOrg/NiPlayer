@@ -1,3 +1,4 @@
+import { SingleTapEvent, wrap } from "ntouch.js";
 import { BaseEvent } from "../../../../../../class/BaseEvent";
 import { Player } from "../../../../../../page/player";
 import {
@@ -10,8 +11,10 @@ import { SubsettingItem } from "../SubsettingItem";
 export class SubsettingsBase extends BaseEvent {
   id = "SubsettingsBase";
   el: HTMLElement;
+  clickOrTap: "click" | "singleTap" = "click"
   readonly player: Player;
   readonly subsetting: SubSetting;
+
   SubsettingsItem: SubsettingsItem[];
 
   constructor(subsetting: SubSetting, player: Player) {
@@ -26,6 +29,15 @@ export class SubsettingsBase extends BaseEvent {
       this.registerSubsettingsItem(item);
       item.instance.el.dataset.SubsettingsSubtitleType = item.leftText;
     });
+  }
+
+  initPCEvent() {
+    this.clickOrTap = "click"
+  }
+
+
+  initMobileEvent() {
+    this.clickOrTap = "singleTap"
   }
 
   // target表示点击你这个item，需要跳转到哪一个SubsettingsBase
@@ -65,8 +77,15 @@ export class SubsettingsBase extends BaseEvent {
     item.instance = instance;
     this.el.appendChild(instance.el);
 
-    instance.el.addEventListener("click", (e) => {
-      e.stopPropagation();
+    if(this.player.env === "PC") {
+      this.initPCEvent()
+    } else {
+      this.initMobileEvent()
+    }
+    wrap(instance.el).addEventListener(this.clickOrTap, (e: MouseEvent | SingleTapEvent) => {
+      if(e instanceof MouseEvent) {
+        e.stopPropagation();
+      }
       if (item.target) {
         this.el.style.display = "none";
         base.el.style.display = "";
@@ -75,8 +94,9 @@ export class SubsettingsBase extends BaseEvent {
           ? base.el.dataset.width + "px"
           : "200px";
       }
-
       if (item.click) item.click(item);
+    },{
+      stopPropagation: true
     });
 
     return item;

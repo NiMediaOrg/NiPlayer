@@ -2,7 +2,13 @@ import { Component } from "../../../../class/Component";
 import { EVENT } from "../../../../events";
 import { Player } from "../../../../page/player";
 import { ComponentItem, DOMProps, Node } from "../../../../types/Player";
-import { $, addClass, checkIsMouseInRange, includeClass, removeClass } from "../../../../utils/domUtils";
+import {
+  $,
+  addClass,
+  checkIsMouseInRange,
+  includeClass,
+  removeClass,
+} from "../../../../utils/domUtils";
 
 export class Options extends Component implements ComponentItem {
   id = "Options";
@@ -38,48 +44,61 @@ export class Options extends Component implements ComponentItem {
 
   initBaseTemplate() {
     this.hideBox = $("div");
-    addClass(this.hideBox,["video-set","video-set-hidden"])
-    if(this.hideHeight && this.hideHeight > 0) {
-        this.hideBox.style.height = this.hideHeight + 'px';
+    addClass(this.hideBox, ["video-set", "video-set-hidden"]);
+    if (this.hideHeight && this.hideHeight > 0) {
+      this.hideBox.style.height = this.hideHeight + "px";
     }
-    if(this.hideWidth && this.hideWidth > 0) {
-        this.hideBox.style.width = this.hideWidth + 'px'
+    if (this.hideWidth && this.hideWidth > 0) {
+      this.hideBox.style.width = this.hideWidth + "px";
     }
 
     this.el.appendChild(this.hideBox);
 
     this.iconBox = $("div");
-    addClass(this.iconBox,["video-icon"])
+    addClass(this.iconBox, ["video-icon"]);
     this.el.appendChild(this.iconBox);
   }
 
   initBaseEvent() {
-    this.el.onmouseenter = (e) => {
-        let ctx = this;
-        removeClass(this.hideBox,["video-set-hidden"])
-        document.body.onmousemove = ctx.handleMouseMove.bind(this);
-        this.player.emit("oneControllerHover",this);
+    if(this.player.env === "PC") {
+      this.initBasePCEvent();
+    } else {
+      this.initBaseMobileEvent();
     }
+  }
 
-    this.player.on("oneControllerHover",(controller:ComponentItem) => {
-      if(this !== controller) {
-        if(!includeClass(this.hideBox,"video-set-hidden")) {
-          addClass(this.hideBox,["video-set-hidden"])
+  initBasePCEvent() {
+    this.el.onmouseenter = (e) => {
+      let ctx = this;
+      removeClass(this.hideBox, ["video-set-hidden"]);
+      document.body.onmousemove = ctx.handleMouseMove.bind(this);
+      this.player.emit("oneControllerHover", this);
+    };
+
+    this.player.on("oneControllerHover", (controller: ComponentItem) => {
+      if (this !== controller) {
+        if (!includeClass(this.hideBox, "video-set-hidden")) {
+          addClass(this.hideBox, ["video-set-hidden"]);
         }
       }
-    })
+    });
 
-    this.player.on(EVENT.VIDEO_CLICK,() => {
-      addClass(this.hideBox,["video-set-hidden"])
-    })
+    this.player.on(EVENT.VIDEO_CLICK, () => {
+      addClass(this.hideBox, ["video-set-hidden"]);
+    });
+  }
+
+  initBaseMobileEvent() {
+
   }
 
   handleMouseMove(e: MouseEvent) {
-    let pX = e.clientX,pY = e.clientY;
+    let pX = e.clientX,
+      pY = e.clientY;
     let ctx = this;
-    if(!checkIsMouseInRange(ctx.el, ctx.hideBox, this.bottom, pX,pY)) {
-        addClass(this.hideBox,["video-set-hidden"])
-        document.body.onmousemove = null; 
+    if (!checkIsMouseInRange(ctx.el, ctx.hideBox, this.bottom, pX, pY)) {
+      addClass(this.hideBox, ["video-set-hidden"]);
+      document.body.onmousemove = null;
     }
   }
 

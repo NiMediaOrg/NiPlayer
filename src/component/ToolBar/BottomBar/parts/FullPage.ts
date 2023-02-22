@@ -1,4 +1,4 @@
-import { wrap } from "ntouch.js";
+import { SingleTapEvent, wrap } from "ntouch.js";
 import { Player } from "../../../../page/player";
 import { DOMProps, Node } from "../../../../types/Player";
 import { addClass, createSvg, removeClass } from "../../../../utils/domUtils";
@@ -32,14 +32,17 @@ export class FullPage extends Options {
     initEvent() {
         this.onClick = this.onClick.bind(this);
         if(this.player.env === "Mobile") {
-            wrap(this.el).addEventListener("singleTap",this.onClick);
+            wrap(this.el).addEventListener("singleTap",this.onClick,{stopPropagation: true});
         } else {
             this.el.onclick = this.onClick;
         }
     }
 
-    onClick(e: Event) {
-        e.stopPropagation();
+    onClick(e: Event | SingleTapEvent) {
+
+        if(e instanceof Event) {
+            e.stopPropagation();
+        }
         if(!this.isFullPage) {
             addClass(this.player.el,["video-wrapper-fullpage"])
             this.iconBox.removeChild(this.icon);
