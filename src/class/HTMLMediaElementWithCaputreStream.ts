@@ -1,3 +1,3 @@
-interface HTMLMediaElementWithCaputreStream extends HTMLMediaElement{
-    captureStream(fps?:number): MediaStream;
-  }
+interface HTMLMediaElementWithCaputreStream extends HTMLMediaElement {
+  captureStream(fps?: number): MediaStream;
+}

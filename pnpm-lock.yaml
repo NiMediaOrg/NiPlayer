@@ -4,6 +4,7 @@ specifiers:
   '@babel/core': ^7.20.7
   '@babel/preset-env': ^7.20.2
   '@babel/preset-typescript': ^7.18.6
+  '@rollup/plugin-alias': ^4.0.3
   '@rollup/plugin-babel': ^6.0.3
   '@rollup/plugin-commonjs': ^24.0.1
   '@rollup/plugin-html': ^1.0.2
@@ -17,7 +18,7 @@ specifiers:
   be-full: ^0.1.4
   less: ^4.1.3
   mp4box: ^0.5.2
-  ntouch.js: ^1.0.6
+  ntouch.js: ^1.1.0
   postcss: ^8.4.21
   rollup: ^2.79.1
   rollup-plugin-dts: ^4.1.0
@@ -33,13 +34,14 @@ specifiers:
 dependencies:
   be-full: 0.1.4
   mp4box: 0.5.2
-  ntouch.js: 1.0.6
+  ntouch.js: 1.1.0
   socket.io-client: 4.6.0
 
 devDependencies:
   '@babel/core': 7.20.12
   '@babel/preset-env': 7.20.2_@babel+core@7.20.12
   '@babel/preset-typescript': 7.18.6_@babel+core@7.20.12
+  '@rollup/plugin-alias': 4.0.3_rollup@2.79.1
   '@rollup/plugin-babel': 6.0.3_3dsfpkpoyvuuxyfgdbpn4j4uzm
   '@rollup/plugin-commonjs': 24.0.1_rollup@2.79.1
   '@rollup/plugin-html': 1.0.2_rollup@2.79.1
@@ -1503,6 +1505,19 @@ packages:
       '@jridgewell/sourcemap-codec': 1.4.14
     dev: true
 
+  /@rollup/plugin-alias/4.0.3_rollup@2.79.1:
+    resolution: {integrity: sha512-ZuDWE1q4PQDhvm/zc5Prun8sBpLJy41DMptYrS6MhAy9s9kL/doN1613BWfEchGVfKxzliJ3BjbOPizXX38DbQ==}
+    engines: {node: '>=14.0.0'}
+    peerDependencies:
+      rollup: ^1.20.0||^2.0.0||^3.0.0
+    peerDependenciesMeta:
+      rollup:
+        optional: true
+    dependencies:
+      rollup: 2.79.1
+      slash: 4.0.0
+    dev: true
+
   /@rollup/plugin-babel/6.0.3_3dsfpkpoyvuuxyfgdbpn4j4uzm:
     resolution: {integrity: sha512-fKImZKppa1A/gX73eg4JGo+8kQr/q1HBQaCGKECZ0v4YBBv3lFqi14+7xyApECzvkLTHCifx+7ntcrvtBIRcpg==}
     engines: {node: '>=14.0.0'}
@@ -2828,8 +2843,8 @@ packages:
       boolbase: 1.0.0
     dev: true
 
-  /ntouch.js/1.0.6:
-    resolution: {integrity: sha512-M/X6na+pLQY/ZevUOVWOyYYo30a1Oww+50EWlWNJfe0NofdK9oT+rv2gi4hDSlCkEUYVBvxhWr6hsRJJORJlKg==}
+  /ntouch.js/1.1.0:
+    resolution: {integrity: sha512-sCfGpoN0NRsMXiKPfo2xaeuJRVcBlDD/vz61Zv7Ga9c0/M0f2HzU2NoeQ/5OsGts/o/BYQvzXr1op/6YvD4UHA==}
     dev: false
 
   /num2fraction/1.2.2:
@@ -3626,6 +3641,11 @@ packages:
 
   /signal-exit/3.0.7:
     resolution: {integrity: sha512-wnD2ZE+l+SPC/uoS0vXeE9L1+0wuaMqKlfz9AMUo38JsyLSBWSFcHR1Rri62LZc12vLr1gb3jl7iwQhgwpAbGQ==}
+    dev: true
+
+  /slash/4.0.0:
+    resolution: {integrity: sha512-3dOsAHXXUkQTpOYcoAxLIorMTp4gIQr5IW3iVb7A7lFIp0VHhnynm9izx6TssdrIcVIESAlVjtnO2K8bg+Coew==}
+    engines: {node: '>=12'}
     dev: true
 
   /smob/0.0.6:

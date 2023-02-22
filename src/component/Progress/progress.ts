@@ -88,7 +88,6 @@ export class Progress extends Component implements ComponentItem {
       e.stopPropagation();
       this.emit(EVENT.DOT_DOWN);
       this.mouseX = e.pageX;
-      this.dotLeft = parseInt(this.dot.style.left) / 100 * this.el.clientWidth;
       document.body.addEventListener("mousemove", ctx.onMouseMove);
 
       document.body.onmouseup =  (e: MouseEvent) => {
