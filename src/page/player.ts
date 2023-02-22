@@ -22,9 +22,9 @@ import { ErrorLoading } from "../component/Loading/parts/ErrorLoading";
 import { TopBar } from "../component/TopBar/TopBar";
 import { Env } from "../utils/env";
 import { MobileVolume } from "../component/Mobile/MobileVolume";
-import { MoveEvent, wrap } from "ntouch.js";
 import { EVENT } from "../events";
 import { Subtitle } from "../component/Subtitle/Subtitle";
+import { DoubleTapEvent, MoveEvent, SingleTapEvent, SwipeEvent, wrap } from "ntouch.js"
 class Player extends Component implements ComponentItem {
   readonly id = "Player";
   // 播放器的默认配置
@@ -203,8 +203,6 @@ class Player extends Component implements ComponentItem {
 
   initPCEvent(): void {
     this.el.onclick = (e) => {
-      
-      console.log("触发点击事件")
       if (this.video.paused) {
         this.video.play();
       } else if (this.video.played) {
@@ -225,7 +223,11 @@ class Player extends Component implements ComponentItem {
   }
 
   initMobileEvent(): void {
-    wrap(this.video).addEventListener("singleTap", (e) => {
+    wrap(this.el).addEventListener("touchstart",() => {
+      this.emit(EVENT.DOT_DOWN);
+    })
+
+    wrap(this.el).addEventListener("singleTap", (e: SingleTapEvent) => {
       if (this.toolBar.status === "hidden") {
         this.emit(EVENT.SHOW_TOOLBAR, e);
       } else {
@@ -234,7 +236,7 @@ class Player extends Component implements ComponentItem {
       this.emit(EVENT.VIDEO_CLICK);
     });
 
-    wrap(this.video).addEventListener("doubleTap", (e) => {
+    wrap(this.el).addEventListener("doubleTap", (e: DoubleTapEvent) => {
       if (this.video.paused) {
         this.video.play();
       } else if (this.video.played) {
@@ -242,7 +244,7 @@ class Player extends Component implements ComponentItem {
       }
     });
 
-    wrap(this.video).addEventListener("move", (e) => {
+    wrap(this.el).addEventListener("move", (e: MoveEvent) => {
       let dx = e.deltaX;
       let dy = e.deltaY;
       if (computeAngle(dx, dy) >= 75) {
@@ -252,7 +254,8 @@ class Player extends Component implements ComponentItem {
       }
     });
 
-    wrap(this.video).addEventListener("swipe", (e) => {
+    // 拖动结束事件
+    wrap(this.el).addEventListener("swipe", (e: SwipeEvent) => {
       let dx = e.endPos.x - e.startPos.x;
       let dy = e.endPos.y - e.startPos.y;
       if (computeAngle(dx, dy) >= 75) {

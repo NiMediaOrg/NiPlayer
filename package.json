@@ -20,6 +20,7 @@
     "@babel/core": "^7.20.7",
     "@babel/preset-env": "^7.20.2",
     "@babel/preset-typescript": "^7.18.6",
+    "@rollup/plugin-alias": "^4.0.3",
     "@rollup/plugin-babel": "^6.0.3",
     "@rollup/plugin-commonjs": "^24.0.1",
     "@rollup/plugin-html": "^1.0.2",
@@ -55,7 +56,7 @@
   "dependencies": {
     "be-full": "^0.1.4",
     "mp4box": "^0.5.2",
-    "ntouch.js": "^1.0.6",
+    "ntouch.js": "^1.1.0",
     "socket.io-client": "^4.6.0"
   }
 }
