@@ -1,4 +1,4 @@
-import { wrap } from "ntouch.js";
+import { SingleTapEvent, wrap } from "ntouch.js";
 import { Player } from "../../../../page/player";
 import { DOMProps, Node } from "../../../../types/Player";
 import {
@@ -50,12 +50,14 @@ export class ScreenShot extends Options {
     if (this.player.env === "PC") {
       this.el.addEventListener("click", this.onClick);
     } else {
-      wrap(this.el).addEventListener("singleTap", this.onClick);
+      wrap(this.el).addEventListener("singleTap", this.onClick,{stopPropagation:true});
     }
   }
 
-  onClick(e: Event) {
-    e.stopPropagation();
+  onClick(e: Event | SingleTapEvent) {
+    if(e instanceof Event) {
+      e.stopPropagation();
+    }
     if (!includeClass(this.icon, "video-screenshot-animate")) {
       addClass(this.icon, ["video-screenshot-animate"]);
       (this.icon as SVGSVGElement).ontransitionend = (e) => {

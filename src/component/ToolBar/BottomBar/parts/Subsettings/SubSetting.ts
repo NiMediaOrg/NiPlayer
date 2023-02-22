@@ -9,7 +9,7 @@ import {
   includeClass,
   removeClass,
 } from "../../../../../utils/domUtils";
-import { wrap } from "ntouch.js";
+import { SingleTapEvent, wrap } from "ntouch.js";
 import { SubsettingsMain } from "./parts/SubsettingsMain";
 import { SubsettingsBaseConstructor, SubsettingsItem } from "../../../../../types/Player";;
 import { SubsettingsBase } from "./parts/SubsettingsBase";
@@ -62,8 +62,10 @@ export class SubSetting extends Options {
     }
 
     this.el.onmouseenter = null;
-    wrap(this.iconBox).addEventListener(this.clickOrTap, (e) => {
-      e.stopPropagation();
+    wrap(this.iconBox).addEventListener(this.clickOrTap, (e: MouseEvent | SingleTapEvent) => {
+      if(e instanceof Event) {
+        e.stopPropagation();
+      }
       if (!includeClass(this.icon, "video-subsettings-animate")) {
         addClass(this.icon, ["video-subsettings-animate"]);
       } else {
@@ -75,6 +77,8 @@ export class SubSetting extends Options {
         removeClass(this.hideBox, ["video-set-hidden"]);
       }
       this.player.emit("oneControllerHover", this);
+    },{
+      stopPropagation:true
     });
   }
 

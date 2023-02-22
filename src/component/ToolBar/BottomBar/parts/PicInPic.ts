@@ -1,4 +1,4 @@
-import { wrap } from "ntouch.js";
+import { SingleTapEvent, wrap } from "ntouch.js";
 import { Player } from "../../../../page/player";
 import { DOMProps, Node } from "../../../../types/Player";
 import { addClass, createSvg } from "../../../../utils/domUtils";
@@ -37,8 +37,11 @@ export class PicInPic extends Options {
         }
     }
 
-    onClick(e: Event) {
-        e.stopPropagation();
+    onClick(e: Event | SingleTapEvent) {
+        if(e instanceof Event) {
+            e.stopPropagation();
+        }
+        
         if (document.pictureInPictureElement) { // 当前画中画的元素
             document.exitPictureInPicture();
         } else {

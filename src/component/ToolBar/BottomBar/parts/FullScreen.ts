@@ -42,12 +42,14 @@ export class FullScreen extends Options {
     if (this.player.env === "PC") {
       this.el.onclick = this.onClick;
     } else {
-      wrap(this.el).addEventListener("singleTap", this.onClick);
+      wrap(this.el).addEventListener("singleTap", this.onClick,{stopPropagation: true});
     }
   }
 
   onClick(e: Event | SingleTapEvent) {
-    e.stopPropagation();
+    if(e instanceof Event) {
+      e.stopPropagation();
+    }
     if (!isFull(this.player.container)) {
       // 调用浏览器提供的全屏API接口去请求元素的全屏，原生全屏分为  竖屏全屏 + 横屏全屏
       beFull(this.player.container);
