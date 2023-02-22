@@ -27,7 +27,7 @@ export class VideoProgress extends Progress {
             let scale = dx / this.el.clientWidth;
             if (scale < 0) {
                 scale = 0;
-              } else if (scale > 1) {
+            } else if (scale > 1) {
                 scale = 1;
             }
             this.player.video.currentTime = scale * this.player.video.duration;

@@ -5,6 +5,7 @@ import { SubsettingItem } from "../component/ToolBar/BottomBar/parts/Subsettings
 import { Player } from "../page/player";
 import { RequestHeader } from "./mp4";
 
+// 播放器的 选项
 export type PlayerOptions = {
   url?: string;
   container?: HTMLElement;
@@ -36,6 +37,7 @@ export type Subtitles = {
   tip: string;
   source: string;
   lang: "zh" | "en" | "jp";
+  style?: Partial<CSSStyleDeclaration>;
 }
 
 export type DOMProps = {

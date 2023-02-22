@@ -31,45 +31,13 @@ export class Subtitle {
   init() {
     this.initTemplate();
     this.initTextTrack();
+
+    this.adjustSubtitleStyle(this.defaultSubtitle);
     this.initEvent();
-
-    nextTick(() => {
-      let ctx = this;
-      this.subsettingsSubtitle = (SubsettingsSubtitle as SubsettingsBaseConstructor).instance as SubsettingsSubtitle;
-      this.subtitles.forEach((item) => {
-        let leftIcon = null;
-        if (item === this.defaultSubtitle) {
-          leftIcon = createSvg(settingsConfirmPath, "0 0 1024 1024");
-        }
-        let subsettingsItem = this.subsettingsSubtitle.registerSubsettingsItem({
-          leftIcon: leftIcon,
-          leftText: item.tip,
-          target: SubsettingsMain,
-          click: (value: SubsettingsItem) => {
-            this.leadItem.instance.rightTipBox.innerText = value.leftText;
-            ctx.trackElement.src = item.source;
-            for (let index in ctx.subtitles) {
-              ctx.subtitles[index].instance.leftIconBox.innerHTML = "";
-              if (value.leftIcon) delete value.leftIcon;
-              if (ctx.subtitles[index].instance === value.instance) {
-                value.leftIcon = createSvg(
-                  settingsConfirmPath,
-                  "0 0 1024 1024"
-                );
-                ctx.subtitles[index].instance.leftIconBox.appendChild(
-                  value.leftIcon
-                );
-              }
-            }
-          }
-        });
-
-        item.instance = subsettingsItem.instance;
-      });
-    });
   }
 
   initTemplate() {
+    // 设置字幕的样式
     this.el = $("div.video-texttrack-container");
     this.player.el.appendChild(this.el);
 
@@ -81,6 +49,20 @@ export class Subtitle {
         rightIcon: createSvg(rightarrowPath, "0 0 1024 1024"),
         target: SubsettingsSubtitle   
     })
+  }
+
+  // 调整字幕的样式
+  adjustSubtitleStyle(subtitle: Subtitles) {
+    console.log(subtitle.style)
+    for(let key in this.defaultSubtitle.style) {
+      this.el.style[key] = ""
+    }
+
+    if(subtitle.style) {
+      for(let key in subtitle.style) {
+        this.el.style[key] = subtitle.style[key];
+      }
+    }
   }
 
   initTextTrack() {
@@ -106,6 +88,45 @@ export class Subtitle {
     this.player.on("ShowSubtitle",() => {
         this.trackElement.src = this.currentSource;
     })
+
+    // 初始化设置栏中的字幕设置选项
+    nextTick(() => {
+      let ctx = this;
+      this.subsettingsSubtitle = (SubsettingsSubtitle as SubsettingsBaseConstructor).instance as SubsettingsSubtitle;
+      this.subtitles.forEach((item) => {
+        let leftIcon = null;
+        if (item === this.defaultSubtitle) {
+          leftIcon = createSvg(settingsConfirmPath, "0 0 1024 1024");
+        }
+        let subsettingsItem = this.subsettingsSubtitle.registerSubsettingsItem({
+          leftIcon: leftIcon,
+          leftText: item.tip,
+          target: SubsettingsMain,
+          click: (value: SubsettingsItem) => {
+            this.leadItem.instance.rightTipBox.innerText = value.leftText;
+            ctx.trackElement.src = item.source; //改变字幕，就是修改字幕的源文件
+            ctx.adjustSubtitleStyle(item); //每次修改字幕时都需要调整其字幕样式
+            ctx.defaultSubtitle = item;
+            for (let index in ctx.subtitles) {
+              ctx.subtitles[index].instance.leftIconBox.innerHTML = "";
+              if (value.leftIcon) delete value.leftIcon;
+              if (ctx.subtitles[index].instance === value.instance) {
+                value.leftIcon = createSvg(
+                  settingsConfirmPath,
+                  "0 0 1024 1024"
+                );
+                ctx.subtitles[index].instance.leftIconBox.appendChild(
+                  value.leftIcon
+                );
+              }
+            }
+          }
+        });
+
+        item.instance = subsettingsItem.instance;
+      });
+    });
+
     this.loadVTTFile(this.defaultSubtitle.source);
   }
 
