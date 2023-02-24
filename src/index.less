@@ -11,6 +11,8 @@
 
 @progressColor: #f00;
 @subtitleColor: rgb(254, 146, 0);
+
+@zIndex: 4001;
 .Niplayer_video-wrapper {
   width: 100%;
   height: 100%;
@@ -18,7 +20,7 @@
   position: relative;
   overflow: hidden;
   user-select: none;
-  transform: all .5s ease;
+  transform: all 0.5s ease;
   .flex-vertical-horizontal-center;
 
   &:focus {
@@ -37,13 +39,44 @@
     }
   }
 
+  .video-context-menu {
+    display: none;
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 200px;
+    border-radius: 3px;
+    flex-direction: column;
+    padding: 5px 0;
+    backdrop-filter: saturate(180%) blur(20px);
+    background-color: #000000b3 !important;
+    z-index: @zIndex + 1;
+    &:last-child {
+      border-bottom: none !important;
+    }
+    .video-context-menu-item {
+      cursor: pointer;
+      color: #fff;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      text-shadow: 0 0 2px #00000080;
+      border-bottom: 1px solid #ffffff1a;
+      padding: 10px 15px;
+      font-size: 12px;
+      display: block;
+      overflow: hidden;
+      &:hover {
+        background-color: #ffffff1a;
+        color: @progressColor;
+      }
+    }
+  }
   //控制字幕的样式
   .video-texttrack-container-showtoolbar {
-    bottom: calc(@toolbarHeight + 5px)!important;
-
-  } 
+    bottom: calc(@toolbarHeight + 5px) !important;
+  }
   .video-texttrack-container {
-    transition: all .5s;
+    transition: all 0.5s;
     position: absolute;
     bottom: 5px;
     color: @subtitleColor;
@@ -79,7 +112,7 @@
     height: 35px;
     color: @commonColor;
     transition: all 0.3s ease;
-    z-index: 4001;
+    z-index: @zIndex;
     padding: 5px 5px 0px 5px;
     display: flex;
     justify-content: space-between;
@@ -114,7 +147,7 @@
     color: @commonColor;
     height: @toolbarHeight;
     transition: all 0.3s ease;
-    z-index: 4001;
+    z-index: @zIndex;
     background-image: linear-gradient(to top, #000, #0006, #0000);
     background-position: bottom;
     background-repeat: repeat-x;
@@ -148,7 +181,7 @@
             text-align: center;
             font-size: 10px;
             display: none;
-            z-index: 4002;
+            z-index: @zIndex + 1;
           }
 
           .video-progress-thumbnails {
@@ -157,7 +190,7 @@
             bottom: 10px;
             width: 160px;
             height: 90px;
-            background-color: rgba(255,255,255,0.5);
+            background-color: rgba(255, 255, 255, 0.5);
             display: none;
             overflow: hidden;
           }
@@ -166,7 +199,6 @@
             left: 0;
             height: 100%;
             width: 0;
-            z-index: 1001;
             position: absolute;
             background-color: hsla(0, 0%, 100%, 0.3);
             border-top-right-radius: 3px;
@@ -180,7 +212,7 @@
             border-bottom-right-radius: 3px;
             left: 0;
             width: 0;
-            z-index: 2002;
+            z-index: @zIndex + 1;
           }
 
           .video-progress-dot-hidden {
@@ -195,7 +227,7 @@
             border-radius: 100%;
             background-color: @progressColor;
             cursor: pointer;
-            z-index: 2003;
+            z-index: @zIndex + 1;
             top: 50%;
             transform: translateY(-50%);
             transition: opacity 0.6s ease;
@@ -264,7 +296,7 @@
                 left: 50%;
                 top: 50%;
                 transform: translate(-50%, -50%);
-                z-index: 1003;
+                z-index: @zIndex + 1;
               }
             }
           }
@@ -274,7 +306,7 @@
         .video-duration-time {
           .flex-vertical-center;
           font-size: @smallSizeFont;
-          opacity: .7;
+          opacity: 0.7;
           margin-left: 5px;
           height: 100%;
 
@@ -367,7 +399,6 @@
   .video-mask {
     position: absolute;
     background: transparent;
-    z-index: 0;
     width: 100%;
     height: 100%;
     left: 0;
@@ -378,7 +409,7 @@
     width: 100%;
     height: 100%;
     position: absolute;
-    z-index: 1001;
+    z-index: @zIndex - 1;
     background-color: rgba(0, 0, 0, 0.4);
     left: 0;
     top: 0;
@@ -421,12 +452,11 @@
 
 // 以下的类为工具类，统一存放在最外侧
 
-
 .video-switch-on {
-  fill: @navyBlue!important
+  fill: @navyBlue!important;
 }
 .video-switch-off {
-  fill: @commonColor!important
+  fill: @commonColor!important;
 }
 // 该类用于所有的原子组件的共同样式
 .Nplayer_controller {
@@ -475,7 +505,7 @@
   }
 
   .video-set-hidden {
-    display: none!important;
+    display: none !important;
   }
 }
 
@@ -484,16 +514,15 @@
   .video-subsettings-set {
     height: auto;
     max-height: 300px;
-    background-color: #000000e6;
     backdrop-filter: saturate(180%) blur(20px);
     border-radius: 3px;
     font-size: 13px;
-    transition: all .2s;
+    transition: all 0.2s;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    .video-subsettings-main, 
+    .video-subsettings-main,
     .video-subsettings-subtitle,
     .video-subsettings-playrate,
     .video-subsettings-danmaku-main,
@@ -545,7 +574,7 @@
         align-items: center;
         display: flex;
 
-        .video-subsettings-itemright-tip{
+        .video-subsettings-itemright-tip {
           white-space: nowrap;
           color: #ffffff80;
           margin-right: 5px;
@@ -669,7 +698,7 @@
   right: 0;
   top: 0;
   bottom: 0;
-  z-index: 2001;
+  z-index: @zIndex - 1;
 }
 
 // 关灯模式添加的类
@@ -680,7 +709,7 @@
   width: 100vw;
   height: 100vh;
   background: #000;
-  z-index: 2001;
+  z-index: @zIndex - 1;
 }
 
 // 用于手机全屏的类，暂时无法使用

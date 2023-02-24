@@ -32,6 +32,8 @@ import {
   SwipeEvent,
   wrap,
 } from "ntouch.js";
+import { ContextMenu } from "../component/ContextMenu/ContextMenu";
+import { ContextMenuItem } from "../component/ContextMenu/ContextMenuItem";
 class Player extends Component implements ComponentItem {
   readonly id = "Player";
   // 播放器的默认配置
@@ -43,6 +45,7 @@ class Player extends Component implements ComponentItem {
   video: HTMLVideoElement;
   container: HTMLElement;
   props: DOMProps;
+  contextMenu: ContextMenu;
   toolBar: ToolBar;
   topbar: TopBar;
   loading: TimeLoading;
@@ -111,6 +114,7 @@ class Player extends Component implements ComponentItem {
     this.error = new ErrorLoading(this, "你的网络罢工啦Q_Q", this.el);
     this.toolBar = new ToolBar(this, this.el, "div");
     this.topbar = new TopBar(this, this.el, "div");
+    this.contextMenu = new ContextMenu(this, this.el, "div");
     if (
       this.playerOptions.subtitles &&
       this.playerOptions.subtitles.length > 0
@@ -243,7 +247,6 @@ class Player extends Component implements ComponentItem {
       if (!this.video.paused) this.emit(EVENT.HIDE_TOOLBAR, e);
     };
 
-    
     // 键盘事件
     document.addEventListener("keyup", (e) => {
       console.log(e.key);
@@ -266,7 +269,7 @@ class Player extends Component implements ComponentItem {
           }
           break;
         case "ArrowTop":
-          
+
         case "ArrowDown":
 
         case "":
@@ -279,6 +282,25 @@ class Player extends Component implements ComponentItem {
           }
           break;
       }
+    });
+
+    this.el.addEventListener("mousedown", (e: MouseEvent) => {
+      if (
+        this.contextMenu.el.style.display &&
+        this.contextMenu.el.style.display !== "" &&
+        e.button === 0
+      ) {
+        this.contextMenu.el.style.display = "";
+      }
+    });
+
+    // 鼠标右键事件
+    this.el.addEventListener("contextmenu", (e) => {
+      e.preventDefault();
+
+      this.contextMenu.el.style.display = "block";
+      this.contextMenu.el.style.top = e.offsetY + "px";
+      this.contextMenu.el.style.left = e.offsetX + "px";
     });
   }
 
@@ -549,6 +571,17 @@ class Player extends Component implements ComponentItem {
     }
     ONCE_COMPONENT_STORE.delete(id);
   }
+
+  // 注册一个右击菜单项
+  registerContextMenu(
+    content: string | HTMLElement,
+    click?: (item: ContextMenuItem) => any
+  ) {
+    this.contextMenu.registerContextMenu(content,click);
+  }
+
+  // 注册一个设置选项
+  registerSubsetting() {}
 
   /**
    * @description 注册对应的组件
