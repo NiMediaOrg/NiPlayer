@@ -5,8 +5,6 @@ import { storeControlComponent } from "../../../../utils/store";
 import { Toast } from "../../../Toast/Toast";
 import { confirmPath, countdownPath, videoShotPath$1, videoShotPath$2 } from "../../../../svg/index";
 import { Options } from "./Options";
-import { SingleTapEvent } from "ntouch.js";
- 
 export class VideoShot extends Options {
     readonly id = "VideoShot";
     player: Player;

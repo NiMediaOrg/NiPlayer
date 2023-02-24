@@ -25,7 +25,6 @@
     </style>
   </head>
   <body>
-    <iframe src="http://player.bilibili.com/player.html?aid=17649289&bvid=BV1zW411t7YE&cid=28831871&page=19" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"> </iframe>
     <div id="video"></div>
     <script>
       
@@ -34,6 +33,13 @@
         let player = new Player.default({
             url: "https://novaex.cc/fireworks.mp4", 
             container:document.getElementById("video"),
+            thumbnails: {
+              col: 1,
+              row: 47,
+              total: 47,
+              source: "./assets/sprites.png",
+              interval: 6,
+            },
             subtitles:[ // 字幕
                 {
                     source: "http://127.0.0.1:5501/assets/subtitle.vtt",
@@ -63,7 +69,8 @@
               open: true,
               api: "https://bilibili-service.vercel.app/api/danmaku",
               type: "http"
-            }
+            },
+            title: "一首《打上花火》竟治愈了无数破碎的心灵！"
         });
       }
     </script>

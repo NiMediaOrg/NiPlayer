@@ -19,7 +19,7 @@ export class Controller extends Component implements ComponentItem {
   rightArea: HTMLElement; //代表最右侧的区域
   player: Player;
   // 控件
-  leftControllers: ComponentConstructor[] = [PlayButton,Volume, DutaionShow];
+  leftControllers: ComponentConstructor[] = [PlayButton, Volume, DutaionShow];
   rightController: ComponentConstructor[] = [SubSetting,VideoShot,ScreenShot,PicInPic,FullPage,FullScreen];
   constructor(player: Player,container:HTMLElement,desc?:string) {
     super(container,desc);
