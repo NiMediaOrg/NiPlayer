@@ -1,5 +1,15 @@
 import { Component } from "../class/Component";
-import { DutaionShow, FullPage, FullScreen, PicInPic, PlayButton, ScreenShot, SubSetting, VideoShot, Volume } from "../component";
+import {
+  DutaionShow,
+  FullPage,
+  FullScreen,
+  PicInPic,
+  PlayButton,
+  ScreenShot,
+  SubSetting,
+  VideoShot,
+  Volume,
+} from "../component";
 import { SubsettingsBase } from "../component/ToolBar/BottomBar/parts/Subsettings/parts/SubsettingsBase";
 import { SubsettingItem } from "../component/ToolBar/BottomBar/parts/Subsettings/SubsettingItem";
 import { Player } from "../page/player";
@@ -13,6 +23,17 @@ export type PlayerOptions = {
   post?: string;
   autoPlay?: boolean;
   streamPlay?: boolean;
+  subtitles?: Subtitles[];
+  danmaku?: DanmakuOptions;
+  plugins?: Plugin[];
+  bilibiliMode?: boolean;
+  title?:
+    | string
+    | {
+        message: string;
+        style?: Partial<CSSStyleDeclaration>;
+      };
+  thumbnails?: Thumbnails;
   leftBottomBarControllers?: ComponentConstructor[];
   rightBottomBarControllers?: ComponentConstructor[];
   leftTopBarControllers?: ComponentConstructor[];
@@ -20,21 +41,13 @@ export type PlayerOptions = {
   leftMediumBarController?: ComponentConstructor[];
   mediumMediumBarController?: ComponentConstructor[];
   rightMediumBarController?: ComponentConstructor[];
-  subtitles?: Subtitles[];
-  danmaku?: DanmakuOptions;
-  plugins?: Plugin[];
-  bilibiliMode?: boolean;
-  title?: string | {
-    message: string,
-    style?: Partial<CSSStyleDeclaration>;
-  };
 };
 
 export type DanmakuOptions = {
   open: boolean;
   api?: string;
-  type?: "websocket" | "http"
-}
+  type?: "websocket" | "http";
+};
 
 export type Subtitles = {
   default?: boolean;
@@ -42,6 +55,17 @@ export type Subtitles = {
   source: string;
   lang: "zh" | "en" | "jp";
   style?: Partial<CSSStyleDeclaration>;
+};
+
+export interface Thumbnails {
+  row: number; // 精灵图的行数
+  col: number; // 列数
+  total: number; // 精灵图的总数
+  margin: number; // 距离上下左右的像素大小
+  source: string; // 资源的地址
+  interval: number; //间隔时间
+  width: number;
+  height: number;
 }
 
 export type DOMProps = {
@@ -66,13 +90,13 @@ export interface SubsettingsItem {
   leftText?: string;
   rightTip?: string;
   rightIcon?: SVGSVGElement | HTMLElement;
-  instance? : SubsettingItem; //自身item对应的实例
+  instance?: SubsettingItem; //自身item对应的实例
   click?: (item: SubsettingsItem) => any;
   target?: SubsettingsBase | SubsettingsBaseConstructor; //该item对应的点击后需要跳转的SubsettingsBase实例对象
 }
 
 export interface SubsettingsBaseConstructor {
-  new (subsetting:SubSetting,player:Player): SubsettingsBase;
+  new (subsetting: SubSetting, player: Player): SubsettingsBase;
 
   instance?: SubsettingsBase;
 }
@@ -97,7 +121,7 @@ export interface ComponentConstructor {
     props?: DOMProps,
     children?: string | Node[]
   ): Component & ComponentItem;
-}
+} // 组件的构造函数
 
 // 存储内置组件的ID，用于在用户注册组件时区分是自定义组件还是内置组件
 export type BuiltInComponentID =
@@ -113,17 +137,17 @@ export type BuiltInComponentID =
   | "FullScreen";
 
 export type ComponentMap = {
-  PlayButton: PlayButton,
-  Volume: Volume,
-  FullScreen: FullScreen,
-  DutaionShow: DutaionShow,
-  SubSetting: SubSetting,
-  VideoShot: VideoShot,
-  ScreenShot: ScreenShot,
-  PicInPic: PicInPic,
-  FullPage: FullPage,
-  [props: string]: ComponentItem
-}
+  PlayButton: PlayButton;
+  Volume: Volume;
+  FullScreen: FullScreen;
+  DutaionShow: DutaionShow;
+  SubSetting: SubSetting;
+  VideoShot: VideoShot;
+  ScreenShot: ScreenShot;
+  PicInPic: PicInPic;
+  FullPage: FullPage;
+  [props: string]: ComponentItem;
+};
 
 //对应最顶层的ToolBar的注册选项
 export type TopToolBarOptions = {
@@ -138,7 +162,7 @@ export type BottomToolBarOptions = {
 
 export type AnyPositionOptions = {
   type: "AnyPosition";
-}
+};
 
 // 注册组件时的选项
 export type RegisterComponentOptions = {
@@ -155,9 +179,9 @@ export type AxiosConfig = {
   baseURL?: string;
   header?: RequestHeader;
   timeout?: number;
-}
+};
 
 export type AxiosOptions = {
   header?: RequestHeader;
-  query?: {[props:string]: any}
-}
+  query?: { [props: string]: any };
+};
