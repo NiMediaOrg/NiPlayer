@@ -38,7 +38,8 @@ export class DanmakuController {
       options
     );
     this.instance = new Axios({
-      baseURL: ""
+      baseURL: "",
+      timeout: this.options.timeout ?? null
     })
     this.init();
   }
@@ -210,7 +211,7 @@ export class DanmakuController {
     this.instance.get(this.options.api,{
       query:{
         time: this.player.video.currentTime
-      }
+      },
     }).then((value: DanmakuData[]) => {
       for(let data of value) {
         this.danmaku.addData(data);

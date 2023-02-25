@@ -27,7 +27,9 @@ export class ContextMenu extends Component implements ComponentItem {
 
   // 初始化基础的菜单选项
   initComponent() {
-    this.registerContextMenu("统计信息");
+    this.registerContextMenu("统计信息", function(item: ComponentItem) {
+        
+    });
     this.registerContextMenu(`NiPlayer ${pkg.version}`)
     this.registerContextMenu("关闭",function(item: ContextMenuItem) {
         this.el.style.display = "";

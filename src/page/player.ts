@@ -7,6 +7,7 @@ import {
   RegisterComponentOptions,
   ToolBar,
   UpdateComponentOptions,
+  Video,
 } from "../index";
 import { Component } from "../class/Component";
 import { $, addClass, patchComponent, removeClass } from "../utils/domUtils";
@@ -284,14 +285,8 @@ class Player extends Component implements ComponentItem {
       }
     });
 
-    this.el.addEventListener("mousedown", (e: MouseEvent) => {
-      if (
-        this.contextMenu.el.style.display &&
-        this.contextMenu.el.style.display !== "" &&
-        e.button === 0
-      ) {
-        this.contextMenu.el.style.display = "";
-      }
+    this.el.addEventListener("click", (e: MouseEvent) => {
+      this.contextMenu.el.style.display = "";
     });
 
     // 鼠标右键事件
@@ -356,6 +351,7 @@ class Player extends Component implements ComponentItem {
     }
   }
 
+  // 给video添加媒体资源，开始初始化媒体资源的解析
   attachSource(url: string) {
     // 是否启动流式播放
     if (this.playerOptions.streamPlay) {
@@ -583,6 +579,10 @@ class Player extends Component implements ComponentItem {
   // 注册一个设置选项
   registerSubsetting() {}
 
+  // 获取视频信息
+  getVideoInfo(): Video {
+    return {}
+  }
   /**
    * @description 注册对应的组件
    * @param plugin
