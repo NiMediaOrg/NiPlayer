@@ -33,6 +33,7 @@ class MediaPlayer {
         this.mp4boxfile.onMoovStart = function () {
             Log.info("Application", "Starting to parse movie information");
         }
+        // MP4的moov box解析成果后触发该事件
         this.mp4boxfile.onReady = function (info: MoovBoxInfo) {
             Log.info("Application", "Movie information received");
             ctx.mediaInfo = info;

@@ -7,6 +7,7 @@ import {
   RegisterComponentOptions,
   ToolBar,
   UpdateComponentOptions,
+  Video,
 } from "../index";
 import { Component } from "../class/Component";
 import { $, addClass, patchComponent, removeClass } from "../utils/domUtils";
@@ -32,6 +33,8 @@ import {
   SwipeEvent,
   wrap,
 } from "ntouch.js";
+import { ContextMenu } from "../component/ContextMenu/ContextMenu";
+import { ContextMenuItem } from "../component/ContextMenu/ContextMenuItem";
 class Player extends Component implements ComponentItem {
   readonly id = "Player";
   // 播放器的默认配置
@@ -43,6 +46,7 @@ class Player extends Component implements ComponentItem {
   video: HTMLVideoElement;
   container: HTMLElement;
   props: DOMProps;
+  contextMenu: ContextMenu;
   toolBar: ToolBar;
   topbar: TopBar;
   loading: TimeLoading;
@@ -111,6 +115,7 @@ class Player extends Component implements ComponentItem {
     this.error = new ErrorLoading(this, "你的网络罢工啦Q_Q", this.el);
     this.toolBar = new ToolBar(this, this.el, "div");
     this.topbar = new TopBar(this, this.el, "div");
+    this.contextMenu = new ContextMenu(this, this.el, "div");
     if (
       this.playerOptions.subtitles &&
       this.playerOptions.subtitles.length > 0
@@ -243,7 +248,6 @@ class Player extends Component implements ComponentItem {
       if (!this.video.paused) this.emit(EVENT.HIDE_TOOLBAR, e);
     };
 
-    
     // 键盘事件
     document.addEventListener("keyup", (e) => {
       console.log(e.key);
@@ -266,7 +270,7 @@ class Player extends Component implements ComponentItem {
           }
           break;
         case "ArrowTop":
-          
+
         case "ArrowDown":
 
         case "":
@@ -279,6 +283,19 @@ class Player extends Component implements ComponentItem {
           }
           break;
       }
+    });
+
+    this.el.addEventListener("click", (e: MouseEvent) => {
+      this.contextMenu.el.style.display = "";
+    });
+
+    // 鼠标右键事件
+    this.el.addEventListener("contextmenu", (e) => {
+      e.preventDefault();
+
+      this.contextMenu.el.style.display = "block";
+      this.contextMenu.el.style.top = e.offsetY + "px";
+      this.contextMenu.el.style.left = e.offsetX + "px";
     });
   }
 
@@ -334,6 +351,7 @@ class Player extends Component implements ComponentItem {
     }
   }
 
+  // 给video添加媒体资源，开始初始化媒体资源的解析
   attachSource(url: string) {
     // 是否启动流式播放
     if (this.playerOptions.streamPlay) {
@@ -550,6 +568,21 @@ class Player extends Component implements ComponentItem {
     ONCE_COMPONENT_STORE.delete(id);
   }
 
+  // 注册一个右击菜单项
+  registerContextMenu(
+    content: string | HTMLElement,
+    click?: (item: ContextMenuItem) => any
+  ) {
+    this.contextMenu.registerContextMenu(content,click);
+  }
+
+  // 注册一个设置选项
+  registerSubsetting() {}
+
+  // 获取视频信息
+  getVideoInfo(): Video {
+    return {}
+  }
   /**
    * @description 注册对应的组件
    * @param plugin

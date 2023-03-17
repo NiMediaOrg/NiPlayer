@@ -47,6 +47,7 @@ export type DanmakuOptions = {
   open: boolean;
   api?: string;
   type?: "websocket" | "http";
+  timeout?: number;
 };
 
 export type Subtitles = {
@@ -66,6 +67,19 @@ export interface Thumbnails {
   interval: number; //间隔时间
   width: number;
   height: number;
+}
+
+export type Video = {
+  url?: string; //视频的源地址
+  volume?: number;// 视频的音量
+  time?: string;// 视频的当前时间
+  duration?: number;// 视频的总时长
+  frameRate?: number; //视频的帧率 kps;
+  brandRate?: number; //视频的码率 bps
+  videoCodec?: string; //视频的编码方式
+  audioCodec?: string;// 音频的编码方式
+  lastUpdateTime?: string; //视频最后一次更新时间
+  isFragmented?: string; //是否为fragmented类型的mp4文件
 }
 
 export type DOMProps = {
@@ -178,10 +192,10 @@ export type UpdateComponentOptions = {
 export type AxiosConfig = {
   baseURL?: string;
   header?: RequestHeader;
-  timeout?: number;
+  timeout?: number; //请求的超时时长
 };
 
 export type AxiosOptions = {
-  header?: RequestHeader;
-  query?: { [props: string]: any };
+  header?: RequestHeader; //请求头
+  query?: { [props: string]: any }; // get请求的查询参数
 };
