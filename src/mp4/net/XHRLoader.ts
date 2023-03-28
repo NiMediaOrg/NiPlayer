@@ -1,4 +1,4 @@
-import { XHRConfig } from "../../types/mp4";
+import { XHRConfig } from "@/types/mp4";
 
 export class XHRLoader {
 

@@ -1,4 +1,4 @@
-import { DanmakuData } from "../../types/danmaku";
+import { DanmakuData } from "@/types/danmaku";
 
 export class PriorityQueue<T extends DanmakuData> {
   readonly queue: T[];

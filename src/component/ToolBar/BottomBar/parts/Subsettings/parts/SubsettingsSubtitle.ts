@@ -1,13 +1,13 @@
-import { Player } from "../../../../../../page/player";
+import { Player } from "@/page/player";
 import {
   leftarrowPath,
   subtitleShowPath,
   switchOffPath,
   switchOnPath,
-} from "../../../../../../svg";
-import { SubsettingsItem } from "../../../../../../types/Player";
-import { storeControlComponent } from "../../../../../../utils";
-import { $, addClass, createSvg } from "../../../../../../utils/domUtils";
+} from "@/svg";
+import { SubsettingsItem } from "@/types/Player";
+import { storeControlComponent } from "@/utils";
+import { $, addClass, createSvg } from "@/utils/domUtils";
 import { SubSetting } from "../SubSetting";
 import { SubsettingsBase } from "./SubsettingsBase";
 import { SubsettingsMain } from "./SubsettingsMain";

@@ -1,10 +1,10 @@
 import { MoveEvent, SwipeEvent } from "ntouch.js";
-import { EVENT } from "../../../../events";
-import { Player } from "../../../../page/player";
-import { Thumbnails } from "../../../../types/Player";
-import { formatTime, getDOMPoint } from "../../../../utils";
-import { $, addClass, removeClass } from "../../../../utils/domUtils";
-import { Progress } from "../../../Progress/Progress";
+import { EVENT } from "@/events";
+import { Player } from "@/page/player";
+import { Thumbnails } from "@/types/Player";
+import { formatTime, getDOMPoint } from "@/utils";
+import { $, addClass, removeClass } from "@/utils/domUtils";
+import { Progress } from "@/component/Progress/Progress";
 
 export class VideoProgress extends Progress {
   readonly id = "VideoProgress";

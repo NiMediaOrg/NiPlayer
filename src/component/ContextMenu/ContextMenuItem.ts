@@ -1,4 +1,4 @@
-import { $ } from "../../utils";
+import { $ } from "@/utils";
 
 export class ContextMenuItem {
   readonly id = "ContextMenuItem";

@@ -1,10 +1,10 @@
 import { MoveEvent, SwipeEvent } from "ntouch.js";
-import { Component } from "../../class/Component";
-import { EVENT } from "../../events";
-import { Player } from "../../page/player";
-import { ComponentItem, DOMProps,Node } from "../../types/Player";
-import { $, addClass, createSvg } from "../../utils/domUtils";
-import { volumePath$1 } from "../../svg";
+import { Component } from "@/class/Component";
+import { EVENT } from "@/events";
+import { Player } from "@/page/player";
+import { ComponentItem, DOMProps,Node } from "@/types/Player";
+import { $, addClass, createSvg } from "@/utils/domUtils";
+import { volumePath$1 } from "@/svg";
 import "./index.less"
 
 export class MobileVolume extends Component implements ComponentItem {

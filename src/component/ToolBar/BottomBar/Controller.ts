@@ -1,8 +1,8 @@
-import { Component } from "../../../class/Component";
-import { Player } from "../../../page/player";
-import { ComponentConstructor, ComponentItem } from "../../../types/Player";
-import { $ } from "../../../utils/domUtils";
-import { ONCE_COMPONENT_STORE, storeControlComponent } from "../../../utils/store";
+import { Component } from "@/class/Component";
+import { Player } from "@/page/player";
+import { ComponentConstructor, ComponentItem } from "@/types/Player";
+import { $ } from "@/utils/domUtils";
+import { ONCE_COMPONENT_STORE, storeControlComponent } from "@/utils/store";
 import { DutaionShow } from "./parts/DurationShow";
 import { FullPage } from "./parts/FullPage";
 import { FullScreen } from "./parts/FullScreen";

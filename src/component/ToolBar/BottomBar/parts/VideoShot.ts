@@ -1,9 +1,9 @@
-import { Player } from "../../../../page/player";
-import { DOMProps, Node } from "../../../../types/Player";
-import { $, addClass, createSvg, createSvgs, removeClass } from "../../../../utils/domUtils";
-import { storeControlComponent } from "../../../../utils/store";
-import { Toast } from "../../../Toast/Toast";
-import { confirmPath, countdownPath, videoShotPath$1, videoShotPath$2 } from "../../../../svg/index";
+import { Player } from "@/page/player";
+import { DOMProps, Node } from "@/types/Player";
+import { $, addClass, createSvg, removeClass } from "@/utils/domUtils";
+import { storeControlComponent } from "@/utils/store";
+import { Toast } from "@/component/Toast/Toast";
+import { confirmPath, countdownPath, videoShotPath$1 } from "@/svg/index";
 import { Options } from "./Options";
 export class VideoShot extends Options {
     readonly id = "VideoShot";

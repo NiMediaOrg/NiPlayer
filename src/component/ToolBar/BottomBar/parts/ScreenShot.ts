@@ -1,6 +1,6 @@
 import { SingleTapEvent, wrap } from "ntouch.js";
-import { Player } from "../../../../page/player";
-import { DOMProps, Node } from "../../../../types/Player";
+import { Player } from "@/page/player";
+import { DOMProps, Node } from "@/types/Player";
 import {
     $,
   addClass,
@@ -8,10 +8,10 @@ import {
   createSvgs,
   includeClass,
   removeClass,
-} from "../../../../utils/domUtils";
-import { storeControlComponent } from "../../../../utils/store";
-import { Toast } from "../../../Toast/Toast";
-import { confirmPath, screenShotPath } from "../../../../svg/index"
+} from "@/utils/domUtils";
+import { storeControlComponent } from "@/utils/store";
+import { Toast } from "@/component/Toast/Toast";
+import { confirmPath, screenShotPath } from "@/svg/index"
 import { Options } from "./Options";
 
 export class ScreenShot extends Options {

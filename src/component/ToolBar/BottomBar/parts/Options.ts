@@ -1,7 +1,7 @@
-import { Component } from "../../../../class/Component";
-import { EVENT } from "../../../../events";
-import { Player } from "../../../../page/player";
-import { ComponentItem, DOMProps, Node } from "../../../../types/Player";
+import { Component } from "@/class/Component";
+import { EVENT } from "@/events";
+import { Player } from "@/page/player";
+import { ComponentItem, DOMProps, Node } from "@/types/Player";
 import {
   $,
   addClass,

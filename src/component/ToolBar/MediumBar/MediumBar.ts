@@ -1,8 +1,8 @@
-import { Component } from "../../../class/Component";
-import { Player } from "../../../page/player";
-import { ComponentItem } from "../../../types/Player";
-import { $ } from "../../../utils/domUtils";
-import { storeControlComponent } from "../../../utils/store";
+import { Component } from "@/class/Component";
+import { Player } from "@/page/player";
+import { ComponentItem } from "@/types/Player";
+import { $ } from "@/utils/domUtils";
+import { storeControlComponent } from "@/utils/store";
 import { VideoProgress } from "./parts/VideoProgressBar";
 
 export class MediumBar extends Component implements ComponentItem {

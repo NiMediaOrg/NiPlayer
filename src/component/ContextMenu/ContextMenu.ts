@@ -1,7 +1,7 @@
-import { Component } from "../../class/Component";
-import { Player } from "../../page/player";
-import { ComponentItem } from "../../types/Player";
-import { addClass, storeControlComponent } from "../../utils";
+import { Component } from "@/class/Component";
+import { Player } from "@/page/player";
+import { ComponentItem } from "@/types/Player";
+import { addClass, storeControlComponent } from "@/utils";
 import { ContextMenuItem } from "./ContextMenuItem";
 
 import pkg from "../../../package.json"
