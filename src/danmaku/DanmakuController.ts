@@ -162,7 +162,6 @@ export class DanmakuController {
 
     this.video.addEventListener("pause", () => {
       //暂停所有的弹幕
-      console.log("pause")
       this.danmaku.pause();
     });
 
@@ -175,12 +174,10 @@ export class DanmakuController {
     })
 
     this.video.addEventListener("play", () => {
-      console.log("play")
       this.danmaku.resume();
     });
 
     this.video.addEventListener("canplay",() => {
-      console.log("canplay")
       this.danmaku.resume()
     })
 
