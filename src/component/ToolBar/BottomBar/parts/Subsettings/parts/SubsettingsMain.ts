@@ -1,13 +1,13 @@
-import { Player } from "../../../../../../page/player";
+import { Player } from "@/page/player";
 import {
   flipPath,
   playratePath,
   propotionPath$1,
   propotionPath$2,
   rightarrowPath,
-} from "../../../../../../svg";
-import { SubsettingsItem } from "../../../../../../types/Player";
-import { $, createSvg, createSvgs } from "../../../../../../utils/domUtils";
+} from "@/svg";
+import { SubsettingsItem } from "@/types/Player";
+import { $, createSvg, createSvgs } from "@/utils/domUtils";
 import { SubSetting } from "../SubSetting";
 import { SubsettingsBase } from "./SubsettingsBase";
 import { SubsettingsPlayrate } from "./SubsettingsPlayrate";

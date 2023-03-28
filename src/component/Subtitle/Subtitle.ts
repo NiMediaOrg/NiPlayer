@@ -1,13 +1,13 @@
 // 字幕功能  -- 包含外挂字幕以及软字幕
-import { Player } from "../../page/player";
-import { SubsettingsBaseConstructor, SubsettingsItem, Subtitles } from "../../types/Player";
-import HTTPRequest from "../../mp4/net/HTTPRequest";
-import { XHRLoader } from "../../mp4/net/XHRLoader";
-import { $, addClass, createSvg, createSvgs, removeClass } from "../../utils/domUtils";
-import { EVENT } from "../../events";
-import { nextTick } from "../../utils/nextTick";
+import { Player } from "@/page/player";
+import { SubsettingsBaseConstructor, SubsettingsItem, Subtitles } from "@/types/Player";
+import HTTPRequest from "@/mp4/net/HTTPRequest";
+import { XHRLoader } from "@/mp4/net/XHRLoader";
+import { $, addClass, createSvg, createSvgs, removeClass } from "@/utils/domUtils";
+import { EVENT } from "@/events";
+import { nextTick } from "@/utils/nextTick";
 import { SubsettingsSubtitle } from "../ToolBar/BottomBar/parts/Subsettings/parts/SubsettingsSubtitle";
-import { rightarrowPath, settingsConfirmPath, subtitlePath$1, subtitlePath$2 } from "../../svg";
+import { rightarrowPath, settingsConfirmPath, subtitlePath$1, subtitlePath$2 } from "@/svg";
 import { SubsettingItem } from "../ToolBar/BottomBar/parts/Subsettings/SubsettingItem";
 import { SubsettingsMain } from "../ToolBar";
 export class Subtitle {

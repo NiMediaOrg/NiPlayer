@@ -1,5 +1,5 @@
-import { Player } from "../../page/player";
-import { $ } from "../../utils";
+import { Player } from "@/page/player";
+import { $ } from "@/utils";
 
 export class ContextMenuInfo {
     readonly id = "ContextMenuInfo";

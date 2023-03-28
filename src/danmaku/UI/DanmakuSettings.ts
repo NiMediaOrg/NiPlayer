@@ -1,10 +1,9 @@
-import { Options, SubsettingsMain } from "../../component";
-import { SubsettingsDanmakuMain } from "../../component/ToolBar/BottomBar/parts/Subsettings/parts/danmaku/SubsettingsDanmakuMain";
-import { SubsettingsBase } from "../../component/ToolBar/BottomBar/parts/Subsettings/parts/SubsettingsBase";
-import { Player } from "../../page/player";
-import { danmakuPath$1, danmakuPath$2, rightarrowPath } from "../../svg";
-import { SubsettingsBaseConstructor } from "../../types/Player";
-import { createSvg, createSvgs, ONCE_COMPONENT_STORE } from "../../utils";
+import { SubsettingsMain } from "@/component";
+import { SubsettingsDanmakuMain } from "@/component/ToolBar/BottomBar/parts/Subsettings/parts/danmaku/SubsettingsDanmakuMain";
+import { Player } from "@/page/player";
+import { danmakuPath$1, danmakuPath$2, rightarrowPath } from "@/svg";
+import { SubsettingsBaseConstructor } from "@/types/Player";
+import { createSvg, createSvgs } from "@/utils";
 
 export class DanmakuSettings {
   readonly id = "DanmakuSettings";

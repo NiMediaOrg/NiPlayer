@@ -1,8 +1,8 @@
-import { Options } from "../../component";
-import { danmakuClosePath, danmakuOpenPath } from "../../svg/index";
-import { Player } from "../../page/player";
-import { DOMProps, Node } from "../../types/Player";
-import { $, addClass, createSvg } from "../../utils/domUtils";
+import { Options } from "@/component";
+import { danmakuClosePath, danmakuOpenPath } from "@/svg/index";
+import { Player } from "@/page/player";
+import { DOMProps, Node } from "@/types/Player";
+import { $, addClass, createSvg } from "@/utils/domUtils";
 
 export class DanmakuOpenClose extends Options {
   readonly id = "DanmakuOpenClose";

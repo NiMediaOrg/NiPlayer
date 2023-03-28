@@ -1,10 +1,10 @@
 import { SingleTapEvent } from "ntouch.js";
-import { Component } from "../../class/Component";
-import { EVENT } from "../../events";
-import { Node, ComponentItem, DOMProps, ComponentConstructor } from "../../index";
-import { Player } from "../../page/player";
-import { $, addClass, includeClass, removeClass } from "../../utils/domUtils";
-import { ONCE_COMPONENT_STORE, storeControlComponent } from "../../utils/store";
+import { Component } from "@/class/Component";
+import { EVENT } from "@/events";
+import { Node, ComponentItem, DOMProps, ComponentConstructor } from "@/index";
+import { Player } from "@/page/player";
+import { $, addClass, includeClass, removeClass } from "@/utils/domUtils";
+import { ONCE_COMPONENT_STORE, storeControlComponent } from "@/utils/store";
 
 export class TopBar extends Component implements ComponentItem {
   readonly id: string = "TopBar";

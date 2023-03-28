@@ -1,5 +1,5 @@
 import { Log } from "mp4box";
-import { RequestHeader } from "../../types/mp4";
+import { RequestHeader } from "@/types/mp4";
 import HTTPRequest from "./HTTPRequest";
 import  {XHRLoader}  from "./XHRLoader";
 class DownLoader {

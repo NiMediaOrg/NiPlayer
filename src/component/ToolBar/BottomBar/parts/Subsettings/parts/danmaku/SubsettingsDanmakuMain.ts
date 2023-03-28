@@ -1,7 +1,7 @@
-import { Player } from "../../../../../../../page/player";
-import { leftarrowPath, rightarrowPath } from "../../../../../../../svg";
-import { SubsettingsItem } from "../../../../../../../types/Player";
-import { $, createSvg } from "../../../../../../../utils";
+import { Player } from "@/page/player";
+import { leftarrowPath, rightarrowPath } from "@/svg";
+import { SubsettingsItem } from "@/types/Player";
+import { $, createSvg } from "@/utils";
 import { SubSetting } from "../../SubSetting";
 import { SubsettingsBase } from "../SubsettingsBase";
 import { SubsettingsMain } from "../SubsettingsMain";

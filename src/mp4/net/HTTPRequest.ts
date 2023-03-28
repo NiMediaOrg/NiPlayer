@@ -1,4 +1,4 @@
-import { RequestHeader, RequestMethod } from "../../types/mp4";
+import { RequestHeader, RequestMethod } from "@/types/mp4";
 
 export default class HTTPRequest {
     sendRequestTime: number | null;

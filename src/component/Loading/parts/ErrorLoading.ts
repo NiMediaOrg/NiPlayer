@@ -1,6 +1,6 @@
-import { EVENT } from "../../../events";
-import { Player } from "../../../page/player";
-import { addClass } from "../../../utils/domUtils";
+import { EVENT } from "@/events";
+import { Player } from "@/page/player";
+import { addClass } from "@/utils/domUtils";
 import { Loading } from "../Loading";
 
 export class ErrorLoading extends Loading {

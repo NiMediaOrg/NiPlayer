@@ -1,5 +1,5 @@
-import { Player } from "../../../../../page/player";
-import { $ } from "../../../../../utils/domUtils";
+import { Player } from "@/page/player";
+import { $ } from "@/utils/domUtils";
 
 export class SubsettingItem {
   el: HTMLElement;

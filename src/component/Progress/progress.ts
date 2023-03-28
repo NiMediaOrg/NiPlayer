@@ -1,8 +1,8 @@
-import { Component } from "../../class/Component";
-import { Player } from "../../page/player";
-import { ComponentItem } from "../../types/Player";
-import { EVENT } from "../../events";
-import { $, getDOMPoint } from "../../utils/domUtils";
+import { Component } from "@/class/Component";
+import { Player } from "@/page/player";
+import { ComponentItem } from "@/types/Player";
+import { EVENT } from "@/events";
+import { $, getDOMPoint } from "@/utils/domUtils";
 import { SingleTapEvent, wrap } from "ntouch.js";
 
 export class Progress extends Component implements ComponentItem {

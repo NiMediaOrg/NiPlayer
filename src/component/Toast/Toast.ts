@@ -1,7 +1,7 @@
-import { Component } from "../../class/Component";
-import { Player } from "../../page/player";
-import { ComponentItem, DOMProps } from "../../types/Player";
-import { addClass } from "../../utils/domUtils";
+import { Component } from "@/class/Component";
+import { Player } from "@/page/player";
+import { ComponentItem, DOMProps } from "@/types/Player";
+import { addClass } from "@/utils/domUtils";
 export class Toast extends Component implements ComponentItem {
   readonly id = "Toast";
   readonly player: Player;

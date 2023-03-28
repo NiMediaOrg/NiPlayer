@@ -1,10 +1,10 @@
 import { SingleTapEvent, wrap } from "ntouch.js";
-import { BaseEvent } from "../../../../../../class/BaseEvent";
-import { Player } from "../../../../../../page/player";
+import { BaseEvent } from "@/class/BaseEvent";
+import { Player } from "@/page/player";
 import {
   SubsettingsBaseConstructor,
   SubsettingsItem,
-} from "../../../../../../types/Player";
+} from "@/types/Player";
 import { SubSetting } from "../SubSetting";
 import { SubsettingItem } from "../SubsettingItem";
 

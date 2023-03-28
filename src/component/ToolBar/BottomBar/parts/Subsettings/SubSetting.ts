@@ -1,17 +1,17 @@
 import { Options } from "../Options";
-import { Player } from "../../../../../page/player";
-import { storeControlComponent } from "../../../../../utils/store";
-import { subSettingPath } from "../../../../../svg";
+import { Player } from "@/page/player";
+import { storeControlComponent } from "@/utils/store";
+import { subSettingPath } from "@/svg";
 import {
   $,
   addClass,
   createSvg,
   includeClass,
   removeClass,
-} from "../../../../../utils/domUtils";
+} from "@/utils/domUtils";
 import { SingleTapEvent, wrap } from "ntouch.js";
 import { SubsettingsMain } from "./parts/SubsettingsMain";
-import { SubsettingsBaseConstructor, SubsettingsItem } from "../../../../../types/Player";;
+import { SubsettingsBaseConstructor } from "@/types/Player";;
 import { SubsettingsBase } from "./parts/SubsettingsBase";
 
 export class SubSetting extends Options {

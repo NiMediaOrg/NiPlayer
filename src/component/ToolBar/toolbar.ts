@@ -1,15 +1,15 @@
 import { MoveEvent, SingleTapEvent } from "ntouch.js";
-import { Component } from "../../class/Component";
-import { EVENT } from "../../events";
+import { Component } from "@/class/Component";
+import { EVENT } from "@/events";
 import {
   Node,
   ComponentItem,
   DOMProps,
   Controller,
-} from "../../index";
-import { Player } from "../../page/player";
-import { addClass, includeClass, removeClass } from "../../utils/domUtils";
-import { storeControlComponent } from "../../utils/store";
+} from "@/index";
+import { Player } from "@/page/player";
+import { addClass, includeClass, removeClass } from "@/utils/domUtils";
+import { storeControlComponent } from "@/utils/store";
 import { MediumBar } from "./MediumBar/MediumBar";
 
 export class ToolBar extends Component implements ComponentItem {

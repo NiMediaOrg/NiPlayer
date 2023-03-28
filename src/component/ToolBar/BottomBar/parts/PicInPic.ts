@@ -1,9 +1,9 @@
 import { SingleTapEvent, wrap } from "ntouch.js";
-import { Player } from "../../../../page/player";
-import { DOMProps, Node } from "../../../../types/Player";
-import { addClass, createSvg } from "../../../../utils/domUtils";
-import { storeControlComponent } from "../../../../utils/store";
-import { picInPicPath } from "../../../../svg";
+import { Player } from "@/page/player";
+import { DOMProps, Node } from "@/types/Player";
+import { addClass, createSvg } from "@/utils/domUtils";
+import { storeControlComponent } from "@/utils/store";
+import { picInPicPath } from "@/svg";
 import { Options } from "./Options";
 
 export class PicInPic extends Options {
