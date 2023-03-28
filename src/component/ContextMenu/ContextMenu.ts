@@ -36,6 +36,7 @@ export class ContextMenu extends Component implements ComponentItem {
     })
   }
 
+   // 注册右击菜单选项
   registerContextMenu(
     content: string | HTMLElement,
     click?: (item: ContextMenuItem, e?: Event) => any
