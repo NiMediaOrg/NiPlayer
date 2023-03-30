@@ -2,9 +2,10 @@ import MP4Box ,{ MP4File, Log, MP4ArrayBuffer, MP4SourceBuffer } from "mp4box"
 import { Player } from "../page/player";
 import { MoovBoxInfo, MediaTrack } from "../types/mp4";
 import { DownLoader } from "./net/DownLoader";
+// 使用MediaPlayer来接管对mp4视频文件的流式播放
 class MediaPlayer {
     url: string;
-    player:Player;
+    player: Player;
     mp4boxfile: MP4File;
     mediaSource: MediaSource;
     mediaInfo: MoovBoxInfo;
@@ -30,12 +31,13 @@ class MediaPlayer {
             this.loadFile()
         })
 
+        // 开始解析moov box时触发该事件
         this.mp4boxfile.onMoovStart = function () {
             Log.info("Application", "Starting to parse movie information");
         }
-        // MP4的moov box解析成果后触发该事件
+        // moov box解析成功后触发该事件
         this.mp4boxfile.onReady = function (info: MoovBoxInfo) {
-            Log.info("Application", "Movie information received");
+            
             ctx.mediaInfo = info;
             if (info.isFragmented) {
                 ctx.mediaSource.duration = info.fragment_duration / info.timescale;
@@ -55,8 +57,7 @@ class MediaPlayer {
             ctx.onUpdateEnd.call(sb, true, false, ctx);
         }
 
-        this.player.on("seeking",(e) => {
-            console.log("seeking")
+        this.player.on("seeking",(e: Event) => {
             var i, start, end;
             var seek_info;
             var video = this.player.video;
