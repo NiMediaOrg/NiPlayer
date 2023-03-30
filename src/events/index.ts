@@ -33,5 +33,6 @@ export enum EVENT {
     SLIDE_HORIZONTAL = "slideHorizontal",
     VOLUME_PROGRESS_CLICK = "volume-progress-click",
     REQUEST_DANMAKU_DATA = "RequestDanmakuData",
-    SEND_DANMAKU_DATA = "SendDanmakuData"
+    SEND_DANMAKU_DATA = "SendDanmakuData",
+    MOOV_PARSE_READY = "MoovParseReady"
 }

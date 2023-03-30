@@ -15,7 +15,7 @@ class DownLoader {
 	callback: Function = null;
 	eof: boolean = false;
     loader: XHRLoader;
-    constructor(url?:string) {
+    constructor(url?: string) {
         this.url = url || "";
         this.loader = new XHRLoader();
     }
