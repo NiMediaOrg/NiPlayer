@@ -44,6 +44,7 @@ class Player extends Component implements ComponentItem {
   private videoInfo: Video;
   enableSeek = true;
   env = Env.env;
+  // 保存当前运行环境的全屏模式，主要用于移动端-- 竖版全屏和横板全屏
   fullScreenMode: "Vertical" | "Horizontal" = "Horizontal";
   video: HTMLVideoElement;
   container: HTMLElement;
@@ -588,9 +589,6 @@ class Player extends Component implements ComponentItem {
   getVideoInfo(): Video {
     return this.videoInfo;
   }
-
-
-
   // 设置视频信息
   setVideoInfo(info:Video): void {
     this.videoInfo = info;
