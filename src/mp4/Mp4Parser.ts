@@ -78,6 +78,4 @@ export class Mp4Parser {
 
         this.downloader.start();
     }
-
-
 }

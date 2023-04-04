@@ -1,4 +1,5 @@
 import {
+  ComponentConstructor,
   ComponentItem,
   DanmakuController,
   DOMProps,
@@ -44,6 +45,7 @@ class Player extends Component implements ComponentItem {
   private videoInfo: Video;
   enableSeek = true;
   env = Env.env;
+  // 保存当前运行环境的全屏模式，主要用于移动端-- 竖版全屏和横板全屏
   fullScreenMode: "Vertical" | "Horizontal" = "Horizontal";
   video: HTMLVideoElement;
   container: HTMLElement;
@@ -581,6 +583,20 @@ class Player extends Component implements ComponentItem {
     this.contextMenu.registerContextMenu(content,click);
   }
 
+  // 注册一个底部的Controller类型的组件
+  registerControllers(component: ComponentConstructor, pos: "left" | "medium" | "right") {
+    if(pos === "left") {
+      if(!this.playerOptions.leftBottomBarControllers) this.playerOptions.leftBottomBarControllers = [];
+      this.playerOptions.leftBottomBarControllers.push(component);
+    }else if(pos === "medium") {
+      if(!this.playerOptions.mediumMediumBarController) this.playerOptions.mediumMediumBarController = [];
+      this.playerOptions.mediumMediumBarController.push(component);
+    }else {
+      if(!this.playerOptions.rightBottomBarControllers) this.playerOptions.rightBottomBarControllers = [];
+      this.playerOptions.rightBottomBarControllers.push(component);
+    }
+  }
+
   // 注册一个设置选项
   registerSubsetting() {}
 
@@ -588,9 +604,6 @@ class Player extends Component implements ComponentItem {
   getVideoInfo(): Video {
     return this.videoInfo;
   }
-
-
-
   // 设置视频信息
   setVideoInfo(info:Video): void {
     this.videoInfo = info;

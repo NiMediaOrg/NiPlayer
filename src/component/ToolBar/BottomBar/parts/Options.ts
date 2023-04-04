@@ -8,7 +8,7 @@ import {
   checkIsMouseInRange,
   includeClass,
   removeClass,
-} from "../../../../utils/domUtils";
+} from "@/utils/domUtils";
 
 export class Options extends Component implements ComponentItem {
   id = "Options";
