@@ -1,4 +1,5 @@
 import {
+  ComponentConstructor,
   ComponentItem,
   DanmakuController,
   DOMProps,
@@ -580,6 +581,20 @@ class Player extends Component implements ComponentItem {
     click?: (item: ContextMenuItem) => any
   ) {
     this.contextMenu.registerContextMenu(content,click);
+  }
+
+  // 注册一个底部的Controller类型的组件
+  registerControllers(component: ComponentConstructor, pos: "left" | "medium" | "right") {
+    if(pos === "left") {
+      if(!this.playerOptions.leftBottomBarControllers) this.playerOptions.leftBottomBarControllers = [];
+      this.playerOptions.leftBottomBarControllers.push(component);
+    }else if(pos === "medium") {
+      if(!this.playerOptions.mediumMediumBarController) this.playerOptions.mediumMediumBarController = [];
+      this.playerOptions.mediumMediumBarController.push(component);
+    }else {
+      if(!this.playerOptions.rightBottomBarControllers) this.playerOptions.rightBottomBarControllers = [];
+      this.playerOptions.rightBottomBarControllers.push(component);
+    }
   }
 
   // 注册一个设置选项
