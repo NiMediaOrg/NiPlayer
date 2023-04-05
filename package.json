@@ -1,6 +1,6 @@
 {
   "name": "niplayer",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "description": "This is a TS library for video player",
   "main": "./dist/player.esm.js",
   "types": "./dist/index.d.ts",
@@ -27,6 +27,7 @@
     "@rollup/plugin-html": "^1.0.2",
     "@rollup/plugin-json": "^6.0.0",
     "@rollup/plugin-node-resolve": "^15.0.1",
+    "@rollup/plugin-replace": "^5.0.2",
     "@rollup/plugin-terser": "^0.4.0",
     "@rollup/plugin-typescript": "^10.0.1",
     "@types/node": "^18.13.0",
@@ -38,6 +39,8 @@
     "rollup": "^2.79.1",
     "rollup-plugin-dts": "^4.1.0",
     "rollup-plugin-livereload": "^2.0.5",
+    "rollup-plugin-node-builtins": "^2.1.2",
+    "rollup-plugin-node-globals": "^1.4.0",
     "rollup-plugin-node-polyfills": "^0.2.1",
     "rollup-plugin-postcss": "^4.0.2",
     "rollup-plugin-serve": "^2.0.2",
@@ -59,6 +62,6 @@
     "be-full": "^0.1.4",
     "mp4box": "^0.5.2",
     "ntouch.js": "^1.1.0",
-    "socket.io-client": "^4.6.0"
+    "socket.io-client": "4.6.0"
   }
 }
