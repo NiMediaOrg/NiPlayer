@@ -1,6 +1,6 @@
 {
   "name": "niplayer",
-  "version": "1.3.6",
+  "version": "1.4.0",
   "description": "This is a TS library for video player",
   "main": "./dist/player.esm.js",
   "types": "./dist/index.d.ts",
@@ -8,6 +8,7 @@
     "dev": "rollup -c script/rollup.config.dev.js --watch",
     "build": "rollup -c script/rollup.config.prod.js",
     "build:tsc": "tsc",
+    "build:dts": "dts-bundle-generator -o ./dist/index.d.ts ./src/index.ts --project tsconfig.json  --no-check",
     "test": "vitest",
     "coverage": "vitest run --coverage"
   },
@@ -31,6 +32,7 @@
     "@types/node": "^18.13.0",
     "@vitest/coverage-c8": "^0.27.2",
     "autoprefixer": "^8.0.0",
+    "dts-bundle-generator": "^8.0.0",
     "less": "^4.1.3",
     "postcss": "^8.4.21",
     "rollup": "^2.79.1",
