@@ -36,14 +36,15 @@ export class VideoProgress extends Progress {
           margin: 0,
         },
         this.player.playerOptions.thumbnails
-      );
+      )
+      this.thumbnails = $("div.video-progress-thumbnails");
+      this.thumbnails.style.height = this.thumbnailsOptions.height + "px";
+      this.thumbnails.style.width = this.thumbnailsOptions.width + "px";
     }
     this.preTime = $("div.video-progress-pretime");
-    this.thumbnails = $("div.video-progress-thumbnails");
-
-    this.thumbnails.style.height = this.thumbnailsOptions.height + "px";
-    this.thumbnails.style.width = this.thumbnailsOptions.width + "px";
-    this.el.append(this.preTime, this.thumbnails);
+    
+    this.el.append(this.preTime);
+    this.thumbnails && this.el.append(this.thumbnails);
     addClass(this.el, ["video-progress"]);
     addClass(this.dot, ["video-progress-dot", "video-progress-dot-hidden"]);
     addClass(this.completedProgress, ["video-progress-completed"]);
@@ -91,7 +92,7 @@ export class VideoProgress extends Progress {
   initPCEvent(): void {
     this.el.addEventListener("mouseenter", (e: MouseEvent) => {
       this.preTime.style.display = "block";
-      this.thumbnails.style.display = "block";
+      if(this.thumbnails) this.thumbnails.style.display = "block";
       let left = e.clientX - getDOMPoint(this.el).x;
       this.preTime.style.left = left - this.preTime.clientWidth / 2 + "px";
       let time = formatTime(
@@ -112,17 +113,19 @@ export class VideoProgress extends Progress {
       this.preTime.style.left = left - this.preTime.clientWidth / 2 + "px";
       this.preTime.innerText = time;
 
-      if (left - this.thumbnails.clientWidth / 2 >= 0) {
-        this.thumbnails.style.left =
-          left - this.thumbnails.clientWidth / 2 + "px";
-      } else {
-        this.thumbnails.style.left = 0 + "px";
+      if(this.thumbnails) {
+        if (left - this.thumbnails.clientWidth / 2 >= 0) {
+          this.thumbnails.style.left =
+            left - this.thumbnails.clientWidth / 2 + "px";
+        } else {
+          this.thumbnails.style.left = 0 + "px";
+        }
       }
     });
 
     this.el.addEventListener("mouseleave", () => {
       this.preTime.style.display = "";
-      this.thumbnails.style.display = "";
+      if(this.thumbnails) this.thumbnails.style.display = "";
     });
 
     this.on(EVENT.PROGRESS_CLICK, (dx: number, ctx: Progress) => {
