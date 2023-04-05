@@ -5,7 +5,7 @@ import { Danmaku } from "./Danmaku";
 import { DanmakuInput } from "./UI/DanmakuInput";
 import { DanmakuOpenClose } from "./UI/DanmakuOpenClose";
 import { DanmakuSettings } from "./UI/DanmakuSettings";
-import io from "socket.io-client/dist/socket.io";
+import * as io from "socket.io-client";
 import "../utils/polyfill";
 import { $, addClass, removeClass } from "../utils/domUtils";
 import { Axios } from "../utils/net";
@@ -66,7 +66,7 @@ export class DanmakuController {
 
   //TODO 初始化websocket连接
   initWebSocket() {
-    const socket = io(this.options.api, {
+    const socket = io.io(this.options.api, {
       transports: ["websocket", "polling"],
     });
 

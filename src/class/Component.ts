@@ -1,4 +1,4 @@
-import { $, addClass } from "../utils/domUtils";
+import { $, addClass } from "@/utils/domUtils";
 import { BaseEvent } from "./BaseEvent";
 import { DOMProps, Node } from "../types/Player";
 

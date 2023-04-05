@@ -5,6 +5,7 @@ import { storeControlComponent } from "@/utils/store";
 import { Toast } from "@/component/Toast/Toast";
 import { confirmPath, countdownPath, videoShotPath$1 } from "@/svg/index";
 import { Options } from "./Options";
+import { HTMLMediaElementWithCaputreStream } from "@/class/HTMLMediaElementWithCaputreStream";
 export class VideoShot extends Options {
     readonly id = "VideoShot";
     player: Player;

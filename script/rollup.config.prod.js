@@ -3,14 +3,17 @@ import postcss from 'rollup-plugin-postcss'
 import autoprefixer from 'autoprefixer'
 import { defineConfig } from "rollup";
 import { nodeResolve } from "@rollup/plugin-node-resolve";
-import nodePolyfills from 'rollup-plugin-node-polyfills';
 import json from '@rollup/plugin-json';
 import commonjs from '@rollup/plugin-commonjs';
 import { babel } from '@rollup/plugin-babel';
 import terser from '@rollup/plugin-terser';
 import alias from '@rollup/plugin-alias';
+// 用于在导入socket.io-client包时进行Polyfill，因为该库中引入了很多只在node环境下才具有的第三方包例如http,stream,buffer等
+// 因此需要导入 'rollup-plugin-node-builtins' 和 "rollup-plugin-node-globals"进行Polyfill
+import builtins from 'rollup-plugin-node-builtins'
+import globals from "rollup-plugin-node-globals";
+import replace from '@rollup/plugin-replace';
 const path = require("path")
-const extensions = [".ts","less"];
 
 export default defineConfig({
     input:"./src/index.ts",
@@ -49,12 +52,13 @@ export default defineConfig({
          //ts插件让rollup读取ts文件
       ts(),
       nodeResolve({
-        extensions,
-        preferBuiltins: true,
-        
+        browser: true
       }),
-      nodePolyfills({
-        exclude: ["/node_modules/.pnpm/axios@1.3.3"]
+      builtins(),
+      globals(),
+      replace({
+        "process.env.NODE_ENV": JSON.stringify("development"),
+        preventAssignment: true
       }),
       json(),
       babel(),
