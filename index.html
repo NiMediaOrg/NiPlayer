@@ -33,46 +33,46 @@
         let player = new Player.default({
             url: "https://novaex.cc/fireworks.mp4", 
             container:document.getElementById("video"),
-            streamPlay: true,
-            thumbnails: { // 缩略图设置选项
-              col: 1,
-              row: 47,
-              total: 47,
-              source: "https://novaex.cc/sprites.png",
-              interval: 6,
-            },
-            subtitles: [ // 字幕
-                {
-                    source: "http://127.0.0.1:5501/assets/subtitle.vtt",
-                    tip: "Bilingual",
-                    lang: "en",
-                    default: true,
-                    style: {
-                      backgroundColor: "yellow",
-                      color: "red"
-                    }
-                },
-                {
-                    source: "http://127.0.0.1:5501/assets/subtitle.zn.vtt",
-                    tip:"Chinese",
-                    lang: "zh",
-                    style: {
-                      color: "green"
-                    }
-                },
-                {
-                    source: "http://127.0.0.1:5501/assets/subtitle.jp.vtt",
-                    tip:"Japanese",
-                    lang: "jp"
-                }
-            ],
-            danmaku: { //弹幕
-              open: true,
-              api: "https://bilibili-service.vercel.app/api/danmaku",
-              type: "http",
-              timeout: 5000
-            },
-            title: "一首《打上花火》竟治愈了无数破碎的心灵！"
+            // streamPlay: true,
+            // thumbnails: { // 缩略图设置选项
+            //   col: 1,
+            //   row: 47,
+            //   total: 47,
+            //   source: "https://novaex.cc/sprites.png",
+            //   interval: 6,
+            // },
+            // subtitles: [ // 字幕
+            //     {
+            //         source: "http://127.0.0.1:5501/assets/subtitle.vtt",
+            //         tip: "Bilingual",
+            //         lang: "en",
+            //         default: true,
+            //         style: {
+            //           backgroundColor: "yellow",
+            //           color: "red"
+            //         }
+            //     },
+            //     {
+            //         source: "http://127.0.0.1:5501/assets/subtitle.zn.vtt",
+            //         tip:"Chinese",
+            //         lang: "zh",
+            //         style: {
+            //           color: "green"
+            //         }
+            //     },
+            //     {
+            //         source: "http://127.0.0.1:5501/assets/subtitle.jp.vtt",
+            //         tip:"Japanese",
+            //         lang: "jp"
+            //     }
+            // ],
+            // danmaku: { //弹幕
+            //   open: true,
+            //   api: "https://bilibili-service.vercel.app/api/danmaku",
+            //   type: "http",
+            //   timeout: 5000
+            // },
+            // title: "一首《打上花火》竟治愈了无数破碎的心灵！"
         });
       }
     </script>
