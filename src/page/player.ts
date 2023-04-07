@@ -4,6 +4,7 @@ import {
   DanmakuController,
   DOMProps,
   FullScreen,
+  getExtension,
   PlayerOptions,
   RegisterComponentOptions,
   ToolBar,
@@ -95,14 +96,16 @@ class Player extends Component implements ComponentItem {
     // 初始化媒体的播放源
     this.playerOptions?.url && this.attachSource(this.playerOptions.url);
 
+    this.initPlugin();
     this.initComponent();
     this.initTemplate();
     this.initEvent();
-    this.initPlugin();
+    
     this.initResizeObserver();
     this.checkFullScreenMode();
   }
 
+  // 在所有组件初始化完成之后对player的整体模板进行初始化
   initTemplate(): void {
     if (this.env === "Mobile") {
       // 如果是在移动端，则音量的调节使用手势决定的.
@@ -111,6 +114,7 @@ class Player extends Component implements ComponentItem {
     }
   }
 
+  // 对包含的所有组件进行初始化
   initComponent(): void {
     this.loading = new TimeLoading(
       this,
@@ -348,6 +352,7 @@ class Player extends Component implements ComponentItem {
     });
   }
 
+  // 初始化插件
   private initPlugin() {
     if (this.playerOptions.plugins) {
       this.playerOptions.plugins.forEach((plugin) => {
@@ -359,11 +364,15 @@ class Player extends Component implements ComponentItem {
   // 给video添加媒体资源，开始初始化媒体资源的解析
   attachSource(url: string) {
     // 是否启动流式播放
-    new Mp4Parser(url,this);
-    if (this.playerOptions.streamPlay) {
-      new Mp4MediaPlayer(url, this);
-    } else {
-      this.video.src = url;
+    let extension = getExtension(url);
+    this.emit(EVENT.SOURCE_ATTACHED, url); // 触发资源加载完毕事件
+    if(extension === "mp4") {
+      new Mp4Parser(url,this);
+      if (this.playerOptions.streamPlay) {
+        new Mp4MediaPlayer(url, this);
+      } else {
+        this.video.src = url;
+      }
     }
   }
 
@@ -587,13 +596,13 @@ class Player extends Component implements ComponentItem {
   registerControllers(component: ComponentConstructor, pos: "left" | "medium" | "right") {
     if(pos === "left") {
       if(!this.playerOptions.leftBottomBarControllers) this.playerOptions.leftBottomBarControllers = [];
-      this.playerOptions.leftBottomBarControllers.push(component);
+      this.playerOptions.leftBottomBarControllers.unshift(component);
     }else if(pos === "medium") {
       if(!this.playerOptions.mediumMediumBarController) this.playerOptions.mediumMediumBarController = [];
-      this.playerOptions.mediumMediumBarController.push(component);
+      this.playerOptions.mediumMediumBarController.unshift(component);
     }else {
       if(!this.playerOptions.rightBottomBarControllers) this.playerOptions.rightBottomBarControllers = [];
-      this.playerOptions.rightBottomBarControllers.push(component);
+      this.playerOptions.rightBottomBarControllers.unshift(component);
     }
   }
 
