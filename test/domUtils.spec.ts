@@ -1,4 +1,4 @@
-import {test,expect} from "vitest"
+import { test,expect } from "vitest"
 const SELECTOR_REG = /([\w-]+)?(?:#([\w-]+))?(?:\.([\w-]+))?/;
 function regxMatch(str: string) {
     let regArray = SELECTOR_REG.exec(str);

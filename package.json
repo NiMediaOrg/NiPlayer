@@ -1,6 +1,6 @@
 {
   "name": "niplayer",
-  "version": "1.4.2",
+  "version": "1.4.3",
   "description": "This is a TS library for video player",
   "main": "./dist/player.esm.js",
   "types": "./dist/index.d.ts",
@@ -46,6 +46,7 @@
     "rollup-plugin-serve": "^2.0.2",
     "rollup-plugin-typescript2": "^0.34.1",
     "typescript": "^4.9.5",
+    "vite": "^4.2.1",
     "vitest": "^0.27.2"
   },
   "author": "novani",
