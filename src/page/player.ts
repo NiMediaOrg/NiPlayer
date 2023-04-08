@@ -139,6 +139,7 @@ class Player extends Component implements ComponentItem {
     }
   }
 
+  // 初始化公有的事件
   initEvent() {
     if (this.env === "Mobile") {
       this.initMobileEvent();
@@ -237,6 +238,7 @@ class Player extends Component implements ComponentItem {
     });
   }
 
+  // 初始化PC端事件
   initPCEvent(): void {
     this.el.onclick = (e) => {
       if (this.video.paused) {
@@ -308,6 +310,7 @@ class Player extends Component implements ComponentItem {
     });
   }
 
+  // 初始化移动端事件
   initMobileEvent(): void {
     wrap(this.el).addEventListener("touchstart", () => {
       this.emit(EVENT.DOT_DOWN);
@@ -614,7 +617,7 @@ class Player extends Component implements ComponentItem {
     return this.videoInfo;
   }
   // 设置视频信息
-  setVideoInfo(info:Video): void {
+  setVideoInfo(info: Video): void {
     this.videoInfo = info;
     console.log(this.videoInfo)
   }
