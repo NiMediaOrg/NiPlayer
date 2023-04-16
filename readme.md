@@ -1,5 +1,5 @@
-<p align=center><img src="https://user-images.githubusercontent.com/69229785/218659902-9f5f15b7-59ba-4920-92a6-e8f7da0e9589.png" /><p/>
-<h2 align=center>Niplayer</h2>
+<p><img src="https://user-images.githubusercontent.com/69229785/218659902-9f5f15b7-59ba-4920-92a6-e8f7da0e9589.png" /><p/>
+<img src="https://img.shields.io/badge/NiPlayer-1.4.3-red"/>
 
 ## :bell: 预览
 
