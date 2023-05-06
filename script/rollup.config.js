@@ -20,7 +20,8 @@ export default defineConfig({
       commonjs(),
       postcss({
         plugins:[
-          autoprefixer()
+          autoprefixer(),
+
         ]
       }),
       

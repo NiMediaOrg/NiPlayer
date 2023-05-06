@@ -91,8 +91,8 @@ export class SubsettingsBase extends BaseEvent {
         base.el.style.display = "";
 
         this.subsetting.hideBox.style.width = base.el.dataset.width
-          ? base.el.dataset.width + "px"
-          : "200px";
+          ? base.el.dataset.width / this.player.baseSize + "rem"
+          : 200 / this.player.baseSize + "rem";
       }
       if (item.click) item.click(item);
     },{

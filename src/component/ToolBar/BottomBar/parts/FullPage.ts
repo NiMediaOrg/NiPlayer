@@ -26,7 +26,6 @@ export class FullPage extends Options {
         this.iconBox.appendChild(this.icon);
 
         this.hideBox.innerText = "网页全屏"
-        this.hideBox.style.fontSize = "13px"
     }
     
     initEvent() {

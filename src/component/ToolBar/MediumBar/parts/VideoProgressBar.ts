@@ -38,8 +38,8 @@ export class VideoProgress extends Progress {
         this.player.playerOptions.thumbnails
       )
       this.thumbnails = $("div.video-progress-thumbnails");
-      this.thumbnails.style.height = this.thumbnailsOptions.height + "px";
-      this.thumbnails.style.width = this.thumbnailsOptions.width + "px";
+      this.thumbnails.style.height = this.thumbnailsOptions.height / this.player.baseSize + "rem";
+      this.thumbnails.style.width = this.thumbnailsOptions.width / this.player.baseSize + "rem";
     }
     this.preTime = $("div.video-progress-pretime");
     
