@@ -6,7 +6,6 @@ import { DanmakuInput } from "./UI/DanmakuInput";
 import { DanmakuOpenClose } from "./UI/DanmakuOpenClose";
 import { DanmakuSettings } from "./UI/DanmakuSettings";
 import * as io from "socket.io-client";
-import "../utils/polyfill";
 import { $, addClass, removeClass } from "../utils/domUtils";
 import { Axios } from "../utils/net";
 import { DanmakuData } from "../types/danmaku";
@@ -39,7 +38,7 @@ export class DanmakuController {
     );
     this.instance = new Axios({
       baseURL: "",
-      timeout: this.options.timeout ?? null
+      timeout: this.options.timeout ?? 1000
     })
     this.init();
   }
@@ -95,8 +94,9 @@ export class DanmakuController {
     socket.connect();
   }
 
+  //TODO  初始化http短轮询连接
   initHTTP() {
-    //TODO  初始化http轮询连接
+    
     this.instance.get(this.options.api,{
       query:{
         time: 0
@@ -110,6 +110,7 @@ export class DanmakuController {
     })
   }
 
+  // 弹幕加载失败
   setDanmakuFail() {
     this.el.style.backgroundColor = "";
       (this.danmakuLoading.childNodes[0] as HTMLElement).innerText = '弹幕加载失败';
@@ -120,6 +121,7 @@ export class DanmakuController {
       }, 3000);
   }
 
+  // 弹幕加载成功
   setDanmakuSuccess() {
     this.el.style.backgroundColor = "";
       (this.danmakuLoading.childNodes[0] as HTMLElement).innerText = '弹幕加载成功';
@@ -156,13 +158,11 @@ export class DanmakuController {
 
   initializeEvent() {
 
+    this.video.addEventListener("seeking", (e: Event) => {
+      this.onSeeked(e);
+    })
     this.video.addEventListener("seeked", (e: Event) => {
       this.onSeeked(e);
-    });
-
-    this.video.addEventListener("pause", () => {
-      //暂停所有的弹幕
-      this.danmaku.pause();
     });
 
     this.video.addEventListener("waiting",() => {
@@ -174,7 +174,14 @@ export class DanmakuController {
     })
 
     this.video.addEventListener("play", () => {
+      if(this.video.seeking) return;
       this.danmaku.resume();
+    });
+
+    this.video.addEventListener("pause", () => {
+      //暂停所有的弹幕
+      if(this.video.seeking) return;
+      this.danmaku.pause();
     });
 
     this.video.addEventListener("canplay",() => {
@@ -185,7 +192,7 @@ export class DanmakuController {
       this.danmaku.setPaused(false)
     })
 
-    this.danmakuInput.on("sendData", function (data) {
+    this.danmakuInput.on("sendData", function (data: string) {
       //TODO 此处为发送弹幕的逻辑
     });
 
@@ -230,6 +237,7 @@ export class DanmakuController {
     this.danmaku.setOpacity(opacity);
   }
 
+  //* 设置字体的大小
   setFontSize(scale: number) {
     this.danmaku.setFontSize(scale);
   }

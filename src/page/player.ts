@@ -38,6 +38,7 @@ import {
 import { ContextMenu } from "@/component/ContextMenu/ContextMenu";
 import { ContextMenuItem } from "@/component/ContextMenu/ContextMenuItem";
 import { Mp4Parser } from "@/mp4/Mp4Parser";
+import base64str from "@/svg/base64";
 class Player extends Component implements ComponentItem {
   readonly id = "Player";
   // 播放器的默认配置
@@ -60,6 +61,9 @@ class Player extends Component implements ComponentItem {
   containerWidth: number;
   containerHeight: number;
   danmakuController: DanmakuController;
+
+  // 暂停图标
+  pauseIcon: HTMLElement;
   
   // 视频的长宽比例 默认为16： 9
   private mediaProportion: number = 9 / 16;
@@ -87,6 +91,7 @@ class Player extends Component implements ComponentItem {
       // 兼容移动端设置的属性
       this.video = $("video");
       this.video["playsinline"] = true;
+      // 设置播放器为H5播放器
       this.video["x5-video-player-type"] = "h5";
     }
     this.video.crossOrigin = "anonymous";
@@ -112,6 +117,13 @@ class Player extends Component implements ComponentItem {
       this.unmountComponent("Volume");
       new MobileVolume(this, this.el, "div");
     }
+
+    this.pauseIcon = $("div.pauseIcon");
+    const img: HTMLImageElement = $("img");
+    img.src = base64str;
+    this.pauseIcon.append(img);
+    this.pauseIcon.style.display = "none";
+    this.el.append(this.pauseIcon)
   }
 
   // 对包含的所有组件进行初始化
@@ -157,10 +169,12 @@ class Player extends Component implements ComponentItem {
     });
 
     this.video.addEventListener("play", (e) => {
+      this.pauseIcon.style.display = "none";
       this.emit(EVENT.PLAY, e);
     });
 
     this.video.addEventListener("pause", (e) => {
+      this.pauseIcon.style.display = ""
       this.emit(EVENT.PAUSE, e);
     });
 
@@ -366,12 +380,12 @@ class Player extends Component implements ComponentItem {
 
   // 给video添加媒体资源，开始初始化媒体资源的解析
   attachSource(url: string) {
-    // 是否启动流式播放
     let extension = getExtension(url);
     this.emit(EVENT.SOURCE_ATTACHED, url); // 触发资源加载完毕事件
     if(extension === "mp4") {
       new Mp4Parser(url,this);
       if (this.playerOptions.streamPlay) {
+         // 是否启动流式播放
         new Mp4MediaPlayer(url, this);
       } else {
         this.video.src = url;
@@ -470,7 +484,8 @@ class Player extends Component implements ComponentItem {
   // 查询移动端的全屏方式
   checkFullScreenMode() {}
 
-  // 注册/挂载自己的组件,其中的id为组件实例的名称，分为内置和用户自定义这两种情况；注意，id是唯一的，不能存在两个具有相同id的组件实例!!!
+  // 注册/挂载自己的组件,其中的id为组件实例的名称，分为内置和用户自定义这两种情况；
+  // 注意，id是唯一的，不能存在两个具有相同id的组件实例!!!
   mountComponent(
     id: string,
     component: ComponentItem,
