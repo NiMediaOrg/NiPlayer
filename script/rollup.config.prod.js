@@ -5,6 +5,7 @@ import { defineConfig } from "rollup";
 import { nodeResolve } from "@rollup/plugin-node-resolve";
 import json from '@rollup/plugin-json';
 import commonjs from '@rollup/plugin-commonjs';
+import px2rem from "postcss-pxtorem"
 import { babel } from '@rollup/plugin-babel';
 import terser from '@rollup/plugin-terser';
 import alias from '@rollup/plugin-alias';
@@ -65,7 +66,12 @@ export default defineConfig({
       commonjs(),
       postcss({
         plugins:[
-          autoprefixer()
+          autoprefixer(),
+          px2rem({
+            rootValue: 16,
+            propList: ['margin-left', 'min-width', 'height', 'font-size', 'bottom', 'width'],
+            // selectorBlackList: [/^video-controller$/,/^video-bottombar$/, /^video-set$/, /^video-duration-time$/, /^video-topbar$/, /^danmaku-send$/]
+        })
         ]
       }),
       alias({

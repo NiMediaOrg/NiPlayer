@@ -60,6 +60,8 @@ class Player extends Component implements ComponentItem {
   mask: HTMLElement;
   containerWidth: number;
   containerHeight: number;
+
+  baseSize: number = 16;
   danmakuController: DanmakuController;
 
   // 暂停图标
@@ -405,7 +407,11 @@ class Player extends Component implements ComponentItem {
       });
       this.adjustMediaSize();
 
+      // 获取到容器的宽高
       let width = entries[0].contentRect.width;
+      let height = entries[0].contentRect.height;
+
+      this.adjustRem(width, height)
       let subsetting;
       // 当尺寸发生变化的时候视频库只调整基本的内置组件，其余用户自定义的组件响应式需要自己实现
       if (width <= 500) {
@@ -462,6 +468,12 @@ class Player extends Component implements ComponentItem {
     });
 
     resizeObserver.observe(this.el);
+  }
+
+  // 设置根节点的fontsize大小以便于做移动端适配 -> rem
+  private adjustRem(width: number, height: number = 0) {
+    const scale = width / 600;
+    document.documentElement.style.fontSize = this.baseSize * Math.min(scale, 1.25) + 'px'
   }
 
   //调整video的尺寸

@@ -32,7 +32,8 @@ export default defineConfig({
         commonjs(),
         postcss({
             plugins:[
-            autoprefixer()
+                autoprefixer(),
+                
             ],
             extract: 'css/index.css',
         }),

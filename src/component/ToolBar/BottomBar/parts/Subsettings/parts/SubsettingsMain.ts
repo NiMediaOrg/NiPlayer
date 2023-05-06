@@ -42,7 +42,7 @@ export class SubsettingsMain extends SubsettingsBase {
   init() {
     this.el = $("div.video-subsettings-main");
     this.el.dataset.width = "200";
-    this.subsetting.hideBox.style.width = this.el.dataset.width + "px";
+    this.subsetting.hideBox.style.width = parseInt(this.el.dataset.width) / this.player.baseSize + "rem";
     this.initSubsettingsItem();
     this.initEvent();
   }
