@@ -473,7 +473,15 @@ class Player extends Component implements ComponentItem {
   // 设置根节点的fontsize大小以便于做移动端适配 -> rem
   private adjustRem(width: number, height: number = 0) {
     const scale = width / 600;
-    document.documentElement.style.fontSize = this.baseSize * Math.min(scale, 1.25) + 'px'
+    let number = 1;
+    if(scale > 1.25) {
+      number = 1.25
+    } else if(scale < 1){
+      number = 1;
+    } else {
+      number = scale;
+    }
+    document.documentElement.style.fontSize = this.baseSize * number + 'px'
   }
 
   //调整video的尺寸

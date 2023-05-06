@@ -69,7 +69,7 @@ export default defineConfig({
           autoprefixer(),
           px2rem({
             rootValue: 16,
-            propList: ['margin-left', 'min-width', 'height', 'font-size', 'bottom', 'width'],
+            propList: ['margin-left', 'min-width', 'height', 'font-size', 'bottom', 'width', 'padding', 'transform' ],
             // selectorBlackList: [/^video-controller$/,/^video-bottombar$/, /^video-set$/, /^video-duration-time$/, /^video-topbar$/, /^danmaku-send$/]
         })
         ]
