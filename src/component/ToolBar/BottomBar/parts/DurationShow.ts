@@ -31,7 +31,7 @@ export class DutaionShow extends Component implements ComponentItem {
     }
 
     initEvent() {
-        this.player.on(EVENT.LOADED_META_DATA,(e)=>{
+        this.player.on(EVENT.LOADED_META_DATA, (e: Event)=>{
             let video = e.target as HTMLVideoElement;
             this.totalTime = formatTime(video.duration);
             this.el.innerText = `${this.currentTime}/${this.totalTime}`;

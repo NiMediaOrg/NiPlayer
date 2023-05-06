@@ -72,10 +72,16 @@ export class Progress extends Component implements ComponentItem {
     let ctx = this;
     
     this.el.onmouseenter = (e: Event) => {
+      this.el.style.height = "8px";
+      this.dot.style.height = "12px";
+      this.dot.style.width = "12px";
       this.emit(EVENT.PROGRESS_MOUSE_ENTER, e, ctx)
     };
 
     this.el.onmouseleave = (e: Event) => {
+      this.el.style.height = "";
+      this.dot.style.height = "12px";
+      this.dot.style.width = "12px";
       this.emit(EVENT.PROGRESS_MOUSE_LEAVE,e, ctx);
     };
 

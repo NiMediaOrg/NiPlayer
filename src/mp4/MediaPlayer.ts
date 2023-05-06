@@ -102,11 +102,12 @@ class MediaPlayer {
     addBuffer(mp4track: MediaTrack) {
         var track_id = mp4track.id;
         var codec = mp4track.codec;
+        // mime指定对应媒体的编解码方式/规范
         var mime = 'video/mp4; codecs=\"'+ codec +'\"';
         var sb: MP4SourceBuffer;
         if (MediaSource.isTypeSupported(mime)) {
             try {
-                console.log("MSE - SourceBuffer #"+track_id,"Creation with type '"+mime+"'")
+                console.log("MSE - SourceBuffer #" + track_id,"Creation with type '" + mime + "'")
                 // 根据moov box中解析出来的track去一一创建对应的sourcebuffer
                 sb = this.mediaSource.addSourceBuffer(mime);
                 sb.addEventListener("error", function(e) {

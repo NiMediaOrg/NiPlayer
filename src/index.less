@@ -8,7 +8,7 @@
 @plainBlue: #00a1d6;
 // 深蓝色
 @navyBlue: #007aff;
-
+// 最终选择了#ff0作为整个播放器的主题色
 @themeColor: #f00;
 @progressColor: #f00;
 @subtitleColor: rgb(254, 146, 0);
@@ -23,6 +23,17 @@
   user-select: none;
   transform: all 0.5s ease;
   .flex-vertical-horizontal-center;
+
+  .pauseIcon {
+    position: absolute;
+    right: 10px;
+    bottom: calc(@bottombarHeight + 10px);
+
+    img {
+      width: 100px;
+      height: auto;
+    }
+  }
 
   &:focus {
     outline: none;
@@ -192,7 +203,7 @@
     left: 0;
     width: 100%;
     color: @commonColor;
-    height: @toolbarHeight;
+    padding: 0 0 10px 0;
     transition: all 0.3s ease;
     z-index: @zIndex;
     background-image: linear-gradient(to top, #000, #0006, #0000);
@@ -209,10 +220,11 @@
         flex: 1;
 
         .video-progress {
+          transition: height .5s ease;
           width: calc(100% - 18px);
           margin: 0 auto;
           height: 3px;
-          transition: width 0.5s ease;
+          transition: height 0.5s ease;
           background-color: hsla(0, 0%, 100%, 0.2);
           cursor: pointer;
           position: relative;
@@ -561,7 +573,7 @@
   .video-subsettings-set {
     height: auto;
     max-height: 300px;
-    backdrop-filter: saturate(180%) blur(20px);
+    backdrop-filter: saturate(180%) blur(20px); // saturate(180%) blur(20px)
     border-radius: 3px;
     font-size: 13px;
     transition: all 0.2s;
@@ -577,6 +589,7 @@
     .video-subsettings-danmaku-range,
     .video-subsettings-danmaku-size {
       width: 100%;
+      backdrop-filter: saturate(180%) blur(20px);
     }
     .video-subsettings-item {
       &:hover {
