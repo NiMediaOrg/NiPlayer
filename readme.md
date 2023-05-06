@@ -1,6 +1,7 @@
 <p><img src="https://user-images.githubusercontent.com/69229785/218659902-9f5f15b7-59ba-4920-92a6-e8f7da0e9589.png" /><p/>
-<img src="https://img.shields.io/badge/NiPlayer-1.4.3-red"/>
-## :bell: 预览
+<img src="https://img.shields.io/badge/NiPlayer-1.4.3-red"/><br/>
+
+<h1>效果预览</h1>
 <img src="https://user-images.githubusercontent.com/69229785/236618465-eb4e580c-54d6-4c00-9ae0-886878aecd74.png" /><br />
 <img src="https://user-images.githubusercontent.com/69229785/236618495-e93cb0ae-258d-4c1a-9eb3-45ede1964e9f.png" /><br />
 
