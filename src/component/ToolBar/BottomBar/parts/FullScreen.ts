@@ -46,29 +46,49 @@ export class FullScreen extends Options {
         stopPropagation: true,
       });
     }
+
+    document.addEventListener("fullscreenchange", (e) => {
+      console.log("fullscreen change")
+    })
+
+    this.player.container.onfullscreenchange = () => {
+      console.log("fullscreen change")
+    }
+
+    this.player.container.onfullscreenerror = () => {
+      console.log("fullscreen error")
+    }
+
+    document.onfullscreenchange = () => {
+      console.log("fullscreen change")
+    }
+
+    document.onfullscreenerror = () => {
+      console.log("fullscreen error")
+    }
   }
 
   requestFullScreen(e?: Event | SingleTapEvent) {
-    if (e instanceof Event) {
+    if (e instanceof Event) { // 在此处做了一层类型守卫
       e.stopPropagation();
     }
     if (!isFull(this.player.container)) {
       // 调用浏览器提供的全屏API接口去请求元素的全屏，原生全屏分为  竖屏全屏 + 横屏全屏
-      beFull(this.player.container);
+      beFull(this.player.container).then((val) => {
+        console.log("val")
+      })
+        
+      // this.player.emit(EVENT.ENTER_FULLSCREEN);
+  
       this.iconBox.removeChild(this.icon);
       this.icon = createSvg(fullscreenExitPath, "0 0 1024 1024");
       this.iconBox.appendChild(this.icon);
-      this.player.container.addEventListener("fullscreenchange", (e) => {
-        this.player.emit(EVENT.ENTER_FULLSCREEN);
-      });
     } else if (isFull(this.player.container)) {
-      exitFull();
+      exitFull()
+      // this.player.emit(EVENT.LEAVE_FULLSCREEN);
       this.iconBox.removeChild(this.icon);
       this.icon = createSvg(fullscreenPath, "0 0 1024 1024");
       this.iconBox.appendChild(this.icon);
-      this.player.container.addEventListener("fullscreenchange", (e) => {
-        this.player.emit(EVENT.LEAVE_FULLSCREEN);
-      });
     }
   }
 }

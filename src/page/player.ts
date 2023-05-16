@@ -233,6 +233,7 @@ class Player extends Component implements ComponentItem {
     });
 
     this.on(EVENT.ENTER_FULLSCREEN, () => {
+      console.log("enter fullscreen")
       document.querySelectorAll(".video-controller").forEach((el) => {
         (el as HTMLElement).style.marginRight = "15px";
       });
@@ -241,9 +242,11 @@ class Player extends Component implements ComponentItem {
       });
 
       this.isFullscreen = true;
+      this.adjustRem(this.el.clientWidth, this.el.clientHeight);
     });
 
     this.on(EVENT.LEAVE_FULLSCREEN, () => {
+      console.log("leave fullscreen")
       document.querySelectorAll(".video-controller").forEach((el) => {
         (el as HTMLElement).style.marginRight = "";
       });
@@ -251,7 +254,18 @@ class Player extends Component implements ComponentItem {
         (el as HTMLElement).style.marginRight = "";
       });
       this.isFullscreen = false;
+      this.adjustRem(this.el.clientWidth, this.el.clientHeight);
     });
+
+    this.on(EVENT.ENTER_FULLPAGE, () => {
+      console.log("enter fullpage")
+      this.adjustRem(this.el.clientWidth, this.el.clientHeight);
+    })
+
+    this.on(EVENT.LEAVE_FULLPAGE, () => {
+      console.log("leave fullpage")
+      this.adjustRem(this.el.clientWidth, this.el.clientHeight);
+    })
   }
 
   // 初始化PC端事件
@@ -411,7 +425,6 @@ class Player extends Component implements ComponentItem {
       let width = entries[0].contentRect.width;
       let height = entries[0].contentRect.height;
 
-      this.adjustRem(width, height)
       let subsetting;
       // 当尺寸发生变化的时候视频库只调整基本的内置组件，其余用户自定义的组件响应式需要自己实现
       if (width <= 500) {
@@ -473,13 +486,12 @@ class Player extends Component implements ComponentItem {
   // 设置根节点的fontsize大小以便于做移动端适配 -> rem
   private adjustRem(width: number, height: number = 0) {
     const scale = width / 600;
+    console.log(scale)
     let number = 1;
-    if(scale > 1.25) {
+    if(scale > 1.75) {
       number = 1.25
     } else if(scale < 1){
       number = 1;
-    } else {
-      number = scale;
     }
     document.documentElement.style.fontSize = this.baseSize * number + 'px'
   }
