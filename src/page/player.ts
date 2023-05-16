@@ -234,22 +234,20 @@ class Player extends Component implements ComponentItem {
 
     this.on(EVENT.ENTER_FULLSCREEN, () => {
       this.isFullscreen = true;
-      this.adjustRem(this.el.clientWidth, this.el.clientHeight);
+      this.adjustRem(this.el.clientWidth);
     });
 
     this.on(EVENT.LEAVE_FULLSCREEN, () => {
       this.isFullscreen = false;
-      this.adjustRem(this.el.clientWidth, this.el.clientHeight);
+      this.adjustRem();
     });
 
     this.on(EVENT.ENTER_FULLPAGE, () => {
-      console.log("enter fullpage")
-      this.adjustRem(this.el.clientWidth, this.el.clientHeight);
+      this.adjustRem(this.el.clientWidth);
     })
 
     this.on(EVENT.LEAVE_FULLPAGE, () => {
-      console.log("leave fullpage")
-      this.adjustRem(this.el.clientWidth, this.el.clientHeight);
+      this.adjustRem();
     })
   }
 
@@ -469,15 +467,13 @@ class Player extends Component implements ComponentItem {
   }
 
   // 设置根节点的fontsize大小以便于做移动端适配 -> rem
-  private adjustRem(width: number, height: number = 0) {
+  private adjustRem(width: number = 600) {
     const scale = width / 600;
-    console.log(scale)
     let number = 1;
     if(scale > 1.75) {
       number = 1.25
-    } else if(scale < 1){
-      number = 1;
     }
+    console.log(width, number);
     document.documentElement.style.fontSize = this.baseSize * number + 'px'
   }
 

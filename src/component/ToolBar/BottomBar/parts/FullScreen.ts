@@ -50,7 +50,7 @@ export class FullScreen extends Options {
       if(document.fullscreenElement) {
         this.player.emit(EVENT.ENTER_FULLSCREEN);
       } else {
-        this.player.emit(EVENT.ENTER_FULLSCREEN);
+        this.player.emit(EVENT.LEAVE_FULLSCREEN);
       }
     })
   }
