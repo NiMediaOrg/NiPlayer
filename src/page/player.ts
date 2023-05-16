@@ -233,26 +233,11 @@ class Player extends Component implements ComponentItem {
     });
 
     this.on(EVENT.ENTER_FULLSCREEN, () => {
-      console.log("enter fullscreen")
-      document.querySelectorAll(".video-controller").forEach((el) => {
-        (el as HTMLElement).style.marginRight = "15px";
-      });
-      document.querySelectorAll(".video-topbar-controller").forEach((el) => {
-        (el as HTMLElement).style.marginRight = "15px";
-      });
-
       this.isFullscreen = true;
       this.adjustRem(this.el.clientWidth, this.el.clientHeight);
     });
 
     this.on(EVENT.LEAVE_FULLSCREEN, () => {
-      console.log("leave fullscreen")
-      document.querySelectorAll(".video-controller").forEach((el) => {
-        (el as HTMLElement).style.marginRight = "";
-      });
-      document.querySelectorAll(".video-topbar-controller").forEach((el) => {
-        (el as HTMLElement).style.marginRight = "";
-      });
       this.isFullscreen = false;
       this.adjustRem(this.el.clientWidth, this.el.clientHeight);
     });
