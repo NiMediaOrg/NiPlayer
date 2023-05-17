@@ -1,4 +1,3 @@
-import { MoveEvent, SingleTapEvent } from "ntouch.js";
 import { Component } from "@/class/Component";
 import { EVENT } from "@/events";
 import {

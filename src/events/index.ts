@@ -24,6 +24,8 @@ export enum EVENT {
     VIDEO_DOT_DRAG = "videoDotDrag",
     ENTER_FULLSCREEN = "enterFullscreen",
     LEAVE_FULLSCREEN = "leaveFullscreen",
+    ENTER_FULLPAGE = "enterFullPage",
+    LEAVE_FULLPAGE = "leaveFullPage",
     RESIZE = 'resize',
     SHOW_TOOLBAR = "showtoolbar",
     HIDE_TOOLBAR = "hidetoolbar",

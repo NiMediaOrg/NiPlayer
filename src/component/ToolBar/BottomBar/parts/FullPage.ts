@@ -5,6 +5,7 @@ import { addClass, createSvg, removeClass } from "@/utils/domUtils";
 import { storeControlComponent } from "@/utils/store";
 import { fullPagePath, fullPageExitPath } from "@/svg/index";
 import { Options } from "./Options";
+import { EVENT } from "@/events";
 
 export class FullPage extends Options {
     readonly id = "FullPage";
@@ -43,16 +44,21 @@ export class FullPage extends Options {
             e.stopPropagation();
         }
         if(!this.isFullPage) {
+            // 表明此刻播放器进入页面全屏
+            
             addClass(this.player.el,["video-wrapper-fullpage"])
             this.iconBox.removeChild(this.icon);
             this.icon = createSvg(fullPageExitPath,'0 0 1024 1024');
             this.iconBox.appendChild(this.icon)
+            this.player.emit(EVENT.ENTER_FULLPAGE);
             
         } else {
+            
             removeClass(this.player.el,["video-wrapper-fullpage"]);
             this.iconBox.removeChild(this.icon);
             this.icon = createSvg(fullPagePath,'0 0 1024 1024');
             this.iconBox.appendChild(this.icon)
+            this.player.emit(EVENT.LEAVE_FULLPAGE);
         }
         this.isFullPage = !this.isFullPage;
 
