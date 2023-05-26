@@ -4,6 +4,7 @@
 /assets/
 /.vscode/
 /script/
+/config/
 /dist/index.html
 /assets/
 .babelrc

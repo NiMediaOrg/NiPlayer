@@ -4,9 +4,10 @@ import { Player } from "@/page/player";
 import { DOMProps, Node } from "@/types/Player";
 import { addClass, createSvg } from "@/utils/domUtils";
 import { storeControlComponent } from "@/utils/store";
-import { danmakuClosePath, fullscreenExitPath, fullscreenPath } from "@/svg/index";
+import { fullscreenExitPath, fullscreenPath } from "@/svg/index";
 import { Options } from "./Options";
-import { beFull, exitFull, isFull } from "be-full";
+import { isFull } from "be-full";
+import { FullHTMLElement, enterFull, exitFull } from "@/utils/full";
 
 export class FullScreen extends Options {
   readonly id = "FullScreen";
@@ -56,19 +57,20 @@ export class FullScreen extends Options {
   }
 
   requestFullScreen(e?: Event | SingleTapEvent) {
-    console.log("请求全屏")
     if (e instanceof Event) { // 在此处做了一层类型守卫
       e.stopPropagation();
     }
     if (!isFull(this.player.container)) {
       // 调用浏览器提供的全屏API接口去请求元素的全屏，原生全屏分为  竖屏全屏 + 横屏全屏
-      this.player.container.requestFullscreen();
+      enterFull(this.player.container as FullHTMLElement)
+      // this.player.container.requestFullscreen();
   
       this.iconBox.removeChild(this.icon);
       this.icon = createSvg(fullscreenExitPath, "0 0 1024 1024");
       this.iconBox.appendChild(this.icon);
     } else if (isFull(this.player.container)) {
-      document.exitFullscreen();
+      // document.exitFullscreen()
+      exitFull();
       this.iconBox.removeChild(this.icon);
       this.icon = createSvg(fullscreenPath, "0 0 1024 1024");
       this.iconBox.appendChild(this.icon);
