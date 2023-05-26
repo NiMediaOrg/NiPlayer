@@ -5,13 +5,14 @@ import { defineConfig } from "rollup";
 import { nodeResolve } from "@rollup/plugin-node-resolve";
 import json from '@rollup/plugin-json';
 import commonjs from '@rollup/plugin-commonjs';
-import px2rem from "postcss-pxtorem"
+import px2rem from "postcss-pxtorem";
 import { babel } from '@rollup/plugin-babel';
 import terser from '@rollup/plugin-terser';
 import alias from '@rollup/plugin-alias';
 // 用于在导入socket.io-client包时进行Polyfill，因为该库中引入了很多只在node环境下才具有的第三方包例如http,stream,buffer等
 // 因此需要导入 'rollup-plugin-node-builtins' 和 "rollup-plugin-node-globals"进行Polyfill
 import builtins from 'rollup-plugin-node-builtins'
+
 import globals from "rollup-plugin-node-globals";
 import replace from '@rollup/plugin-replace';
 const path = require("path")
