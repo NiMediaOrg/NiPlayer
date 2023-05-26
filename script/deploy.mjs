@@ -36,7 +36,7 @@ try {
 
 spinner = ora("正在执行git commit方法").start();
 try {
-    await exec(`git commit -m ${commitMessage}`);
+    exec(` git commit -am "${commitMessage}" `);
     spinner.succeed("成功执行git commit");
 } catch(error) {
     console.error(`发生错误： ${error}`);
@@ -46,4 +46,4 @@ try {
 
 console.log("--------------git push------------------");
 const branchList = exec("git branch -r");
-console.log(branchList.stdout)
+console.log(branchList.stdout[0])
