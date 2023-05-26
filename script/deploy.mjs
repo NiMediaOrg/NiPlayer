@@ -46,4 +46,4 @@ try {
 
 console.log("--------------git push------------------");
 const branchList = exec("git branch -r");
-console.log("@@@", branchList.stdout[0])
+console.log("@@@", branchList)
