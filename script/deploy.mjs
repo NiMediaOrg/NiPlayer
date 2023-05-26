@@ -2,12 +2,7 @@
 import sh from "shelljs"
 import ora from "ora";
 import inquirer from "inquirer"
-import { fileURLToPath } from "url";
-import { createRequire } from 'module'
 
-const __dirname = fileURLToPath(new URL(".", import.meta.url))
-// 在esm模块中自定义使用cjs才存在的模块导入方法 -- require
-const require = createRequire(import.meta.url)
 const exec = sh.exec;
 let commitMessage = "";
 console.log("----------------git add . -----------------")
@@ -46,4 +41,27 @@ try {
 
 console.log("--------------git push------------------");
 const branchList = exec("git branch -r");
-console.log("@@@", typeof branchList)
+const list = branchList["stdout"].split("\n").map(str => str.trim().replace("origin/", "")).filter(str => str !== '');
+let choiceBranch = "";
+try {
+    choiceBranch = await inquirer.prompt({
+        type: "list",
+        name: "branck",
+        message: "选择你要push的分支",
+        choices: [...list],
+        default: "dev"
+    })
+} catch(error) {
+    console.error(`发生错误： ${error}`);
+}
+spinner = ora("正在执行git push方法").start();
+try {
+    exec(` git push origin ${choiceBranch} `);
+    spinner.succeed("成功执行git push");
+} catch(error) {
+    console.error(`发生错误： ${error}`);
+} finally {
+    spinner.stop();
+}
+
+console.log("项目deploy成功！！！")
