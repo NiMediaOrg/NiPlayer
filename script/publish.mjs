@@ -37,3 +37,5 @@ const publish = () => {
     }   
     
 }
+
+publish();
