@@ -1,80 +1,85 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests" />
-    <!-- <script src="https://cdn.jsdelivr.net/npm/niplayer@latest/dist/player.umd.js"></script> -->
-    <script src="./dist/player.umd.js"></script>
-    
-    <title>NiPlayer</title>
-    <style>
-      html,body {
-        width: 100%;
-        height: 100%;
-      }
-      #video {
-        height: 300px;
-        width: 600px;
-        resize: both;
-        overflow: auto;
-        margin: 100px auto;
-      }
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta
+            http-equiv="Content-Security-Policy"
+            content="upgrade-insecure-requests"
+        />
+        <!-- <script src="https://cdn.jsdelivr.net/npm/niplayer@latest/dist/player.umd.js"></script> -->
+        <script src="./dist/player.umd.js"></script>
 
-    </style>
-  </head>
-  <body>
-    <div id="video"></div>
-    <script>
-      
-      window.onload = function() {
-
-        let player = new Player.default({
-            url: "https://novaex.cc/fireworks.mp4", 
-            container:document.getElementById("video"),
-            streamPlay: false,
-            thumbnails: { // 缩略图设置选项
-              col: 1,
-              row: 47,
-              total: 47,
-              source: "https://novaex.cc/sprites.png",
-              interval: 6,
-            },
-            subtitles: [ // 字幕
-                {
-                    source: "http://127.0.0.1:5501/assets/subtitle.vtt",
-                    tip: "Bilingual",
-                    lang: "en",
-                    default: true,
-                    style: {
-                      backgroundColor: "yellow",
-                      color: "red"
-                    }
-                },
-                {
-                    source: "http://127.0.0.1:5501/assets/subtitle.zn.vtt",
-                    tip:"Chinese",
-                    lang: "zh",
-                    style: {
-                      color: "green"
-                    }
-                },
-                {
-                    source: "http://127.0.0.1:5501/assets/subtitle.jp.vtt",
-                    tip:"Japanese",
-                    lang: "jp"
-                }
-            ],
-            danmaku: { //弹幕
-              open: true,
-              api: "https://bilibili-service.vercel.app/api/danmaku",
-              type: "http",
-              timeout: 5000
-            },
-            title: "一首《打上花火》竟治愈了无数破碎的心灵！"
-        });
-      }
-    </script>
-  </body>
+        <title>NiPlayer</title>
+        <style>
+            html,
+            body {
+                width: 100%;
+                height: 100%;
+            }
+            #video {
+                height: 300px;
+                width: 600px;
+                resize: both;
+                overflow: auto;
+                margin: 100px auto;
+            }
+        </style>
+    </head>
+    <body>
+        <!-- <iframe width="1466" height="545" src="https://www.youtube.com/embed/eFAYZF9Mty4" title="Boston Celtics vs Miami Heat Game 5 Full Highlights | 2023 ECF | FreeDawkins" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe> -->
+        <div id="video"></div>
+        <script>
+            window.onload = function () {
+                let player = new Player.default({
+                    url: 'https://novaex.cc/OnePiece.mp4',
+                    container: document.getElementById('video'),
+                    streamPlay: true,
+                    thumbnails: {
+                        // 缩略图设置选项
+                        col: 1,
+                        row: 47,
+                        total: 47,
+                        source: 'https://novaex.cc/sprites.png',
+                        interval: 6,
+                    },
+                    subtitles: [
+                        // 字幕
+                        {
+                            source: 'http://127.0.0.1:5501/assets/subtitle.vtt',
+                            tip: 'Bilingual',
+                            lang: 'en',
+                            default: true,
+                            style: {
+                                backgroundColor: 'yellow',
+                                color: 'red',
+                            },
+                        },
+                        {
+                            source: 'http://127.0.0.1:5501/assets/subtitle.zn.vtt',
+                            tip: 'Chinese',
+                            lang: 'zh',
+                            style: {
+                                color: 'green',
+                            },
+                        },
+                        {
+                            source: 'http://127.0.0.1:5501/assets/subtitle.jp.vtt',
+                            tip: 'Japanese',
+                            lang: 'jp',
+                        },
+                    ],
+                    danmaku: {
+                        //弹幕
+                        open: true,
+                        api: 'https://bilibili-service.vercel.app/api/danmaku',
+                        type: 'http',
+                        timeout: 5000,
+                    },
+                    title: '一首《打上花火》竟治愈了无数破碎的心灵！',
+                })
+            }
+        </script>
+    </body>
 </html>

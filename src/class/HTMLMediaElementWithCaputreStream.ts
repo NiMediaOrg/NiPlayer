@@ -1,3 +1,3 @@
 export interface HTMLMediaElementWithCaputreStream extends HTMLMediaElement {
-  captureStream(fps?: number): MediaStream;
+    captureStream(fps?: number): MediaStream
 }

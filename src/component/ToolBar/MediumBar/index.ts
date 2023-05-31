@@ -1,2 +1,2 @@
-export * from "./parts/VideoProgressBar"
-export * from "./MediumBar"
+export * from './parts/VideoProgressBar'
+export * from './MediumBar'

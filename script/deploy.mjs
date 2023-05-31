@@ -53,7 +53,7 @@ async function gitPush() {
     const list = branchList["stdout"].split("\n").map(str => str.trim().replace("origin/", "")).filter(str => str !== '');
     let choiceBranch = "";
     try {
-        const { branck: choiceBranch} = await inquirer.prompt({
+        const { branck: choiceBranch } = await inquirer.prompt({
             type: "list",
             name: "branck",
             message: "选择你要push的分支",

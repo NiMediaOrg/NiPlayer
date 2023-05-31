@@ -10,9 +10,10 @@
     "build:tsc": "tsc",
     "build:dts": "dts-bundle-generator -o ./dist/index.d.ts ./src/index.ts --project tsconfig.json  --no-check",
     "publish": "node ./script/publish.mjs",
+    "deploy": "node ./script/deploy.mjs",
     "test": "vitest",
     "coverage": "vitest run --coverage",
-    "deploy": "node ./script/deploy.mjs"
+    "lint:prettier": "prettier --write ./src"
   },
   "keywords": [
     "player",
@@ -49,6 +50,7 @@
     "ora": "^6.3.1",
     "postcss": "^8.4.21",
     "postcss-pxtorem": "^6.0.0",
+    "prettier": "^2.8.8",
     "rimraf": "^5.0.1",
     "rollup": "^2.79.1",
     "rollup-plugin-dts": "^4.1.0",
@@ -64,8 +66,8 @@
     "vite": "^4.2.1",
     "vitest": "^0.27.2"
   },
-  "author": "novani",
-  "license": "ISC",
+  "author": "NovaNi",
+  "license": "MIT",
   "browserslist": [
     "defaults",
     "not ie < 8",

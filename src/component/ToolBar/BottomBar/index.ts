@@ -1,2 +1,2 @@
-export * from "./parts"
-export * from "./Controller"
+export * from './parts'
+export * from './Controller'
