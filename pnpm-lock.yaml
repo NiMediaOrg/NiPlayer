@@ -26,6 +26,7 @@ specifiers:
   ora: ^6.3.1
   postcss: ^8.4.21
   postcss-pxtorem: ^6.0.0
+  prettier: ^2.8.8
   rimraf: ^5.0.1
   rollup: ^2.79.1
   rollup-plugin-dts: ^4.1.0
@@ -71,6 +72,7 @@ devDependencies:
   ora: 6.3.1
   postcss: 8.4.21
   postcss-pxtorem: 6.0.0_postcss@8.4.21
+  prettier: 2.8.8
   rimraf: 5.0.1
   rollup: 2.79.1
   rollup-plugin-dts: 4.2.3_zptcx3kz3uwp66hzhyyt545weq
@@ -4220,6 +4222,12 @@ packages:
       nanoid: 3.3.6
       picocolors: 1.0.0
       source-map-js: 1.0.2
+    dev: true
+
+  /prettier/2.8.8:
+    resolution: {integrity: sha512-tdN8qQGvNjw4CHbY+XXk0JgCXn9QiF21a55rBe5LJAU+kDyC4WQn4+awm2Xfk2lQMk5fKup9XgzTZtGkjBdP9Q==}
+    engines: {node: '>=10.13.0'}
+    hasBin: true
     dev: true
 
   /process-es6/0.11.6:

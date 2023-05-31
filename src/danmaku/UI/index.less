@@ -1,4 +1,4 @@
-@backgroundColor: hsla(0,0%,100%,.15);
+@backgroundColor: hsla(0, 0%, 100%, 0.15);
 .danmaku-input-wrapper {
     box-sizing: border-box;
     padding: 0 5px;
@@ -37,7 +37,6 @@
     cursor: pointer;
 }
 
-
 .video-danmaku-container {
     position: absolute;
     width: 100%;
@@ -56,8 +55,9 @@
         will-change: transform;
         font-weight: normal;
         line-height: 1.125;
-        font-family: SimHei, "Microsoft JhengHei", Arial, Helvetica, sans-serif;
-        text-shadow: rgb(0 0 0) 1px 0px 1px, rgb(0 0 0) 0px 1px 1px, rgb(0 0 0) 0px -1px 1px, rgb(0 0 0) -1px 0px 1px;
+        font-family: SimHei, 'Microsoft JhengHei', Arial, Helvetica, sans-serif;
+        text-shadow: rgb(0 0 0) 1px 0px 1px, rgb(0 0 0) 0px 1px 1px,
+            rgb(0 0 0) 0px -1px 1px, rgb(0 0 0) -1px 0px 1px;
         opacity: 1;
         margin-left: 0px;
     }
@@ -83,7 +83,7 @@
     .video-danmaku-loading {
         left: 50%;
         bottom: 50%;
-        transform: translate(-50%,50%);
+        transform: translate(-50%, 50%);
     }
 
     .video-danmaku-shaking {
@@ -97,32 +97,31 @@
 }
 @keyframes shake {
     10% {
-        transform: rotate(15deg) translate(-50%,50%);
+        transform: rotate(15deg) translate(-50%, 50%);
     }
     20% {
-        transform: rotate(-10deg) translate(-50%,50%);
+        transform: rotate(-10deg) translate(-50%, 50%);
     }
     30% {
-        transform: rotate(5deg) translate(-50%,50%);
+        transform: rotate(5deg) translate(-50%, 50%);
     }
     40% {
-        transform: rotate(-5deg) translate(-50%,50%);
+        transform: rotate(-5deg) translate(-50%, 50%);
     }
     50% {
-        transform: rotate(10deg) translate(-50%,50%);
+        transform: rotate(10deg) translate(-50%, 50%);
     }
     60% {
-        transform: rotate(-15deg) translate(-50%,50%);
+        transform: rotate(-15deg) translate(-50%, 50%);
     }
     70% {
-        transform: rotate(10deg) translate(-50%,50%);
+        transform: rotate(10deg) translate(-50%, 50%);
     }
     80% {
-        transform: rotate(-5deg) translate(-50%,50%);
+        transform: rotate(-5deg) translate(-50%, 50%);
     }
     90%,
     100% {
-        transform: rotate(0deg) translate(-50%,50%);
+        transform: rotate(0deg) translate(-50%, 50%);
     }
-
 }
