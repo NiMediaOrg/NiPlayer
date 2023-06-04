@@ -11,7 +11,7 @@ const version = argv[2].split("=")[1];
 
 //TODO 开始发布包的最新版本
 const publish = () => {
-    const pkg = fs.readJSONSync(`${cwd}/package.json`);
+    let pkg = fs.readJSONSync(`${cwd}/package.json`);
     const currentVersion = pkg.version;
     const newVersion = version;
     if(compareVersion(newVersion, currentVersion) === 1) {
