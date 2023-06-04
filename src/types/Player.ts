@@ -1,4 +1,4 @@
-import { Component } from '../class/Component'
+import { Component } from '@/class/Component'
 import {
     DutaionShow,
     FullPage,
@@ -9,10 +9,10 @@ import {
     SubSetting,
     VideoShot,
     Volume,
-} from '../component'
-import { SubsettingsBase } from '../component/ToolBar/BottomBar/parts/Subsettings/parts/SubsettingsBase'
-import { SubsettingItem } from '../component/ToolBar/BottomBar/parts/Subsettings/SubsettingItem'
-import { Player } from '../page/player'
+} from '@/component'
+import { SubsettingsBase } from '@/component/ToolBar/BottomBar/parts/Subsettings/parts/SubsettingsBase'
+import { SubsettingItem } from '@/component'
+import { Player } from '@/page/player'
 import { RequestHeader } from './mp4'
 
 // 播放器的 选项
