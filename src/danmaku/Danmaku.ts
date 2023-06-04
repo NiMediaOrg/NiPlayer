@@ -29,7 +29,7 @@ export class Danmaku {
         track: Track
         datas: DanmakuData[]
     }>
-    private defaultDanma: DanmakuData = {
+    private defaultDanmaku: DanmakuData = {
         message: 'default message',
         fontColor: '#fff',
         fontSize: this.trackHeight,
@@ -131,7 +131,7 @@ export class Danmaku {
             }
             return Object.assign(
                 {
-                    ...this.defaultDanma,
+                    ...this.defaultDanmaku,
                     timestamp: this.player.video.currentTime,
                 },
                 data
