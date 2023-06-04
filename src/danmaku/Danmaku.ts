@@ -2,6 +2,7 @@ import { Player } from '../page/player'
 import { DanmakuData, Track } from '../types/danmaku'
 import { $ } from '../utils/domUtils'
 import { PriorityQueue } from './utils/PriorityQueue'
+import {nextTick} from "@/utils";
 /**
  * @description 弹幕类，只专注于实现弹幕的基本逻辑，View层
  */
@@ -83,11 +84,11 @@ export class Danmaku {
 
     // 恢复单条弹幕的运动
     resumeOneData(data: DanmakuData) {
-        data.dom.style.transform = `translateX(${-data.totalDistance}px)`
         data.startTime = Date.now()
         data.rollTime =
             (data.totalDistance - data.rollDistance) / data.rollSpeed
         data.dom.style.transition = `transform ${data.rollTime}s linear`
+        data.dom.style.transform = `translateX(${-data.totalDistance}px)`
     }
 
     // 暂停单条弹幕的运动
@@ -265,6 +266,11 @@ export class Danmaku {
         })
     }
 
+    /**
+     * @description 开启弹幕运动
+     * @param data 
+     * @returns {void}
+     */
     startAnimate(data: DanmakuData) {
         // moovingQueue中存储的都是在运动中的弹幕
         // 如果当前是暂停的化则该弹幕不应该开启动画
@@ -358,6 +364,29 @@ export class Danmaku {
         this.showScale = num
         this.trackNumber =
             (this.container.clientHeight / this.trackHeight) * this.showScale
+    }
+
+    // 设置弹幕的移动距离，主要是为了防止在播放器尺寸发生变化时弹幕的运行信息还保存着旧的信息，需要及时更新移动的距离和移动时间
+    setRollDistance() {
+        this.moovingQueue.forEach(data => {
+            data.totalDistance = this.container.clientWidth + data.width;
+            if(this.player.video.paused || this.isPaused) {
+                return;
+            } else {
+                const currentTime = Date.now()
+                const currentRollDistance =
+                    ((currentTime - data.startTime) * data.rollSpeed) / 1000
+                data.rollDistance =
+                    currentRollDistance + (data.rollDistance ? data.rollDistance : 0)
+                data.startTime = currentTime;
+                // data.rolltime中保存的是弹幕还需要运动的时长
+                data.rollTime =
+                    (data.totalDistance - data.rollDistance) / data.rollSpeed;
+                data.dom.style.transition = `transform ${data.rollTime}s linear`;
+                data.dom.style.transform = `translateX(${-data.totalDistance}px)`;
+            }
+
+        })
     }
 
     setFontSize(scale: number) {

@@ -10,7 +10,7 @@ import {
     removeClass,
 } from '@/utils/domUtils'
 import { SingleTapEvent, wrap } from 'ntouch.js'
-import { SubsettingsMain } from './parts/SubsettingsMain'
+import { SubsettingsMain } from '@/component'
 import { SubsettingsBaseConstructor } from '@/types/Player'
 import { SubsettingsBase } from './parts/SubsettingsBase'
 

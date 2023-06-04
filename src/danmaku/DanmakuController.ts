@@ -232,6 +232,7 @@ export class DanmakuController {
 
         this.player.on(EVENT.RESIZE, () => {
             this.setTrackNumber()
+            this.setRollDistance()
         })
     }
 
@@ -258,6 +259,10 @@ export class DanmakuController {
     //* 设置弹幕轨道是数目
     setTrackNumber(num?: number) {
         this.danmaku.setTrackNumber(num || null)
+    }
+
+    setRollDistance() {
+        this.danmaku.setRollDistance()
     }
 
     //* 设置弹幕的透明度
