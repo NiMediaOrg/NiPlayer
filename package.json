@@ -1,6 +1,6 @@
 {
   "name": "niplayer",
-  "version": "1.4.4",
+  "version": "1.4.6",
   "description": "This is a TS library for video player",
   "main": "./dist/player.esm.js",
   "types": "./dist/index.d.ts",
@@ -9,7 +9,7 @@
     "build": "rimraf dist && rollup -c config/rollup.config.prod.js && npm run build:dts",
     "build:tsc": "tsc",
     "build:dts": "dts-bundle-generator -o ./dist/index.d.ts ./src/index.ts --project tsconfig.json  --no-check",
-    "publish": "node ./script/publish.mjs",
+    "publish: niplayer": "node ./script/publish.mjs",
     "deploy": "node ./script/deploy.mjs",
     "test": "vitest",
     "coverage": "vitest run --coverage",

@@ -5,12 +5,14 @@
 /.vscode/
 /script/
 /config/
-/dist/index.html
 /assets/
 .babelrc
 .gitignore
 .npmignore
 .npmrc
 vitest.config.ts
+prettier.config.js
+index.html
 tsconfig.json
-
+/.idea/
+/niplayer-plugin-dash/
