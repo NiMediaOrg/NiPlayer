@@ -30,7 +30,7 @@ async function gitCommit() {
             message: "输入你的commit message",
             default: "update: tiny update"
         })
-        commitMessage = answer;
+        commitMessage = answer.commit;
     } catch(error) {
         console.error(`发生错误： ${error}`);
     }
