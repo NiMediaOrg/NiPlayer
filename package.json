@@ -1,6 +1,6 @@
 {
   "name": "niplayer",
-  "version": "1.4.4",
+  "version": "1.4.5",
   "description": "This is a TS library for video player",
   "main": "./dist/player.esm.js",
   "types": "./dist/index.d.ts",

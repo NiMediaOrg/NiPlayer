@@ -4,7 +4,7 @@ import { Player } from '@/page/player'
 import { DOMProps, Node } from '@/types/Player'
 import { addClass, createSvg } from '@/utils/domUtils'
 import { storeControlComponent } from '@/utils/store'
-import { fullscreenExitPath, fullscreenPath } from '@/svg/index'
+import { fullscreenExitPath, fullscreenPath } from '@/svg'
 import { Options } from './Options'
 import { isFull } from 'be-full'
 import { FullHTMLElement, enterFull, exitFull } from '@/utils/full'
@@ -53,8 +53,10 @@ export class FullScreen extends Options {
 
         document.addEventListener('fullscreenchange', (e) => {
             if (document.fullscreenElement) {
+                console.log("进入全屏");
                 this.player.emit(EVENT.ENTER_FULLSCREEN)
             } else {
+                console.log("退出全屏");
                 this.player.emit(EVENT.LEAVE_FULLSCREEN)
             }
         })

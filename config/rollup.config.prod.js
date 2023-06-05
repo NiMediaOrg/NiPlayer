@@ -50,6 +50,7 @@ export default defineConfig({
             plugins: [terser()],
         },
     ],
+    treeshake: true,
     plugins: [
         //ts插件让rollup读取ts文件
         ts(),

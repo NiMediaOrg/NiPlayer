@@ -472,12 +472,12 @@ class Player extends Component implements ComponentItem {
 
     // 设置根节点的fontsize大小以便于做移动端适配 -> rem
     private adjustRem(width: number = 600) {
+        console.log("调整rem大小", width)
         const scale = width / 600
         let number = 1
         if (scale > 1.75) {
             number = 1.25
         }
-        console.log(width, number)
         document.documentElement.style.fontSize = this.baseSize * number + 'px'
     }
 
