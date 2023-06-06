@@ -107,7 +107,7 @@ class MediaPlayer {
         }
     }
     /**
-     * @description 根据传入的媒体轨道的类型构建对应的SourceBuffer
+     * @description 根据传入的媒体轨道的类型构建对应的SourceBuffer, 编码方式和对应的解码规范是一一对应的，尽管可能不是使用相同的字符串来表示它们
      * @param mp4track
      */
     addBuffer(mp4track: MediaTrack) {
