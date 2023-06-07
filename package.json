@@ -3,6 +3,7 @@
   "version": "1.4.6",
   "description": "This is a TS library for video player",
   "main": "./dist/player.esm.js",
+  "module": "./dist/player.esm.js",
   "types": "./dist/index.d.ts",
   "scripts": {
     "dev": "rollup -c config/rollup.config.dev.js --watch",
@@ -14,6 +15,19 @@
     "test": "vitest",
     "coverage": "vitest run --coverage",
     "lint:prettier": "prettier --write ./src"
+  },
+  "exports": {
+    ".": {
+      "require": "./dist/player.cjs.js",
+      "import": "./dist/player.esm.js"
+    }
+  },
+  "bugs": {
+    "url": "https://github.com/NiMediaOrg/NiPlayer/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/NiMediaOrg/NiPlayer"
   },
   "keywords": [
     "player",

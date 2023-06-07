@@ -65,27 +65,28 @@ export class VideoProgress extends Progress {
                 scale = 1
             }
 
-            this.player.emit(EVENT.VIDEO_DOT_DRAG, scale)
+            this.player.emit(EVENT.VIDEO_DOT_DRAG, scale);
         })
 
         this.on(EVENT.DOT_DOWN, () => {
             this.dotLeft =
-                (parseInt(this.dot.style.left) / 100) * this.el.clientWidth
-            this.player.emit(EVENT.DOT_DOWN)
+                (parseInt(this.dot.style.left) / 100) * this.el.clientWidth;
+            this.player.emit(EVENT.DOT_DOWN);
         })
 
         this.on(EVENT.DOT_UP, (scale: number) => {
-            this.player.emit(EVENT.DOT_UP)
-            this.dotLeft = this.el.clientWidth * scale
-            this.player.video.currentTime = scale * this.player.video.duration
+            this.player.emit(EVENT.DOT_UP);
+            this.dotLeft = this.el.clientWidth * scale;
+            this.player.video.currentTime = scale * this.player.video.duration;
         })
 
         this.player.video.addEventListener('timeupdate', (e) => {
             if (this.player.enableSeek) {
                 let scale =
-                    this.player.video.currentTime / this.player.video.duration
-                this.dot.style.left = scale * 100 + '%'
-                this.completedProgress.style.width = scale * 100 + '%'
+                    this.player.video.currentTime / this.player.video.duration;
+                // this.dot.style.left = scale * 100 + '%'
+                this.dot.style.left = `calc(${scale * 100}% - ${this.dot.clientWidth / 2}px)`;
+                this.completedProgress.style.width = scale * 100 + '%';
             }
         })
     }
