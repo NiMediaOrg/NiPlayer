@@ -250,6 +250,16 @@ class Player extends Component implements ComponentItem {
         this.on(EVENT.LEAVE_FULLPAGE, () => {
             this.adjustRem()
         })
+
+        this.on(EVENT.HIDE_TOOLBAR, () => {
+            this.container.style.cursor = "none";
+            this.el.style.cursor = "none";
+        })
+
+        this.on(EVENT.SHOW_TOOLBAR, () => {
+            this.container.style.cursor = "";
+            this.el.style.cursor = ""
+        })
     }
 
     // 初始化PC端事件

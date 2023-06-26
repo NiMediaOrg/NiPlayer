@@ -61,7 +61,7 @@ export class ToolBar extends Component implements ComponentItem {
         })
 
         this.player.on(EVENT.HIDE_TOOLBAR, () => {
-            this.onHideToolBar()
+            this.onHideToolBar();
         })
     }
 
