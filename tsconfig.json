@@ -8,6 +8,10 @@
     "./lib/**/*"
   ],
   "compilerOptions": {
+    "types": [
+      "vite/client"
+    ],
+    "declaration": false,
     "resolveJsonModule": true,
     /* Language and Environment */
     "target": "ES2015",                                  /* Set the JavaScript language version for emitted JavaScript and include compatible library declarations. */
@@ -33,6 +37,5 @@
     "strict": false,                                      /* Enable all strict type-checking options. */
     "noImplicitAny": false,                            /* Enable error reporting for expressions and declarations with an implied 'any' type. */
     "skipLibCheck": true,                                 /* Skip type checking all .d.ts files. */
-    "declaration": false  /*  不生成类型声明文件 */
   }
 }
