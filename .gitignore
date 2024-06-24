@@ -1,5 +1,4 @@
-/node_modules/
-video.mp4
-/assets/
-/dist/
-/niplayer-plugin-dash/
+**/node_modules/**
+*.mp4
+assets/**
+**/dist/**

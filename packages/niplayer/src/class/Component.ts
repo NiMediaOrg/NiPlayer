@@ -41,4 +41,6 @@ export class Component extends BaseEvent {
     resetEvent() {}
     // 销毁组件
     dispose() {}
+
+    render() {}
 }

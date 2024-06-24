@@ -1,0 +1,39 @@
+{
+    "include": [
+      "./packages/**/*.ts"
+    ],
+    "exclude": [
+      "./packages/**/dist/*",
+      "./packages/**/lib/*",
+      "node_modules",
+    ],
+    "compilerOptions": {
+      "declaration": false,
+      "resolveJsonModule": true,
+      /* Language and Environment */
+      "target": "ES2015",
+      "lib": ["ES2016","DOM.Iterable","DOM"],
+      /* Modules */
+      "module": "ES6",
+      "rootDir": ".",
+      "moduleResolution": "node",
+      "baseUrl": ".",
+      "paths": {
+        "@/*": ["./packages/niplayer/src/*"]
+      },
+      "rootDirs": [
+        "./packages/**/src",
+        "package.json"
+      ],
+      "allowJs": true,
+      "checkJs": true,
+      "sourceMap": true,
+      "noEmitOnError": true,
+      "esModuleInterop": true,
+      "forceConsistentCasingInFileNames": true,
+      "strict": false,
+      "noImplicitAny": false,
+      "skipLibCheck": true,
+    }
+  }
+  

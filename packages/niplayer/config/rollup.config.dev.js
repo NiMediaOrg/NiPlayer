@@ -1,17 +1,10 @@
 // 开发环境
-import ts from 'rollup-plugin-typescript2'
-import babel from 'rollup-plugin-babel'
-import commonjs from 'rollup-plugin-commonjs'
 import postcss from 'rollup-plugin-postcss'
 import autoprefixer from 'autoprefixer'
 import { defineConfig } from 'rollup'
-import { nodeResolve } from '@rollup/plugin-node-resolve'
 import serve from 'rollup-plugin-serve'
 import livereload from 'rollup-plugin-livereload'
-
-const html = require('@rollup/plugin-html')
-
-const extensions = ['.ts', 'less']
+import { getBasePlugin } from '../../../script/rollup-helper.cjs'
 
 export default defineConfig({
     input: './src/page/player.ts', //入口
@@ -24,12 +17,7 @@ export default defineConfig({
         },
     ],
     plugins: [
-        ts(),
-        nodeResolve({
-            extensions,
-        }),
-        babel(),
-        commonjs(),
+        ...getBasePlugin(process.env.NODE_ENV),
         postcss({
             plugins: [autoprefixer()],
             extract: 'css/index.css',
