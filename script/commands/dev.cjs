@@ -3,7 +3,6 @@ const path = require("path");
 const fs = require('fs');
 async function dev(dir, port) {
     const rootPath = path.resolve(fs.realpathSync(process.cwd()), `./${dir}`)
-    console.log(rootPath)
     //* vite的开发环境配置
     /**
    * @type {import('vite').UserConfig}
