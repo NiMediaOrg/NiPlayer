@@ -1,3 +1,18 @@
 {
-    "extends": "../../tsconfig.base.json"
+    "extends": "../../tsconfig.base.json",
+    "compileOnSave": true,
+    "include": [
+        "./src/**/*"
+    ],
+    "exclude": [
+        "./dist/**/*",
+        "node_modules"
+    ],
+    "compilerOptions": {
+        "target": "ESNext",
+        "module": "ES6",
+        "moduleResolution": "Node",
+        "jsx": "preserve",
+        "jsxImportSource": "solid-js"
+    }
 }

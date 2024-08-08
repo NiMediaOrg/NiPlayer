@@ -17,7 +17,7 @@
     "dev:niplayer": "pnpm cli dev examples/niplayer"
   },
   "engines": {
-    "node": ">=18.12.0"
+    "node": ">=18.12.0" 
   },
   "keywords": [
     "player",
