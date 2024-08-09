@@ -2,7 +2,8 @@
     "extends": "../../tsconfig.base.json",
     "compileOnSave": true,
     "include": [
-        "./src/**/*"
+        "./src/**/*",
+        "./demo/**/*"
     ],
     "exclude": [
         "./dist/**/*",

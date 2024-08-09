@@ -6,15 +6,7 @@
   "module": "./dist/player.esm.js",
   "types": "./dist/index.d.ts",
   "scripts": {
-    "dev": "vite",
-    "build": "rimraf dist && cross-env NODE_ENV=prod rollup -c ./config/rollup.config.prod.cjs && npm run build:dts",
-    "build:tsc": "tsc",
-    "build:dts": "dts-bundle-generator -o ./dist/index.d.ts ./src/index.ts --project tsconfig.json  --no-check",
-    "publish: niplayer": "node ./script/publish.mjs",
-    "deploy": "node ./script/deploy.mjs",
-    "test": "vitest",
-    "coverage": "vitest run --coverage",
-    "lint:prettier": "prettier --write ./src"
+    "dev": "rspack serve --config ./config/rspack.dev.config.cjs"
   },
   "exports": {
     ".": {
