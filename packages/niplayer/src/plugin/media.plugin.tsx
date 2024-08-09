@@ -6,7 +6,7 @@ export class MediaPlugin extends UIPlugin {
     protected render() {
         const [ getCount, setCount ] = createSignal(0);
         return (
-            <div onClick={() => setCount(c => c + 1)}>{getCount()}</div>
+            <div onClick={() => setCount(c => c + 1)}>The count is {getCount()}</div>
         )
     }
 }
