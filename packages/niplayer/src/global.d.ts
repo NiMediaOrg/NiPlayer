@@ -7,4 +7,9 @@ declare module '.png' {
     export default base64;
 }
 
+declare module '*.svg' {
+    const svg: any;
+    export default svg;
+}
+
 export {}

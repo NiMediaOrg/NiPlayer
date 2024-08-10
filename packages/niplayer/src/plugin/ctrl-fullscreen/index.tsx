@@ -1,3 +1,4 @@
+import { fullscreen, leaveFullscreen } from "@/assets/svg";
 import { UIPlugin } from "@/base/ui.plugin";
 import { JSX } from "solid-js/jsx-runtime";
 
@@ -16,8 +17,9 @@ export class FullScreen extends UIPlugin {
         }
 
         return (
-            <div class="niplayer-controller-middle-item niplayer-controller-fullscreen-container" onClick={() => handleClick()}>
-                {state.isEnterFullscreen ? '退出全屏' : '进入全屏' }
+            <div class="niplayer-controller-middle-item niplayer-controller-fullscreen-container" onClick={() => handleClick()} >
+                <div innerHTML={state.isEnterFullscreen ? leaveFullscreen :  fullscreen} style={{width: '100%', height: '100%'}}></div>
+                <span class="niplayer-controller-middle-item-tip">{state.isEnterFullscreen ? '退出全屏' : '全屏'}</span>
             </div>
         )
     }

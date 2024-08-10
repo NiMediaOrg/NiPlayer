@@ -65,6 +65,8 @@
         background-image: url(./assets/image/control-bg.png);
         background-repeat: repeat-x;
         background-position: bottom;        
+        box-sizing: border-box;
+        padding: 0 15px;
 
         &-middle {
             width: 100%;
@@ -89,9 +91,43 @@
                 justify-content: center;
                 align-items: center;
                 cursor: pointer;
+                position: relative;
+                
+
+                &:hover {
+                    svg {
+                        opacity: 1;
+                    }
+
+                    .niplayer-controller-middle-item-tip {
+                        opacity: 1;
+                        transform: translateX(-50%) translateY(0px);
+                    }
+                }
+
+                &-tip {
+                    position: absolute;
+                    bottom: 55px;
+                    left: 50%;
+                    transform: translateX(-50%) translateY(10px);
+                    text-wrap: nowrap;
+                    background-color: #000;
+                    padding: 5px 5px;
+                    border-radius: 5px;
+                    font-size: 12px;
+                    text-align: center;
+                    display: flex;
+                    align-items: center;
+                    opacity: 0;
+                    transition: all .5s ease;
+                }
+                
                 svg {
                     width: 100%;
                     height: 100%;
+                    fill: #fff;
+                    opacity: .8;
+                    transition: opacity .5s ease;
                 }
             }
         }
