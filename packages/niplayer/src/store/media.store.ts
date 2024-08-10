@@ -7,6 +7,7 @@ export interface MediaState {
     count: number;
     isEnterFullscreen: boolean;
     isEnterPipInPip: boolean;
+    volume: number;
 }
 
 export default class MediaStore extends BaseStore<MediaState> {
@@ -16,6 +17,7 @@ export default class MediaStore extends BaseStore<MediaState> {
             totalTime: 0,
             paused: true,
             count: 0,
+            volume: 100,
             isEnterFullscreen: false,
             isEnterPipInPip: false,
         }
@@ -45,6 +47,10 @@ export default class MediaStore extends BaseStore<MediaState> {
 
         videoElement.addEventListener('leavepictureinpicture', () => {
             this.setState('isEnterPipInPip', false);
+        })
+
+        videoElement.addEventListener('volumechange', () => {
+            this.setState('volume', videoElement.volume);
         })
 
         this.player.config.container.addEventListener('fullscreenchange', () => {

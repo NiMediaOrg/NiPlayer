@@ -9,6 +9,7 @@ import { PlayButton } from "./plugin/play-button";
 import { TimeLabel } from "./plugin/time-label";
 import { FullScreen } from "./plugin/ctrl-fullscreen";
 import { PipInPip } from "./plugin/pip-in-pip";
+import { Volume } from "./plugin/volume";
 interface Plugin {
     new (player: NiPlayer):void;
 }
@@ -46,6 +47,7 @@ export default class NiPlayer extends EventEmitter3 {
 
     private plugins: Plugin[] = [
         PlayButton,
+        Volume,
         TimeLabel,
         PipInPip,
         FullScreen
@@ -68,7 +70,7 @@ export default class NiPlayer extends EventEmitter3 {
         })
     }
     /**
-     * @desc 构造播放器的整体模板
+     * @desc 构造播放器的整体DOM模板
      */
     private renderTemplate(): void {
         const App = () => (
@@ -134,8 +136,8 @@ export default class NiPlayer extends EventEmitter3 {
      * @desc 暂停播放
      * @returns {void}
      */
-    public pause() {
-        return this.nodes.videoElement.pause();
+    public pause(): void {
+        this.nodes.videoElement.pause();
     }
     /**
      * @desc 播放器进入全屏模式
