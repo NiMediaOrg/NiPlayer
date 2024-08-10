@@ -7,7 +7,7 @@ import { NI_PLAYER_EVENT } from "@/events";
  * @instance UI类型的插件
  */
 export abstract class UIPlugin extends BasePlugin {
-    protected abstract name: string;
+    
     protected element: HTMLElement;
 
     constructor(player: NiPlayer) {
@@ -18,9 +18,6 @@ export abstract class UIPlugin extends BasePlugin {
     }
 
     protected install(): void {
-        // if (DEBUG) {
-            
-        // }
         const dom = this.render();
         this.element = document.createElement('div');
         if (typeof dom === 'string') {
@@ -32,7 +29,6 @@ export abstract class UIPlugin extends BasePlugin {
             render(() => dom, this.element);
             this.element = this.element.children[0] as HTMLElement;
         }
-        console.log(`[Plugin] The UIPlugin ${this.name} has been installed`);    
     }
     /**
      * @desc 在ui类型的插件中，render函数用于实现视图

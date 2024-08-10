@@ -66,6 +66,7 @@ importers:
       eventemitter3: ^5.0.1
       mobx: ^6.13.1
       mp4box: ^0.5.2
+      niplayer-components: workspace:^1.0.0
       ntouch.js: ^1.1.0
       socket.io-client: 4.6.0
       solid-js: ^1.8.19
@@ -74,6 +75,7 @@ importers:
       eventemitter3: 5.0.1
       mobx: 6.13.1
       mp4box: 0.5.2
+      niplayer-components: link:../niplayer-components
       ntouch.js: 1.1.0
       socket.io-client: 4.6.0
       solid-js: 1.8.20

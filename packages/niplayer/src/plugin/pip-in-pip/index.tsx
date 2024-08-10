@@ -6,7 +6,6 @@ export class PipInPip extends UIPlugin {
     protected name: string = 'pip-in-pip';
 
     protected render(): JSX.Element | string | HTMLElement {
-        console.log(pipInPip)
         const { state, setState } = this.player.rootStore.mediaStore;
         const handleClick = () => {
             if (state.isEnterPipInPip) {
