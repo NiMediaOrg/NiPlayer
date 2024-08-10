@@ -1,9 +1,9 @@
 import NiPlayer from "@/player";
-import { observable, runInAction } from "mobx";
+import { createStore, SetStoreFunction } from "solid-js/store";
 /**
  * @instance 基础store抽象类，用于管理各种状态
  */
-export default abstract class BaseStore<T = void> {
+export default abstract class BaseStore<T extends object = object> {
     /**
      * @getter
      * @desc This MUST be a Getter.
@@ -17,12 +17,14 @@ export default abstract class BaseStore<T = void> {
      */
     state: T;
 
+    setState: SetStoreFunction<T>;
+
     protected player: NiPlayer;
 
     private initState() {
-        this.state = observable.object(this.defaultState, null, {
-            deep: false
-        })
+        const [state, setState] = createStore(this.defaultState);
+        this.state = state;
+        this.setState = setState;
     }
 
     constructor(player: NiPlayer) {
@@ -30,13 +32,4 @@ export default abstract class BaseStore<T = void> {
         this.player = player;
     }
 
-    protected setState(newVal: Partial<T>): void {
-        runInAction(() => {
-            for (let key in newVal) {
-                if (this.defaultState[key] && this.defaultState[key] !== newVal[key]) {
-                    this.state[key] = newVal[key];
-                }
-            }
-        })
-    }
 }

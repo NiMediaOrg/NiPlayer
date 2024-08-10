@@ -6,8 +6,8 @@ import { DanmakuInput } from './UI/DanmakuInput'
 import { DanmakuOpenClose } from './UI/DanmakuOpenClose'
 import { DanmakuSettings } from './UI/DanmakuSettings'
 import * as io from 'socket.io-client'
-import { $, addClass, removeClass } from '../utils/domUtils'
-import { Axios } from '../utils/net'
+import { $, addClass, removeClass } from '../../src/utils/domUtils'
+import { Axios } from '../../src/utils/net'
 import { DanmakuData } from '../types/danmaku'
 
 /**

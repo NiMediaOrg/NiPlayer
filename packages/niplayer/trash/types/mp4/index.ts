@@ -1,4 +1,4 @@
-import HTTPRequest from '../../mp4/net/HTTPRequest'
+import HTTPRequest from '../../../trash/mp4/net/HTTPRequest'
 
 export type MoovBoxInfo = {
     duration?: number

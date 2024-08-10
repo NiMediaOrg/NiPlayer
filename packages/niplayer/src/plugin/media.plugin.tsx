@@ -1,12 +1,18 @@
 import { UIPlugin } from "@/base/ui.plugin";
-import { createSignal } from "solid-js";
 export class MediaPlugin extends UIPlugin {
     protected name: string = 'media-demo';
 
-    protected render() {
-        const [ getCount, setCount ] = createSignal(0);
+    protected render() {        
+        const { state, setState } = this.player.rootStore.mediaStore;
         return (
-            <div onClick={() => setCount(c => c + 1)} style={{cursor: 'pointer', "user-select": 'none'}}>The count is {getCount()}</div>
+            <div class="media-container">
+                <span>{state.count}</span>
+                <button onclick={() => setState('count', c => c + 1)}>+1</button> 
+            </div>
         )
+    };
+
+    protected afterRender(): void {
+        this.player.nodes.controllerBar.appendChild(this.element)
     }
 }

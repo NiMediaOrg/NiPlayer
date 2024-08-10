@@ -1,6 +1,6 @@
 import { Player } from '@/page/player'
 import MP4Box, { MP4ArrayBuffer, MP4File } from 'mp4box'
-import { Video } from '..'
+import { Video } from '../../src'
 import { DownLoader } from './net/DownLoader'
 import { EVENT } from '@/events'
 export class Mp4Parser {

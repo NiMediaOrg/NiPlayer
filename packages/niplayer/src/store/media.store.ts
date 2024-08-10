@@ -1,12 +1,13 @@
 import BaseStore from "@/base/base.store";
 import NiPlayer from "@/player";
-import { NI_PLAYER_EVENT } from "@/types/events";
+import { NI_PLAYER_EVENT } from "@/events";
 
 export interface MediaState {
     currentTime: number;
     totalTime: number;
     paused: boolean;
     playing: boolean;
+    count: number;
 }
 
 export default class MediaStore extends BaseStore<MediaState> {
@@ -15,39 +16,40 @@ export default class MediaStore extends BaseStore<MediaState> {
             currentTime: 0,
             totalTime: 0,
             paused: true,
-            playing: false
+            playing: false,
+            count: 0,
         }
     }
 
     constructor(player: NiPlayer) {
         super(player);
 
-        this.player.on(NI_PLAYER_EVENT.VIDEO_PREPARED, (video: HTMLVideoElement) => {
-            video.addEventListener('play', () => {
-                this.setState({
-                    playing: true, 
-                    paused: false
-                })
-            })
+        // this.player.on(NI_PLAYER_EVENT.VIDEO_PREPARED, (video: HTMLVideoElement) => {
+        //     video.addEventListener('play', () => {
+        //         this.setState({
+        //             playing: true, 
+        //             paused: false
+        //         })
+        //     })
 
-            video.addEventListener('pause', () => {
-                this.setState({
-                    playing: false,
-                    paused: true
-                })
-            })
+        //     video.addEventListener('pause', () => {
+        //         this.setState({
+        //             playing: false,
+        //             paused: true
+        //         })
+        //     })
 
-            video.addEventListener('durationchange', () => {
-                this.setState({
-                    totalTime: video.duration
-                })
-            })
+        //     video.addEventListener('durationchange', () => {
+        //         this.setState({
+        //             totalTime: video.duration
+        //         })
+        //     })
 
-            video.addEventListener('timeupdate', () => {
-                this.setState({
-                    currentTime: video.currentTime
-                })
-            })
-        })
+        //     video.addEventListener('timeupdate', () => {
+        //         this.setState({
+        //             currentTime: video.currentTime
+        //         })
+        //     })
+        // })
     }
 }

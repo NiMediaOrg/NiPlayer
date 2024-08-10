@@ -1,4 +1,4 @@
-import { AxiosConfig, AxiosOptions } from '../types/Player'
+import { AxiosConfig, AxiosOptions } from '../../trash/types/Player'
 
 export class Axios {
     config: AxiosConfig
