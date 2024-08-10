@@ -1,4 +1,4 @@
-import { ComponentItem, ComponentMap } from '../types/Player'
+import { ComponentItem, ComponentMap } from '../../trash/types/Player'
 
 // COMPONENT_STORE存储目前还展示在视图上的组件，也就是没用卸载或者删除的组件
 export const COMPONENT_STORE = new Map<string, ComponentItem>()

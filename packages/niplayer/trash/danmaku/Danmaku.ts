@@ -1,6 +1,6 @@
 import { Player } from '../page/player'
 import { DanmakuData, Track } from '../types/danmaku'
-import { $ } from '../utils/domUtils'
+import { $ } from '../../src/utils/domUtils'
 import { PriorityQueue } from './utils/PriorityQueue'
 import {nextTick} from "@/utils";
 /**

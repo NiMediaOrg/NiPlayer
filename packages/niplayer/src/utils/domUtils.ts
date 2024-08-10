@@ -5,7 +5,7 @@ import {
     getFunctionParametersType,
     Node,
     UpdateComponentOptions,
-} from '../types/Player'
+} from '../../trash/types/Player'
 export function getDOMPoint(dom: HTMLElement): { x: number; y: number } {
     let rect = dom.getBoundingClientRect()
     return { x: rect.left, y: rect.top }

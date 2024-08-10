@@ -6,15 +6,7 @@
   "module": "./dist/player.esm.js",
   "types": "./dist/index.d.ts",
   "scripts": {
-    "dev": "vite",
-    "build": "rimraf dist && cross-env NODE_ENV=prod rollup -c ./config/rollup.config.prod.cjs && npm run build:dts",
-    "build:tsc": "tsc",
-    "build:dts": "dts-bundle-generator -o ./dist/index.d.ts ./src/index.ts --project tsconfig.json  --no-check",
-    "publish: niplayer": "node ./script/publish.mjs",
-    "deploy": "node ./script/deploy.mjs",
-    "test": "vitest",
-    "coverage": "vitest run --coverage",
-    "lint:prettier": "prettier --write ./src"
+    "dev": "rspack serve --config ./config/rspack.dev.config.cjs"
   },
   "exports": {
     ".": {
@@ -53,9 +45,12 @@
   ],
   "dependencies": {
     "be-full": "^0.1.4",
+    "eventemitter3": "^5.0.1",
+    "mobx": "^6.13.1",
     "mp4box": "^0.5.2",
     "ntouch.js": "^1.1.0",
-    "socket.io-client": "4.6.0"
+    "socket.io-client": "4.6.0",
+    "solid-js": "^1.8.19"
   },
   "files": [
     "package.json",
