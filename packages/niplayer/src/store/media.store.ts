@@ -1,13 +1,12 @@
 import BaseStore from "@/base/base.store";
-import NiPlayer from "@/player";
-import { NI_PLAYER_EVENT } from "@/events";
 
 export interface MediaState {
     currentTime: number;
     totalTime: number;
     paused: boolean;
-    playing: boolean;
     count: number;
+    isEnterFullscreen: boolean;
+    isEnterPipInPip: boolean;
 }
 
 export default class MediaStore extends BaseStore<MediaState> {
@@ -16,40 +15,40 @@ export default class MediaStore extends BaseStore<MediaState> {
             currentTime: 0,
             totalTime: 0,
             paused: true,
-            playing: false,
             count: 0,
+            isEnterFullscreen: false,
+            isEnterPipInPip: false,
         }
     }
 
-    constructor(player: NiPlayer) {
-        super(player);
+    mounted(): void {
+        const videoElement = this.player.nodes.videoElement;
+        videoElement.addEventListener('durationchange', () => {
+            this.setState('totalTime', videoElement.duration);
+        })
 
-        // this.player.on(NI_PLAYER_EVENT.VIDEO_PREPARED, (video: HTMLVideoElement) => {
-        //     video.addEventListener('play', () => {
-        //         this.setState({
-        //             playing: true, 
-        //             paused: false
-        //         })
-        //     })
+        videoElement.addEventListener('timeupdate', () => {
+            this.setState('currentTime', videoElement.currentTime);
+        })
 
-        //     video.addEventListener('pause', () => {
-        //         this.setState({
-        //             playing: false,
-        //             paused: true
-        //         })
-        //     })
+        videoElement.addEventListener('play', () => {
+            this.setState('paused', videoElement.paused);
+        })
 
-        //     video.addEventListener('durationchange', () => {
-        //         this.setState({
-        //             totalTime: video.duration
-        //         })
-        //     })
+        videoElement.addEventListener('pause', () => {
+            this.setState('paused', videoElement.paused);
+        })
 
-        //     video.addEventListener('timeupdate', () => {
-        //         this.setState({
-        //             currentTime: video.currentTime
-        //         })
-        //     })
-        // })
+        videoElement.addEventListener('enterpictureinpicture', () => {
+            this.setState('isEnterPipInPip', true);
+        })
+
+        videoElement.addEventListener('leavepictureinpicture', () => {
+            this.setState('isEnterPipInPip', false);
+        })
+
+        this.player.config.container.addEventListener('fullscreenchange', () => {
+            this.setState('isEnterFullscreen', !!document.fullscreenElement);
+        })
     }
 }

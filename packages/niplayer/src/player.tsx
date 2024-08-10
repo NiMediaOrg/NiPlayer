@@ -1,11 +1,14 @@
 import { EventEmitter3 } from "./base/event-emitter3";
 import { defaultConfig } from "./default-config";
-import { MediaPlugin } from "./plugin/media.plugin";
 import { RootStore } from "./store/root.store";
 import { PlayerConfig } from "../trash/types/config";
 import { NI_PLAYER_EVENT } from "./events";
 import { render } from "solid-js/web";
 import { createEffect } from "solid-js";
+import { PlayButton } from "./plugin/play-button";
+import { TimeLabel } from "./plugin/time-label";
+import { FullScreen } from "./plugin/ctrl-fullscreen";
+import { PipInPip } from "./plugin/pip-in-pip";
 interface Plugin {
     new (player: NiPlayer):void;
 }
@@ -21,16 +24,31 @@ export default class NiPlayer extends EventEmitter3 {
         container: HTMLDivElement,
         videoArea: HTMLDivElement,
         videoElement: HTMLVideoElement,
-        controllerBar: HTMLDivElement
+        controllerBar: HTMLDivElement,
+        controllerBarTop:HTMLDivElement,
+        controllerBarMiddle: HTMLDivElement,
+        controllerBarBottom: HTMLDivElement,
+        controllerBarMiddleLeft: HTMLDivElement,
+        controllerBarMiddleMiddle: HTMLDivElement,
+        controllerBarMiddleRight: HTMLDivElement,
     } = {
         container: null,
         videoArea: null,
         videoElement: null,
         controllerBar: null,
+        controllerBarTop: null,
+        controllerBarMiddle: null,
+        controllerBarBottom: null,
+        controllerBarMiddleLeft: null,
+        controllerBarMiddleMiddle: null,
+        controllerBarMiddleRight: null
     };
 
     private plugins: Plugin[] = [
-        MediaPlugin
+        PlayButton,
+        TimeLabel,
+        PipInPip,
+        FullScreen
     ];
 
     constructor(options?: PlayerConfig) {
@@ -56,10 +74,17 @@ export default class NiPlayer extends EventEmitter3 {
         const App = () => (
             <div class="niplayer-container" ref={this.nodes.container}>
                 <div class="niplayer-video-area" ref={this.nodes.videoArea}>
-                    {this.config.video ? '' : <video src={this.config.url} ref={this.nodes.videoElement}></video>}
+                    {this.config.video ? '' : <video src={this.config.url} ref={this.nodes.videoElement} autoplay></video>}
                 </div>
                 <div class="niplayer-controller-area" ref={this.nodes.controllerBar}>
-
+                    <div class="niplayer-controller-area-top" ref={this.nodes.controllerBarTop}></div>
+                    <div class="niplayer-controller-area-middle" ref={this.nodes.controllerBarMiddle}>
+                        <div class="niplayer-controller-area-middle-left" ref={this.nodes.controllerBarMiddleLeft}></div>
+                        <div class="niplayer-controller-area-middle-middle" ref={this.nodes.controllerBarMiddleMiddle}></div>
+                        <div class="niplayer-controller-area-middle-right" ref={this.nodes.controllerBarMiddleRight}></div>
+                    </div>
+                    <div class="niplayer-controller-area-bottom" ref={this.nodes.controllerBarBottom}>                        
+                    </div>
                 </div>
             </div>
         );
@@ -78,17 +103,48 @@ export default class NiPlayer extends EventEmitter3 {
      * @desc 注册并且订阅播放器内部的state
      * @param getter
      */
-    public useState<T>(getter: () => T, callback: (newVal: T) => void) {
+    public useState<T>(getter: () => T, callback: (newVal: T) => void, options?: {fireImmediately?: boolean}) {
+        let isFirst = true;
         createEffect(() => {
             const val = getter();
-            callback(val);
+            if (options.fireImmediately && isFirst) {
+                callback(val);
+            } else if (!isFirst) {
+                callback(val);
+            }
+
+            isFirst = false;
         });
     }
     /**
-     * @desc 注册一个副作用函数
+     * @desc 注册一个副作用函数, 可以自动进行依赖收集和依赖触发
      * @param handle 
      */
     public useEffect(handle: () => void) {
         createEffect(handle);
+    }
+
+    public play(): Promise<any> {
+        return this.nodes.videoElement.play();
+    }
+
+    public pause() {
+        return this.nodes.videoElement.pause();
+    }
+
+    public requestFullScreen() {
+        this.config.container.requestFullscreen();
+    }
+
+    public exitFullScreen() {
+        document.fullscreenElement && document.fullscreenEnabled && document.exitFullscreen();
+    }
+
+    public requestPipInPip() {
+        this.nodes.videoElement.requestPictureInPicture();
+    }
+
+    public exitPipInPip() {
+        document.exitPictureInPicture();
     }
 }

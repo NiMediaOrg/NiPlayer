@@ -1,3 +1,4 @@
+import { NI_PLAYER_EVENT } from "@/events";
 import NiPlayer from "@/player";
 import { createStore, SetStoreFunction } from "solid-js/store";
 /**
@@ -30,6 +31,12 @@ export default abstract class BaseStore<T extends object = object> {
     constructor(player: NiPlayer) {
         this.initState();
         this.player = player;
+        this.player.on(NI_PLAYER_EVENT.MOUNTED, () => {
+            this.mounted();
+        })
     }
-
+    /**
+     * @desc 在ui视图渲染完成后调用
+     */
+    mounted() {}
 }
