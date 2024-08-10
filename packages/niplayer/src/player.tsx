@@ -123,27 +123,41 @@ export default class NiPlayer extends EventEmitter3 {
     public useEffect(handle: () => void) {
         createEffect(handle);
     }
-
+    /**
+     * @desc 开始播放
+     * @returns {Promise<any>}
+     */
     public play(): Promise<any> {
         return this.nodes.videoElement.play();
     }
-
+    /**
+     * @desc 暂停播放
+     * @returns {void}
+     */
     public pause() {
         return this.nodes.videoElement.pause();
     }
-
+    /**
+     * @desc 播放器进入全屏模式
+     */
     public requestFullScreen() {
         this.config.container.requestFullscreen();
     }
-
+    /**
+     * @desc 播放器退出全屏模式
+     */
     public exitFullScreen() {
         document.fullscreenElement && document.fullscreenEnabled && document.exitFullscreen();
     }
-
+    /**
+     * @description 播放器进入画中画模式
+     */
     public requestPipInPip() {
         this.nodes.videoElement.requestPictureInPicture();
     }
-
+    /**
+     * @description 播放器退出画中画模式
+     */
     public exitPipInPip() {
         document.exitPictureInPicture();
     }

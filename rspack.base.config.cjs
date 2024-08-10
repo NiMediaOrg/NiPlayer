@@ -17,6 +17,10 @@ const config = defineConfig({
         ],
       },
       {
+        test: /\.svg$/,
+        loader: 'svg-inline-loader'
+      },
+      {
         test: /\.(png|jpe?g|gif)$/i,
         type: "asset/resource",
       },
