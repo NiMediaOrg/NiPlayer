@@ -109,7 +109,7 @@ export default class NiPlayer extends EventEmitter3 {
         let isFirst = true;
         createEffect(() => {
             const val = getter();
-            if (options.fireImmediately && isFirst) {
+            if (options?.fireImmediately && isFirst) {
                 callback(val);
             } else if (!isFirst) {
                 callback(val);

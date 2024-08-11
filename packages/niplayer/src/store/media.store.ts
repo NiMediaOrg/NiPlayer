@@ -33,7 +33,7 @@ export default class MediaStore extends BaseStore<MediaState> {
             currentTime: 0,
             totalTime: 0,
             paused: true,
-            volume: 100,
+            volume: 0.5,
             isEnterFullscreen: false,
             isEnterPipInPip: false,
         }
@@ -71,6 +71,10 @@ export default class MediaStore extends BaseStore<MediaState> {
 
         this.player.config.container.addEventListener('fullscreenchange', () => {
             this.setState('isEnterFullscreen', !!document.fullscreenElement);
+        })
+
+        this.player.useState(() => this.state.volume, (val) => {
+            videoElement.volume = val;
         })
     }
 }
