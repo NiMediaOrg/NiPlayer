@@ -1,12 +1,29 @@
 import BaseStore from "@/base/base.store";
 
 export interface MediaState {
+    /**
+     * @description 视频当前时间
+     */
     currentTime: number;
+    /**
+     * @description 视频的总时长
+     */
     totalTime: number;
+    /**
+     * @description 视频的暂停状态
+     */
     paused: boolean;
-    count: number;
+    /**
+     * @description 是否处于全屏状态
+     */
     isEnterFullscreen: boolean;
+    /**
+     * @description 是否处于画中画状态
+     */
     isEnterPipInPip: boolean;
+    /**
+     * @description 视频的音量大小
+     */
     volume: number;
 }
 
@@ -16,7 +33,6 @@ export default class MediaStore extends BaseStore<MediaState> {
             currentTime: 0,
             totalTime: 0,
             paused: true,
-            count: 0,
             volume: 100,
             isEnterFullscreen: false,
             isEnterPipInPip: false,

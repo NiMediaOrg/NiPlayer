@@ -76,7 +76,7 @@ export default class NiPlayer extends EventEmitter3 {
         const App = () => (
             <div class="niplayer-container" ref={this.nodes.container}>
                 <div class="niplayer-video-area" ref={this.nodes.videoArea}>
-                    {this.config.video ? '' : <video src={this.config.url} ref={this.nodes.videoElement} autoplay></video>}
+                    {this.config.video ? '' : <video src={this.config.url} ref={this.nodes.videoElement} autoplay muted></video>}
                 </div>
                 <div class="niplayer-controller-area" ref={this.nodes.controllerBar}>
                     <div class="niplayer-controller-area-top" ref={this.nodes.controllerBarTop}></div>
