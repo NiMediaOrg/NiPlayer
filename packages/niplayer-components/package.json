@@ -4,12 +4,11 @@
   "description": "NiPlayer播放器的通用组件库",
   "main": "./src/index.ts",
   "module": "./src/index.ts",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
   "keywords": [
     "video",
-    "components"
+    "components",
+    "solid-js",
+    "css in js"
   ],
   "author": "NovaNi",
   "license": "ISC"

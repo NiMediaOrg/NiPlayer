@@ -1,1 +1,1 @@
-console.log('components')
+export { default as Slider } from "./components/slider";

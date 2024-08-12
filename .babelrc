@@ -10,5 +10,8 @@
             "@babel/preset-typescript"
         ]
     ],
+    "plugins": [
+        "solid-styled-jsx/babel"
+    ],
     "exclude": "node_modules/**"
 }

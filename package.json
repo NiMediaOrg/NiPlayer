@@ -12,10 +12,6 @@
     "type": "git",
     "url": "https://github.com/NiMediaOrg/NiPlayer"
   },
-  "scripts": {
-    "cli": "node ./script/commands/cli.cjs",
-    "dev:niplayer": "pnpm cli dev examples/niplayer"
-  },
   "engines": {
     "node": ">=18.12.0"
   },
@@ -56,9 +52,13 @@
     "rimraf": "^5.0.1",
     "sade": "^1.8.1",
     "shelljs": "^0.8.5",
+    "solid-js": "^1.8.19",
+    "solid-styled-jsx": "^0.27.1",
+    "styled-jsx": "^3.4.4",
     "svg-inline-loader": "^0.8.2",
     "typescript": "^4.9.5",
-    "vitest": "^0.27.2"
+    "vitest": "^0.27.2",
+    "webpack": "^5.93.0"
   },
   "author": "NovaNi",
   "license": "MIT",
