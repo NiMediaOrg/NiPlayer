@@ -11,6 +11,7 @@ import { FullScreen } from "./plugin/ctrl-fullscreen";
 import { PipInPip } from "./plugin/pip-in-pip";
 import { Volume } from "./plugin/volume";
 import { Progress } from "./plugin/progress";
+import { Setting } from "./plugin/setting";
 interface Plugin {
     new (player: NiPlayer):void;
 }
@@ -51,6 +52,7 @@ export default class NiPlayer extends EventEmitter3 {
         PlayButton,
         Volume,
         TimeLabel,
+        Setting,
         PipInPip,
         FullScreen
     ];

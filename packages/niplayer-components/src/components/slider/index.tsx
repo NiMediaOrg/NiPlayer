@@ -9,7 +9,11 @@ interface SliderProps {
     minProgress?: number;
     maxProgress?: number;
     hidden?: boolean;
+    dotScale?: number;
     onChange?: (progress: number) => void;
+    onMouseDown?: () => void;
+    onMouseMove?: () => void;
+    onMouseUp?: (per: number) => void;
 }
 
 const Slider = (props: SliderProps) => {
@@ -28,16 +32,21 @@ const Slider = (props: SliderProps) => {
     const handleMouseDown = (e: MouseEvent) => {
         const x = e.offsetX;
         props.onChange?.(getProgressPercentage(x / sliderHTML.clientWidth));
+        props.onMouseDown?.();
         const initPer = props.progress;
         document.onmousemove = (ev: MouseEvent) => {
             const deltaX = ev.clientX - e.clientX;
             const per = getProgressPercentage(initPer + deltaX / sliderHTML.clientWidth);
             props.onChange?.(per);
+            props.onMouseMove?.();
         }
 
-        document.onmouseup = () => {
+        document.onmouseup = (evs: MouseEvent) => {
             document.onmousemove = null;
             document.onmouseup = null;
+            const deltaX = evs.clientX - e.clientX;
+            const per = getProgressPercentage(initPer + deltaX / sliderHTML.clientWidth);
+            props.onMouseUp?.(per);
         }
     }
         
@@ -61,8 +70,8 @@ const Slider = (props: SliderProps) => {
                             border-radius: 5px;
                             position: relative;
                             margin-right: 10px;
-                            display: ${props?.hidden ? 'none' : ''}
-                            /* transition: width .5s ease; */
+                            display: ${props?.hidden ? 'none' : ''};
+                            transition: height .3s ease;
                         }
 
                         .nova-slider-top {
@@ -89,9 +98,9 @@ const Slider = (props: SliderProps) => {
 
                         .nova-slider-done {
                             background-color: #f00;
-                            height: 105%;
+                            height: 100%;
                             width: 100%;
-                            transform: scaleX(${props.progress ? props.progress + '' : '1'});
+                            transform: scaleX(${props.progress !== undefined ? props.progress + '' : '1'});
                             transform-origin: left;
                             border-radius: 5px;
                             pointer-events: none;
@@ -105,11 +114,11 @@ const Slider = (props: SliderProps) => {
                             border-radius: 6px;
                             position: absolute;
                             top: 50%;
-                            margin-top: -6px;
-                            margin-right: -6px;
                             left: ${props.progress ? props.progress * 100 + '': '100'}%;
                             pointer-events: none;
-                            
+                            transform: translate(-50%, -50%) scale(${props.dotScale !== undefined ? props.dotScale : 1});
+                            transform-origin: center center;
+                            transition: transform .3s ease;
                         }`
                 }
             </style>

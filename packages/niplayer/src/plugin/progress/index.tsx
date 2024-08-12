@@ -6,14 +6,48 @@ import "./index.less";
 export class Progress extends UIPlugin {
     protected name: string = 'progress-bar';
 
+    protected initSliderHeight: number = 3;
+    protected hoverSliderHeight: number = 5;
+    protected progressSignal = createSignal(0);
+
+    protected get progressPercentage(): number {
+        if (this.player.rootStore.actionStore.state.isProgressDrag) {
+            return this.progressSignal[0]();
+        }
+        const { state } = this.player.rootStore.mediaStore;
+        const val = isNaN(state.currentTime / state.totalTime) ? 0 : state.currentTime / state.totalTime;
+        return val;
+    } 
+
     protected render(): JSX.Element | string | HTMLElement {
-        const [progress, setProgress] = createSignal(0.5)
-        const handleChange = (val) => {
-            setProgress(val);
+        const [ sliderHeight, setSliderHeight ] = createSignal(this.initSliderHeight);
+        const [ dotScale, setDotScale ] = createSignal(0);
+        const handleChange = (val: number) => {
+            this.progressSignal[1](val);
+        }
+
+        const handleMouseEnter = () => {
+            setSliderHeight(this.hoverSliderHeight);
+            setDotScale(1);
+        }
+
+        const handleMouseLeave = () => {
+            setSliderHeight(this.initSliderHeight);
+            setDotScale(0);
+        }
+
+        const handleMouseDown = () => {
+            this.player.rootStore.actionStore.setState('isProgressDrag', true);
+        }
+
+        const handleMouseUp = (per: number) => {
+            this.player.rootStore.actionStore.setState('isProgressDrag', false);
+            this.player.rootStore.mediaStore.setState('currentTime', this.player.rootStore.mediaStore.state.totalTime * per);
+            this.player.play();
         }
         return (
-            <div class="niplayer-progress-container" style={{cursor: 'pointer'}}>
-                <Slider progress={progress()} height={3} onChange={handleChange}/>
+            <div class="niplayer-progress-container" style={{cursor: 'pointer', position: 'absolute', bottom: '0', width: '100%'}} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
+                <Slider progress={this.progressPercentage} height={sliderHeight()} onChange={handleChange} dotScale={dotScale()} onMouseDown={handleMouseDown} onMouseUp={handleMouseUp}/>
             </div>
         )
     }

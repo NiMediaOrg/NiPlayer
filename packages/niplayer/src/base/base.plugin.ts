@@ -9,8 +9,8 @@ export default abstract class BasePlugin {
     protected abstract install(): void;
 
     constructor(public player: NiPlayer) {
-        this.install();
         this.player.on(NI_PLAYER_EVENT.MOUNTED, () => {
+            this.install();
             this.log();
         })
     }
