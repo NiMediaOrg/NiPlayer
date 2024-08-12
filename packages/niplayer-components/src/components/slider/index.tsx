@@ -8,6 +8,7 @@ interface SliderProps {
     height?: number
     minProgress?: number;
     maxProgress?: number;
+    hidden?: boolean;
     onChange?: (progress: number) => void;
 }
 
@@ -26,12 +27,12 @@ const Slider = (props: SliderProps) => {
 
     const handleMouseDown = (e: MouseEvent) => {
         const x = e.offsetX;
-        props.onChange(getProgressPercentage(x / sliderHTML.clientWidth));
+        props.onChange?.(getProgressPercentage(x / sliderHTML.clientWidth));
         const initPer = props.progress;
         document.onmousemove = (ev: MouseEvent) => {
             const deltaX = ev.clientX - e.clientX;
             const per = getProgressPercentage(initPer + deltaX / sliderHTML.clientWidth);
-            props.onChange(per);
+            props.onChange?.(per);
         }
 
         document.onmouseup = () => {
@@ -39,7 +40,7 @@ const Slider = (props: SliderProps) => {
             document.onmouseup = null;
         }
     }
-
+        
     return (
         <>
             <div class="nova-slider-container" ref={sliderHTML} onMouseDown={handleMouseDown}>
@@ -51,17 +52,16 @@ const Slider = (props: SliderProps) => {
                 </div>
                 <div class="nova-slider-bottom"></div>
             </div>
-            <style>
+            <style jsx dynamic>
                 {
-                    css`
-                        .nova-slider-container {
+                    `.nova-slider-container {
                             width: ${props.width ? `${props.width}px` : '100%'};
                             height: ${props.height ? `${props.height}px` : '100%'};
                             background-color: #faf4f4fc;
                             border-radius: 5px;
                             position: relative;
                             margin-right: 10px;
-                            display: ${props.width ? '' : 'none'}
+                            display: ${props?.hidden ? 'none' : ''}
                             /* transition: width .5s ease; */
                         }
 
@@ -89,12 +89,13 @@ const Slider = (props: SliderProps) => {
 
                         .nova-slider-done {
                             background-color: #f00;
-                            height: 100%;
+                            height: 105%;
                             width: 100%;
                             transform: scaleX(${props.progress ? props.progress + '' : '1'});
                             transform-origin: left;
                             border-radius: 5px;
                             pointer-events: none;
+                            box-sizing: border-box;
                         }
 
                         .nova-slider-dot {
@@ -109,8 +110,7 @@ const Slider = (props: SliderProps) => {
                             left: ${props.progress ? props.progress * 100 + '': '100'}%;
                             pointer-events: none;
                             
-                        }
-                    `
+                        }`
                 }
             </style>
         </>

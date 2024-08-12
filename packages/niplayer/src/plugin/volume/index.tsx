@@ -55,6 +55,7 @@ export class Volume extends UIPlugin {
                         maxProgress={this.maxProgress} 
                         width={hideSlider() ? 0 : 60} 
                         height={3}
+                        hidden={hideSlider()}
                     />
                 </div>
             </div>

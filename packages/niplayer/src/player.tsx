@@ -10,6 +10,7 @@ import { TimeLabel } from "./plugin/time-label";
 import { FullScreen } from "./plugin/ctrl-fullscreen";
 import { PipInPip } from "./plugin/pip-in-pip";
 import { Volume } from "./plugin/volume";
+import { Progress } from "./plugin/progress";
 interface Plugin {
     new (player: NiPlayer):void;
 }
@@ -46,6 +47,7 @@ export default class NiPlayer extends EventEmitter3 {
     };
 
     private plugins: Plugin[] = [
+        Progress,
         PlayButton,
         Volume,
         TimeLabel,
@@ -70,13 +72,29 @@ export default class NiPlayer extends EventEmitter3 {
         })
     }
     /**
-     * @desc 构造播放器的整体DOM模板
+     * @desc 构造播放器的整体DOM模板并且绑定相关事件
      */
     private renderTemplate(): void {
+        const handleClick = () => {
+            if (this.rootStore.mediaStore.state.paused) {
+                this.play();
+            } else {
+                this.pause();
+            }
+        }
+
+        const handleDoubleClick = () => {
+            if (this.rootStore.mediaStore.state.isEnterFullscreen) {
+                this.exitFullScreen();
+            } else {
+                this.requestFullScreen();
+            }
+        }
+
         const App = () => (
             <div class="niplayer-container" ref={this.nodes.container}>
-                <div class="niplayer-video-area" ref={this.nodes.videoArea}>
-                    {this.config.video ? '' : <video src={this.config.url} ref={this.nodes.videoElement} autoplay muted></video>}
+                <div class="niplayer-video-area" ref={this.nodes.videoArea} onClick={handleClick} onDblClick={handleDoubleClick}>
+                    {this.config.video ? '' : <video src={this.config.url} ref={this.nodes.videoElement} autoplay></video>}
                 </div>
                 <div class="niplayer-controller-area" ref={this.nodes.controllerBar}>
                     <div class="niplayer-controller-area-top" ref={this.nodes.controllerBarTop}></div>

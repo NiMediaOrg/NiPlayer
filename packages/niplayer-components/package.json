@@ -11,9 +11,5 @@
     "css in js"
   ],
   "author": "NovaNi",
-  "license": "ISC",
-  "dependencies": {
-    "solid-js": "^1.8.19",
-    "solid-styled-jsx": "^0.27.1"
-  }
+  "license": "ISC"
 }
