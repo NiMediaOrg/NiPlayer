@@ -76,5 +76,9 @@ export default class MediaStore extends BaseStore<MediaState> {
         this.player.useState(() => this.state.volume, (val) => {
             videoElement.volume = val;
         })
+
+        this.player.useState(() => this.state.currentTime, (time) => {
+            videoElement.currentTime = time;
+        })
     }
 }
