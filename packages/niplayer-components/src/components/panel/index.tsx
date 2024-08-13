@@ -1,3 +1,5 @@
+import { createEffect, onMount } from "solid-js";
+
 export interface IPanelItem {
     content: string;
     icon?: string;
@@ -8,16 +10,56 @@ export interface IPanelItem {
 
 interface PanelProps {
     items: IPanelItem[];
+    sideItems?: IPanelItem[];
+    hidden?: boolean;
+    onItemClick?: (list: IPanelItem[]) => void;
 }
 
 const Panel = (props: PanelProps) => {
+    let mainList: HTMLUListElement = null, sideList: HTMLUListElement = null, container: HTMLDivElement = null;
+    const handleJump = (index: number) => {
+        props.items[index]?.jump && props.onItemClick?.(props.items[index]?.jump);
+    }
+
+    createEffect(() => {
+        if (!mainList || !sideList || !container) return;
+        const sideItems = props.sideItems;
+        if (sideItems.length > 0) {
+            mainList.style.transform = 'translateX(-100%)';
+            mainList.style.position = 'absolute';
+
+            sideList.style.transform = 'translateX(-100%)';
+            sideList.style.position = 'relative';
+
+        } else {
+            // container.style.maxHeight = '150px';
+        }
+    })
 
     return (
         <>
-            <div class="nova-panel-container">
-                <ul class="nova-panel-list">
+            <div class="nova-panel-container" style={{opacity: props.hidden ? 0 : 1}} ref={container}>
+                <ul class="nova-panel-list nova-panel-main-list" ref={mainList}>
                     {
-                        props.items.map(item => {
+                        props.items.map((item, index) => {
+                            return (
+                                <li class="nova-panel-list-item" onClick={() => handleJump(index)}>
+                                    <div class="nova-panel-list-item-left">
+                                        <span class="nova-panel-list-item-icon" innerHTML={item.icon || ''}></span>
+                                        <span class="nova-panel-list-item-content">{item.content}</span>
+                                    </div>
+                                    <div class="nova-panel-list-item-right">
+                                        <span class="nova-panel-list-item-tip">{item.tip}</span>
+                                        <span class="nova-panel-list-item-button" innerHTML={item.button || ''}></span>
+                                    </div>
+                                </li>
+                            )
+                        })
+                    }
+                </ul>
+                <ul class="nova-panel-list nova-panel-side-list" ref={sideList}>
+                    {
+                        props.sideItems.map((item, index) => {
                             return (
                                 <li class="nova-panel-list-item">
                                     <div class="nova-panel-list-item-left">
@@ -40,21 +82,37 @@ const Panel = (props: PanelProps) => {
                 `
                     .nova-panel-container {
                         background-color: rgba(0,0,0,0.8);
-                        padding: 5px 10px;
                         border-radius: 10px;
                         font-size: 14px;
+                        transition: opacity .5s ease, max-height 2.5s ease;
+                        overflow: hidden;
+                        position: relative;
+                        display: grid;
                     }
 
                     .nova-panel-list {
                         list-style: none;
                         padding: 0;
                         margin: 0;
+                        transition: transform .5s ease;
+                    }
+
+
+                    .nova-panel-main-list {
+                        left: 0;
+                        bottom: 0;
+                    }
+
+                    .nova-panel-side-list {
+                        position: absolute;
+                        left: 100%;
+                        bottom: 0;
                     }
 
                     .nova-panel-list-item {
                         white-space: nowrap;
                         width: 230px;
-                        padding: 10px 5px;
+                        padding: 10px 15px;
                         display: flex;
                         align-items: center;
                         border-radius: 10px;
