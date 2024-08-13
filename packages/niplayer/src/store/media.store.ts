@@ -1,4 +1,5 @@
 import BaseStore from "@/base/base.store";
+import { NI_PLAYER_EVENT } from "@/events";
 
 export interface MediaState {
     /**
@@ -57,6 +58,10 @@ export default class MediaStore extends BaseStore<MediaState> {
             this.setState('paused', videoElement.paused);
         })
 
+        videoElement.addEventListener('seeked', () => {
+            this.player.emit(NI_PLAYER_EVENT.VIDEO_SEEKED, videoElement.currentTime);
+        })
+
         videoElement.addEventListener('enterpictureinpicture', () => {
             this.setState('isEnterPipInPip', true);
         })
@@ -75,10 +80,6 @@ export default class MediaStore extends BaseStore<MediaState> {
 
         this.player.useState(() => this.state.volume, (val) => {
             videoElement.volume = val;
-        })
-
-        this.player.useState(() => this.state.currentTime, (time) => {
-            videoElement.currentTime = time;
         })
     }
 }

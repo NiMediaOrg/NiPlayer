@@ -22,18 +22,18 @@ const Panel = (props: PanelProps) => {
     }
 
     createEffect(() => {
-        if (!mainList || !sideList || !container) return;
-        const sideItems = props.sideItems;
-        if (sideItems.length > 0) {
-            mainList.style.transform = 'translateX(-100%)';
-            mainList.style.position = 'absolute';
+        // if (!mainList || !sideList || !container) return;
+        // const sideItems = props.sideItems;
+        // if (sideItems.length > 0) {
+        //     mainList.style.transform = 'translateX(-100%)';
+        //     mainList.style.position = 'absolute';
 
-            sideList.style.transform = 'translateX(-100%)';
-            sideList.style.position = 'relative';
+        //     sideList.style.transform = 'translateX(-100%)';
+        //     sideList.style.position = 'relative';
 
-        } else {
-            // container.style.maxHeight = '150px';
-        }
+        // } else {
+        //     // container.style.maxHeight = '150px';
+        // }
     })
 
     return (
@@ -88,6 +88,7 @@ const Panel = (props: PanelProps) => {
                         overflow: hidden;
                         position: relative;
                         display: grid;
+                        max-height: ${props.sideItems.length > 0 ? '1000px' : '200px'}
                     }
 
                     .nova-panel-list {
@@ -99,12 +100,15 @@ const Panel = (props: PanelProps) => {
 
 
                     .nova-panel-main-list {
+                        position: ${props.sideItems.length > 0 ? 'absolute' : 'relative'};
+                        transform: ${props.sideItems.length > 0 ? 'translateX(-100%)' : 'translateX(0)'};
                         left: 0;
                         bottom: 0;
                     }
 
                     .nova-panel-side-list {
-                        position: absolute;
+                        position: ${props.sideItems.length > 0 ? 'relative' : 'absolute'};
+                        transform: ${props.sideItems.length > 0 ? 'translateX(-100%)' : 'translateX(0)'};
                         left: 100%;
                         bottom: 0;
                     }

@@ -159,28 +159,46 @@ export default class NiPlayer extends EventEmitter3 {
     public pause(): void {
         this.nodes.videoElement.pause();
     }
+
+    public seek(time: number): Promise<number> {
+        return new Promise((res, rej) => {
+            this.nodes.videoElement.currentTime = Math.max(0, Math.min(time, this.nodes.videoElement.duration));
+            this.play();
+            const onSeeked = () => {
+                res(time);
+                this.off(NI_PLAYER_EVENT.VIDEO_SEEKED, onSeeked);
+            }
+            this.on(NI_PLAYER_EVENT.VIDEO_SEEKED, onSeeked);
+        })
+    }
     /**
      * @desc 播放器进入全屏模式
      */
-    public requestFullScreen() {
-        this.config.container.requestFullscreen();
+    public requestFullScreen(): Promise<void> {
+        return this.config.container.requestFullscreen();
     }
     /**
      * @desc 播放器退出全屏模式
      */
-    public exitFullScreen() {
-        document.fullscreenElement && document.fullscreenEnabled && document.exitFullscreen();
+    public exitFullScreen(): Promise<void> {
+        return document.fullscreenElement && document.fullscreenEnabled && document.exitFullscreen();
     }
     /**
      * @description 播放器进入画中画模式
      */
-    public requestPipInPip() {
-        this.nodes.videoElement.requestPictureInPicture();
+    public requestPipInPip(): Promise<PictureInPictureWindow> {
+        return this.nodes.videoElement.requestPictureInPicture();
     }
     /**
      * @description 播放器退出画中画模式
      */
-    public exitPipInPip() {
-        document.exitPictureInPicture();
+    public exitPipInPip(): Promise<void> {
+        return document.exitPictureInPicture();
+    }
+    /**
+     * 
+     */
+    public setVolume(val: number) {
+        this.nodes.videoElement.volume = val;
     }
 }
