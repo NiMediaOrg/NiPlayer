@@ -26,6 +26,14 @@ export interface MediaState {
      * @description 视频的音量大小
      */
     volume: number;
+    /**
+     * @description 视频的倍速
+     */
+    playrate: number;
+    /**
+     * @description 视频是否在缓冲中
+     */
+    waiting: boolean;
 }
 
 export default class MediaStore extends BaseStore<MediaState> {
@@ -35,9 +43,15 @@ export default class MediaStore extends BaseStore<MediaState> {
             totalTime: 0,
             paused: true,
             volume: 0.5,
+            playrate: 1,
             isEnterFullscreen: false,
             isEnterPipInPip: false,
+            waiting: false,
         }
+    }
+
+    get playRateTitle() {
+        return this.state.playrate === 1 ? '正常' : this.state.playrate + ' 倍速'
     }
 
     mounted(): void {
@@ -74,12 +88,21 @@ export default class MediaStore extends BaseStore<MediaState> {
             this.setState('volume', videoElement.volume);
         })
 
-        this.player.config.container.addEventListener('fullscreenchange', () => {
-            this.setState('isEnterFullscreen', !!document.fullscreenElement);
+        videoElement.addEventListener('ratechange', () => {
+            this.setState('playrate', videoElement.playbackRate);
+            this.player.emit(NI_PLAYER_EVENT.VIDEO_PLAYRATE_CHANGED, videoElement.playbackRate);
         })
 
-        this.player.useState(() => this.state.volume, (val) => {
-            videoElement.volume = val;
+        videoElement.addEventListener('waiting', () => {
+            this.setState('waiting', true);
+        })
+
+        videoElement.addEventListener('playing', () => {
+            this.setState('waiting', false);
+        })
+
+        this.player.config.container.addEventListener('fullscreenchange', () => {
+            this.setState('isEnterFullscreen', !!document.fullscreenElement);
         })
     }
 }

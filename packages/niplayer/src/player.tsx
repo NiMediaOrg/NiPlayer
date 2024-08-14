@@ -12,6 +12,7 @@ import { PipInPip } from "./plugin/pip-in-pip";
 import { Volume } from "./plugin/volume";
 import { Progress } from "./plugin/progress";
 import { Setting } from "./plugin/setting";
+import { PlayWaiting } from "./plugin/play-wating";
 interface Plugin {
     new (player: NiPlayer):void;
 }
@@ -48,6 +49,7 @@ export default class NiPlayer extends EventEmitter3 {
     };
 
     private plugins: Plugin[] = [
+        PlayWaiting,
         Progress,
         PlayButton,
         Volume,
@@ -196,9 +198,15 @@ export default class NiPlayer extends EventEmitter3 {
         return document.exitPictureInPicture();
     }
     /**
-     * 
+    * @description 设置音量 
      */
     public setVolume(val: number) {
         this.nodes.videoElement.volume = val;
+    }
+    /**
+     * @description 设置倍速
+     */
+    public setPlaybackRate(val: number) {
+        this.nodes.videoElement.playbackRate = val;
     }
 }

@@ -9,3 +9,4 @@ export { default as playrate } from "./playrate.svg";
 export { default as ratio } from "./ratio.svg";
 export { default as subtitle } from "./subtitle.svg";
 export { default as rightArrow } from "./right-arrow.svg";
+export { default as back } from "./back.svg";
