@@ -114,7 +114,7 @@ const Slider = (props: SliderProps) => {
                             border-radius: 6px;
                             position: absolute;
                             top: 50%;
-                            left: ${props.progress ? props.progress * 100 + '': '100'}%;
+                            left: ${props.progress !== undefined ? props.progress * 100 + '': '100'}%;
                             pointer-events: none;
                             transform: translate(-50%, -50%) scale(${props.dotScale !== undefined ? props.dotScale : 1});
                             transform-origin: center center;

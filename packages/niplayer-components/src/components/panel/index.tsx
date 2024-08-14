@@ -1,31 +1,49 @@
+import { createEffect } from "solid-js";
+
+export interface IPanel {
+    items?: IPanelItem[],
+    title?: string;
+    headerIcon?: string;
+    panelItemClick?: (item: IPanelItem) => void;
+}
 export interface IPanelItem {
     content: string;
     icon?: string;
-    tip?: string;
+    tip?: string | (() => string);
     button?: string;
-    jump?: IPanelItem[];
+    jump?: IPanel;
+    val?: any;
 }
 
 interface PanelProps {
-    items: IPanelItem[];
+    main: IPanel;
+    side?: IPanel;
+    hidden?: boolean;
+    onBackClick?: () => void;
 }
 
 const Panel = (props: PanelProps) => {
+    let mainList: HTMLUListElement = null, sideList: HTMLUListElement = null, container: HTMLDivElement = null;
+
+    const handleBack = () => {
+        props.onBackClick?.();
+    }
 
     return (
         <>
-            <div class="nova-panel-container">
-                <ul class="nova-panel-list">
+            {/* 主列表 */}
+            <div class="nova-panel-container" style={{opacity: props.hidden ? 0 : 1}} ref={container}>
+                <ul class="nova-panel-list nova-panel-main-list" ref={mainList}>
                     {
-                        props.items.map(item => {
+                        props.main.items.map((item, index) => {
                             return (
-                                <li class="nova-panel-list-item">
+                                <li class="nova-panel-list-item" onClick={() => props.main.panelItemClick?.(item)}>
                                     <div class="nova-panel-list-item-left">
                                         <span class="nova-panel-list-item-icon" innerHTML={item.icon || ''}></span>
                                         <span class="nova-panel-list-item-content">{item.content}</span>
                                     </div>
                                     <div class="nova-panel-list-item-right">
-                                        <span class="nova-panel-list-item-tip">{item.tip}</span>
+                                        <span class="nova-panel-list-item-tip">{typeof item.tip === 'function' ? item.tip() : item.tip}</span>
                                         <span class="nova-panel-list-item-button" innerHTML={item.button || ''}></span>
                                     </div>
                                 </li>
@@ -33,28 +51,103 @@ const Panel = (props: PanelProps) => {
                         })
                     }
                 </ul>
+                {/* 副列表 */}
+                <ul class="nova-panel-list nova-panel-side-list" ref={sideList}>
+                    {
+                        props.side?.items ? 
+                        <>
+                            <div class="nova-panel-header" onclick={handleBack}>
+                                <span class="nova-panel-header-back" innerHTML={props.side.headerIcon}></span>
+                                <span class="nova-panel-header-title">{props.side.title}</span>
+                            </div>
+                            {
+                                props.side.items.map((item, index) => {
+                                    return (
+                                        <li class="nova-panel-list-item" onClick={() => props.side?.panelItemClick?.(item)}>
+                                            <div class="nova-panel-list-item-left">
+                                                <span class="nova-panel-list-item-icon" innerHTML={item.icon || ''}></span>
+                                                <span class="nova-panel-list-item-content">{item.content}</span>
+                                            </div>
+                                            <div class="nova-panel-list-item-right">
+                                                <span class="nova-panel-list-item-tip">{typeof item.tip === 'function' ? item.tip() : item.tip}</span>
+                                                <span class="nova-panel-list-item-button" innerHTML={item.button || ''}></span>
+                                            </div>
+                                        </li>
+                                    )
+                                })
+                            }
+                    </> : ''
+                    }
+                    
+                </ul>
             </div>
 
             <style jsx dynamic>
             {
                 `
                     .nova-panel-container {
-                        background-color: rgba(0,0,0,0.8);
-                        padding: 5px 10px;
+                        background-color: #2d2a2ae7;
                         border-radius: 10px;
                         font-size: 14px;
+                        transition: opacity .5s ease, max-height 1.5s ease;
+                        overflow: hidden;
+                        position: relative;
+                        display: grid;
+                        max-height: ${props.side?.items ? '1000px' : '200px'}
                     }
 
                     .nova-panel-list {
                         list-style: none;
                         padding: 0;
                         margin: 0;
+                        transition: transform .5s ease;
+                    }
+
+
+                    .nova-panel-main-list {
+                        position: ${props.side?.items ? 'absolute' : 'relative'};
+                        transform: ${props.side?.items ? 'translateX(-100%)' : 'translateX(0)'};
+                        left: 0;
+                        bottom: 0;
+                    }
+
+                    .nova-panel-side-list {
+                        position: ${props.side?.items ? 'relative' : 'absolute'};
+                        transform: ${props.side?.items ? 'translateX(-100%)' : 'translateX(0)'};
+                        left: 100%;
+                        bottom: 0;
+                    }
+
+                    .nova-panel-header {
+                        width: 100%;
+                        height: 50px;
+                        padding-left: 15px;
+                        display: flex;
+                        align-items: center;
+                        border-radius-top-left: 10px;
+                        border-radius-top-right: 10px;
+                        box-sizing: border-box;
+                        border-bottom: 1px solid #9d9d9d;
+                    }
+
+                    .nova-panel-header-back {
+                        width: 18px;
+                        height: 18px;
+                    }
+
+                    .nova-panel-header-back svg {
+                        width: 100%;
+                        height: 100%;
+                    }
+
+                    .nova-panel-header-title {
+                        margin-left: 10px;
                     }
 
                     .nova-panel-list-item {
                         white-space: nowrap;
                         width: 230px;
-                        padding: 10px 5px;
+                        padding: 10px 15px;
                         display: flex;
                         align-items: center;
                         border-radius: 10px;

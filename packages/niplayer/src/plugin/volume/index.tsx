@@ -10,7 +10,7 @@ export class Volume extends UIPlugin {
     protected name: string = 'volume';
 
     protected minProgress: number = 0.0025;
-    protected maxProgress: number = 0.8;
+    protected maxProgress: number = 0.9;
 
     protected get progress() {
         const { state } = this.player.rootStore.mediaStore;
@@ -21,7 +21,6 @@ export class Volume extends UIPlugin {
     }
 
     protected render(): JSX.Element | string | HTMLElement {
-        const { state, setState } = this.player.rootStore.mediaStore;
         const [hideSlider, setHideSlider] = createSignal(true);
 
         const handleVolumeChange = (val: number) => {
@@ -31,7 +30,7 @@ export class Volume extends UIPlugin {
             } else if (val === this.maxProgress) {
                 volume = 1;
             }
-            setState('volume', volume);
+            this.player.setVolume(val);
         }
 
         const handleMouseEnter = () => {

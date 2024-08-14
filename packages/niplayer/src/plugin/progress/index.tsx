@@ -41,9 +41,9 @@ export class Progress extends UIPlugin {
         }
 
         const handleMouseUp = (per: number) => {
-            this.player.rootStore.actionStore.setState('isProgressDrag', false);
-            this.player.rootStore.mediaStore.setState('currentTime', this.player.rootStore.mediaStore.state.totalTime * per);
-            this.player.play();
+            this.player.seek(per * this.player.rootStore.mediaStore.state.totalTime).then(() => {
+                this.player.rootStore.actionStore.setState('isProgressDrag', false);
+            });
         }
         return (
             <div class="niplayer-progress-container" style={{cursor: 'pointer', position: 'absolute', bottom: '0', width: '100%'}} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>

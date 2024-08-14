@@ -12,6 +12,7 @@ import { PipInPip } from "./plugin/pip-in-pip";
 import { Volume } from "./plugin/volume";
 import { Progress } from "./plugin/progress";
 import { Setting } from "./plugin/setting";
+import { PlayWaiting } from "./plugin/play-wating";
 interface Plugin {
     new (player: NiPlayer):void;
 }
@@ -48,6 +49,7 @@ export default class NiPlayer extends EventEmitter3 {
     };
 
     private plugins: Plugin[] = [
+        PlayWaiting,
         Progress,
         PlayButton,
         Volume,
@@ -159,28 +161,52 @@ export default class NiPlayer extends EventEmitter3 {
     public pause(): void {
         this.nodes.videoElement.pause();
     }
+
+    public seek(time: number): Promise<number> {
+        return new Promise((res, rej) => {
+            this.nodes.videoElement.currentTime = Math.max(0, Math.min(time, this.nodes.videoElement.duration));
+            this.play();
+            const onSeeked = () => {
+                res(time);
+                this.off(NI_PLAYER_EVENT.VIDEO_SEEKED, onSeeked);
+            }
+            this.on(NI_PLAYER_EVENT.VIDEO_SEEKED, onSeeked);
+        })
+    }
     /**
      * @desc 播放器进入全屏模式
      */
-    public requestFullScreen() {
-        this.config.container.requestFullscreen();
+    public requestFullScreen(): Promise<void> {
+        return this.config.container.requestFullscreen();
     }
     /**
      * @desc 播放器退出全屏模式
      */
-    public exitFullScreen() {
-        document.fullscreenElement && document.fullscreenEnabled && document.exitFullscreen();
+    public exitFullScreen(): Promise<void> {
+        return document.fullscreenElement && document.fullscreenEnabled && document.exitFullscreen();
     }
     /**
      * @description 播放器进入画中画模式
      */
-    public requestPipInPip() {
-        this.nodes.videoElement.requestPictureInPicture();
+    public requestPipInPip(): Promise<PictureInPictureWindow> {
+        return this.nodes.videoElement.requestPictureInPicture();
     }
     /**
      * @description 播放器退出画中画模式
      */
-    public exitPipInPip() {
-        document.exitPictureInPicture();
+    public exitPipInPip(): Promise<void> {
+        return document.exitPictureInPicture();
+    }
+    /**
+    * @description 设置音量 
+     */
+    public setVolume(val: number) {
+        this.nodes.videoElement.volume = val;
+    }
+    /**
+     * @description 设置倍速
+     */
+    public setPlaybackRate(val: number) {
+        this.nodes.videoElement.playbackRate = val;
     }
 }
