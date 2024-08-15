@@ -1,5 +1,6 @@
 import BaseStore from "@/base/base.store";
 import { NI_PLAYER_EVENT } from "@/events";
+import bind from "bind-decorator";
 
 export interface MediaState {
     /**
@@ -54,61 +55,123 @@ export default class MediaStore extends BaseStore<MediaState> {
         return this.state.playrate === 1 ? '正常' : this.state.playrate + ' 倍速'
     }
 
+    get videoElement() {
+        return this.player.nodes.videoElement;
+    }
+
     mounted(): void {
-        const videoElement = this.player.nodes.videoElement;
-        videoElement.addEventListener('canplay', () => {
-            this.player.emit(NI_PLAYER_EVENT.VIDEO_CAN_PLAY);
-        })
-
-        // videoElement.addEventListener('')
-
-        videoElement.addEventListener('durationchange', () => {
-            this.setState('totalTime', videoElement.duration);
-        })
-
-        videoElement.addEventListener('timeupdate', () => {
-            this.setState('currentTime', videoElement.currentTime);
-        })
-
-        videoElement.addEventListener('play', () => {
-            this.setState('paused', videoElement.paused);
-        })
-
-        videoElement.addEventListener('pause', () => {
-            this.setState('paused', videoElement.paused);
-        })
-
-        videoElement.addEventListener('seeked', () => {
-            this.player.emit(NI_PLAYER_EVENT.VIDEO_SEEKED, videoElement.currentTime);
-        })
-
-        videoElement.addEventListener('enterpictureinpicture', () => {
-            this.setState('isEnterPipInPip', true);
-        })
-
-        videoElement.addEventListener('leavepictureinpicture', () => {
-            this.setState('isEnterPipInPip', false);
-        })
-
-        videoElement.addEventListener('volumechange', () => {
-            this.setState('volume', videoElement.volume);
-        })
-
-        videoElement.addEventListener('ratechange', () => {
-            this.setState('playrate', videoElement.playbackRate);
-            this.player.emit(NI_PLAYER_EVENT.VIDEO_PLAYRATE_CHANGED, videoElement.playbackRate);
-        })
-
-        videoElement.addEventListener('waiting', () => {
-            this.setState('waiting', true);
-        })
-
-        videoElement.addEventListener('playing', () => {
-            this.setState('waiting', false);
-        })
-
+        this.addMediaEvents();
         this.player.config.container.addEventListener('fullscreenchange', () => {
             this.setState('isEnterFullscreen', !!document.fullscreenElement);
         })
+    }
+
+    setMediaState() {
+
+    }
+
+    addMediaEvents(immediate = false) {
+        // if (immediate) {
+        //     this.setState('totalTime', this.videoElement.duration);
+        //     this.setState('currentTime', this.videoElement.currentTime);
+        //     this.setState('paused', this.videoElement.paused);
+        //     this.setState('volume', this.videoElement.volume);
+        //     this.setState('playrate', this.videoElement.playbackRate);
+        // }
+        this.videoElement.addEventListener('canplay', this.onCanPlay)
+        this.videoElement.addEventListener('durationchange', this.onDurationChange)
+        this.videoElement.addEventListener('timeupdate', this.onTimeUpdate)
+        this.videoElement.addEventListener('play', this.onPlay)
+        this.videoElement.addEventListener('pause', this.onPause)
+        this.videoElement.addEventListener('seeked', this.onSeeked)
+        this.videoElement.addEventListener('enterpictureinpicture', this.onEnterPictureInPicture)
+        this.videoElement.addEventListener('leavepictureinpicture', this.onLeavePictureInPicture)
+        this.videoElement.addEventListener('volumechange', this.onVolumeChange)
+        this.videoElement.addEventListener('ratechange', this.onRateChange)
+        this.videoElement.addEventListener('waiting', this.onWaiting)
+        this.videoElement.addEventListener('playing', this.onPlaying)
+    }
+
+    removeMediaEvents() {
+        this.videoElement.removeEventListener('canplay', this.onCanPlay)
+        this.videoElement.removeEventListener('durationchange', this.onDurationChange)
+        this.videoElement.removeEventListener('timeupdate', this.onTimeUpdate)
+        this.videoElement.removeEventListener('play', this.onPlay)
+        this.videoElement.removeEventListener('pause', this.onPause)
+        this.videoElement.removeEventListener('seeked', this.onSeeked)
+        this.videoElement.removeEventListener('enterpictureinpicture', this.onEnterPictureInPicture)
+        this.videoElement.removeEventListener('leavepictureinpicture', this.onLeavePictureInPicture)
+        this.videoElement.removeEventListener('volumechange', this.onVolumeChange)
+        this.videoElement.removeEventListener('ratechange', this.onRateChange)
+        this.videoElement.removeEventListener('waiting', this.onWaiting)
+        this.videoElement.removeEventListener('playing', this.onPlaying)
+    }
+
+    @bind
+    onCanPlay() {
+        this.player.emit(NI_PLAYER_EVENT.VIDEO_CAN_PLAY);
+    }
+
+    @bind
+    onDurationChange() {
+        this.setState('totalTime', this.videoElement.duration);
+        this.player.emit(NI_PLAYER_EVENT.VIDEO_DURATION_CHANGED, this.videoElement.duration);
+    }
+
+    @bind
+    onTimeUpdate() {
+        this.setState('currentTime', this.videoElement.currentTime);
+        this.player.emit(NI_PLAYER_EVENT.VIDEO_TIME_UPDATE, this.videoElement.currentTime);
+    }
+
+    @bind
+    onPlay() {
+        this.setState('paused', this.videoElement.paused);
+        this.player.emit(NI_PLAYER_EVENT.VIDEO_PLAY);
+    }
+
+    @bind
+    onPause() {
+        this.setState('paused', this.videoElement.paused);
+        this.player.emit(NI_PLAYER_EVENT.VIDEO_PAUSE);
+    }
+
+    @bind
+    onSeeked() {
+        this.player.emit(NI_PLAYER_EVENT.VIDEO_SEEKED, this.videoElement.currentTime);
+    }
+
+    @bind
+    onEnterPictureInPicture() {
+        this.setState('isEnterPipInPip', true);
+    }
+
+    @bind
+    onLeavePictureInPicture() {
+        this.setState('isEnterPipInPip', false);
+    }
+
+    @bind
+    onVolumeChange() {
+        this.setState('volume', this.videoElement.volume);
+        this.player.emit(NI_PLAYER_EVENT.VIDEO_VOLUME_CHANGED, this.videoElement.volume);
+    }
+
+    @bind
+    onRateChange() {
+        this.setState('playrate', this.videoElement.playbackRate);
+        this.player.emit(NI_PLAYER_EVENT.VIDEO_PLAYRATE_CHANGED, this.videoElement.playbackRate);
+    }
+
+    @bind
+    onWaiting() {
+        this.setState('waiting', true);
+        this.player.emit(NI_PLAYER_EVENT.VIDEO_WAITING);
+    }
+
+    @bind
+    onPlaying() {
+        this.setState('waiting', false);
+        this.player.emit(NI_PLAYER_EVENT.VIDEO_PLAYING);
     }
 }

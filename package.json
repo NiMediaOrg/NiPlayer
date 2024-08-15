@@ -29,6 +29,7 @@
   ],
   "devDependencies": {
     "@babel/core": "^7.20.7",
+    "@babel/plugin-proposal-decorators": "^7.24.7",
     "@babel/preset-env": "^7.20.2",
     "@babel/preset-typescript": "^7.24.7",
     "@rspack/cli": "^0.7.5",
@@ -69,5 +70,8 @@
     "> 1%",
     "iOS 7",
     "last 3 iOS versions"
-  ]
+  ],
+  "dependencies": {
+    "bind-decorator": "^1.0.11"
+  }
 }

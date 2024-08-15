@@ -3,6 +3,7 @@ import { NiPlayer } from "../src/index";
 const player = new NiPlayer({
     container: document.querySelector('#app'),
     url: 'https://artplayer.org/assets/sample/video.mp4',
+    seamlessChangeQuality: true,
     quality: [
         {
             url: 'https://artplayer.org/assets/sample/video.mp4',

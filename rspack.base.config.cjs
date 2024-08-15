@@ -12,7 +12,7 @@ const config = defineConfig({
             loader: 'babel-loader',
             options: {
               presets: ['solid', '@babel/preset-typescript'],
-              plugins: ['solid-styled-jsx/babel']
+              plugins: [ 'solid-styled-jsx/babel', ["@babel/plugin-proposal-decorators", { "legacy": true}] ]
             },
           },
         ],
