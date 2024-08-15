@@ -13,6 +13,8 @@ import { Volume } from "./plugin/volume";
 import { Progress } from "./plugin/progress";
 import { Setting } from "./plugin/setting";
 import { PlayWaiting } from "./plugin/play-wating";
+import { IPanel, IPanelItem } from "niplayer-components";
+import { PlaybackRate } from "./plugin/playback-rate";
 interface Plugin {
     new (player: NiPlayer):void;
 }
@@ -56,7 +58,8 @@ export default class NiPlayer extends EventEmitter3 {
         TimeLabel,
         Setting,
         PipInPip,
-        FullScreen
+        FullScreen,
+        PlaybackRate
     ];
 
     constructor(options?: PlayerConfig) {
@@ -98,7 +101,7 @@ export default class NiPlayer extends EventEmitter3 {
         const App = () => (
             <div class="niplayer-container" ref={this.nodes.container}>
                 <div class="niplayer-video-area" ref={this.nodes.videoArea} onClick={handleClick} onDblClick={handleDoubleClick}>
-                    {this.config.video ? '' : <video src={this.config.url} ref={this.nodes.videoElement} autoplay></video>}
+                    {this.config.video ? '' : <video src={this.config.url} ref={this.nodes.videoElement} autoplay muted></video>}
                 </div>
                 <div class="niplayer-controller-area" ref={this.nodes.controllerBar}>
                     <div class="niplayer-controller-area-top" ref={this.nodes.controllerBarTop}></div>
@@ -122,6 +125,12 @@ export default class NiPlayer extends EventEmitter3 {
      */
     public registerPlugin(plugin: Plugin) {
         new plugin(this);
+    }
+    /**
+     * @desc 注册设置项
+     */
+    public registerSettingItem(item: IPanelItem) {
+        this.rootStore.settingStore.registerPanelItem(item);
     }
     /**
      * @desc 注册并且订阅播放器内部的state
