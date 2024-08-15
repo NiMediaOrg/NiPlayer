@@ -16,6 +16,7 @@ import { PlayWaiting } from "./plugin/play-wating";
 import { IPanel, IPanelItem } from "niplayer-components";
 import { PlaybackRate } from "./plugin/playback-rate";
 import { PlayQuality } from "./plugin/play-quality";
+import { ImageShot } from "./plugin/image-shot";
 interface Plugin {
     new (player: NiPlayer):void;
 }
@@ -38,6 +39,10 @@ export default class NiPlayer extends EventEmitter3 {
         controllerBarMiddleLeft: HTMLDivElement,
         controllerBarMiddleMiddle: HTMLDivElement,
         controllerBarMiddleRight: HTMLDivElement,
+        topArea: HTMLDivElement,
+        topAreaLeft: HTMLDivElement,
+        topAreaMiddle: HTMLDivElement,
+        topAreaRight: HTMLDivElement,
     } = {
         container: null,
         videoArea: null,
@@ -48,7 +53,11 @@ export default class NiPlayer extends EventEmitter3 {
         controllerBarBottom: null,
         controllerBarMiddleLeft: null,
         controllerBarMiddleMiddle: null,
-        controllerBarMiddleRight: null
+        controllerBarMiddleRight: null,
+        topArea: null,
+        topAreaLeft: null,
+        topAreaMiddle: null,
+        topAreaRight: null,
     };
 
     private plugins: Plugin[] = [
@@ -57,6 +66,7 @@ export default class NiPlayer extends EventEmitter3 {
         PlayButton,
         Volume,
         TimeLabel,
+        ImageShot,
         Setting,
         PipInPip,
         FullScreen,
@@ -104,6 +114,11 @@ export default class NiPlayer extends EventEmitter3 {
             <div class="niplayer-container" ref={this.nodes.container}>
                 <div class="niplayer-video-area" ref={this.nodes.videoArea} onClick={handleClick} onDblClick={handleDoubleClick}>
                     {this.config.video ? '' : <video src={this.config.url} ref={this.nodes.videoElement} autoplay muted></video>}
+                </div>
+                <div class="niplayer-top-area" ref={this.nodes.topArea}>
+                    <div class="niplayer-top-area-left" ref={this.nodes.topAreaLeft}></div>
+                    <div class="niplayer-top-area-middle" ref={this.nodes.topAreaMiddle}></div>
+                    <div class="niplayer-top-area-right" ref={this.nodes.topAreaRight}></div>
                 </div>
                 <div class="niplayer-controller-area" ref={this.nodes.controllerBar}>
                     <div class="niplayer-controller-area-top" ref={this.nodes.controllerBarTop}></div>

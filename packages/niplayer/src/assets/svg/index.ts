@@ -11,3 +11,4 @@ export { default as subtitle } from "./subtitle.svg";
 export { default as rightArrow } from "./right-arrow.svg";
 export { default as back } from "./back.svg";
 export { default as quality } from "./quality.svg";
+export { default as imageshot } from "./imageshot.svg";

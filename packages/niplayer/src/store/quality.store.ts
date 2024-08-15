@@ -34,7 +34,7 @@ export class QualityStore extends BaseStore<QualityState> {
         if (!q) return;
         if (q.qn === this.state.selectedQuality?.qn) return;
         if (this.state.isChangeQuality) {
-            console.log('正在切换清晰度中')
+            console.warn('正在切换清晰度中')
             return;
         }
         //* 触发播放器的切换quality事件
@@ -71,7 +71,7 @@ export class QualityStore extends BaseStore<QualityState> {
             clearTimeout(switchTimer);
 
             videoEvents.forEach((item) => {
-                videoElement.removeEventListener(item.type, item.callback);
+                videoElement.removeEventListener(item.prop, item.callback);
             });
             nextVideoEvents.forEach((item) => {
                 nextVideo[item.prop] = null;
@@ -100,10 +100,11 @@ export class QualityStore extends BaseStore<QualityState> {
 
         const restartDelaySwitch = (from: string) => {
             clearTimeout(switchTimer);
+            clearTimeout(switchTimeoutTimer);
             switchTimer = window.setTimeout(
                 () => {
                     console.log(`from:${from}`);
-                    // done();
+                    done();
                 },
                 ((nextVideo.currentTime - videoElement.currentTime) * 1000) / videoElement.playbackRate,
             );
@@ -124,26 +125,26 @@ export class QualityStore extends BaseStore<QualityState> {
                 }
             },
             {
-                type: 'volumechange',
+                prop: 'volumechange',
                 callback: () => {
                     nextVideo.volume = videoElement.volume;
                 },
                 fireImmediately: true,
             },
             {
-                type: 'play',
+                prop: 'play',
                 callback: () => {
                     nextVideo.play();
                 },
             },
             {
-                type: 'pause',
+                prop: 'pause',
                 callback: () => {
                     nextVideo.pause();
                 },
             },
             {
-                type: 'seeking',
+                prop: 'seeking',
                 callback: () => {
                     // tuneNextVideo(video.paused ? 0 : 1);
                     nextVideo.currentTime = videoElement.paused ? videoElement.currentTime : videoElement.currentTime + 1;
@@ -151,7 +152,7 @@ export class QualityStore extends BaseStore<QualityState> {
                 },
             },
             {
-                type: 'error',
+                prop: 'error',
                 callback: () => {
                     // catchPrimaryError();
                 },
@@ -166,6 +167,7 @@ export class QualityStore extends BaseStore<QualityState> {
                         if (item.fireImmediately) {
                             item.callback();
                         }
+
                         videoElement.addEventListener(item.prop, item.callback);
 
                         if (videoElement.paused) {
@@ -202,7 +204,7 @@ export class QualityStore extends BaseStore<QualityState> {
                         nextVideo.currentTime = videoElement.currentTime;
                         restartDelaySwitch('PauseEvent');
                     } else {
-
+                        
                     }
                 },
             },
