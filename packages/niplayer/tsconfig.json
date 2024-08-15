@@ -14,6 +14,7 @@
         "module": "ES6",
         "moduleResolution": "Node",
         "jsx": "preserve",
-        "jsxImportSource": "solid-js"
+        "jsxImportSource": "solid-js",
+        "experimentalDecorators": true
     }
 }

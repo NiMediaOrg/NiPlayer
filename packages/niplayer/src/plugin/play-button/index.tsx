@@ -8,6 +8,7 @@ export class PlayButton extends UIPlugin {
     protected render(): JSX.Element | string | HTMLElement {
         const { state, setState } = this.player.rootStore.mediaStore;
         const handleClick = () => {
+            console.log(state.paused)
             if (state.paused) {
                 this.player.play();
             } else {

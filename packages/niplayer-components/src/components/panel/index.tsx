@@ -6,6 +6,7 @@ export interface IPanel {
     headerIcon?: string;
     panelItemClick?: (item: IPanelItem) => void;
 }
+
 export interface IPanelItem {
     content: string;
     icon?: string;

@@ -33,4 +33,8 @@ export type PlayerConfig = {
      * @desc 视频的清晰度列表
      */
     quality?:  IQuality[];
+    /**
+     * @desc 是否使用无缝切换画质
+     */
+    seamlessChangeQuality?: boolean;
 }

@@ -2,6 +2,8 @@ import BaseStore from "@/base/base.store";
 import NiPlayer from "@/player";
 import MediaStore from "./media.store";
 import ActionStore from "./action.store";
+import { SettingStore } from "./setting.store";
+import { QualityStore } from "./quality.store";
 export interface RootState {
     playerInitialized?: boolean;
 }
@@ -11,6 +13,8 @@ export interface RootState {
 export class RootStore extends BaseStore<RootState> {
     public mediaStore: MediaStore;
     public actionStore: ActionStore;
+    public settingStore: SettingStore;
+    public qualityStore: QualityStore;
     get defaultState() {
         return {
             playerInitialized: false
@@ -20,6 +24,8 @@ export class RootStore extends BaseStore<RootState> {
     decomposeSubStore() {
         this.mediaStore = new MediaStore(this.player);
         this.actionStore = new ActionStore(this.player);
+        this.settingStore = new SettingStore(this.player);
+        this.qualityStore = new QualityStore(this.player);
     }
 
     constructor(player: NiPlayer) {
