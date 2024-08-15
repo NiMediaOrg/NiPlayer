@@ -2,31 +2,31 @@ import { NiPlayer } from "../src/index";
 
 const player = new NiPlayer({
     container: document.querySelector('#app'),
-    url: 'https://artplayer.org/assets/sample/video.mp4',
+    url: 'https://cdn.jsdelivr.net/gh/shiyiya/QI-ABSL@master/o/君の名は.mp4',
     seamlessChangeQuality: true,
     quality: [
         {
-            url: 'https://artplayer.org/assets/sample/video.mp4',
+            url: 'https://cdn.jsdelivr.net/gh/shiyiya/QI-ABSL@master/o/君の名は.mp4',
             qn: 120,
             name: '4K 超高清'
         },
         {
-            url: 'https://artplayer.org/assets/sample/video.mp4',
+            url: 'https://cdn.jsdelivr.net/gh/shiyiya/QI-ABSL@master/o/君の名は.mp4',
             qn: 112,
             name: '1080P 高清'
         },
         {
-            url: 'https://artplayer.org/assets/sample/video.mp4',
+            url: 'https://cdn.jsdelivr.net/gh/shiyiya/QI-ABSL@master/o/君の名は.mp4',
             qn: 64,
             name: '720P 高清'
         },
         {
-            url: 'https://artplayer.org/assets/sample/video.mp4',
+            url: 'https://cdn.jsdelivr.net/gh/shiyiya/QI-ABSL@master/o/君の名は.mp4',
             qn: 32,
             name: '480P 清晰'
         },
         {
-            url: 'https://artplayer.org/assets/sample/video.mp4',
+            url: 'https://cdn.jsdelivr.net/gh/shiyiya/QI-ABSL@master/o/君の名は.mp4',
             qn: 16,
             name: '360P 流畅'
         },
