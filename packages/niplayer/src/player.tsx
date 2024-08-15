@@ -1,7 +1,7 @@
 import { EventEmitter3 } from "./base/event-emitter3";
 import { defaultConfig } from "./default-config";
 import { RootStore } from "./store/root.store";
-import { PlayerConfig } from "../trash/types/config";
+import { PlayerConfig } from "./types";
 import { NI_PLAYER_EVENT } from "./events";
 import { render } from "solid-js/web";
 import { createEffect } from "solid-js";
@@ -15,6 +15,7 @@ import { Setting } from "./plugin/setting";
 import { PlayWaiting } from "./plugin/play-wating";
 import { IPanel, IPanelItem } from "niplayer-components";
 import { PlaybackRate } from "./plugin/playback-rate";
+import { PlayQuality } from "./plugin/play-quality";
 interface Plugin {
     new (player: NiPlayer):void;
 }
@@ -22,7 +23,7 @@ interface Plugin {
  * @desc 播放器的入口文件
  */
 export default class NiPlayer extends EventEmitter3 {
-
+    static Event: typeof NI_PLAYER_EVENT = NI_PLAYER_EVENT;
     public config: PlayerConfig;
     public rootStore: RootStore;
 
@@ -59,6 +60,7 @@ export default class NiPlayer extends EventEmitter3 {
         Setting,
         PipInPip,
         FullScreen,
+        PlayQuality,
         PlaybackRate
     ];
 

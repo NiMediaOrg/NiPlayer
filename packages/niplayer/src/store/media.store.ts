@@ -56,6 +56,12 @@ export default class MediaStore extends BaseStore<MediaState> {
 
     mounted(): void {
         const videoElement = this.player.nodes.videoElement;
+        videoElement.addEventListener('canplay', () => {
+            this.player.emit(NI_PLAYER_EVENT.VIDEO_CAN_PLAY);
+        })
+
+        // videoElement.addEventListener('')
+
         videoElement.addEventListener('durationchange', () => {
             this.setState('totalTime', videoElement.duration);
         })
