@@ -4,6 +4,9 @@ const player = new NiPlayer({
     container: document.querySelector('#app'),
     url: 'https://cdn.jsdelivr.net/gh/shiyiya/QI-ABSL@master/o/君の名は.mp4',
     title: '一手《你的名字》看哭中国十四亿网友！！！',
+    waterMark: {
+        message: 'NovaNi'
+    },
     seamlessChangeQuality: true,
     quality: [
         {
