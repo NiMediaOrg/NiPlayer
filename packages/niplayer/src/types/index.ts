@@ -4,6 +4,11 @@ export interface IQuality {
     name: string;
 }
 
+export interface IWaterMark {
+    message: string;
+    rotate?: number;
+}
+
 export type PlayerConfig = {
     /**
      * @desc 视频的url地址
@@ -41,4 +46,8 @@ export type PlayerConfig = {
      * @desc 视频的标题
      */
     title?: string;
+    /**
+     * @desc 截图的水印相关配置
+     */
+    waterMark?: IWaterMark;
 }
