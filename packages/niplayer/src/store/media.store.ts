@@ -66,18 +66,7 @@ export default class MediaStore extends BaseStore<MediaState> {
         })
     }
 
-    setMediaState() {
-
-    }
-
-    addMediaEvents(immediate = false) {
-        // if (immediate) {
-        //     this.setState('totalTime', this.videoElement.duration);
-        //     this.setState('currentTime', this.videoElement.currentTime);
-        //     this.setState('paused', this.videoElement.paused);
-        //     this.setState('volume', this.videoElement.volume);
-        //     this.setState('playrate', this.videoElement.playbackRate);
-        // }
+    addMediaEvents() {
         this.videoElement.addEventListener('canplay', this.onCanPlay)
         this.videoElement.addEventListener('durationchange', this.onDurationChange)
         this.videoElement.addEventListener('timeupdate', this.onTimeUpdate)

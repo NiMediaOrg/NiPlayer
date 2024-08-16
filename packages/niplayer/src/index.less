@@ -52,6 +52,13 @@
         box-sizing: border-box;
         padding: 0 15px;
         z-index: 10;
+        opacity: 1;
+        transition: opacity .25s ease;
+
+        &.hidden {
+            opacity: 0;
+            cursor: none;
+        }
 
         &-top {
             position: relative;
@@ -120,6 +127,29 @@
                     transition: opacity .5s ease;
                 }
             }
+        }
+    }
+
+    .niplayer-top-area {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        display: flex;
+        color: #fff;
+        font-size: 20px;
+        z-index: 10;
+        padding: 15px;
+        background: linear-gradient(180deg, rgba(0, 0, 0, .6), transparent);
+        height: 120px;
+        box-sizing: border-box;
+        pointer-events: none;
+        transition: all .25 ease;
+        opacity: 1;
+
+        &.hidden {
+            opacity: 0;
+            visibility: hidden;
         }
     }
 }

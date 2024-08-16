@@ -37,4 +37,8 @@ export type PlayerConfig = {
      * @desc 是否使用无缝切换画质
      */
     seamlessChangeQuality?: boolean;
+    /**
+     * @desc 视频的标题
+     */
+    title?: string;
 }

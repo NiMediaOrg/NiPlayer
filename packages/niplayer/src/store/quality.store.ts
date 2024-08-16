@@ -85,7 +85,7 @@ export class QualityStore extends BaseStore<QualityState> {
             this.player.nodes.videoElement = nextVideo;
 
             this.player.rootStore.mediaStore.removeMediaEvents();
-            this.player.rootStore.mediaStore.addMediaEvents(true);
+            this.player.rootStore.mediaStore.addMediaEvents();
             this.setState('selectedQuality', q);
             this.setState('isChangeQuality', false);
             this.player.emit(NI_PLAYER_EVENT.VIDEO_QUALITY_CHANGED, q);
