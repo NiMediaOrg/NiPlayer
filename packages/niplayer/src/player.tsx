@@ -115,12 +115,14 @@ export default class NiPlayer extends EventEmitter3 {
                 <div class="niplayer-video-area" ref={this.nodes.videoArea} onClick={handleClick} onDblClick={handleDoubleClick}>
                     {this.config.video ? '' : <video src={this.config.url} ref={this.nodes.videoElement} autoplay muted></video>}
                 </div>
-                <div class="niplayer-top-area" ref={this.nodes.topArea}>
-                    <div class="niplayer-top-area-left" ref={this.nodes.topAreaLeft}></div>
+                <div classList={{"niplayer-top-area": true, "hidden": this.rootStore.actionStore.state.isTopBarHidden}} ref={this.nodes.topArea}>
+                    <div class="niplayer-top-area-left" ref={this.nodes.topAreaLeft}>
+                        {this.config.title || ''}
+                    </div>
                     <div class="niplayer-top-area-middle" ref={this.nodes.topAreaMiddle}></div>
                     <div class="niplayer-top-area-right" ref={this.nodes.topAreaRight}></div>
                 </div>
-                <div class="niplayer-controller-area" ref={this.nodes.controllerBar}>
+                <div classList={{"niplayer-controller-area": true, "hidden": this.rootStore.actionStore.state.isControllerBarHidden}} ref={this.nodes.controllerBar}>
                     <div class="niplayer-controller-area-top" ref={this.nodes.controllerBarTop}></div>
                     <div class="niplayer-controller-area-middle" ref={this.nodes.controllerBarMiddle}>
                         <div class="niplayer-controller-area-middle-left" ref={this.nodes.controllerBarMiddleLeft}></div>

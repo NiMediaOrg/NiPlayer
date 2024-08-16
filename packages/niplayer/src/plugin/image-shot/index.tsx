@@ -5,6 +5,9 @@ import { JSX } from "solid-js";
 export class ImageShot extends UIPlugin {
     protected name: string = 'image-shot';
 
+    protected shot() {
+        
+    }
 
     protected render(): JSX.Element | string | HTMLElement {
         const handleClick = () => {
