@@ -79,7 +79,10 @@ export default class MediaStore extends BaseStore<MediaState> {
         this.videoElement.addEventListener('ratechange', this.onRateChange)
         this.videoElement.addEventListener('waiting', this.onWaiting)
         this.videoElement.addEventListener('playing', this.onPlaying)
+        this.videoElement.addEventListener('ended', this.onEnded)
+        this.videoElement.addEventListener('error', this.onError)
     }
+
 
     removeMediaEvents() {
         this.videoElement.removeEventListener('canplay', this.onCanPlay)
@@ -94,6 +97,8 @@ export default class MediaStore extends BaseStore<MediaState> {
         this.videoElement.removeEventListener('ratechange', this.onRateChange)
         this.videoElement.removeEventListener('waiting', this.onWaiting)
         this.videoElement.removeEventListener('playing', this.onPlaying)
+        this.videoElement.removeEventListener('ended', this.onEnded)
+        this.videoElement.removeEventListener('error', this.onError)
     }
 
     @bind
@@ -162,5 +167,15 @@ export default class MediaStore extends BaseStore<MediaState> {
     onPlaying() {
         this.setState('waiting', false);
         this.player.emit(NI_PLAYER_EVENT.VIDEO_PLAYING);
+    }
+
+    @bind
+    onEnded() {
+        throw new Error("Method not implemented.");
+    }
+
+    @bind
+    onError() {
+        throw new Error("Method not implemented.");
     }
 }

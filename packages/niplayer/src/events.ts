@@ -12,5 +12,7 @@ export enum NI_PLAYER_EVENT {
     VIDEO_PLAYING = 'video_playing',
     VIDEO_DURATION_CHANGED = 'video_duration_changed',
     VIDEO_TIME_UPDATE = 'video_time_update',
-
+    VIDEO_ENDED = 'video_ended',
+    VIDEO_ERROR = 'video_error',
+    VIDEO_LOADING = 'video_loading',
 }
