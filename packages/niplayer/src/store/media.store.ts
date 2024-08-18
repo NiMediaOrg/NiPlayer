@@ -171,11 +171,11 @@ export default class MediaStore extends BaseStore<MediaState> {
 
     @bind
     onEnded() {
-        throw new Error("Method not implemented.");
+        // throw new Error("Method not implemented.");
     }
 
     @bind
     onError() {
-        throw new Error("Method not implemented.");
+        // throw new Error("Method not implemented.");
     }
 }

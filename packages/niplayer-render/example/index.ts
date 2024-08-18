@@ -1,0 +1,2 @@
+// import "./canvas";
+import "./danmaku";

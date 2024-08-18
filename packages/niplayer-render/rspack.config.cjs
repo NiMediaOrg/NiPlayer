@@ -6,7 +6,7 @@ const path = require('node:path');
 module.exports = defineConfig({
     mode: 'development',
     entry: {
-        core: './example/demo.ts',
+        core: './example/index.ts',
     },
     module: {
         rules: [
@@ -22,5 +22,10 @@ module.exports = defineConfig({
         port: 8888,
         open: true,
         hot: true
-    }
+    },
+    resolve: {
+        extensions: [
+            ...baseOptions.resolve?.extensions || []
+        ]
+    },
 })

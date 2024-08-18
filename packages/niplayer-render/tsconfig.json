@@ -8,6 +8,7 @@
         "./demo/**/*"
     ],
     "compilerOptions": {
-        "checkJs": false
+        "checkJs": false,
+        "experimentalDecorators": true
     }
 }
