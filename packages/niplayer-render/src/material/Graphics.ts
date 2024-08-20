@@ -15,8 +15,4 @@ export abstract class Graphics extends RenderObject {
      * @desc contains方法则是为了以后的碰撞检测做准备
      */
     public abstract contains(point: { x: number, y: number }): boolean;
-
-    constructor() {
-        super();
-    }
 }
