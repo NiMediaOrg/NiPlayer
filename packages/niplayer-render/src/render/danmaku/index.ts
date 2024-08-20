@@ -1,6 +1,6 @@
 import bind from "bind-decorator";
 import { defaultConfig } from "./default-config";
-import { PriorityQueue } from "./priority-queue";
+import { PriorityQueue } from "../../utils/priority-queue";
 import { TimeController } from "./time-controller";
 
 //* 使用canvas实现弹幕的demo
@@ -34,6 +34,9 @@ export interface IDanmakuEngineConfig {
     timeline?: () => number;
 }
 
+/**
+ * @desc 通用Canvas弹幕引擎
+ */
 export class NiDanmakuEngine {
     private list: IDanmaku[] = [];
     private renderList: PriorityQueue<IDanmakuRender> = new PriorityQueue();
@@ -81,20 +84,25 @@ export class NiDanmakuEngine {
         const { text } = dm;
         this.context.font = `${dm.fontSize * window.devicePixelRatio}px ${dm.fontFamily}`;
         this.context.fillStyle = dm.color;
+        this.context.textBaseline = 'top';
+
 
         this.context.beginPath()
         this.context.fillText(text, this.canvas.width + 10, - dm.fontSize - 10);
         this.context.closePath();
 
-        const { width } = this.context.measureText(text);
+        const { actualBoundingBoxLeft, actualBoundingBoxRight, actualBoundingBoxAscent, actualBoundingBoxDescent  } = this.context.measureText(text);
+        // 测量文本的宽高
+        const width = actualBoundingBoxLeft + actualBoundingBoxRight;
+        const height = actualBoundingBoxAscent + actualBoundingBoxDescent;
         const speed = (this.canvas.width + width) / dm.duration;
         return {
             ...dm,
             on: false,
             x: this.canvas.width,
-            y: 20,
+            y: 0,
             width: width,
-            height: dm.fontSize * window.devicePixelRatio,
+            height: height,
             middleTime: this.renderTime + (this.canvas.width) / speed,
             endTime: this.renderTime + (this.canvas.width + width) / speed,
             speed,
@@ -134,6 +142,11 @@ export class NiDanmakuEngine {
         window.cancelAnimationFrame(this.timer);
     }
 
+    // ToDO
+    public seek(time: number, isClear?: boolean) {
+        
+    }
+
     @bind
     public schedule() {
         this.timeController.update();
@@ -150,6 +163,7 @@ export class NiDanmakuEngine {
             this.context.beginPath();
             this.context.font = `${dm.fontSize}px ${dm.fontFamily}`;
             this.context.fillStyle = dm.color;
+            this.context.textBaseline = 'top';
             this.context.fillText(dm.text, dm.x + 10, dm.y);
             this.context.closePath();
         });
@@ -180,7 +194,7 @@ export class NiDanmakuEngine {
             this.clearSomewhere({ x: dm.x, y: dm.y }, { x: dm.x + dm.width, y: dm.y + dm.height });
             dm.on = false;
             dm.x = this.canvas.width;
-            dm.y = 20;
+            dm.y = 0;
             dm.endTime = 0;
             dm.middleTime = 0;
             this.renderList.delete(dm);

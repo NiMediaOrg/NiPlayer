@@ -21,7 +21,10 @@ module.exports = defineConfig({
     devServer: {
         port: 8888,
         open: true,
-        hot: true
+        hot: true,
+        static: {
+            directory: path.resolve(__dirname, "./example/assets"),
+        },
     },
     resolve: {
         extensions: [

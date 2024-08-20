@@ -1,7 +1,7 @@
 {
   "name": "niplayer-watermark",
   "version": "1.0.0",
-  "description": "canvas renderer",
+  "description": "canvas 2d render",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -12,7 +12,8 @@
     "render",
     "2d",
     "webgl",
-    "webgpu"
+    "webgpu",
+    "canvas"
   ],
   "author": "NovaNi",
   "license": "ISC"

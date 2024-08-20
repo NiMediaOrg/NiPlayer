@@ -1,4 +1,5 @@
 import { drawCurvePath } from "../src/render/2d";
+import picture from "./assets/test.jpg";
 
 window.onload = () => {
     const canvas = document.getElementById('render') as HTMLCanvasElement;
@@ -17,14 +18,15 @@ window.onload = () => {
     ctx.fillStyle = radialGradient;
 
     // 设置线性渐变
+
     const linearGradient = ctx.createLinearGradient(0, 0, 0, 300);
     linearGradient.addColorStop(0,'red');
     linearGradient.addColorStop(1,'blue');
     ctx.strokeStyle = linearGradient;
     ctx.lineWidth = 2;
-    // ctx.fillStyle = 'red';
-    // ctx.fillRect(100, 100, 200, 300);
-    // ctx.strokeRect(0, 0, 100, 100);
+    ctx.fillStyle = 'red';
+    ctx.fillRect(100, 100, 200, 300);
+    ctx.strokeRect(0, 0, 100, 100);
     // 方形绘制
     //* 0. 模拟真人绘制场景，先将画笔放下，开始绘制
     ctx.beginPath();
@@ -36,10 +38,10 @@ window.onload = () => {
     ctx.closePath();
 
     // 填充法绘制矩形
-    // ctx.beginPath();
-    // ctx.rect(100, 130, 300, 200);
-    // ctx.fill();
-    // ctx.closePath();
+    ctx.beginPath();
+    ctx.rect(100, 130, 300, 200);
+    ctx.fill();
+    ctx.closePath();
 
     ///* 绘制圆形, 默认绘制方向：顺时针
     ctx.beginPath();
@@ -53,21 +55,20 @@ window.onload = () => {
     ctx.closePath();
 
     /// 线段绘制
-    ctx.beginPath();
+    ctx.beginPath()
+    ctx.lineWidth = 1;
+    // ctx.lineCap = 'square';
+    ctx.lineJoin = 'round'
+    ctx.setLineDash([20, 5])
+    ctx.lineDashOffset = 10;
 
     ctx.moveTo(150, 450);
-    ctx.lineTo(0, 0)
-    ctx.lineTo(190, 20);
-    ctx.fill();
+    ctx.lineTo(50, 50)
+    // ctx.lineTo(190, 20);
+    // ctx.lineTo(150, 450);
+    ctx.stroke();
+    // ctx.fill();
     ctx.closePath();
-    // drawCanvasDanmaku(canvas, {
-    //     fontSize: 30,
-    //     fontFamily: 'Arial',
-    //     color:'red',
-    //     text: 'hello world',
-    //     y: 100,
-    //     duration: 14.5
-    // })
 
     //* 贝塞尔曲线绘制
     // drawCurvePath({
@@ -78,6 +79,14 @@ window.onload = () => {
     //     y: 200
     // }, 1, canvas);
 
+    //* canvas pattern模式
+    const img = new Image();
+    img.src = picture;
+    img.onload = () => {
+        const pattern = ctx.createPattern(img, 'no-repeat')!;
+        ctx.fillStyle = pattern;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+    }
 
     start.onclick = () => {
         timer = requestAnimationFrame(() => clear(currentHeight))
