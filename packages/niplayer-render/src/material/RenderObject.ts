@@ -18,11 +18,11 @@ export abstract class RenderObject {
     /**
      * @desc 渲染对象的子元素
      */
-    protected children: PriorityQueue<RenderObject>;
+    public children: PriorityQueue<RenderObject>;
     /**
      * @desc 渲染对象的父元素
      */
-    protected parent: RenderObject | null = null;
+    public parent: RenderObject | null = null;
     /**
      * 渲染对象的样式
      */

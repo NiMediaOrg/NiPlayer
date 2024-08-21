@@ -26,3 +26,8 @@ rect1.appendChild(rect3);
 
 app.appendChild(rect1);
 app.draw();
+
+window.setTimeout(() => {
+    console.log(rect3.style)
+    rect3.style.left = 200;
+}, 3000)

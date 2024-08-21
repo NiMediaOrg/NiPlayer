@@ -3,14 +3,9 @@ import { Graphics, GraphicsType } from "./Graphics";
 export class Rectangle extends Graphics {
     public type: GraphicsType = GraphicsType.Rectangle;
     public contains(point: { x: number; y: number; }): boolean {
-        //ToDo Complete
-        // 矩形碰撞检测
-        // 矩形的左上角坐标为(x, y)，右下角坐标为(x + width, y + height)
-        
-        // 点的坐标为(x1, y1)
-
         return true;
     }
+
     constructor(
         x: number, 
         y: number,

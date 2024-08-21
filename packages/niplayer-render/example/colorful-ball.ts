@@ -3,6 +3,7 @@ const canvas = document.getElementById('render') as HTMLCanvasElement;
 canvas.width = canvas.clientWidth * window.devicePixelRatio;
 canvas.height = canvas.clientHeight * window.devicePixelRatio;
 
+let timer = -1;
 
 const ctx = canvas.getContext('2d')!;
 ctx.globalAlpha = 0.5
