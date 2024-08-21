@@ -8,26 +8,30 @@ export class Rectangle extends Graphics {
         // 矩形的左上角坐标为(x, y)，右下角坐标为(x + width, y + height)
         
         // 点的坐标为(x1, y1)
-        const { x, y, width, height } = this;
-        const { x: x1, y: y1 } = point;
-        // 点在矩形内部
-        if (x1 >= x && x1 <= x + width && y1 >= y && y1 <= y + height) {
-            return true;
-        }
-        // 点在矩形外部
-        return false;
 
+        return true;
     }
     constructor(
-        public x: number, 
-        public y: number,
-        public width: number, 
-        public height: number
+        x: number, 
+        y: number,
+        width: number, 
+        height: number
     ) {
         super();
+        this.style.height = height;
+        this.style.width = width;
+        this.style.left = x;
+        this.style.top = y;
     }
 
-    public draw(): void {
-        
+    public draw(context: CanvasRenderingContext2D): void {
+        context.save();
+        context.beginPath();
+        this.style.color && (context.fillStyle = this.style.color);
+        this.style.opacity && (context.globalAlpha = this.style.opacity);
+        context.fillRect(this.style.left, this.style.top, this.style.width, this.style.height);
+        context.closePath();
+        context.restore();
+        this.children.forEach(child => child.draw(context));
     }
 }
