@@ -1,5 +1,8 @@
+import bind from "bind-decorator";
 import { IRenderObject, RenderObject } from "./material/RenderObject";
 import { IApplicationConfig } from "./types";
+import { nextTick } from "./utils/next-tick";
+const map = new Map<RenderObject, Map<string, Set<Function>>>();
 class ApplicationRoot extends RenderObject {
     constructor() {
         super();
@@ -31,15 +34,19 @@ export class Application {
         this.root = new ApplicationRoot();
     }
 
+    @bind
     draw() {
-        if (!this.dirty) this.dirty = true;
+        if (!this.dirty) {
+            this.changeStyleProxy(this.root);   
+            this.dirty = true;
+        }
+        console.log(this)
         this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
         this.root.draw(this.context);
     }
 
     appendChild(child: RenderObject) {
         this.root.appendChild(child);
-        this.changeStyleProxy(child);
     }
 
     removeChild(child: RenderObject) {
@@ -47,13 +54,30 @@ export class Application {
     }
 
     changeStyleProxy(item: RenderObject) {
+        const queue: Set<Function> = new Set();
+        let pending = false;
         item.style = new Proxy(item.style, {
             get: (target: IRenderObject, key: string) => {
+                if (!map.has(item)) map.set(item, new Map());
+                if (!map.get(item)?.has(key)) map.get(item)?.set(key, new Set());
+                map.get(item)?.get(key)?.add(this.draw);
                 return target[key];
             },
-            set: (target: IRenderObject, key: string, value) => {
+            set: (target: IRenderObject, key: string, value: any) => {
                 if (target[key] === value) return true;
-                return Reflect.set(target, key, value);
+                target[key] = value;
+                const callbacks = map.get(item)?.get(key);
+                map.get(item)?.delete(key);
+                callbacks?.forEach(callback => queue.add(callback));
+                
+                if (!pending) {
+                    pending = true;
+                    nextTick(() => {
+                        pending = false;
+                        queue.forEach(callback => callback());
+                    });
+                }
+                return true;
             }
         })
 
