@@ -1,3 +1,4 @@
+import { observable } from "../reactivity/observer";
 import { PriorityQueue } from "../utils/priority-queue";
 
 export interface IRenderObject {
@@ -6,8 +7,10 @@ export interface IRenderObject {
     opacity?: number;
     color?: string;
     zIndex?: number;
-    left?: number;
-    top?: number;
+    x?: number;
+    y?: number;
+    position?: 'absolute' |'relative' | 'static' | 'fixed';
+    overflow?: 'hidden' | 'none' | 'scroll';
     [key: string]: any;
 }
 
@@ -32,6 +35,27 @@ export abstract class RenderObject {
 
     constructor() {
         this.children = new PriorityQueue<RenderObject>((a, b) => a.style.zIndex < b.style.zIndex);
+        this.style = observable(this.style);
+        this.style.position = 'static';
+        this.style.zIndex = 0;
+        this.style.x = 0;
+        this.style.y = 0;
+        this.style.width = 0;
+        this.style.height = 0;
+        this.style.color = 'black';
+        this.style.opacity = 1;
+        this.style.overflow = 'none';
+    }
+
+    protected findNearPositionNode(type: IRenderObject['position']): RenderObject {
+        let node = this as RenderObject;
+        while (node.parent) {
+            node = node.parent;
+            if (node.style.position === type) {
+                return node;
+            }
+        }
+        return null;
     }
     /**
      * @desc 添加子节点

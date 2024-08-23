@@ -3,7 +3,7 @@ function isNative(Ctor: any) {
 }
 
 // 优雅降级实现Vue中的nextTick功能
-export function nextTick(cb: (...args: any[]) => any) {
+export function nextTick(cb: (...args) => any) {
     if (typeof Promise !== 'undefined' && isNative(Promise)) {
         Promise.resolve().then(cb())
     } else if (

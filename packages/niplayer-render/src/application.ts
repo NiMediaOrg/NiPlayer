@@ -1,5 +1,5 @@
-import bind from "bind-decorator";
-import { IRenderObject, RenderObject } from "./material/RenderObject";
+import { RenderObject } from "./material/RenderObject";
+import { autorun } from "./reactivity/effects";
 import { IApplicationConfig } from "./types";
 import { nextTick } from "./utils/next-tick";
 const map = new Map<RenderObject, Map<string, Set<Function>>>();
@@ -18,8 +18,6 @@ export class Application {
     private context: CanvasRenderingContext2D;
     private root: ApplicationRoot;
 
-    private dirty: boolean = false;
-
     public get view() {
         return this.canvas;
     }
@@ -36,13 +34,12 @@ export class Application {
 
     @bind
     draw() {
-        if (!this.dirty) {
-            this.changeStyleProxy(this.root);   
-            this.dirty = true;
+        const _draw = () => {
+            console.log('draw');
+            this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+            this.root.draw(this.context);
         }
-        console.log(this)
-        this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
-        this.root.draw(this.context);
+        autorun(_draw)
     }
 
     appendChild(child: RenderObject) {
@@ -52,35 +49,4 @@ export class Application {
     removeChild(child: RenderObject) {
         this.root.removeChild(child);
     }
-
-    changeStyleProxy(item: RenderObject) {
-        const queue: Set<Function> = new Set();
-        let pending = false;
-        item.style = new Proxy(item.style, {
-            get: (target: IRenderObject, key: string) => {
-                if (!map.has(item)) map.set(item, new Map());
-                if (!map.get(item)?.has(key)) map.get(item)?.set(key, new Set());
-                map.get(item)?.get(key)?.add(this.draw);
-                return target[key];
-            },
-            set: (target: IRenderObject, key: string, value: any) => {
-                if (target[key] === value) return true;
-                target[key] = value;
-                const callbacks = map.get(item)?.get(key);
-                map.get(item)?.delete(key);
-                callbacks?.forEach(callback => queue.add(callback));
-                
-                if (!pending) {
-                    pending = true;
-                    nextTick(() => {
-                        pending = false;
-                        queue.forEach(callback => callback());
-                    });
-                }
-                return true;
-            }
-        })
-
-        item.children.forEach(child => this.changeStyleProxy(child));
-    } 
 }
