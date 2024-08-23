@@ -1,3 +1,4 @@
+import { observable } from "../reactivity/observer";
 import { PriorityQueue } from "../utils/priority-queue";
 
 export interface IRenderObject {
@@ -32,6 +33,7 @@ export abstract class RenderObject {
 
     constructor() {
         this.children = new PriorityQueue<RenderObject>((a, b) => a.style.zIndex < b.style.zIndex);
+        this.style = observable(this.style);
     }
     /**
      * @desc 添加子节点

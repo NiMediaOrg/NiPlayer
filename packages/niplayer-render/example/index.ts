@@ -9,7 +9,7 @@ const app = new Application({
 });
 
 (document.querySelector('#app') as HTMLElement).appendChild(app.view);
-const rect1 = new Rectangle(10, 10, 100, 100);
+const rect1 = new Rectangle(10, 10, 400, 400);
 rect1.style.color ='red';
 rect1.style.zIndex = 20;
 
@@ -28,6 +28,7 @@ app.appendChild(rect1);
 app.draw();
 
 window.setTimeout(() => {
-    console.log(rect3.style)
-    rect3.style.left = 200;
-}, 3000)
+    rect1.style.left = 200;
+    rect1.style.top = 200;
+    rect1.style.color = 'blue';
+}, 2000)

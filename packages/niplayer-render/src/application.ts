@@ -1,4 +1,5 @@
-import { IRenderObject, RenderObject } from "./material/RenderObject";
+import { RenderObject } from "./material/RenderObject";
+import { autorun } from "./reactivity/effects";
 import { IApplicationConfig } from "./types";
 class ApplicationRoot extends RenderObject {
     constructor() {
@@ -15,8 +16,6 @@ export class Application {
     private context: CanvasRenderingContext2D;
     private root: ApplicationRoot;
 
-    private dirty: boolean = false;
-
     public get view() {
         return this.canvas;
     }
@@ -32,31 +31,19 @@ export class Application {
     }
 
     draw() {
-        if (!this.dirty) this.dirty = true;
-        this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
-        this.root.draw(this.context);
+        const _draw = () => {
+            console.log('draw');
+            this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+            this.root.draw(this.context);
+        }
+        autorun(_draw)
     }
 
     appendChild(child: RenderObject) {
         this.root.appendChild(child);
-        this.changeStyleProxy(child);
     }
 
     removeChild(child: RenderObject) {
         this.root.removeChild(child);
     }
-
-    changeStyleProxy(item: RenderObject) {
-        item.style = new Proxy(item.style, {
-            get: (target: IRenderObject, key: string) => {
-                return target[key];
-            },
-            set: (target: IRenderObject, key: string, value) => {
-                if (target[key] === value) return true;
-                return Reflect.set(target, key, value);
-            }
-        })
-
-        item.children.forEach(child => this.changeStyleProxy(child));
-    } 
 }
