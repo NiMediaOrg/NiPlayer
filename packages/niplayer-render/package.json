@@ -1,17 +1,19 @@
 {
   "name": "niplayer-watermark",
   "version": "1.0.0",
-  "description": "给dom添加水印的工具类",
+  "description": "canvas 2d render",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "scripts": {
+    "dev": "rspack serve --config ./rspack.config.cjs"
   },
   "keywords": [
     "render",
     "2d",
     "webgl",
-    "webgpu"
+    "webgpu",
+    "canvas"
   ],
   "author": "NovaNi",
   "license": "ISC"

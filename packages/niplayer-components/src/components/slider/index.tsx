@@ -1,5 +1,3 @@
-import { createEffect, onMount } from "solid-js";
-import { css } from "../../utils/css";
 import type {} from "solid-styled-jsx";
 
 interface SliderProps {
@@ -10,6 +8,7 @@ interface SliderProps {
     maxProgress?: number;
     hidden?: boolean;
     dotScale?: number;
+    dotHidden?: boolean;
     onChange?: (progress: number) => void;
     onMouseDown?: () => void;
     onMouseMove?: () => void;
@@ -18,12 +17,6 @@ interface SliderProps {
 
 const Slider = (props: SliderProps) => {
     let sliderHTML: HTMLDivElement = null;
-
-    // onMount(() => {
-    //     createEffect(() => {
-    //         sliderHTML.style.width = props.width + '';
-    //     })
-    // })
 
     const getProgressPercentage = (per: number) => {
         return Math.max(props.minProgress || 0.005, Math.min(props.maxProgress || 0.9, per));
@@ -64,14 +57,14 @@ const Slider = (props: SliderProps) => {
             <style jsx dynamic>
                 {
                     `.nova-slider-container {
-                            width: ${props.width ? `${props.width}px` : '100%'};
-                            height: ${props.height ? `${props.height}px` : '100%'};
+                            width: ${props.width !== undefined ? `${props.width}px` : '100%'};
+                            height: ${props.height !== undefined ? `${props.height}px` : '100%'};
                             background-color: #faf4f4fc;
                             border-radius: 5px;
                             position: relative;
                             margin-right: 10px;
                             display: ${props?.hidden ? 'none' : ''};
-                            transition: height .3s ease;
+                            transition: all .3s ease-in-out;
                         }
 
                         .nova-slider-top {
@@ -119,6 +112,8 @@ const Slider = (props: SliderProps) => {
                             transform: translate(-50%, -50%) scale(${props.dotScale !== undefined ? props.dotScale : 1});
                             transform-origin: center center;
                             transition: transform .3s ease;
+                            display: ${props?.dotHidden? 'none' : ''};
+
                         }`
                 }
             </style>
