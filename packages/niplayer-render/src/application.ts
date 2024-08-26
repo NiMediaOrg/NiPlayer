@@ -1,22 +1,25 @@
 import { RenderObject } from "./material/RenderObject";
 import { autorun } from "./reactivity/effects";
 import { IApplicationConfig } from "./types";
-import { nextTick } from "./utils/next-tick";
-const map = new Map<RenderObject, Map<string, Set<Function>>>();
 class ApplicationRoot extends RenderObject {
-    constructor() {
-        super();
-        this.style = {};
-    }
-
     public draw(context: CanvasRenderingContext2D): void {
         this.children.forEach(child => child.draw(context));
     }
+
+    public drawContent(context: CanvasRenderingContext2D): void {}
 }
 export class Application {
     private canvas: HTMLCanvasElement;
     private context: CanvasRenderingContext2D;
     private root: ApplicationRoot;
+
+    private ticksFunction: (() => void)[] = [];
+
+    public ticks = {
+        add: (cb: () => void) => {
+            this.ticksFunction.push(cb);
+        }
+    }
 
     public get view() {
         return this.canvas;
@@ -30,9 +33,19 @@ export class Application {
         this.canvas.width = config.width * window.devicePixelRatio;
         this.canvas.height = config.height * window.devicePixelRatio;
         this.root = new ApplicationRoot();
+        this.play();
     }
 
-    @bind
+    public play() {
+        window.requestAnimationFrame(() => {
+            // this.draw();
+            this.ticksFunction.forEach(fn => fn());
+            window.requestAnimationFrame(() => {
+                this.play();
+            })
+        })
+    }
+
     draw() {
         const _draw = () => {
             console.log('draw');

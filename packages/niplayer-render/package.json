@@ -16,5 +16,8 @@
     "canvas"
   ],
   "author": "NovaNi",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "mobx": "^6.13.1"
+  }
 }

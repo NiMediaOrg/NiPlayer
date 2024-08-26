@@ -1,5 +1,24 @@
 import { observable } from "../reactivity/observer";
+import { Matrix } from "../transform/Matrix";
 import { PriorityQueue } from "../utils/priority-queue";
+
+type TScale = `scale(${number}, ${number})`;
+type TTranslate = `translate(${number}, ${number})`;
+type TRotate = `rotate(${number}deg)`;
+type TSkew = `skew(${number}, ${number})`;
+type TTransform = TScale | TTranslate | TRotate | TSkew;
+//TODO 给予更好的类型提示
+type TTransformStr = string; 
+
+export interface ITransform {
+    translateX?: number;
+    translateY?: number;
+    scaleX?: number;
+    scaleY?: number;
+    rotate?: number;
+    skewX?: number;
+    skewY?: number;
+}
 
 export interface IRenderObject {
     width?: number;
@@ -30,12 +49,30 @@ export abstract class RenderObject {
      * 渲染对象的样式
      */
     public style: IRenderObject = {};
+    /**
+     * @desc 渲染对象的变换策略
+     */
+    public transform: ITransform = {};
+    /**
+     * @desc 渲染对象的变换矩阵
+     */
+    public matrix: Matrix;
 
-    public abstract draw(context: CanvasRenderingContext2D): void;
+    public draw(context: CanvasRenderingContext2D) {
+        context.save();
+        context.beginPath();
+        this.drawContent(context);
+        context.closePath();
+        context.restore();
+        this.children.forEach(child => child.draw(context));
+    }
+
+    public abstract drawContent(context: CanvasRenderingContext2D): void;
 
     constructor() {
         this.children = new PriorityQueue<RenderObject>((a, b) => a.style.zIndex < b.style.zIndex);
         this.style = observable(this.style);
+        this.transform = observable(this.transform);
         this.style.position = 'static';
         this.style.zIndex = 0;
         this.style.x = 0;
@@ -45,13 +82,27 @@ export abstract class RenderObject {
         this.style.color = 'black';
         this.style.opacity = 1;
         this.style.overflow = 'none';
+
+        this.transform.rotate = 0;
+        this.transform.scaleX = 1;
+        this.transform.scaleY = 1;
+        this.transform.translateX = 0;
+        this.transform.translateY = 0;
+
+        this.matrix = new Matrix([
+            [1,0,0],
+            [0,1,0],
+            [0,0,1]
+        ])
     }
 
     protected findNearPositionNode(type: IRenderObject['position']): RenderObject {
         let node = this as RenderObject;
+        if (type === 'static') return node.parent;
+        if (type ==='fixed') return null;
         while (node.parent) {
             node = node.parent;
-            if (node.style.position === type) {
+            if (node.style.position === 'relative' || node.style.position ==='absolute') {
                 return node;
             }
         }
