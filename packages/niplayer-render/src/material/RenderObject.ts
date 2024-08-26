@@ -1,15 +1,6 @@
 import { observable } from "../reactivity/observer";
 import { Matrix } from "../transform/Matrix";
 import { PriorityQueue } from "../utils/priority-queue";
-
-type TScale = `scale(${number}, ${number})`;
-type TTranslate = `translate(${number}, ${number})`;
-type TRotate = `rotate(${number}deg)`;
-type TSkew = `skew(${number}, ${number})`;
-type TTransform = TScale | TTranslate | TRotate | TSkew;
-//TODO 给予更好的类型提示
-type TTransformStr = string; 
-
 export interface ITransform {
     translateX?: number;
     translateY?: number;
@@ -28,8 +19,9 @@ export interface IRenderObject {
     zIndex?: number;
     x?: number;
     y?: number;
-    position?: 'absolute' |'relative' | 'static' | 'fixed';
+    position?: 'absolute' | 'relative' | 'static' | 'fixed';
     overflow?: 'hidden' | 'none' | 'scroll';
+    radius?: number;
     [key: string]: any;
 }
 
@@ -58,13 +50,47 @@ export abstract class RenderObject {
      */
     public matrix: Matrix;
 
+    public abstract anchor: { x: number, y: number };
+
     public draw(context: CanvasRenderingContext2D) {
         context.save();
         context.beginPath();
+        this.setTransform(context);
         this.drawContent(context);
         context.closePath();
         context.restore();
         this.children.forEach(child => child.draw(context));
+    }
+
+    /**
+     * @desc 设置渲染对象的矩阵变换
+     * @param context 
+     */
+    public setTransform(context: CanvasRenderingContext2D) {
+        // 1. 旋转变换
+        const rotationMatrix = new Matrix([
+            [Math.cos(Math.PI / 180 * this.transform.rotate), -Math.sin(Math.PI / 180 * this.transform.rotate), 0],
+            [Math.sin(Math.PI / 180 * this.transform.rotate), Math.cos(Math.PI / 180 * this.transform.rotate), 0],
+            [0, 0, 1]
+        ]);
+        // 2. 缩放变换
+        const scaleMatrix = new Matrix([
+            [this.transform.scaleX, 0, 0],
+            [0, this.transform.scaleY, 0],
+            [0, 0, 1]
+        ]);
+
+        //* 先进行父元素的变化, 再进行子元素自己的变化
+        let matrix = rotationMatrix.multiply(scaleMatrix);
+        // 进行平移变换
+        const dx = this.anchor.x - (this.anchor.x * matrix.matrix[0][0] + this.anchor.y * matrix.matrix[0][1]) + this.transform.translateX;
+        const dy = this.anchor.y - (this.anchor.x * matrix.matrix[1][0] + this.anchor.y * matrix.matrix[1][1]) + this.transform.translateY;
+        this.matrix = new Matrix([
+            [matrix.matrix[0][0], matrix.matrix[0][1], dx],
+            [matrix.matrix[1][0], matrix.matrix[1][1], dy],
+            [0, 0, 1]
+        ]).multiply(this.parent.matrix);
+        context.setTransform(this.matrix.matrix[0][0], this.matrix.matrix[1][0], this.matrix.matrix[0][1], this.matrix.matrix[1][1], this.matrix.matrix[0][2], this.matrix.matrix[1][2]);
     }
 
     public abstract drawContent(context: CanvasRenderingContext2D): void;
@@ -82,6 +108,7 @@ export abstract class RenderObject {
         this.style.color = 'black';
         this.style.opacity = 1;
         this.style.overflow = 'none';
+        this.style.opacity = 1;
 
         this.transform.rotate = 0;
         this.transform.scaleX = 1;
@@ -90,19 +117,19 @@ export abstract class RenderObject {
         this.transform.translateY = 0;
 
         this.matrix = new Matrix([
-            [1,0,0],
-            [0,1,0],
-            [0,0,1]
+            [1, 0, 0],
+            [0, 1, 0],
+            [0, 0, 1]
         ])
     }
 
     protected findNearPositionNode(type: IRenderObject['position']): RenderObject {
         let node = this as RenderObject;
         if (type === 'static') return node.parent;
-        if (type ==='fixed') return null;
+        if (type === 'fixed') return null;
         while (node.parent) {
             node = node.parent;
-            if (node.style.position === 'relative' || node.style.position ==='absolute') {
+            if (node.style.position === 'relative' || node.style.position === 'absolute') {
                 return node;
             }
         }
@@ -118,7 +145,7 @@ export abstract class RenderObject {
         }
         child.parent = this;
         this.children.push(child);
-    } 
+    }
     /**
      * @desc 移除子节点
      * @param child 

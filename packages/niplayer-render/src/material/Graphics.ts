@@ -11,8 +11,6 @@ export enum GraphicsType {
 
 export abstract class Graphics extends RenderObject {
     public abstract type: GraphicsType;
-
-    public abstract anchor: {x: number, y: number};
     /**
      * @desc 几何图形其中的文本
      */

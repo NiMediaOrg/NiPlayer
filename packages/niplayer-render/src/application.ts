@@ -2,6 +2,7 @@ import { RenderObject } from "./material/RenderObject";
 import { autorun } from "./reactivity/effects";
 import { IApplicationConfig } from "./types";
 class ApplicationRoot extends RenderObject {
+    public anchor: { x: number; y: number; };
     public draw(context: CanvasRenderingContext2D): void {
         this.children.forEach(child => child.draw(context));
     }
@@ -15,7 +16,7 @@ export class Application {
 
     private ticksFunction: (() => void)[] = [];
 
-    public ticks = {
+    public ticker = {
         add: (cb: () => void) => {
             this.ticksFunction.push(cb);
         }
