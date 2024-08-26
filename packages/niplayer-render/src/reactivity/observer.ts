@@ -1,4 +1,5 @@
 import { nextTick } from "../utils/next-tick";
+import { autorun } from "./effects";
 
 export type Observer = () => void;
 export const effectCallbackStack: Observer[] = [];
@@ -9,12 +10,12 @@ const taskQueue: Set<Observer> = new Set();
 let pending = false;
 
 function flushScheduleQueue() { //实现视图的异步更新
-    taskQueue.forEach(fn => fn());
+    taskQueue.forEach(fn => autorun(fn));
     taskQueue.clear();
     pending = false;
 }
 
-export function observable(object: Record<string, any>): Partial<ProxyConstructor> {
+export function observable(object: Record<string, any>) {
     return new Proxy(object, {
         get(target, key: string) {
             if (!observableMap.has(target)) observableMap.set(target, new Map());
@@ -40,6 +41,8 @@ export function observable(object: Record<string, any>): Partial<ProxyConstructo
                     taskQueue.add(fn);
                 });
             }
+
+            // flushScheduleQueue();
             if (!pending) {
                 pending = true;
                 nextTick(() => flushScheduleQueue);
