@@ -1,11 +1,11 @@
-import { Matrix } from "../transform/Matrix";
-import { Graphics, GraphicsType } from "./Graphics";
+import {  GraphicsType } from "./Graphics";
+import { Polygon } from "./Polygon";
 
-export class Rectangle extends Graphics {
+export class Rectangle extends Polygon {
     public type: GraphicsType = GraphicsType.Rectangle;
-    public anchor: { x: number; y: number; } = {x: 0, y: 0};
+    public anchor: { x: number; y: number; } = { x: 0, y: 0 };
     public contains(point: { x: number; y: number; }): boolean {
-        return true;
+        return super.contains(point);
     }
     public innerText: string = '';
 
@@ -15,7 +15,7 @@ export class Rectangle extends Graphics {
         width: number,
         height: number
     ) {
-        super();
+        super([]);
         this.style.height = height;
         this.style.width = width;
         this.style.x = x;
@@ -25,36 +25,25 @@ export class Rectangle extends Graphics {
     }
 
     public drawContent(context: CanvasRenderingContext2D): void {
-        this.style.color && (context.fillStyle = this.style.color);
-        this.style.opacity && (context.globalAlpha = this.style.opacity);
-        const node = this.findNearPositionNode(this.style.position);
-        let x = this.style.x + (node?.style?.x || 0);
-        let y = this.style.y + (node?.style?.y || 0);
-        // 1. 旋转变换
-        const rotationMatrix = new Matrix([
-            [Math.cos(Math.PI / 180 * this.transform.rotate), -Math.sin(Math.PI / 180 * this.transform.rotate), 0],
-            [Math.sin(Math.PI / 180 * this.transform.rotate), Math.cos(Math.PI / 180 * this.transform.rotate), 0],
-            [0, 0, 1]
-        ]);
-        // 2. 缩放变换
-        const scaleMatrix = new Matrix([
-            [this.transform.scaleX, 0, 0],
-            [0, this.transform.scaleY, 0],
-            [0, 0, 1]
-        ]);
-
-        //* 先进行父元素的变化, 再进行子元素自己的变化
-        let matrix = rotationMatrix.multiply(scaleMatrix);
-        // 进行平移变换
-        const dx = this.anchor.x - (this.anchor.x * matrix.matrix[0][0] + this.anchor.y * matrix.matrix[0][1]) + this.transform.translateX;
-        const dy = this.anchor.y - (this.anchor.x * matrix.matrix[1][0] + this.anchor.y * matrix.matrix[1][1]) + this.transform.translateY;
-        this.matrix = new Matrix([
-            [matrix.matrix[0][0], matrix.matrix[0][1], dx],
-            [matrix.matrix[1][0], matrix.matrix[1][1], dy],
-            [0, 0, 1]
-        ]).multiply(this.parent.matrix);
-        context.setTransform(this.matrix.matrix[0][0], this.matrix.matrix[1][0], this.matrix.matrix[0][1], this.matrix.matrix[1][1], this.matrix.matrix[0][2], this.matrix.matrix[1][2]);
-        context.fillRect(x, y, this.style.width, this.style.height);
+        this.points = [
+            {
+                x: this.style.x,
+                y: this.style.y
+            },
+            {
+                x: this.style.x + this.style.width,
+                y: this.style.y
+            },
+            {
+                x: this.style.x + this.style.width,
+                y: this.style.y + this.style.height
+            },
+            {
+                x: this.style.x,
+                y: this.style.y + this.style.height
+            }
+        ]
+        super.drawContent(context);
     }
 
     public drawText(context: CanvasRenderingContext2D) {

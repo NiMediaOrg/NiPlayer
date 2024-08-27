@@ -11,16 +11,10 @@ export enum GraphicsType {
 
 export abstract class Graphics extends RenderObject {
     public abstract type: GraphicsType;
-
-    public abstract anchor: {x: number, y: number};
     /**
      * @desc 几何图形其中的文本
      */
     public abstract innerText: string;
-    /**
-     * @desc contains方法则是为了以后的碰撞检测做准备
-     */
-    public abstract contains(point: { x: number, y: number }): boolean;
     /**
      * @desc 将文本绘制到其中
      * @param context 

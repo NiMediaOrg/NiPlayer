@@ -1,4 +1,4 @@
-import { Application, Rectangle } from "../src";
+import { Application, Circle, Rectangle, Sprite } from "../src";
 const start = document.querySelector('.start') as HTMLButtonElement;
 const stop = document.querySelector('.stop') as HTMLButtonElement;
 
@@ -14,11 +14,6 @@ rect1.style.zIndex = 20;
 rect1.style.position = 'relative';
 rect1.style.font = '35px Arial';
 rect1.style.overflow = 'hidden';
-// rect1.transform.rotate = 90;
-// rect1.transform.scaleX = 2;
-// rect1.transform.scaleY = 2;
-// rect1.transform.translateX = 100;
-
 
 rect1.innerText = 'Hellooooooooooooooooooooo World';
 
@@ -32,38 +27,29 @@ rect3.style.color = 'green';
 rect3.style.position = 'fixed';
 rect3.style.zIndex = 30;
 
-rect1.appendChild(rect2);
+// rect1.appendChild(rect2);
 // rect1.appendChild(rect3);
 
-app.appendChild(rect1);
+const circle1 = new Circle(100, 100, 50);
+circle1.style.color = 'black';
+circle1.style.zIndex = 100;
+
+const sprite1 = new Sprite(20, 40);
+// app.appendChild(rect1);
+app.appendChild(circle1);
+// app.appendChild(sprite1);
 app.draw();
 
-app.ticks.add(() => {
-    rect1.transform.translateX! += 1;
-    rect1.transform.scaleX! -= 0.001;
-    rect1.transform.scaleY! -= 0.001;
-    rect1.transform.rotate! += 5;
+app.ticker.add(() => {
+    // rect1.transform.translateX! += 1;
+    // rect1.transform.scaleX! -= 0.001;
+    // rect1.transform.scaleY! -= 0.001;
+    // rect1.transform.rotate! += 5;
+
+    circle1.transform.translateX! += 1;
+    circle1.transform.translateY! += 1;
+    circle1.transform.scaleX! += 0.001;
+    circle1.transform.scaleY! += 0.001;
+
+    // sprite1.transform.rotate! += 10;
 });
-
-let timer = -1;
-let running = false;
-const draw = () => {
-    timer = window.requestAnimationFrame(() => {
-        
-        draw();
-    });
-}
-
-start.onclick = () => {
-    if (running) return;
-    running = true;
-    draw();
-}
-
-stop.onclick = () => {
-    if (!running) return;
-    running = false;
-    window.cancelAnimationFrame(timer);
-    timer = -1;
-}
-// draw();
