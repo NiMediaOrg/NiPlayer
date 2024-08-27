@@ -42,9 +42,9 @@ app.draw();
 
 app.ticker.add(() => {
     // rect1.transform.translateX! += 1;
-    // rect1.transform.scaleX! -= 0.001;
-    // rect1.transform.scaleY! -= 0.001;
-    // rect1.transform.rotate! += 5;
+    rect1.transform.scaleX! -= 0.001;
+    rect1.transform.scaleY! -= 0.001;
+    rect1.transform.rotate! += 5;
 
     // circle1.transform.translateX! += 1;
     // circle1.transform.translateY! += 1;

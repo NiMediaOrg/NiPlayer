@@ -7,17 +7,33 @@ export class Polygon extends Graphics {
 
     public contains(point: { x: number; y: number; }): boolean {
         let count = 0;
+        const points = this.points.map(point => {
+            const vector = [point.x, point.y, 1];
+            for (let i = 0; i < this.matrix.matrix.length; i++) {
+                let sum = 0;
+                for (let j = 0; j < this.matrix.matrix[0].length; j++) {
+                    sum += this.matrix.matrix[i][j] * vector[j];
+                }
+                vector[i] = sum;
+            }
+
+            return {
+                x: vector[0],
+                y: vector[1]
+            }
+        })
         for (let i = 0; i < this.points.length; i++) {
-            const x1 = this.points[i].x;
-            const y1 = this.points[i].y;
-            const x2 = this.points[(i + 1) % this.points.length].x;
-            const y2 = this.points[(i + 1) % this.points.length].y;
-            const x3 = point.x;
-            const y3 = point.y; 
-            if (this.isInteract(x3, y3, x1, y1, x2, y2)) {
+            const x1 = points[i].x;
+            const y1 = points[i].y;
+            const x2 = points[(i + 1) % points.length].x;
+            const y2 = points[(i + 1) % points.length].y;
+            const x = point.x;
+            const y = point.y;
+            if (this.isInteract(x, y, x1, y1, x2, y2)) {
                 count++;
             }
         }
+        // console.log('@@@', count % 2 !== 0)
         return count % 2 !== 0;
     }
     public points: { x: number; y: number; }[] = [];

@@ -2,7 +2,7 @@ import bind from "bind-decorator";
 import { RenderObject } from "./material/RenderObject";
 import { autorun } from "./reactivity/effects";
 import { IApplicationConfig, IPoint } from "./types";
-import { Circle } from "./material";
+import { Circle, Rectangle } from "./material";
 class ApplicationRoot extends RenderObject {
     public anchor: { x: number; y: number; };
     public contains(point: { x: number; y: number; }): boolean {
@@ -42,16 +42,18 @@ export class Application {
         this.canvas.height = config.height * window.devicePixelRatio;
         this.root = new ApplicationRoot();
 
-        this.canvas.addEventListener('mousemove', this.onClick);
+        this.canvas.addEventListener('mousemove', this.onMouseMove);
         this.play();
     }
 
     @bind
-    private onClick(e: MouseEvent) {
+    private onMouseMove(e: MouseEvent) {
         const target = this.hitCheck(this.root, {x: e.offsetX, y: e.offsetY});
-        if (target instanceof Circle) {
+        if (target instanceof Rectangle) {
             this.canvas.style.cursor = 'pointer';
-        } 
+        } else {
+            this.canvas.style.cursor = 'default';
+        }
     }
     /**
      * @desc canvas中的碰撞检测实现，使用后序遍历，优先实现子节点
@@ -60,7 +62,7 @@ export class Application {
     private hitCheck(node: RenderObject, point: IPoint): RenderObject | null {
         let hitTarget: RenderObject | null = null;
         node.children.forEach(child => {
-            hitTarget = this.hitCheck(child, point)
+            hitTarget = this.hitCheck(child, point) ?? hitTarget;
         });
 
         if (!hitTarget) {
