@@ -22,18 +22,18 @@ export class Polygon extends Graphics {
                 y: vector[1]
             }
         })
+        const node = this.findNearPositionNode(this.style.position);
         for (let i = 0; i < this.points.length; i++) {
-            const x1 = points[i].x;
-            const y1 = points[i].y;
-            const x2 = points[(i + 1) % points.length].x;
-            const y2 = points[(i + 1) % points.length].y;
+            const x1 = points[i].x + (node?.style.x || 0);
+            const y1 = points[i].y + (node?.style.y || 0);
+            const x2 = points[(i + 1) % points.length].x + (node?.style.x || 0);
+            const y2 = points[(i + 1) % points.length].y + (node?.style.y || 0);
             const x = point.x;
             const y = point.y;
             if (this.isInteract(x, y, x1, y1, x2, y2)) {
                 count++;
             }
         }
-        // console.log('@@@', count % 2 !== 0)
         return count % 2 !== 0;
     }
     public points: { x: number; y: number; }[] = [];

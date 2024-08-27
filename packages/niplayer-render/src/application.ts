@@ -48,8 +48,8 @@ export class Application {
 
     @bind
     private onMouseMove(e: MouseEvent) {
-        const target = this.hitCheck(this.root, {x: e.offsetX, y: e.offsetY});
-        if (target instanceof Rectangle) {
+        const target = this.hitCheck(this.root, {x: e.offsetX * window.devicePixelRatio, y: e.offsetY * window.devicePixelRatio});
+        if (target instanceof Circle || target instanceof Rectangle) {
             this.canvas.style.cursor = 'pointer';
         } else {
             this.canvas.style.cursor = 'default';
