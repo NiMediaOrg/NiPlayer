@@ -1,10 +1,11 @@
-import { Graphics, GraphicsType } from "./Graphics";
+import {  GraphicsType } from "./Graphics";
+import { Polygon } from "./Polygon";
 
-export class Rectangle extends Graphics {
+export class Rectangle extends Polygon {
     public type: GraphicsType = GraphicsType.Rectangle;
     public anchor: { x: number; y: number; } = { x: 0, y: 0 };
     public contains(point: { x: number; y: number; }): boolean {
-        return true;
+        return super.contains(point);
     }
     public innerText: string = '';
 
@@ -14,7 +15,7 @@ export class Rectangle extends Graphics {
         width: number,
         height: number
     ) {
-        super();
+        super([]);
         this.style.height = height;
         this.style.width = width;
         this.style.x = x;
@@ -24,12 +25,25 @@ export class Rectangle extends Graphics {
     }
 
     public drawContent(context: CanvasRenderingContext2D): void {
-        context.fillStyle = this.style.color;
-        context.globalAlpha = this.style.opacity;
-        const node = this.findNearPositionNode(this.style.position);
-        let x = this.style.x + (node?.style?.x || 0);
-        let y = this.style.y + (node?.style?.y || 0);
-        context.fillRect(x, y, this.style.width, this.style.height);
+        this.points = [
+            {
+                x: this.style.x,
+                y: this.style.y
+            },
+            {
+                x: this.style.x + this.style.width,
+                y: this.style.y
+            },
+            {
+                x: this.style.x + this.style.width,
+                y: this.style.y + this.style.height
+            },
+            {
+                x: this.style.x,
+                y: this.style.y + this.style.height
+            }
+        ]
+        super.drawContent(context);
     }
 
     public drawText(context: CanvasRenderingContext2D) {

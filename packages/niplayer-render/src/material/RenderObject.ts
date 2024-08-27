@@ -51,6 +51,10 @@ export abstract class RenderObject {
     public matrix: Matrix;
 
     public abstract anchor: { x: number, y: number };
+    /**
+     * @desc contains方法则是为了以后的碰撞检测做准备
+     */
+    public abstract contains(point: { x: number, y: number }): boolean;
 
     public draw(context: CanvasRenderingContext2D) {
         context.save();
@@ -134,6 +138,28 @@ export abstract class RenderObject {
             }
         }
         return null;
+    }
+
+    /**
+     * @description 判断由x,y引出的水平向右的射线是否和x1,y1,x2,y2形成的线段相交
+     * @param x {number}
+     * @param y {number}
+     * @param x1 {number}
+     * @param y1 {number}
+     * @param x2 {number}
+     * @param y2 {number}
+     */
+    protected isInteract(x: number, y: number, x1: number, y1: number, x2: number, y2: number) {
+        if ((y1 < y && y2 < y) || (y1 > y && y2 > y) || (x > x1 && x > x2)) {
+            return false;
+        }
+
+        if (x1 > x && x2 > x) {
+            return true;
+        }
+
+        const ox = x2 - (x2 - x1) * (y2 - y) / (y2 - y1);
+        return x < ox;
     }
     /**
      * @desc 添加子节点

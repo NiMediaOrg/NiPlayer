@@ -4,7 +4,18 @@ export class Circle extends Graphics {
     public type: GraphicsType = GraphicsType.Circle;
     public anchor: { x: number; y: number; } = { x: 0, y: 0 };
     public contains(point: { x: number; y: number; }): boolean {
-        return true;
+        const { x, y } = point;
+        const node = this.findNearPositionNode(this.style.position);
+        let dx = this.style.x + (node?.style?.x || 0);
+        let dy = this.style.y + (node?.style?.y || 0);
+        if (
+            (x - dx) * (x - dx) + (y - dy) * (y - dy) <
+            this.style.radius * this.style.radius
+        ) {
+            return true
+        } else {
+            return false
+        }
     }
     public innerText: string = '';
 
@@ -30,6 +41,6 @@ export class Circle extends Graphics {
     }
 
     public drawText(context: CanvasRenderingContext2D): void {
-        
+
     }
 }
