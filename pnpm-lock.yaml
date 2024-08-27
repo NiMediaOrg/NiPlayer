@@ -171,6 +171,9 @@ importers:
 
   packages/niplayer-render:
     dependencies:
+      eventemitter3:
+        specifier: ^5.0.1
+        version: 5.0.1
       mobx:
         specifier: ^6.13.1
         version: 6.13.1

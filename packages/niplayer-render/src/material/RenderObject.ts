@@ -1,3 +1,4 @@
+import EventEmitter from "eventemitter3";
 import { observable } from "../reactivity/observer";
 import { Matrix } from "../transform/Matrix";
 import { PriorityQueue } from "../utils/priority-queue";
@@ -28,7 +29,7 @@ export interface IRenderObject {
 /**
  * @desc canvas渲染对象的抽象基类
  */
-export abstract class RenderObject {
+export abstract class RenderObject extends EventEmitter {
     /**
      * @desc 渲染对象的子元素
      */
@@ -100,6 +101,7 @@ export abstract class RenderObject {
     public abstract drawContent(context: CanvasRenderingContext2D): void;
 
     constructor() {
+        super();
         this.children = new PriorityQueue<RenderObject>((a, b) => a.style.zIndex < b.style.zIndex);
         this.style = observable(this.style);
         this.transform = observable(this.transform);
@@ -179,4 +181,8 @@ export abstract class RenderObject {
     public removeChild(child: RenderObject) {
         this.children.delete(child);
     }
+
+    public addEventListener() {}
+
+    public removeEventListener() {}
 }
