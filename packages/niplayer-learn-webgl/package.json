@@ -1,0 +1,14 @@
+{
+  "name": "niplayer-learn-webgl",
+  "version": "1.0.0",
+  "description": "Learn WebGL",
+  "main": "./src/index.ts",
+  "scripts": {
+    "dev": "rspack serve --config ./rspack.config.cjs"
+  },
+  "keywords": [
+    "WebGL"
+  ],
+  "author": "NovaNi",
+  "license": "ISC"
+}

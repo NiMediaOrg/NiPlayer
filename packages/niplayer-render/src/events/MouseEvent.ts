@@ -22,8 +22,8 @@ export class MouseEvent {
     public type: keyof EventMap = 'mousemove';
     public global: IPoint = { x: 0, y: 0 };
     public propagationStopped = false;
-    public target: RenderObject;
-    public currentTarget: RenderObject;
+    public target: RenderObject = null;
+    public currentTarget: RenderObject = null;
 
     public stopPropagation() {
         this.propagationStopped = true

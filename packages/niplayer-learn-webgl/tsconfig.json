@@ -1,0 +1,10 @@
+{
+    "exclude": [
+        "node_modules"
+    ],
+    "include": [
+        "./src/**/*",
+        "./demo/**/*"
+    ],
+    "extends": "../../tsconfig.base.json",
+}

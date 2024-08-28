@@ -1,4 +1,4 @@
-import { Application, Circle, Rectangle, Sprite } from "../src";
+import { Application, Circle, MouseEvent, Rectangle, Sprite } from "../src";
 const start = document.querySelector('.start') as HTMLButtonElement;
 const stop = document.querySelector('.stop') as HTMLButtonElement;
 
@@ -44,7 +44,7 @@ rect1.addEventListener('mousedown', (e) => {
     const initY = e.global.y;
     const left = rect1.style.x;
     const top = rect1.style.y;
-    const mousemove = (e) => {
+    const mousemove = (e: MouseEvent) => {
         const x = e.global.x;
         const y = e.global.y;
         const dx = x - initX;
