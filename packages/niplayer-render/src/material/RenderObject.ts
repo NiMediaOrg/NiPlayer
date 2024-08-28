@@ -2,6 +2,7 @@ import EventEmitter from "eventemitter3";
 import { observable } from "../reactivity/observer";
 import { Matrix } from "../transform/Matrix";
 import { PriorityQueue } from "../utils/priority-queue";
+import { EventMap } from "../events/MouseEvent";
 export interface ITransform {
     translateX?: number;
     translateY?: number;
@@ -56,6 +57,17 @@ export abstract class RenderObject extends EventEmitter {
      * @desc contains方法则是为了以后的碰撞检测做准备
      */
     public abstract contains(point: { x: number, y: number }): boolean;
+
+    public get composedPath(): RenderObject[] {
+        const path = [];
+        let top = this as RenderObject;
+        while(top) {
+            path.push(top);
+            top = top.parent;
+        }
+
+        return path;
+    }
 
     public draw(context: CanvasRenderingContext2D) {
         context.save();
@@ -182,7 +194,15 @@ export abstract class RenderObject extends EventEmitter {
         this.children.delete(child);
     }
 
-    public addEventListener() {}
+    public addEventListener<K extends keyof EventMap>(type: K, listener: EventMap[K], options?: AddEventListenerOptions) {
+        if (typeof options === 'object' && options.once) {
+            this.once(type, listener);
+        } else {
+            this.on(type, listener);
+        }
+    }
 
-    public removeEventListener() {}
+    public removeEventListener<K extends keyof EventMap>(type: K, listener: EventMap[K], options?: AddEventListenerOptions) {
+        this.off(type, listener);
+    }
 }

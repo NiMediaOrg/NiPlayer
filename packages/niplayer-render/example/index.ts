@@ -27,16 +27,35 @@ rect3.style.color = 'green';
 rect3.style.position = 'fixed';
 rect3.style.zIndex = 30;
 
-// rect1.appendChild(rect2);
-// rect1.appendChild(rect3);
+rect1.appendChild(rect2);
+rect1.appendChild(rect3);
 
+rect1.addEventListener('mouseenter', (e) => {
+    console.log('rect1 mouseenter', e)
+})
+
+rect1.addEventListener('mouseleave', (e) => {
+    console.log('rect2 mouseleave', e)
+})
+
+rect2.addEventListener('mouseenter', (e) => {
+    console.log('rect2 mouseenter', e)
+})
+
+rect2.addEventListener('mouseleave', (e) => {
+    console.log('rect2 mouseleave', e)
+})
+
+rect2.addEventListener('mousemove', (e) => {
+    console.log('rect2 mousemove', e)
+})
 const circle1 = new Circle(100, 100, 50);
 circle1.style.color = 'black';
 circle1.style.zIndex = 100;
 
 const sprite1 = new Sprite(20, 40);
-// app.appendChild(rect1);
-app.appendChild(circle1);
+app.appendChild(rect1);
+// app.appendChild(circle1);
 // app.appendChild(sprite1);
 app.draw();
 
