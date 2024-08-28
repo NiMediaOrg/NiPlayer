@@ -18,11 +18,12 @@ class ApplicationRoot extends RenderObject {
 export class Application {
     private canvas: HTMLCanvasElement;
     private context: CanvasRenderingContext2D;
-    private root: ApplicationRoot;
     private overTargets: RenderObject[] = [];
+    private pressTargets: RenderObject[] = [];
 
     private ticksFunction: (() => void)[] = [];
 
+    public root: ApplicationRoot;
     public ticker = {
         add: (cb: () => void) => {
             this.ticksFunction.push(cb);
@@ -64,6 +65,10 @@ export class Application {
         if (topTarget && hitTarget !== topTarget) {
             if (!hitTarget.composedPath.includes(topTarget)) {
                 event.type = 'mouseleave';
+                event.global = {
+                    x: point.x,
+                    y: point.y
+                };
                 if (!hitTarget) {
                     topTarget.composedPath.forEach(item => {
                         event.currentTarget = item;
@@ -83,6 +88,10 @@ export class Application {
         if (hitTarget && topTarget !== hitTarget) {
             event.target = hitTarget;
             event.type = 'mouseenter';
+            event.global = {
+                x: point.x,
+                y: point.y
+            };
             if (!topTarget) {
                 hitTarget.composedPath.forEach(item => {
                     event.currentTarget = item;
@@ -109,6 +118,10 @@ export class Application {
             event.currentTarget = hitTarget;
             event.timeStamp = Date.now();
             event.type = 'mousemove';
+            event.global = {
+                x: point.x,
+                y: point.y
+            };
             //todo 事件捕获的处理
             // [...hitTarget.composedPath].reverse().forEach(item => {
             //     item.emit('mousemove', event);
@@ -127,9 +140,64 @@ export class Application {
         this.overTargets = [];
     }
 
+    @bind
+    private _onPointerDown(e: PointerEvent) {
+        const x = e.offsetX * window.devicePixelRatio;
+        const y = e.offsetY * window.devicePixelRatio;
+        const hitTarget = this.hitCheck(this.root, {x,y});
+        const event = new MouseEvent();
+        event.type = 'mousedown';
+        event.timeStamp = Date.now();
+        event.target = hitTarget;
+        event.currentTarget = hitTarget;
+        event.global = {
+            x: x,
+            y: y
+        }
+        hitTarget.composedPath.forEach(item => {
+            event.currentTarget = item;
+            item.emit('mousedown', event);
+        })
+        this.pressTargets = hitTarget.composedPath;
+    }
+
+    @bind
+    private _onPointerUp(e: PointerEvent) {
+        const x = e.offsetX * window.devicePixelRatio;
+        const y = e.offsetY * window.devicePixelRatio;
+        const hitTarget = this.hitCheck(this.root, {x,y});
+        const event = new MouseEvent();
+        event.type = 'mouseup';
+        event.timeStamp = Date.now();
+        event.target = hitTarget;
+        event.currentTarget = hitTarget;
+        hitTarget.composedPath.forEach(item => {
+            event.currentTarget = item;
+            item.emit('mouseup', event);
+        })
+
+        const clickEvent = new MouseEvent();
+        clickEvent.type ='click';
+        clickEvent.timeStamp = Date.now();
+        let target = hitTarget;
+        while(target) {
+            if (this.pressTargets.includes(target)) break;
+            target = target.parent;
+        }
+
+        clickEvent.target = target;
+        while(target) {
+            clickEvent.currentTarget = target;
+            target.emit('click', event);
+            target = target.parent;
+        }
+    }
+
     private addEvents() {
         this.canvas.addEventListener('pointermove', this._onPointerMove);
         this.canvas.addEventListener('pointerleave', this._onPointerLeave);
+        this.canvas.addEventListener('pointerdown', this._onPointerDown);
+        this.canvas.addEventListener('pointerup', this._onPointerUp);
     }
 
     /**

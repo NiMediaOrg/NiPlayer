@@ -13,6 +13,9 @@ export interface EventMap {
     mouseenter: (ev: MouseEvent) => any;
     mouseleave: (ev: MouseEvent) => any;
     mousemove: (ev: MouseEvent) => any;
+    mousedown: (ev: MouseEvent) => any;
+    mouseup: (ev: MouseEvent) => any;
+    click: (ev: MouseEvent) => any;
 }
 export class MouseEvent {
     public timeStamp = 0;

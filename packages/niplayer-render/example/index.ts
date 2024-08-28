@@ -15,8 +15,6 @@ rect1.style.position = 'relative';
 rect1.style.font = '35px Arial';
 rect1.style.overflow = 'hidden';
 
-rect1.innerText = 'Hellooooooooooooooooooooo World';
-
 const rect2 = new Rectangle(40, 30, 50, 200);
 rect2.style.color = 'blue';
 rect2.style.zIndex = 10;
@@ -24,30 +22,42 @@ rect2.style.position = 'absolute';
 
 const rect3 = new Rectangle(50, 50, 160, 100)
 rect3.style.color = 'green';
-rect3.style.position = 'fixed';
+rect3.style.position = 'absolute';
 rect3.style.zIndex = 30;
 
 rect1.appendChild(rect2);
 rect1.appendChild(rect3);
 
-rect1.addEventListener('mouseenter', (e) => {
-    console.log('rect1 mouseenter', e)
-})
+// rect1.addEventListener('mousemove', (e) => {
+//     console.log('rect1 mousemove', e.global)
+// })
 
-rect1.addEventListener('mouseleave', (e) => {
-    console.log('rect2 mouseleave', e)
-})
+// rect2.addEventListener('mousemove', (e) => {
+//     console.log('rect2 mousemove', e.currentTarget)
+// })
+// app.root.addEventListener('mousemove', (e) => {
+//     console.log(e.global)
+// })
 
-rect2.addEventListener('mouseenter', (e) => {
-    console.log('rect2 mouseenter', e)
-})
+rect1.addEventListener('mousedown', (e) => {
+    const initX = e.global.x;
+    const initY = e.global.y;
+    const left = rect1.style.x;
+    const top = rect1.style.y;
+    const mousemove = (e) => {
+        const x = e.global.x;
+        const y = e.global.y;
+        const dx = x - initX;
+        const dy = y - initY;
+        rect1.style.x = left! + dx;
+        rect1.style.y = top! + dy;
+    }
 
-rect2.addEventListener('mouseleave', (e) => {
-    console.log('rect2 mouseleave', e)
-})
+    app.root.addEventListener('mousemove', mousemove)
 
-rect2.addEventListener('mousemove', (e) => {
-    console.log('rect2 mousemove', e)
+    app.root.addEventListener('mouseup', (e) => {
+        app.root.removeEventListener('mousemove', mousemove)
+    })
 })
 const circle1 = new Circle(100, 100, 50);
 circle1.style.color = 'black';
