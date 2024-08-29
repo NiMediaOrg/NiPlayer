@@ -10,7 +10,11 @@ module.exports = defineConfig({
     },
     module: {
         rules: [
-            ...baseOptions.module?.rules || []
+            ...baseOptions.module?.rules || [],
+            {
+                test: /\.glsl$/i,
+                type: 'asset/source',
+            }
         ]
     },
     plugins: [
