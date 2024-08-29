@@ -1,3 +1,4 @@
+let buffer: WebGLBuffer;
 export function createShader(gl: WebGLRenderingContext, type: number, source: string) {
     const shader = gl.createShader(type);
     gl.shaderSource(shader, source);
@@ -33,15 +34,12 @@ export function createProgramFromSource(gl: WebGLRenderingContext, vertexShaderS
     return program;
 }
 
-export function createBuffer(gl: WebGLRenderingContext, program: WebGLProgram, attribute: string, data: ArrayBuffer): [WebGLBuffer, number] {
+export function createBuffer(gl: WebGLRenderingContext) {
+    if (buffer) return buffer;
     // 创建webgl缓冲区
-    const buffer = gl.createBuffer();
+    buffer = gl.createBuffer();
     // 绑定缓冲区
     gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-    // 数据写入缓冲区
-    // gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
-    //  获取顶点属性的位置
-    const location = gl.getAttribLocation(program, attribute);
-    // 关联缓冲区和顶点属性
-    return [buffer, location];
+
+    return buffer;
 }
