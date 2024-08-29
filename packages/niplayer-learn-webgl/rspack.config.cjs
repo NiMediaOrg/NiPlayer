@@ -10,7 +10,11 @@ module.exports = defineConfig({
     },
     module: {
         rules: [
-            ...baseOptions.module?.rules || []
+            ...baseOptions.module?.rules || [],
+            {
+                test: /\.glsl$/i,
+                type: 'asset/source',
+            }
         ]
     },
     plugins: [
@@ -22,6 +26,9 @@ module.exports = defineConfig({
         port: 1010,
         open: true,
         hot: true,
+        static: {
+            directory: path.resolve(__dirname, "./assets"),
+        },
     },
     resolve: {
         extensions: [
