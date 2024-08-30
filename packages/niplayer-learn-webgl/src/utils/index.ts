@@ -43,3 +43,13 @@ export function createBuffer(gl: WebGLRenderingContext) {
 
     return buffer;
 }
+
+export function createCoordinateMatrix(width: number, height: number) {
+    const l = 0, r = width, t = height, b = 0;
+    return [
+        2 / (r - l), 0, 0, 0,
+        0, 2 / (t - b), 0, 0,
+        0, 0, 1, 0,
+        -(r + l) / (r - l), -(t + b) / (t - b), 0, 1
+    ]
+}
