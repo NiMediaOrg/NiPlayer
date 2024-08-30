@@ -1,5 +1,5 @@
 import "./index.less";
-import { createBuffer, createProgramFromSource } from "./utils";
+import { createBuffer, createCoordinateMatrix, createProgramFromSource } from "./utils";
 import vertexShaderSource from "./shader/graphics.vertex.glsl";
 import fragmentShaderSource from "./shader/graphics.fragment.glsl";
 const dotArray = [];
@@ -93,16 +93,15 @@ if (!gl) throw new Error('你的浏览器不支持webgl');
 // 设置webgl的视口
 gl.viewport(0, 0, canvas.width, canvas.height);
 const program = createProgramFromSource(gl, vertexShaderSource, fragmentShaderSource);
-
+//* 纹理的坐标-满足三角形的要求
 const textureData = new Float32Array([
-    0, 1,
     0, 0,
     1, 0,
-    1, 0,
     1, 1,
-    0, 1
+    1, 1,
+    0, 1,
+    0, 0
 ]);
-
 const textureBuffer = gl.createBuffer();
 const textureLocation = gl.getAttribLocation(program, 'a_textureCoordinate');
 gl.bindBuffer(gl.ARRAY_BUFFER, textureBuffer);
@@ -111,12 +110,12 @@ gl.bufferData(gl.ARRAY_BUFFER, textureData, gl.STATIC_DRAW);
 gl.enableVertexAttribArray(textureLocation);
 
 const pointData = new Float32Array([
-    0, 1,
-    0, 0,
-    1, 0,
-    1, 0,
-    1, 1,
-    0, 1
+    0,0,
+    2160,0,
+    2160,1080,
+    2160,1080,
+    0,1080,
+    0,0
 ]);
 const pointBuffer = gl.createBuffer();
 const pointLocation = gl.getAttribLocation(program, 'a_position');
@@ -128,16 +127,20 @@ gl.enableVertexAttribArray(pointLocation);
 const texture = gl.createTexture();
 gl.bindTexture(gl.TEXTURE_2D, texture);
 
-const uniformLocation = gl.getUniformLocation(program, 'u_texture');
 const image = new Image();
 image.src = '/test.jpg';
 image.onload = () => {
+    const u_matrix = gl.getUniformLocation(program, 'u_matrix');
+    const matrix = createCoordinateMatrix(image.width, image.height);
+    gl.uniformMatrix4fv(u_matrix, false, matrix);
+    // 反转y轴
     gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
+    //!! 针对纹理进行裁剪
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    //!! 绘制四边形
     gl.drawArrays(gl.TRIANGLES, 0, 6);
 }
-
