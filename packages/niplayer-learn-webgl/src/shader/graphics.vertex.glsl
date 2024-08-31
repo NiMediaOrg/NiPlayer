@@ -40,6 +40,7 @@ void main() {
         dx, dy, 0, 1
     ) * scale_rotate_matrix;
     gl_Position = u_matrix * final_matrix * a_position;
+    // gl_Position = u_matrix * a_position;
     // gl_Position为内置变量，表示当前点的大小，为浮点类型，如果赋值是整数类型会报错
     // gl_PointSize = 10.0;
     u_textureCoordinate = a_textureCoordinate;

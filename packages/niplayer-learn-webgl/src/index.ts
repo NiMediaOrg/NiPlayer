@@ -114,7 +114,7 @@ gl.bindBuffer(gl.ARRAY_BUFFER, textureBuffer);
 gl.vertexAttribPointer(textureLocation, 2, gl.FLOAT, false, Float32Array.BYTES_PER_ELEMENT * 2, 0);
 gl.bufferData(gl.ARRAY_BUFFER, textureData, gl.STATIC_DRAW);
 gl.enableVertexAttribArray(textureLocation);
-
+//!! 需要绘制的图形的原始坐标，在shader中会转换成webgl坐标系：X: [-1,1];Y:[-1,1]
 const pointData = new Float32Array([
     0, 0,
     2160, 0,
@@ -170,29 +170,47 @@ function toggleBlur(blur: boolean) {
     const isBlur = gl.getUniformLocation(program, 'u_isBlur');
     gl.uniform1i(isBlur, blur ? 1 : 0);
     gl.clearColor(0.0, 0.5, 0.0, 1.0);
-    if (isBlur) {
+
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+    if (blur) {
         //!! 绑定图像的原始纹理
         const frames = [];
         const textures = [];
-        const [frameBuffer1, texture1] = createFrameBuffer(gl, image.width, image.height);
-        const [frameBuffer2, texture2] = createFrameBuffer(gl, image.width, image.height);
-        frames.push(frameBuffer1, frameBuffer2);
-        textures.push(texture1, texture2);
-
+        for (let i = 0;i<2;i++) {
+            const [frameBuffer, texture] = createFrameBuffer(gl, image.width, image.height);
+            frames.push(frameBuffer);
+            textures.push(texture);
+        }
+        
         gl.bindTexture(gl.TEXTURE_2D, texture);
         for (let i = 0; i < 10; i++) {
             gl.bindFramebuffer(gl.FRAMEBUFFER, frames[i % 2]);
+            //! 告诉WebGL帧缓冲需要的视图大小
+            //! 需要注意的是，如果设置的图片像素和canvas像素不一致会导致渲染尺寸的问题，需要针对渲染后的纹理数据再进行一次矩阵变换
+            //todo 寻找更好的办法进行处理
+            gl.viewport(0, 0, image.width, image.height);
             //!! 绘制到当前帧缓冲区中的纹理对象上
             gl.drawArrays(gl.TRIANGLES, 0, 6);
+            // gl.bindTexture(gl.TEXTURE_2D, texture);
             //!! 绑定当前缓冲区的纹理对象作为下一次处理的输入
             gl.bindTexture(gl.TEXTURE_2D, textures[i % 2]);
         }
         //!! 设置帧缓冲区为NULL时，则会绘制到颜色缓冲区中（即屏幕上）
         //!! 因此，在webgl的概念中，屏幕 === 颜色缓冲区
-        console.log(texture)
         gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+        const scale_matrix = gl.getUniformLocation(program, 'scale_matrix');
+        gl.uniformMatrix4fv(scale_matrix, false, createScaleMatrix(canvas.width / image.width, canvas.height / image.height));
+        const translate_matrix = gl.getUniformLocation(program, 'translate_matrix');
+
+        gl.uniformMatrix4fv(translate_matrix, false, createTranslateMatrix((- image.width + canvas.width) / 2, (- image.height + canvas.height) / 2));
         gl.drawArrays(gl.TRIANGLES, 0, 6);
     } else {
+        gl.viewport(0, 0, canvas.width, canvas.height);
+        const translate_matrix = gl.getUniformLocation(program, 'translate_matrix');
+        gl.uniformMatrix4fv(translate_matrix, false, createTranslateMatrix(0, 0));
+        const scale_matrix = gl.getUniformLocation(program, 'scale_matrix');
+        gl.uniformMatrix4fv(scale_matrix, false, createScaleMatrix(1, 1));
+
         gl.drawArrays(gl.TRIANGLES, 0, 6);
     }
 }
@@ -228,6 +246,8 @@ image.onload = () => {
     let angle = 0;
     let scale = 0.5;
     let operation: 'minus' | 'add' = 'add';
+    // gl.viewport(0, 0, image.width, image.height);
+
     const animationChange = () => {
         window.requestAnimationFrame(() => {
             angle += 1;
