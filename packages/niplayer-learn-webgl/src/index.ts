@@ -1,7 +1,7 @@
 import "./index.less";
 import { createBuffer, createCoordinateMatrix, createFrameBuffer, createProgramFromSource, createRotateMatrix, createScaleMatrix, createTranslateMatrix } from "./utils";
-import vertexShaderSource from "./shader/graphics.vertex.glsl";
-import fragmentShaderSource from "./shader/graphics.fragment.glsl";
+import vertexShaderSource from "./shader/2d/graphics.vertex.glsl";
+import fragmentShaderSource from "./shader/2d/graphics.fragment.glsl";
 const dotArray = [];
 const translateInput = document.querySelector('#translate') as HTMLInputElement;
 const scaleInput = document.querySelector('#scale') as HTMLInputElement;
@@ -9,6 +9,10 @@ const rotateInput = document.querySelector('#rotate') as HTMLInputElement;
 const grayBtn = document.querySelector('#gray') as HTMLInputElement;
 const blurBtn = document.querySelector('#blur') as HTMLInputElement;
 
+const start = document.querySelector('.start') as HTMLButtonElement;
+const stop = document.querySelector('.stop') as HTMLButtonElement;
+
+let timer: number = -1;
 interface IPoint {
     x: number;
     y: number;
@@ -114,7 +118,7 @@ gl.bindBuffer(gl.ARRAY_BUFFER, textureBuffer);
 gl.vertexAttribPointer(textureLocation, 2, gl.FLOAT, false, Float32Array.BYTES_PER_ELEMENT * 2, 0);
 gl.bufferData(gl.ARRAY_BUFFER, textureData, gl.STATIC_DRAW);
 gl.enableVertexAttribArray(textureLocation);
-//!! 需要绘制的图形的原始坐标，在shader中会转换成webgl坐标系：X: [-1,1];Y:[-1,1]
+//!! 需要绘制的图形的原始坐标，在shader中会转换成webgl坐标系：X: [-1,1]; Y:[-1,1]
 const pointData = new Float32Array([
     0, 0,
     2160, 0,
@@ -238,13 +242,23 @@ image.onload = () => {
         toggleBlur(blurBtn.checked);
     })
 
+    start.addEventListener('click', () => {
+        if (timer !== -1) return;
+        animationChange();
+    });
+
+    stop.addEventListener('click', () => {
+        window.cancelAnimationFrame(timer);
+        timer = -1;
+    })
+
     let angle = 0;
     let scale = 0.5;
     let operation: 'minus' | 'add' = 'add';
     // gl.viewport(0, 0, image.width, image.height);
 
     const animationChange = () => {
-        window.requestAnimationFrame(() => {
+        timer = window.requestAnimationFrame(() => {
             angle += 1;
             if (scale > 1) {
                 operation = 'minus';
@@ -267,7 +281,8 @@ image.onload = () => {
             animationChange();
         });
     }
-    animationChange();
+
+    // animationChange();
 
     draw();
 }
