@@ -102,3 +102,19 @@ export function createRotateMatrix(angle: number) {
         0, 0, 0, 1
     ]
 }
+
+export function createFrameBuffer(gl: WebGLRenderingContext, width: number, height: number) {
+    //!! 创建帧缓冲区对象
+    const framebuffer = gl.createFramebuffer();
+    gl.bindFramebuffer(gl.FRAMEBUFFER, framebuffer);
+    //!! 这里的texture就是颜色关联对象，它替代了颜色缓冲区
+    const texture = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, width, height, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+    // 将纹理对象texture和绘制缓冲区对象frameBuffer进行绑定；
+    gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, texture, 0);
+    return [
+        framebuffer,
+        texture
+    ]
+}

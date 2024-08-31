@@ -1,11 +1,13 @@
 import "./index.less";
-import { createBuffer, createCoordinateMatrix, createProgramFromSource, createRotateMatrix, createScaleMatrix, createTranslateMatrix } from "./utils";
+import { createBuffer, createCoordinateMatrix, createFrameBuffer, createProgramFromSource, createRotateMatrix, createScaleMatrix, createTranslateMatrix } from "./utils";
 import vertexShaderSource from "./shader/graphics.vertex.glsl";
 import fragmentShaderSource from "./shader/graphics.fragment.glsl";
 const dotArray = [];
 const translateInput = document.querySelector('#translate') as HTMLInputElement;
 const scaleInput = document.querySelector('#scale') as HTMLInputElement;
 const rotateInput = document.querySelector('#rotate') as HTMLInputElement;
+const grayBtn = document.querySelector('#gray') as HTMLInputElement;
+const blurBtn = document.querySelector('#blur') as HTMLInputElement;
 
 interface IPoint {
     x: number;
@@ -68,11 +70,11 @@ function drawTriangle(gl: WebGLRenderingContext, points: [IPoint, IPoint, IPoint
 function drawRectangle(gl: WebGLRenderingContext, points: [IPoint, IPoint, IPoint, IPoint], color: [number, number, number, number]) {
     const data = [];
     [points[0], points[1], points[2]].forEach((point, index) => {
-        data.push(point.x, point.y,...color);
+        data.push(point.x, point.y, ...color);
     });
 
     [points[0], points[3], points[2]].forEach((point, index) => {
-        data.push(point.x, point.y,...color);
+        data.push(point.x, point.y, ...color);
     });
 
     const buf = new Float32Array(data);
@@ -114,12 +116,12 @@ gl.bufferData(gl.ARRAY_BUFFER, textureData, gl.STATIC_DRAW);
 gl.enableVertexAttribArray(textureLocation);
 
 const pointData = new Float32Array([
-    0,0,
-    2160,0,
-    2160,1080,
-    2160,1080,
-    0,1080,
-    0,0
+    0, 0,
+    2160, 0,
+    2160, 1080,
+    2160, 1080,
+    0, 1080,
+    0, 0
 ]);
 const pointBuffer = gl.createBuffer();
 const pointLocation = gl.getAttribLocation(program, 'a_position');
@@ -129,14 +131,15 @@ gl.bufferData(gl.ARRAY_BUFFER, pointData, gl.STATIC_DRAW);
 gl.enableVertexAttribArray(pointLocation);
 
 const texture = gl.createTexture();
+//!! gl.TEXTURE_2D 可以看作webgl提供的全局变量，通过设置全局变量来达到改变绘图的纹理，坐标，颜色等信息
 gl.bindTexture(gl.TEXTURE_2D, texture);
 
 function draw() {
     gl.clearColor(0.0, 0.5, 0.0, 1.0);
     const translate_matrix = gl.getUniformLocation(program, 'translate_matrix');
     gl.uniformMatrix4fv(translate_matrix, false, createTranslateMatrix(0, 0));
-    const scale_matrix = gl.getUniformLocation(program,'scale_matrix');
-    gl.uniformMatrix4fv(scale_matrix, false, createScaleMatrix(0.5, 0.5));
+    const scale_matrix = gl.getUniformLocation(program, 'scale_matrix');
+    // gl.uniformMatrix4fv(scale_matrix, false, createScaleMatrix(0.5, 0.5));
     const rotate_matrix = gl.getUniformLocation(program, 'rotate_matrix');
     gl.uniformMatrix4fv(rotate_matrix, false, createRotateMatrix(0));
     const u_matrix = gl.getUniformLocation(program, 'u_matrix');
@@ -156,13 +159,51 @@ function draw() {
     gl.drawArrays(gl.TRIANGLES, 0, 6);
 }
 
+function toggleGray(gray: boolean) {
+    const isGray = gl.getUniformLocation(program, 'u_isGray');
+    gl.uniform1i(isGray, gray ? 1 : 0);
+    gl.clearColor(0.0, 0.5, 0.0, 1.0);
+    gl.drawArrays(gl.TRIANGLES, 0, 6);
+}
+
+function toggleBlur(blur: boolean) {
+    const isBlur = gl.getUniformLocation(program, 'u_isBlur');
+    gl.uniform1i(isBlur, blur ? 1 : 0);
+    gl.clearColor(0.0, 0.5, 0.0, 1.0);
+    if (isBlur) {
+        //!! 绑定图像的原始纹理
+        const frames = [];
+        const textures = [];
+        const [frameBuffer1, texture1] = createFrameBuffer(gl, image.width, image.height);
+        const [frameBuffer2, texture2] = createFrameBuffer(gl, image.width, image.height);
+        frames.push(frameBuffer1, frameBuffer2);
+        textures.push(texture1, texture2);
+
+        gl.bindTexture(gl.TEXTURE_2D, texture);
+        for (let i = 0; i < 10; i++) {
+            gl.bindFramebuffer(gl.FRAMEBUFFER, frames[i % 2]);
+            //!! 绘制到当前帧缓冲区中的纹理对象上
+            gl.drawArrays(gl.TRIANGLES, 0, 6);
+            //!! 绑定当前缓冲区的纹理对象作为下一次处理的输入
+            gl.bindTexture(gl.TEXTURE_2D, textures[i % 2]);
+        }
+        //!! 设置帧缓冲区为NULL时，则会绘制到颜色缓冲区中（即屏幕上）
+        //!! 因此，在webgl的概念中，屏幕 === 颜色缓冲区
+        console.log(texture)
+        gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+        gl.drawArrays(gl.TRIANGLES, 0, 6);
+    } else {
+        gl.drawArrays(gl.TRIANGLES, 0, 6);
+    }
+}
+
 const image = new Image();
 image.src = '/test.jpg';
 image.onload = () => {
     translateInput.addEventListener('change', (e) => {
         const x = Number(translateInput.value) / 100 * 2160;
         const translate_matrix = gl.getUniformLocation(program, 'translate_matrix');
-        
+
         gl.uniformMatrix4fv(translate_matrix, false, createTranslateMatrix(x, 0));
         gl.clearColor(0.0, 0.5, 0.0, 1.0);
         gl.drawArrays(gl.TRIANGLES, 0, 6);
@@ -175,6 +216,41 @@ image.onload = () => {
         gl.clearColor(0.0, 0.5, 0.0, 1.0);
         gl.drawArrays(gl.TRIANGLES, 0, 6);
     });
+
+    grayBtn.addEventListener('click', (e) => {
+        toggleGray(grayBtn.checked);
+    })
+
+    blurBtn.addEventListener('click', (e) => {
+        toggleBlur(blurBtn.checked);
+    })
+
+    let angle = 0;
+    let scale = 0.5;
+    let operation: 'minus' | 'add' = 'add';
+    const animationChange = () => {
+        window.requestAnimationFrame(() => {
+            angle += 1;
+            if (scale > 1) {
+                operation = 'minus';
+            } else if (scale < 0.3) {
+                operation = 'add';
+            }
+            if (operation === 'add') {
+                scale += 0.001;
+            } else {
+                scale -= 0.001;
+            }
+            const rotate_matrix = gl.getUniformLocation(program, 'rotate_matrix');
+            gl.uniformMatrix4fv(rotate_matrix, false, createRotateMatrix(angle));
+            const scale_matrix = gl.getUniformLocation(program, 'scale_matrix');
+            gl.uniformMatrix4fv(scale_matrix, false, createScaleMatrix(scale, scale));
+            gl.clearColor(0.0, 0.5, 0.0, 1.0);
+            gl.drawArrays(gl.TRIANGLES, 0, 6);
+            animationChange();
+        });
+    }
+    // animationChange();
 
     draw();
 }
