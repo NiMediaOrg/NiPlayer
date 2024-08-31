@@ -166,51 +166,46 @@ function toggleGray(gray: boolean) {
     gl.drawArrays(gl.TRIANGLES, 0, 6);
 }
 
+const frames = [];
+const textures = [];
+
 function toggleBlur(blur: boolean) {
     const isBlur = gl.getUniformLocation(program, 'u_isBlur');
+    const useMatrix = gl.getUniformLocation(program, 'use_matrix');
     gl.uniform1i(isBlur, blur ? 1 : 0);
     gl.clearColor(0.0, 0.5, 0.0, 1.0);
 
     gl.bindTexture(gl.TEXTURE_2D, texture);
     if (blur) {
         //!! 绑定图像的原始纹理
-        const frames = [];
-        const textures = [];
-        for (let i = 0;i<2;i++) {
-            const [frameBuffer, texture] = createFrameBuffer(gl, image.width, image.height);
-            frames.push(frameBuffer);
-            textures.push(texture);
+        if (frames.length === 0) {
+            for (let i = 0; i < 2; i++) {
+                //!! 注意，这里需要传入canvas的像素尺寸，而不是image的尺寸！！！
+                const [frameBuffer, texture] = createFrameBuffer(gl, canvas.width, canvas.height);
+                frames.push(frameBuffer);
+                textures.push(texture);
+            }
         }
-        
+
         gl.bindTexture(gl.TEXTURE_2D, texture);
+        gl.uniform1i(useMatrix, 1);
         for (let i = 0; i < 10; i++) {
             gl.bindFramebuffer(gl.FRAMEBUFFER, frames[i % 2]);
             //! 告诉WebGL帧缓冲需要的视图大小
             //! 需要注意的是，如果设置的图片像素和canvas像素不一致会导致渲染尺寸的问题，需要针对渲染后的纹理数据再进行一次矩阵变换
             //todo 寻找更好的办法进行处理
-            gl.viewport(0, 0, image.width, image.height);
+            gl.viewport(0, 0, canvas.width, canvas.height);
             //!! 绘制到当前帧缓冲区中的纹理对象上
             gl.drawArrays(gl.TRIANGLES, 0, 6);
-            // gl.bindTexture(gl.TEXTURE_2D, texture);
             //!! 绑定当前缓冲区的纹理对象作为下一次处理的输入
             gl.bindTexture(gl.TEXTURE_2D, textures[i % 2]);
         }
         //!! 设置帧缓冲区为NULL时，则会绘制到颜色缓冲区中（即屏幕上）
         //!! 因此，在webgl的概念中，屏幕 === 颜色缓冲区
         gl.bindFramebuffer(gl.FRAMEBUFFER, null);
-        const scale_matrix = gl.getUniformLocation(program, 'scale_matrix');
-        gl.uniformMatrix4fv(scale_matrix, false, createScaleMatrix(canvas.width / image.width, canvas.height / image.height));
-        const translate_matrix = gl.getUniformLocation(program, 'translate_matrix');
-
-        gl.uniformMatrix4fv(translate_matrix, false, createTranslateMatrix((- image.width + canvas.width) / 2, (- image.height + canvas.height) / 2));
+        gl.uniform1i(useMatrix, 0);
         gl.drawArrays(gl.TRIANGLES, 0, 6);
     } else {
-        gl.viewport(0, 0, canvas.width, canvas.height);
-        const translate_matrix = gl.getUniformLocation(program, 'translate_matrix');
-        gl.uniformMatrix4fv(translate_matrix, false, createTranslateMatrix(0, 0));
-        const scale_matrix = gl.getUniformLocation(program, 'scale_matrix');
-        gl.uniformMatrix4fv(scale_matrix, false, createScaleMatrix(1, 1));
-
         gl.drawArrays(gl.TRIANGLES, 0, 6);
     }
 }
@@ -266,11 +261,13 @@ image.onload = () => {
             const scale_matrix = gl.getUniformLocation(program, 'scale_matrix');
             gl.uniformMatrix4fv(scale_matrix, false, createScaleMatrix(scale, scale));
             gl.clearColor(0.0, 0.5, 0.0, 1.0);
+            gl.viewport(0, 0, canvas.width, canvas.height);
+
             gl.drawArrays(gl.TRIANGLES, 0, 6);
             animationChange();
         });
     }
-    // animationChange();
+    animationChange();
 
     draw();
 }

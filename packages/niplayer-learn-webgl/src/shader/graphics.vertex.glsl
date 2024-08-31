@@ -7,6 +7,7 @@ uniform mat4 u_matrix;
 uniform mat4 translate_matrix;
 uniform mat4 scale_matrix;
 uniform mat4 rotate_matrix;
+uniform bool use_matrix;
 varying vec2 u_textureCoordinate;
 
 void main() {
@@ -20,13 +21,13 @@ void main() {
     mat4 common_rotate_matrix = common_matrix;
     mat4 common_translate_matrix = common_matrix;
     // gl_Position为内置变量，表示当前点的位置
-    if(scale_matrix != mat4(0)) {
+    if(scale_matrix != mat4(0) && !use_matrix) {
         common_scale_matrix = scale_matrix;
     }
-    if(rotate_matrix != mat4(0)) {
+    if(rotate_matrix != mat4(0) && !use_matrix) {
         common_rotate_matrix = rotate_matrix;
     }
-    if(translate_matrix != mat4(0)) {
+    if(translate_matrix != mat4(0) && !use_matrix) {
         common_translate_matrix = translate_matrix;
     }
     mat4 scale_rotate_matrix = common_rotate_matrix * common_scale_matrix;
