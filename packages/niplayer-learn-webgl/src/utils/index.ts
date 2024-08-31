@@ -43,7 +43,12 @@ export function createBuffer(gl: WebGLRenderingContext) {
 
     return buffer;
 }
-
+/**
+ * @description 创建将原始坐标转化到webgl坐标到矩阵
+ * @param width 
+ * @param height 
+ * @returns 
+ */
 export function createCoordinateMatrix(width: number, height: number) {
     const l = 0, r = width, t = height, b = 0;
     return [
@@ -51,5 +56,65 @@ export function createCoordinateMatrix(width: number, height: number) {
         0, 2 / (t - b), 0, 0,
         0, 0, 1, 0,
         -(r + l) / (r - l), -(t + b) / (t - b), 0, 1
+    ]
+}
+/**
+ * @description 创建平移矩阵
+ * @param x 
+ * @param y 
+ * @returns 
+ */
+export function createTranslateMatrix(x: number, y: number) {
+    return [
+        1, 0, 0, 0,
+        0, 1, 0, 0,
+        0, 0, 1, 0,
+        x, y, 0, 1
+    ]
+}
+/**
+ * @description 创建缩放矩阵
+ * @param x 
+ * @param y 
+ * @returns 
+ */
+export function createScaleMatrix(x: number, y: number) {
+    return [
+        x, 0, 0, 0,
+        0, y, 0, 0,
+        0, 0, 1, 0,
+        0, 0, 0, 1
+    ]
+}
+/**
+ * @description 创建旋转矩阵
+ * @param angle 
+ * @returns 
+ */
+export function createRotateMatrix(angle: number) {
+    const radian = angle * Math.PI / 180;
+    const cos = Math.cos(radian);
+    const sin = Math.sin(radian);
+    return [
+        cos, -sin, 0, 0,
+        sin, cos, 0, 0,
+        0, 0, 1, 0,
+        0, 0, 0, 1
+    ]
+}
+
+export function createFrameBuffer(gl: WebGLRenderingContext, width: number, height: number) {
+    //!! 创建帧缓冲区对象
+    const framebuffer = gl.createFramebuffer();
+    gl.bindFramebuffer(gl.FRAMEBUFFER, framebuffer);
+    //!! 这里的texture就是颜色关联对象，它替代了颜色缓冲区
+    const texture = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, width, height, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+    // 将纹理对象texture和绘制缓冲区对象frameBuffer进行绑定；
+    gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, texture, 0);
+    return [
+        framebuffer,
+        texture
     ]
 }
