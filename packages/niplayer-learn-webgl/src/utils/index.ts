@@ -43,7 +43,12 @@ export function createBuffer(gl: WebGLRenderingContext) {
 
     return buffer;
 }
-
+/**
+ * @description 创建将原始坐标转化到webgl坐标到矩阵
+ * @param width 
+ * @param height 
+ * @returns 
+ */
 export function createCoordinateMatrix(width: number, height: number) {
     const l = 0, r = width, t = height, b = 0;
     return [
@@ -51,5 +56,49 @@ export function createCoordinateMatrix(width: number, height: number) {
         0, 2 / (t - b), 0, 0,
         0, 0, 1, 0,
         -(r + l) / (r - l), -(t + b) / (t - b), 0, 1
+    ]
+}
+/**
+ * @description 创建平移矩阵
+ * @param x 
+ * @param y 
+ * @returns 
+ */
+export function createTranslateMatrix(x: number, y: number) {
+    return [
+        1, 0, 0, 0,
+        0, 1, 0, 0,
+        0, 0, 1, 0,
+        x, y, 0, 1
+    ]
+}
+/**
+ * @description 创建缩放矩阵
+ * @param x 
+ * @param y 
+ * @returns 
+ */
+export function createScaleMatrix(x: number, y: number) {
+    return [
+        x, 0, 0, 0,
+        0, y, 0, 0,
+        0, 0, 1, 0,
+        0, 0, 0, 1
+    ]
+}
+/**
+ * @description 创建旋转矩阵
+ * @param angle 
+ * @returns 
+ */
+export function createRotateMatrix(angle: number) {
+    const radian = angle * Math.PI / 180;
+    const cos = Math.cos(radian);
+    const sin = Math.sin(radian);
+    return [
+        cos, -sin, 0, 0,
+        sin, cos, 0, 0,
+        0, 0, 1, 0,
+        0, 0, 0, 1
     ]
 }

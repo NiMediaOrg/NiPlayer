@@ -1,8 +1,12 @@
 import "./index.less";
-import { createBuffer, createCoordinateMatrix, createProgramFromSource } from "./utils";
+import { createBuffer, createCoordinateMatrix, createProgramFromSource, createRotateMatrix, createScaleMatrix, createTranslateMatrix } from "./utils";
 import vertexShaderSource from "./shader/graphics.vertex.glsl";
 import fragmentShaderSource from "./shader/graphics.fragment.glsl";
 const dotArray = [];
+const translateInput = document.querySelector('#translate') as HTMLInputElement;
+const scaleInput = document.querySelector('#scale') as HTMLInputElement;
+const rotateInput = document.querySelector('#rotate') as HTMLInputElement;
+
 interface IPoint {
     x: number;
     y: number;
@@ -127,12 +131,19 @@ gl.enableVertexAttribArray(pointLocation);
 const texture = gl.createTexture();
 gl.bindTexture(gl.TEXTURE_2D, texture);
 
-const image = new Image();
-image.src = '/test.jpg';
-image.onload = () => {
+function draw() {
+    gl.clearColor(0.0, 0.5, 0.0, 1.0);
+    const translate_matrix = gl.getUniformLocation(program, 'translate_matrix');
+    gl.uniformMatrix4fv(translate_matrix, false, createTranslateMatrix(0, 0));
+    const scale_matrix = gl.getUniformLocation(program,'scale_matrix');
+    gl.uniformMatrix4fv(scale_matrix, false, createScaleMatrix(0.5, 0.5));
+    const rotate_matrix = gl.getUniformLocation(program, 'rotate_matrix');
+    gl.uniformMatrix4fv(rotate_matrix, false, createRotateMatrix(0));
     const u_matrix = gl.getUniformLocation(program, 'u_matrix');
-    const matrix = createCoordinateMatrix(image.width, image.height);
-    gl.uniformMatrix4fv(u_matrix, false, matrix);
+    const u_anchor = gl.getUniformLocation(program, 'u_anchor');
+    gl.uniform4fv(u_anchor, [image.width / 2, image.height / 2, 1, 1]);
+
+    gl.uniformMatrix4fv(u_matrix, false, createCoordinateMatrix(image.width, image.height));
     // 反转y轴
     gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
@@ -143,4 +154,27 @@ image.onload = () => {
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
     //!! 绘制四边形
     gl.drawArrays(gl.TRIANGLES, 0, 6);
+}
+
+const image = new Image();
+image.src = '/test.jpg';
+image.onload = () => {
+    translateInput.addEventListener('change', (e) => {
+        const x = Number(translateInput.value) / 100 * 2160;
+        const translate_matrix = gl.getUniformLocation(program, 'translate_matrix');
+        
+        gl.uniformMatrix4fv(translate_matrix, false, createTranslateMatrix(x, 0));
+        gl.clearColor(0.0, 0.5, 0.0, 1.0);
+        gl.drawArrays(gl.TRIANGLES, 0, 6);
+    });
+
+    rotateInput.addEventListener('change', (e) => {
+        const x = Number(rotateInput.value);
+        const rotate_matrix = gl.getUniformLocation(program, 'rotate_matrix');
+        gl.uniformMatrix4fv(rotate_matrix, false, createRotateMatrix(x));
+        gl.clearColor(0.0, 0.5, 0.0, 1.0);
+        gl.drawArrays(gl.TRIANGLES, 0, 6);
+    });
+
+    draw();
 }
