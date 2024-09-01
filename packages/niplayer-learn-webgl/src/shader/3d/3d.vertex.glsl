@@ -55,9 +55,7 @@ void main() {
     float dx = v_anchor.x - new_anchor.x + main_translate_matrix[3][0];
     float dy = v_anchor.y - new_anchor.y + main_translate_matrix[3][1];
     float dz = v_anchor.z - new_anchor.z + main_translate_matrix[3][2];
-    // float dz = 0.0;
-
-
+    
     mat4 new_final_matrix = mat4(
         1, 0, 0, 0,
         0, 1, 0, 0,

@@ -12,17 +12,17 @@ window.onload = () => {
     //* 设置立方体的长宽高
     const width = 200, height = 200, depth = 200;
     const pointPos = [
-        // front-face
-        0, 0, 0, width, 0, 0, width, height, 0, width, height, 0, 0, height, 0, 0, 0, 0,
-        // back-face
+        // front-side
         0, 0, depth, width, 0, depth, width, height, depth, width, height, depth, 0, height, depth, 0, 0, depth,
-        // left-face
-        0, 0, 0, 0, height, 0, 0, height, depth, 0, height, depth, 0, 0, depth, 0, 0, 0,
-        // right-face
+        // back-side
+        0, 0, 0, 0, height, 0, width, height, 0, width, height, 0, width, 0, 0, 0, 0, 0,
+        // left-side
+        0, 0, 0, 0, 0, depth, 0, height, depth, 0, height, depth, 0, height, 0, 0, 0, 0,
+        // right-side
         width, 0, 0, width, height, 0, width, height, depth, width, height, depth, width, 0, depth, width, 0, 0,
-        // top-face
-        0, height, 0, width, height, 0, width, height, depth, width, height, depth, 0, height, depth, 0, height, 0,
-        // bottom-face
+        // top-side
+        0, height, 0, 0, height, depth, width, height, depth, width, height, depth, width, height, 0, 0, height, 0,
+        // bottom-side
         0, 0, 0, width, 0, 0, width, 0, depth, width, 0, depth, 0, 0, depth, 0, 0, 0,
     ];
     //* 设置立方体的每个顶点的颜色
@@ -38,7 +38,7 @@ window.onload = () => {
     //* 设置立方体的坐标转化矩阵
     const UVMatrix = [
         2 / width, 0, 0, 0,
-        0, 2 / height , 0, 0,
+        0, 2 / height, 0, 0,
         0, 0, 2 / depth, 0,
         -1, -1, -1, 1
     ];
@@ -50,17 +50,17 @@ window.onload = () => {
     gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(pointPos), gl.STATIC_DRAW);
     const positionLocation = gl.getAttribLocation(program, 'v_position');
-    gl.vertexAttribPointer(positionLocation, 3, gl.FLOAT, false, Float32Array.BYTES_PER_ELEMENT * 3, 0);
+    gl.vertexAttribPointer(positionLocation, 3, gl.FLOAT, false, 0, 0);
     gl.enableVertexAttribArray(positionLocation);
 
     const colorBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), gl.STATIC_DRAW);
     const colorLocation = gl.getAttribLocation(program, 'v_color');
-    gl.vertexAttribPointer(colorLocation, 3, gl.FLOAT, false, Float32Array.BYTES_PER_ELEMENT * 3, 0);
+    gl.vertexAttribPointer(colorLocation, 3, gl.FLOAT, false, 0, 0);
     gl.enableVertexAttribArray(colorLocation);
 
-    const scaleMatrix = gl.getUniformLocation(program,'scale_matrix');
+    const scaleMatrix = gl.getUniformLocation(program, 'scale_matrix');
     gl.uniformMatrix4fv(scaleMatrix, false, createScale3DMatrix(0.5, 0.5, 0.5));
 
     const v_anchor = gl.getUniformLocation(program, 'v_anchor');
@@ -70,8 +70,8 @@ window.onload = () => {
     // gl.uniformMatrix4fv(translateMatrix, false, createTranslate3DMatrix(canvas.width / 2, canvas.height / 2, 0));
     //! 绘制3d图形需要启用深度缓冲，去除一些藏在背部的面的渲染
     gl.enable(gl.DEPTH_TEST)
-    //! 启用GPU的剔除面特性
-    // gl.enable(gl.CULL_FACE)
+    //! 启用GPU的剔除面特性; 顶点绘制顺序逆时针渲染，顺时针剔除不渲染
+    gl.enable(gl.CULL_FACE)
 
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
     gl.drawArrays(gl.TRIANGLES, 0, pointPos.length / 3);
@@ -89,7 +89,7 @@ window.onload = () => {
             const rotateYMatrix = createRotate3DMatrix(rotateY, 'y');
             const rotateYMatrixLocation = gl.getUniformLocation(program, 'rotate_y_matrix');
             gl.uniformMatrix4fv(rotateYMatrixLocation, false, rotateYMatrix);
-    
+
             gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
             gl.drawArrays(gl.TRIANGLES, 0, pointPos.length / 3);
 
