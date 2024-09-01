@@ -56,13 +56,14 @@ export function createBuffer(gl: WebGLRenderingContext) {
  * @param height 
  * @returns 
  */
-export function createCoordinateMatrix(width: number, height: number) {
-    const l = 0, r = width, t = height, b = 0;
+export function createCoordinateMatrix(width: number, height: number, depth?: number) {
+    const l = 0, r = width, t = height, b = 0, n = 0, f = depth;
+
     return [
         2 / (r - l), 0, 0, 0,
         0, 2 / (t - b), 0, 0,
-        0, 0, 1, 0,
-        -(r + l) / (r - l), -(t + b) / (t - b), 0, 1
+        0, 0, 2 / (f - n), 0,
+        -(r + l) / (r - l), -(t + b) / (t - b), -(f + n) / (f - n), 1
     ]
 }
 /**
