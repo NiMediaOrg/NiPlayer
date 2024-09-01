@@ -1,4 +1,11 @@
 let buffer: WebGLBuffer;
+export function createWebGL(canvas: HTMLCanvasElement): WebGLRenderingContext {
+    const gl = canvas.getContext('webgl2') || canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+    if (!gl) throw new Error('your browser not support webgl');
+    (gl as WebGLRenderingContext).viewport(0, 0, canvas.width, canvas.height);
+    return gl as WebGLRenderingContext;
+}
+
 export function createShader(gl: WebGLRenderingContext, type: number, source: string) {
     const shader = gl.createShader(type);
     gl.shaderSource(shader, source);
@@ -72,6 +79,15 @@ export function createTranslateMatrix(x: number, y: number) {
         x, y, 0, 1
     ]
 }
+
+export function createTranslate3DMatrix(dx: number, dy: number, dz: number) {
+    return [
+        1, 0, 0, 0,
+        0, 1, 0, 0,
+        0, 0, 1, 0,
+        dx, dy, dz, 1
+    ]
+}
 /**
  * @description 创建缩放矩阵
  * @param x 
@@ -86,8 +102,17 @@ export function createScaleMatrix(x: number, y: number) {
         0, 0, 0, 1
     ]
 }
+
+export function createScale3DMatrix(x: number, y: number, z: number) {
+    return [
+        x, 0, 0, 0,
+        0, y, 0, 0,
+        0, 0, z, 0,
+        0, 0, 0, 1
+    ]
+}
 /**
- * @description 创建旋转矩阵
+ * @description 创建2d的旋转矩阵,2d的旋转默认是根据z轴进行旋转
  * @param angle 
  * @returns 
  */
@@ -101,6 +126,38 @@ export function createRotateMatrix(angle: number) {
         0, 0, 1, 0,
         0, 0, 0, 1
     ]
+}
+
+// 创建3d场景的旋转矩阵
+export function createRotate3DMatrix(angle: number, axis: 'x' | 'y' | 'z') {
+    const radian = angle * Math.PI / 180;
+    const cos = Math.cos(radian);
+    const sin = Math.sin(radian);
+    switch (axis) {
+        case 'x':
+            return [
+                1, 0, 0, 0,
+                0, cos, -sin, 0,
+                0, sin, cos, 0,
+                0, 0, 0, 1
+            ]
+        case 'y':
+            return [
+                cos, 0, sin, 0,
+                0, 1, 0, 0,
+                -sin, 0, cos, 0,
+                0, 0, 0, 1
+            ]
+        case 'z':
+            return [
+                cos, -sin, 0, 0,
+                sin, cos, 0, 0,
+                0, 0, 1, 0,
+                0, 0, 0, 1
+            ]
+        default:
+            throw new Error('axis must be x, y or z');
+    }
 }
 
 export function createFrameBuffer(gl: WebGLRenderingContext, width: number, height: number) {

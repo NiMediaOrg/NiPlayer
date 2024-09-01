@@ -1,5 +1,5 @@
 import "./index.less";
-import { createBuffer, createCoordinateMatrix, createFrameBuffer, createProgramFromSource, createRotateMatrix, createScaleMatrix, createTranslateMatrix } from "./utils";
+import { createBuffer, createCoordinateMatrix, createFrameBuffer, createProgramFromSource, createRotateMatrix, createScaleMatrix, createTranslateMatrix, createWebGL } from "./utils";
 import vertexShaderSource from "./shader/2d/graphics.vertex.glsl";
 import fragmentShaderSource from "./shader/2d/graphics.fragment.glsl";
 const dotArray = [];
@@ -98,10 +98,9 @@ function drawRectangle(gl: WebGLRenderingContext, points: [IPoint, IPoint, IPoin
 }
 
 const canvas = document.querySelector('#app') as HTMLCanvasElement;
-const gl = canvas.getContext('webgl2') || canvas.getContext('webgl');
-if (!gl) throw new Error('你的浏览器不支持webgl');
-// 设置webgl的视口
-gl.viewport(0, 0, canvas.width, canvas.height);
+const gl = createWebGL(canvas);
+
+
 const program = createProgramFromSource(gl, vertexShaderSource, fragmentShaderSource);
 //* 纹理的坐标-满足三角形的要求
 const textureData = new Float32Array([
