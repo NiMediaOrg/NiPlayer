@@ -7,6 +7,7 @@ window.onload = () => {
     const pause = document.querySelector('.pause') as HTMLButtonElement;
 
     const canvas = document.querySelector('#app') as HTMLCanvasElement;
+
     const gl = createWebGL(canvas);
     const program = createProgramFromSource(gl, vertexShader, fragmentShader);
     //* 设置立方体的长宽高
@@ -60,13 +61,13 @@ window.onload = () => {
     gl.enableVertexAttribArray(colorLocation);
 
     const transMatrix = gl.getUniformLocation(program, 'translate_matrix');
-    gl.uniformMatrix4fv(transMatrix, false, createTranslate3DMatrix(-100, -100 ,-400));
+    // gl.uniformMatrix4fv(transMatrix, false, createTranslate3DMatrix(0, 0, -200));
 
     const v_anchor = gl.getUniformLocation(program, 'v_anchor');
     gl.uniform4fv(v_anchor, [width / 2, height / 2, depth / 2, 1]);
 
     const projMat4 = gl.getUniformLocation(program, 'project_matrix');
-    const mat = createPerspectiveMatrix(80, canvas.width / canvas.height, 10, 1000);
+    const mat = createPerspectiveMatrix(30, canvas.width / canvas.height, 0, 1000);
     gl.uniformMatrix4fv(projMat4, false, mat);
     //! 绘制3d图形需要启用深度缓冲，去除一些藏在背部的面的渲染；在绘制3d图形中需要开启该特性
     gl.enable(gl.DEPTH_TEST)
@@ -106,5 +107,30 @@ window.onload = () => {
         window.cancelAnimationFrame(timer);
         timer = -1;
     }
+    let dx = -100, dy = -100, dz = -500;
+
+    const xRange = document.querySelector('.x') as HTMLInputElement;
+    xRange.addEventListener('change', () => {
+        dx = Number(xRange.value);
+        gl.uniformMatrix4fv(transMatrix, false, createTranslate3DMatrix(dx, dy, dz));
+        gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+        gl.drawArrays(gl.TRIANGLES, 0, pointPos.length / 3);
+    })
+
+    const yRange = document.querySelector('.y') as HTMLInputElement;
+    yRange.addEventListener('change', () => {
+        dy = Number(yRange.value);
+        gl.uniformMatrix4fv(transMatrix, false, createTranslate3DMatrix(dx, dy, dz));
+        gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+        gl.drawArrays(gl.TRIANGLES, 0, pointPos.length / 3);
+    })
+
+    const zRange = document.querySelector('.z') as HTMLInputElement;
+    zRange.addEventListener('change', () => {
+        dz = Number(zRange.value);
+        gl.uniformMatrix4fv(transMatrix, false, createTranslate3DMatrix(dx, dy, dz));
+        gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+        gl.drawArrays(gl.TRIANGLES, 0, pointPos.length / 3);
+    })
 }
 

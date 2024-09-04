@@ -66,5 +66,6 @@ void main() {
     // );
 
     gl_Position = project_matrix * main_translate_matrix * main_rotate_x_matrix * main_rotate_y_matrix * v_position;
+    // gl_Position = v_matrix * main_translate_matrix * v_position;
     f_color = v_color;
 }
