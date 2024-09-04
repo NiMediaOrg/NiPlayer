@@ -181,3 +181,21 @@ export function createFrameBuffer(gl: WebGLRenderingContext, width: number, heig
         texture
     ]
 }
+
+/**
+ * 创建一个透视投影矩阵,注意：透视矩阵本身就已经起到了一个裁剪矩阵的作用，故如果存在透视矩阵的话无需再创建裁剪矩阵！！！
+ * @param fov 视野角度，以弧度为单位
+ * @param aspect 宽高比，即宽度与高度的比例
+ * @param near 近裁剪面距离
+ * @param far 远裁剪面距离
+ * @return 一个 4x4 的透视投影矩阵
+ */
+export function createPerspectiveMatrix(fov: number, aspect: number, near: number, far: number) {
+    const f = 1 / Math.tan(fov / 2);
+    return [
+        f / aspect, 0, 0, 0,
+        0, f, 0, 0,
+        0, 0, (near + far) / (near - far), -1,
+        0, 0, (2 * near * far) / (near - far), 0
+    ];
+}

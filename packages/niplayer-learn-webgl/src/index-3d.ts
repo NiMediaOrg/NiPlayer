@@ -1,4 +1,4 @@
-import { createCoordinateMatrix, createProgramFromSource, createRotate3DMatrix, createScale3DMatrix, createTranslate3DMatrix, createWebGL } from "./utils";
+import { createCoordinateMatrix, createPerspectiveMatrix, createProgramFromSource, createRotate3DMatrix, createScale3DMatrix, createTranslate3DMatrix, createWebGL } from "./utils";
 import fragmentShader from "./shader/3d/3d.fragment.glsl";
 import vertexShader from "./shader/3d/3d.vertex.glsl";
 //! 学习3d渲染
@@ -37,7 +37,7 @@ window.onload = () => {
     ];
     //* 设置立方体的坐标转化矩阵
     //!! 注意：这里的坐标转换是将canvas的原始坐标系转为webgl的坐标，好处是在之后的图像位置确定直接通过canvas设置的像素值即可
-    const UVMatrix = createCoordinateMatrix(canvas.width, canvas.height, 400);
+    const UVMatrix = createCoordinateMatrix(canvas.width, canvas.height, 1000);
 
     // 反转y轴
     gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
@@ -59,15 +59,16 @@ window.onload = () => {
     gl.vertexAttribPointer(colorLocation, 3, gl.FLOAT, false, 0, 0);
     gl.enableVertexAttribArray(colorLocation);
 
-    const scaleMatrix = gl.getUniformLocation(program, 'scale_matrix');
-    // gl.uniformMatrix4fv(scaleMatrix, false, createScale3DMatrix(2, 2, 2));
+    const transMatrix = gl.getUniformLocation(program, 'translate_matrix');
+    gl.uniformMatrix4fv(transMatrix, false, createTranslate3DMatrix(-100, -100 ,-400));
 
     const v_anchor = gl.getUniformLocation(program, 'v_anchor');
     gl.uniform4fv(v_anchor, [width / 2, height / 2, depth / 2, 1]);
 
-    const translateMatrix = gl.getUniformLocation(program, 'translate_matrix');
-    gl.uniformMatrix4fv(translateMatrix, false, createTranslate3DMatrix((canvas.width - width) / 2, (canvas.height - height) / 2, 0));
-    //! 绘制3d图形需要启用深度缓冲，去除一些藏在背部的面的渲染
+    const projMat4 = gl.getUniformLocation(program, 'project_matrix');
+    const mat = createPerspectiveMatrix(80, canvas.width / canvas.height, 10, 1000);
+    gl.uniformMatrix4fv(projMat4, false, mat);
+    //! 绘制3d图形需要启用深度缓冲，去除一些藏在背部的面的渲染；在绘制3d图形中需要开启该特性
     gl.enable(gl.DEPTH_TEST)
     //! 启用GPU的剔除面特性; 顶点绘制顺序逆时针渲染，顺时针剔除不渲染
     gl.enable(gl.CULL_FACE)

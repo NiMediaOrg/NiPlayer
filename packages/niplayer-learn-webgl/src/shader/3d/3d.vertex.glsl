@@ -6,6 +6,8 @@ uniform mat4 rotate_y_matrix;
 
 uniform mat4 scale_matrix;
 uniform mat4 translate_matrix;
+
+uniform mat4 project_matrix;
 uniform vec4 v_anchor;
 varying vec4 f_color;
 void main() {
@@ -51,18 +53,18 @@ void main() {
     }
 
     mat4 final_matrix = main_scale_matrix * main_rotate_x_matrix * main_rotate_y_matrix;
-    vec4 new_anchor = final_matrix * v_anchor;
-    float dx = v_anchor.x - new_anchor.x + main_translate_matrix[3][0];
-    float dy = v_anchor.y - new_anchor.y + main_translate_matrix[3][1];
-    float dz = v_anchor.z - new_anchor.z + main_translate_matrix[3][2];
+    // vec4 new_anchor = final_matrix * v_anchor;
+    // float dx = v_anchor.x - new_anchor.x + main_translate_matrix[3][0];
+    // float dy = v_anchor.y - new_anchor.y + main_translate_matrix[3][1];
+    // float dz = v_anchor.z - new_anchor.z + main_translate_matrix[3][2];
     
-    mat4 new_final_matrix = mat4(
-        1, 0, 0, 0,
-        0, 1, 0, 0,
-        0, 0, 1, 0,
-        dx, dy, dz, 1
-    ) * final_matrix;
+    // mat4 new_final_matrix = mat4(
+    //     1, 0, 0, 0,
+    //     0, 1, 0, 0,
+    //     0, 0, 1, 0,
+    //     400, 400, 0, 1
+    // );
 
-    gl_Position = v_matrix * new_final_matrix * v_position;
+    gl_Position = project_matrix * main_translate_matrix * main_rotate_x_matrix * main_rotate_y_matrix * v_position;
     f_color = v_color;
 }
