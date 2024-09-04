@@ -7,6 +7,7 @@ uniform mat4 u_matrix;
 uniform mat4 translate_matrix;
 uniform mat4 scale_matrix;
 uniform mat4 rotate_matrix;
+uniform bool use_matrix;
 varying vec2 u_textureCoordinate;
 
 void main() {
@@ -39,7 +40,12 @@ void main() {
         0, 0, 1, 0,
         dx, dy, 0, 1
     ) * scale_rotate_matrix;
-    gl_Position = u_matrix * final_matrix * a_position;
+    if (use_matrix) {
+        gl_Position = u_matrix * a_position;
+    } else {
+        gl_Position = u_matrix * final_matrix * a_position;
+    }
+    // gl_Position = u_matrix * a_position;
     // gl_Position为内置变量，表示当前点的大小，为浮点类型，如果赋值是整数类型会报错
     // gl_PointSize = 10.0;
     u_textureCoordinate = a_textureCoordinate;

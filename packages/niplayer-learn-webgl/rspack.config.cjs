@@ -6,7 +6,7 @@ const path = require('node:path');
 module.exports = defineConfig({
     mode: 'development',
     entry: {
-        core: './src/index.ts',
+        core: './src/index-3d.ts',
     },
     module: {
         rules: [
@@ -19,7 +19,7 @@ module.exports = defineConfig({
     },
     plugins: [
         new HtmlWebpackPlugin({
-            template: path.resolve(__dirname, "./index.html"),
+            template: path.resolve(__dirname, "./index-3d.html"),
         })
     ],
     devServer: {

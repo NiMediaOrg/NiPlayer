@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Learn WebGL</title>
+    <title>Learn WebGL 2D</title>
 </head>
 <body>
-    <canvas width="1000" height="500" id="app"></canvas>
+    <canvas width="1200" height="600" id="app"></canvas>
     <div>
         旋转:<input type="range" name="旋转" id="rotate" min="-360" max="360" />
     </div>
@@ -18,5 +18,9 @@
     </div>
     <input type="checkbox" name="gray" id="gray"><label for="gray" style="user-select: none;">图像黑白</label>
     <input type="checkbox" name="blur" id="blur"><label for="blur" style="user-select: none;"> 图形模糊</label>
+    <div>
+        <button class="stop">暂停</button>
+        <button class="start">播放</button>
+    </div>
 </body>
 </html>

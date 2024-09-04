@@ -1,7 +1,7 @@
 import "./index.less";
-import { createBuffer, createCoordinateMatrix, createFrameBuffer, createProgramFromSource, createRotateMatrix, createScaleMatrix, createTranslateMatrix } from "./utils";
-import vertexShaderSource from "./shader/graphics.vertex.glsl";
-import fragmentShaderSource from "./shader/graphics.fragment.glsl";
+import { createBuffer, createCoordinateMatrix, createFrameBuffer, createProgramFromSource, createRotateMatrix, createScaleMatrix, createTranslateMatrix, createWebGL } from "./utils";
+import vertexShaderSource from "./shader/2d/graphics.vertex.glsl";
+import fragmentShaderSource from "./shader/2d/graphics.fragment.glsl";
 const dotArray = [];
 const translateInput = document.querySelector('#translate') as HTMLInputElement;
 const scaleInput = document.querySelector('#scale') as HTMLInputElement;
@@ -9,6 +9,10 @@ const rotateInput = document.querySelector('#rotate') as HTMLInputElement;
 const grayBtn = document.querySelector('#gray') as HTMLInputElement;
 const blurBtn = document.querySelector('#blur') as HTMLInputElement;
 
+const start = document.querySelector('.start') as HTMLButtonElement;
+const stop = document.querySelector('.stop') as HTMLButtonElement;
+
+let timer: number = -1;
 interface IPoint {
     x: number;
     y: number;
@@ -94,10 +98,9 @@ function drawRectangle(gl: WebGLRenderingContext, points: [IPoint, IPoint, IPoin
 }
 
 const canvas = document.querySelector('#app') as HTMLCanvasElement;
-const gl = canvas.getContext('webgl2') || canvas.getContext('webgl');
-if (!gl) throw new Error('你的浏览器不支持webgl');
-// 设置webgl的视口
-gl.viewport(0, 0, canvas.width, canvas.height);
+const gl = createWebGL(canvas);
+
+
 const program = createProgramFromSource(gl, vertexShaderSource, fragmentShaderSource);
 //* 纹理的坐标-满足三角形的要求
 const textureData = new Float32Array([
@@ -114,7 +117,7 @@ gl.bindBuffer(gl.ARRAY_BUFFER, textureBuffer);
 gl.vertexAttribPointer(textureLocation, 2, gl.FLOAT, false, Float32Array.BYTES_PER_ELEMENT * 2, 0);
 gl.bufferData(gl.ARRAY_BUFFER, textureData, gl.STATIC_DRAW);
 gl.enableVertexAttribArray(textureLocation);
-
+//!! 需要绘制的图形的原始坐标，在shader中会转换成webgl坐标系：X: [-1,1]; Y:[-1,1]
 const pointData = new Float32Array([
     0, 0,
     2160, 0,
@@ -166,22 +169,35 @@ function toggleGray(gray: boolean) {
     gl.drawArrays(gl.TRIANGLES, 0, 6);
 }
 
+const frames = [];
+const textures = [];
+
 function toggleBlur(blur: boolean) {
     const isBlur = gl.getUniformLocation(program, 'u_isBlur');
+    const useMatrix = gl.getUniformLocation(program, 'use_matrix');
     gl.uniform1i(isBlur, blur ? 1 : 0);
     gl.clearColor(0.0, 0.5, 0.0, 1.0);
-    if (isBlur) {
+
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+    if (blur) {
         //!! 绑定图像的原始纹理
-        const frames = [];
-        const textures = [];
-        const [frameBuffer1, texture1] = createFrameBuffer(gl, image.width, image.height);
-        const [frameBuffer2, texture2] = createFrameBuffer(gl, image.width, image.height);
-        frames.push(frameBuffer1, frameBuffer2);
-        textures.push(texture1, texture2);
+        if (frames.length === 0) {
+            for (let i = 0; i < 2; i++) {
+                //!! 注意，这里需要传入canvas的像素尺寸，而不是image的尺寸！！！
+                const [frameBuffer, texture] = createFrameBuffer(gl, canvas.width, canvas.height);
+                frames.push(frameBuffer);
+                textures.push(texture);
+            }
+        }
 
         gl.bindTexture(gl.TEXTURE_2D, texture);
+        gl.uniform1i(useMatrix, 1);
         for (let i = 0; i < 10; i++) {
             gl.bindFramebuffer(gl.FRAMEBUFFER, frames[i % 2]);
+            //! 告诉WebGL帧缓冲需要的视图大小
+            //! 需要注意的是，如果设置的图片像素和canvas像素不一致会导致渲染尺寸的问题，需要针对渲染后的纹理数据再进行一次矩阵变换
+            //todo 寻找更好的办法进行处理
+            gl.viewport(0, 0, canvas.width, canvas.height);
             //!! 绘制到当前帧缓冲区中的纹理对象上
             gl.drawArrays(gl.TRIANGLES, 0, 6);
             //!! 绑定当前缓冲区的纹理对象作为下一次处理的输入
@@ -189,8 +205,8 @@ function toggleBlur(blur: boolean) {
         }
         //!! 设置帧缓冲区为NULL时，则会绘制到颜色缓冲区中（即屏幕上）
         //!! 因此，在webgl的概念中，屏幕 === 颜色缓冲区
-        console.log(texture)
         gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+        gl.uniform1i(useMatrix, 0);
         gl.drawArrays(gl.TRIANGLES, 0, 6);
     } else {
         gl.drawArrays(gl.TRIANGLES, 0, 6);
@@ -225,11 +241,23 @@ image.onload = () => {
         toggleBlur(blurBtn.checked);
     })
 
+    start.addEventListener('click', () => {
+        if (timer !== -1) return;
+        animationChange();
+    });
+
+    stop.addEventListener('click', () => {
+        window.cancelAnimationFrame(timer);
+        timer = -1;
+    })
+
     let angle = 0;
     let scale = 0.5;
     let operation: 'minus' | 'add' = 'add';
+    // gl.viewport(0, 0, image.width, image.height);
+
     const animationChange = () => {
-        window.requestAnimationFrame(() => {
+        timer = window.requestAnimationFrame(() => {
             angle += 1;
             if (scale > 1) {
                 operation = 'minus';
@@ -246,10 +274,13 @@ image.onload = () => {
             const scale_matrix = gl.getUniformLocation(program, 'scale_matrix');
             gl.uniformMatrix4fv(scale_matrix, false, createScaleMatrix(scale, scale));
             gl.clearColor(0.0, 0.5, 0.0, 1.0);
+            gl.viewport(0, 0, canvas.width, canvas.height);
+
             gl.drawArrays(gl.TRIANGLES, 0, 6);
             animationChange();
         });
     }
+
     // animationChange();
 
     draw();
