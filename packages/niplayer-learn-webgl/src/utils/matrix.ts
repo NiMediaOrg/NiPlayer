@@ -14,7 +14,7 @@ export class Matrix4 {
      * @returns 
      */
     public multiply(matrix: Matrix4) {
-        const result = new Matrix4([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]);
+        const result = new Matrix4();
         for (let i = 0; i < 4; i++) {
             for (let j = 0; j < 4; j++) {
                 let sum = 0;
@@ -24,6 +24,7 @@ export class Matrix4 {
                 result.data[i * 4 + j] = sum;
             }
         }
+        this.data = result.data;
         return result;
     }
 

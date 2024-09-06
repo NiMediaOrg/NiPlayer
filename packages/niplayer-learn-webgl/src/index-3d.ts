@@ -71,6 +71,8 @@ window.onload = () => {
     gl.vertexAttribPointer(colorLocation, 3, gl.FLOAT, false, 0, 0);
     gl.enableVertexAttribArray(colorLocation);
 
+    const modelMatrix = new Matrix4();
+    const viewMatrix = new Matrix4();
 
     //! 1. 设置三维透视矩阵，将三维空间内的物体映射到canvas平面上
     const projMat4 = gl.getUniformLocation(program, 'project_matrix');
@@ -78,10 +80,10 @@ window.onload = () => {
     gl.uniformMatrix4fv(projMat4, false, mat);
     //! 2. 设置模型矩阵，将模型坐标系转换至世界坐标系
     const modelMat4 = gl.getUniformLocation(program, 'model_matrix');
-    gl.uniformMatrix4fv(modelMat4, false, new Matrix4().data);
+    gl.uniformMatrix4fv(modelMat4, false, modelMatrix.data);
     //! 3. 设置视图矩阵，将世界坐标系转换到视图坐标系
     const viewMat4 = gl.getUniformLocation(program, 'view_matrix');
-    gl.uniformMatrix4fv(viewMat4, false, new Matrix4().data);
+    gl.uniformMatrix4fv(viewMat4, false, viewMatrix.data);
 
     //! 绘制3d图形需要启用深度缓冲，去除一些藏在背部的面的渲染；在绘制3d图形中需要开启该特性
     gl.enable(gl.DEPTH_TEST)
@@ -91,47 +93,44 @@ window.onload = () => {
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
     gl.drawArrays(gl.TRIANGLES, 0, pointPos.length / 3);
 
-    let rotateX = 0, rotateY = 0;
-    let timer = -1;
+    let dx = 0, dy = 0, dz = 0;
+    const translate = () => {
+        gl.uniformMatrix4fv(modelMat4, false, new Matrix4(Matrix4.createTranslate3DMatrix(dx, dy, dz)).data);
+        gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+        gl.drawArrays(gl.TRIANGLES, 0, pointPos.length / 3);
+    }
+    window.layui.use(function () {
+        var slider = window.layui.slider;
+        // 渲染
+        slider.render({
+            elem: '.x-range',
+            max: 1000,
+            min: -1000,
+            change: (val: number) => {
+                dx = val;
+                translate();
+            }
+        });
 
-    // window.layui.use(function () {
-    //     var slider = window.layui.slider;
-    //     // 渲染
-    //     slider.render({
-    //         elem: '.x-range',
-    //         max: 1000,
-    //         min: -1000,
-    //         change: (val: number) => {
-    //             dx = val;
-    //             gl.uniformMatrix4fv(transMatrix, false, createTranslate3DMatrix(dx, dy, dz));
-    //             gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-    //             gl.drawArrays(gl.TRIANGLES, 0, pointPos.length / 3);
-    //         }
-    //     });
+        slider.render({
+            elem: '.y-range',
+            max: 500,
+            min: -500,
+            change: (val: number) => {
+                dy = val;
+                translate();
+            }
+        });
 
-    //     slider.render({
-    //         elem: '.y-range',
-    //         max: 500,
-    //         min: -500,
-    //         change: (val: number) => {
-    //             dy = val;
-    //             gl.uniformMatrix4fv(transMatrix, false, createTranslate3DMatrix(dx, dy, dz));
-    //             gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-    //             gl.drawArrays(gl.TRIANGLES, 0, pointPos.length / 3);
-    //         }
-    //     });
-
-    //     slider.render({
-    //         elem: '.z-range',
-    //         max: 0,
-    //         min: -1000,
-    //         change: (val: number) => {
-    //             dz = val;
-    //             gl.uniformMatrix4fv(transMatrix, false, createTranslate3DMatrix(dx, dy, dz));
-    //             gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-    //             gl.drawArrays(gl.TRIANGLES, 0, pointPos.length / 3);
-    //         }
-    //     });
-    // });
+        slider.render({
+            elem: '.z-range',
+            max: 0,
+            min: -1000,
+            change: (val: number) => {
+                dz = val;
+                translate();
+            }
+        });
+    });
 }
 
