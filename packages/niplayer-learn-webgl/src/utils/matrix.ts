@@ -29,10 +29,47 @@ export class Matrix4 {
     }
 
     /**
+     * @desc 求矩阵的逆
+     * @param mat 
+     * @returns 
+     */
+    static invertMatrix(mat: Matrix4) {
+        const matrix = new Matrix4(mat.data);
+        const result = new Matrix4();
+        const det = matrix.data[0] * matrix.data[5] * matrix.data[10] * matrix.data[15] -
+            matrix.data[0] * matrix.data[9] * matrix.data[10] * matrix.data[14] - 
+            matrix.data[0] * matrix.data[5] * matrix.data[11] * matrix.data[14] +
+            matrix.data[0] * matrix.data[9] * matrix.data[11] * matrix.data[15] +
+            matrix.data[1] * matrix.data[5] * matrix.data[10] * matrix.data[14] -
+            matrix.data[1] * matrix.data[5] * matrix.data[11] * matrix.data[15] +
+            matrix.data[1] * matrix.data[9] * matrix.data[10] * matrix.data[15] -
+            matrix.data[1] * matrix.data[5] * matrix.data[11] * matrix.data[14];
+        if (det === 0) throw new Error('matrix is singular');
+        const invDet = 1 / det;
+        result.data[0] = (matrix.data[5] * matrix.data[10] * matrix.data[15] - matrix.data[9] * matrix.data[11] * matrix.data[14]) * invDet;
+        result.data[1] = (matrix.data[1] * matrix.data[11] * matrix.data[15] - matrix.data[9] * matrix.data[10] * matrix.data[14]) * invDet;
+        result.data[2] = (matrix.data[1] * matrix.data[9] * matrix.data[15] - matrix.data[5] * matrix.data[11] * matrix.data[14]) * invDet;
+        result.data[3] = (matrix.data[1] * matrix.data[9] * matrix.data[14] - matrix.data[5] * matrix.data[10] * matrix.data[15]) * invDet;
+        result.data[4] = (matrix.data[5] * matrix.data[9] * matrix.data[14] - matrix.data[1] * matrix.data[11] * matrix.data[15]) * invDet;
+        result.data[5] = (matrix.data[1] * matrix.data[5] * matrix.data[15] - matrix.data[1] * matrix.data[11] * matrix.data[14]) * invDet;
+        result.data[6] = (matrix.data[5] * matrix.data[9] * matrix.data[14] - matrix.data[1] * matrix.data[10] * matrix.data[15]) * invDet;
+        result.data[7] = (matrix.data[1] * matrix.data[5] * matrix.data[14] - matrix.data[1] * matrix.data[9] * matrix.data[15]) * invDet;
+        result.data[8] = (matrix.data[5] * matrix.data[9] * matrix.data[15] - matrix.data[1] * matrix.data[10] * matrix.data[14]) * invDet;
+        result.data[9] = (matrix.data[1] * matrix.data[5] * matrix.data[15] - matrix.data[1] * matrix.data[11] * matrix.data[14]) * invDet;
+        result.data[10] = (matrix.data[5] * matrix.data[9] * matrix.data[14] - matrix.data[1] * matrix.data[10] * matrix.data[15]) * invDet;
+        result.data[11] = (matrix.data[1] * matrix.data[5] * matrix.data[14] - matrix.data[1] * matrix.data[9] * matrix.data[15]) * invDet;
+        result.data[12] = (matrix.data[5] * matrix.data[9] * matrix.data[15] - matrix.data[1] * matrix.data[11] * matrix.data[14]) * invDet;
+        result.data[13] = (matrix.data[1] * matrix.data[5] * matrix.data[15] - matrix.data[1] * matrix.data[9] * matrix.data[14]) * invDet;
+        result.data[14] = (matrix.data[5] * matrix.data[9] * matrix.data[14] - matrix.data[1] * matrix.data[10] * matrix.data[15]) * invDet;
+        result.data[15] = (matrix.data[1] * matrix.data[5] * matrix.data[14] - matrix.data[1] * matrix.data[9] * matrix.data[14]) * invDet;
+        return result;
+    }
+
+    /**
      * @desc 实现矩阵的转置
      * @param matrix 
      */
-    static invertMatrix(matrix: Matrix4) {
+    static transposeMatrix(matrix: Matrix4) {
         for (let i = 0; i < 4; i++) {
             let h = i, v = i;
             while (h >= 0 && v >= 0) {
@@ -55,7 +92,7 @@ export class Matrix4 {
      * @returns 
      */
     static createScale3DMatrix(x: number, y: number, z: number): number[] {
-        return Matrix4.invertMatrix(new Matrix4([
+        return Matrix4.transposeMatrix(new Matrix4([
             x, 0, 0, 0,
             0, y, 0, 0,
             0, 0, z, 0,
@@ -71,7 +108,7 @@ export class Matrix4 {
      * @returns 
      */
     static createTranslate3DMatrix(x: number, y: number, z: number): number[] {
-        return Matrix4.invertMatrix(new Matrix4([
+        return Matrix4.transposeMatrix(new Matrix4([
             1, 0, 0, x,
             0, 1, 0, y,
             0, 0, 1, z,
@@ -90,21 +127,21 @@ export class Matrix4 {
         const cos = Math.cos(radian);
         const sin = Math.sin(radian);
         if (axis === 'x') {
-            return Matrix4.invertMatrix(new Matrix4([
+            return Matrix4.transposeMatrix(new Matrix4([
                 1, 0, 0, 0,
                 0, cos, -sin, 0,
                 0, sin, cos, 0,
                 0, 0, 0, 1
             ]))
         } else if (axis === 'y') {
-            return Matrix4.invertMatrix(new Matrix4([
+            return Matrix4.transposeMatrix(new Matrix4([
                 cos, 0, sin, 0,
                 0, 1, 0, 0,
                 -sin, 0, cos, 0,
                 0, 0, 0, 1
             ]))
         } else if (axis === 'z') {
-            return Matrix4.invertMatrix(new Matrix4([
+            return Matrix4.transposeMatrix(new Matrix4([
                 cos, -sin, 0, 0,
                 sin, cos, 0, 0,
                 0, 0, 1, 0,

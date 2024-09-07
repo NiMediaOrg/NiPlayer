@@ -71,19 +71,16 @@ window.onload = () => {
     gl.vertexAttribPointer(colorLocation, 3, gl.FLOAT, false, 0, 0);
     gl.enableVertexAttribArray(colorLocation);
 
-    const modelMatrix = new Matrix4();
-    const viewMatrix = new Matrix4();
-
     //! 1. 设置三维透视矩阵，将三维空间内的物体映射到canvas平面上
     const projMat4 = gl.getUniformLocation(program, 'project_matrix');
     const mat = Matrix4.createPerspectiveMatrix(30, canvas.width / canvas.height, 1, 1500);
     gl.uniformMatrix4fv(projMat4, false, mat);
     //! 2. 设置模型矩阵，将模型坐标系转换至世界坐标系
     const modelMat4 = gl.getUniformLocation(program, 'model_matrix');
-    gl.uniformMatrix4fv(modelMat4, false, modelMatrix.data);
+    gl.uniformMatrix4fv(modelMat4, false, new Matrix4().data);
     //! 3. 设置视图矩阵，将世界坐标系转换到视图坐标系
     const viewMat4 = gl.getUniformLocation(program, 'view_matrix');
-    gl.uniformMatrix4fv(viewMat4, false, viewMatrix.data);
+    gl.uniformMatrix4fv(viewMat4, false, new Matrix4().data);
 
     //! 绘制3d图形需要启用深度缓冲，去除一些藏在背部的面的渲染；在绘制3d图形中需要开启该特性
     gl.enable(gl.DEPTH_TEST)
@@ -100,7 +97,7 @@ window.onload = () => {
         gl.drawArrays(gl.TRIANGLES, 0, pointPos.length / 3);
     }
     window.layui.use(function () {
-        var slider = window.layui.slider;
+        const slider = window.layui.slider;
         // 渲染
         slider.render({
             elem: '.x-range',
