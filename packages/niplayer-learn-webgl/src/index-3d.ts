@@ -92,19 +92,19 @@ window.onload = () => {
 
     let dx = 0, dy = 0, dz = 0;
     let rx = 0, ry = 0, rz = 0;
-    const calcMatrix = () => {
+    const calcViewMatrix = () => {
         const matrix = new Matrix4();
         matrix.multiply(Matrix4.createTranslate3DMatrix(dx, dy, dz)).multiply(Matrix4.createRotate3DMatrix(rz, 'z')).multiply(Matrix4.createRotate3DMatrix(ry, 'y')).multiply(Matrix4.createRotate3DMatrix(rx, 'x'));
 
-        return matrix;
+        return Matrix4.invertMatrix(matrix);
     }
     const translate = () => {
-        gl.uniformMatrix4fv(viewMat4, false, calcMatrix().data);
+        gl.uniformMatrix4fv(viewMat4, false, calcViewMatrix().data);
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
         gl.drawArrays(gl.TRIANGLES, 0, pointPos.length / 3);
     }
     const rotate = () => {
-        gl.uniformMatrix4fv(viewMat4, false, calcMatrix().data);
+        gl.uniformMatrix4fv(viewMat4, false, calcViewMatrix().data);
 
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
         gl.drawArrays(gl.TRIANGLES, 0, pointPos.length / 3);

@@ -38,22 +38,45 @@ export class Matrix4 {
         return data[0] * (data[4] * data[8] - data[5] * data[7]) - data[1] * (data[3] * data[8] - data[5] * data[6]) + data[2] * (data[3] * data[7] - data[4] * data[6]);
     }
 
+    static calculateMatrix4Value(data: number[]) {
+        if (data.length!== 16) throw new Error('data length must be 16');
+        return data[0] * this.calculateMatrix3Value(data.filter((val, index) => {
+            if (Math.floor(index / 4) === 0 || index % 4 === 0) return false;
+            return true;
+        })) - data[1] * this.calculateMatrix3Value(data.filter((val, index) => {
+            if (Math.floor(index / 4) === 1 || index % 4 === 1) return false;
+            return true;
+        })) + data[2] * this.calculateMatrix3Value(data.filter((val, index) => {
+            if (Math.floor(index / 4) === 2 || index % 4 === 2) return false;
+            return true;
+        })) - data[3] * this.calculateMatrix3Value(data.filter((val, index) => {
+            if (Math.floor(index / 4) === 3 || index % 4 === 3) return false;
+            return true;
+        }));
+    }
+
     /**
      * @desc 求矩阵的逆
      * @param mat 
-     * @returns 
+     * @returns {Matrix4}
      */
-    static invertMatrix(mat: Matrix4) {
+    static invertMatrix(mat: Matrix4): Matrix4 {
         const result = new Matrix4();
+        const data = [];
         for (let i = 0; i < 16; i++) {
             const row = Math.floor(i / 4);
             const col = i % 4;
-            result.data[i] = Math.pow(-1, row + col) * Matrix4.calculateMatrix3Value(mat.data.filter((val, index) => {
+            data[i] = Math.pow(-1, row + col) * Matrix4.calculateMatrix3Value(mat.data.filter((val, index) => {
                 if (Math.floor(index / 4) === row || index % 4 === col) return false;
                 return true;
             }));
         }
-        return result;
+        const value = Matrix4.calculateMatrix4Value(mat.data);
+        result.data = data.map((val, index) => {
+            return val / 1;
+        })
+        return Matrix4.transposeMatrix(result);
+
     }
 
     /**
@@ -152,8 +175,8 @@ export class Matrix4 {
     static createPerspectiveMatrix(fov: number, aspect: number, near: number, far: number) {
         const f = 1 / Math.tan(fov / 2);
         return [
-            f / aspect, 0, 0, 0,
-            0, f, 0, 0,
+            -f / aspect, 0, 0, 0,
+            0, -f, 0, 0,
             0, 0, (near + far) / (near - far), -1,
             0, 0, (2 * near * far) / (near - far), 0
         ];
