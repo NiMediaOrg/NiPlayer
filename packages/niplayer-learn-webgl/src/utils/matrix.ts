@@ -25,7 +25,17 @@ export class Matrix4 {
             }
         }
         this.data = result.data;
-        return result;
+        return this;
+    }
+
+    /**
+     * @desc 计算三阶行列式的值
+     * @param data 
+     * @returns 
+     */
+    static calculateMatrix3Value(data: number[]) {
+        if (data.length !== 9) throw new Error('data length must be 9');
+        return data[0] * (data[4] * data[8] - data[5] * data[7]) - data[1] * (data[3] * data[8] - data[5] * data[6]) + data[2] * (data[3] * data[7] - data[4] * data[6]);
     }
 
     /**
@@ -34,34 +44,15 @@ export class Matrix4 {
      * @returns 
      */
     static invertMatrix(mat: Matrix4) {
-        const matrix = new Matrix4(mat.data);
         const result = new Matrix4();
-        const det = matrix.data[0] * matrix.data[5] * matrix.data[10] * matrix.data[15] -
-            matrix.data[0] * matrix.data[9] * matrix.data[10] * matrix.data[14] - 
-            matrix.data[0] * matrix.data[5] * matrix.data[11] * matrix.data[14] +
-            matrix.data[0] * matrix.data[9] * matrix.data[11] * matrix.data[15] +
-            matrix.data[1] * matrix.data[5] * matrix.data[10] * matrix.data[14] -
-            matrix.data[1] * matrix.data[5] * matrix.data[11] * matrix.data[15] +
-            matrix.data[1] * matrix.data[9] * matrix.data[10] * matrix.data[15] -
-            matrix.data[1] * matrix.data[5] * matrix.data[11] * matrix.data[14];
-        if (det === 0) throw new Error('matrix is singular');
-        const invDet = 1 / det;
-        result.data[0] = (matrix.data[5] * matrix.data[10] * matrix.data[15] - matrix.data[9] * matrix.data[11] * matrix.data[14]) * invDet;
-        result.data[1] = (matrix.data[1] * matrix.data[11] * matrix.data[15] - matrix.data[9] * matrix.data[10] * matrix.data[14]) * invDet;
-        result.data[2] = (matrix.data[1] * matrix.data[9] * matrix.data[15] - matrix.data[5] * matrix.data[11] * matrix.data[14]) * invDet;
-        result.data[3] = (matrix.data[1] * matrix.data[9] * matrix.data[14] - matrix.data[5] * matrix.data[10] * matrix.data[15]) * invDet;
-        result.data[4] = (matrix.data[5] * matrix.data[9] * matrix.data[14] - matrix.data[1] * matrix.data[11] * matrix.data[15]) * invDet;
-        result.data[5] = (matrix.data[1] * matrix.data[5] * matrix.data[15] - matrix.data[1] * matrix.data[11] * matrix.data[14]) * invDet;
-        result.data[6] = (matrix.data[5] * matrix.data[9] * matrix.data[14] - matrix.data[1] * matrix.data[10] * matrix.data[15]) * invDet;
-        result.data[7] = (matrix.data[1] * matrix.data[5] * matrix.data[14] - matrix.data[1] * matrix.data[9] * matrix.data[15]) * invDet;
-        result.data[8] = (matrix.data[5] * matrix.data[9] * matrix.data[15] - matrix.data[1] * matrix.data[10] * matrix.data[14]) * invDet;
-        result.data[9] = (matrix.data[1] * matrix.data[5] * matrix.data[15] - matrix.data[1] * matrix.data[11] * matrix.data[14]) * invDet;
-        result.data[10] = (matrix.data[5] * matrix.data[9] * matrix.data[14] - matrix.data[1] * matrix.data[10] * matrix.data[15]) * invDet;
-        result.data[11] = (matrix.data[1] * matrix.data[5] * matrix.data[14] - matrix.data[1] * matrix.data[9] * matrix.data[15]) * invDet;
-        result.data[12] = (matrix.data[5] * matrix.data[9] * matrix.data[15] - matrix.data[1] * matrix.data[11] * matrix.data[14]) * invDet;
-        result.data[13] = (matrix.data[1] * matrix.data[5] * matrix.data[15] - matrix.data[1] * matrix.data[9] * matrix.data[14]) * invDet;
-        result.data[14] = (matrix.data[5] * matrix.data[9] * matrix.data[14] - matrix.data[1] * matrix.data[10] * matrix.data[15]) * invDet;
-        result.data[15] = (matrix.data[1] * matrix.data[5] * matrix.data[14] - matrix.data[1] * matrix.data[9] * matrix.data[14]) * invDet;
+        for (let i = 0; i < 16; i++) {
+            const row = Math.floor(i / 4);
+            const col = i % 4;
+            result.data[i] = Math.pow(-1, row + col) * Matrix4.calculateMatrix3Value(mat.data.filter((val, index) => {
+                if (Math.floor(index / 4) === row || index % 4 === col) return false;
+                return true;
+            }));
+        }
         return result;
     }
 
@@ -81,7 +72,7 @@ export class Matrix4 {
             }
         }
 
-        return matrix.data;
+        return matrix;
     }
 
     /**
@@ -91,13 +82,13 @@ export class Matrix4 {
      * @param z 
      * @returns 
      */
-    static createScale3DMatrix(x: number, y: number, z: number): number[] {
-        return Matrix4.transposeMatrix(new Matrix4([
+    static createScale3DMatrix(x: number, y: number, z: number) {
+        return new Matrix4([
             x, 0, 0, 0,
             0, y, 0, 0,
             0, 0, z, 0,
             0, 0, 0, 1
-        ]))
+        ])
     }
 
     /**
@@ -107,13 +98,13 @@ export class Matrix4 {
      * @param z 
      * @returns 
      */
-    static createTranslate3DMatrix(x: number, y: number, z: number): number[] {
-        return Matrix4.transposeMatrix(new Matrix4([
+    static createTranslate3DMatrix(x: number, y: number, z: number): Matrix4 {
+        return new Matrix4([
             1, 0, 0, x,
             0, 1, 0, y,
             0, 0, 1, z,
             0, 0, 0, 1
-        ]))
+        ])
     }
 
     /**
@@ -127,26 +118,26 @@ export class Matrix4 {
         const cos = Math.cos(radian);
         const sin = Math.sin(radian);
         if (axis === 'x') {
-            return Matrix4.transposeMatrix(new Matrix4([
+            return new Matrix4([
                 1, 0, 0, 0,
                 0, cos, -sin, 0,
                 0, sin, cos, 0,
                 0, 0, 0, 1
-            ]))
+            ])
         } else if (axis === 'y') {
-            return Matrix4.transposeMatrix(new Matrix4([
+            return new Matrix4([
                 cos, 0, sin, 0,
                 0, 1, 0, 0,
                 -sin, 0, cos, 0,
                 0, 0, 0, 1
-            ]))
+            ])
         } else if (axis === 'z') {
-            return Matrix4.transposeMatrix(new Matrix4([
+            return new Matrix4([
                 cos, -sin, 0, 0,
                 sin, cos, 0, 0,
                 0, 0, 1, 0,
                 0, 0, 0, 1
-            ]))
+            ])
         }
     }
 

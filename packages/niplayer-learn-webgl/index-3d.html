@@ -15,6 +15,10 @@
             padding: 0;
             box-sizing: border-box;
         }
+
+        .camera-title {
+            padding: 10px;
+        }
     </style>
 </head>
 
@@ -29,7 +33,7 @@
         </div>
         <div class="slider-container" style="
             color: #FFF;
-            font-size:23px; 
+            font-size:16px; 
             position: absolute;
             top: 50px;
             right: 20px; 
@@ -40,9 +44,18 @@
             box-sizing: content-box;
             background-color: rgba(143, 136, 136, 0.5);
         ">
-            TranslateX: <div class="x-range" style="margin-bottom: 10px;"></div>
-            TranslateY: <div class="y-range" style="margin-bottom: 10px;"></div>
-            TranslateZ: <div class="z-range"></div>
+            <span class="camera-title">左右移动相机</span>
+            <div class="x-range" style="margin: 10px;"></div>
+            <span class="camera-title">上下移动相机</span>
+            <div class="y-range" style="margin: 10px;"></div>
+            <span class="camera-title">前后移动相机</span>
+            <div class="z-range" style="margin: 10px;"></div>
+            <span class="camera-title">绕X轴旋转相机</span>
+            <div class="x-rotate" style="margin: 10px;"></div>
+            <span class="camera-title">绕Y轴旋转相机</span>
+            <div class="y-rotate" style="margin: 10px;"></div>
+            <span class="camera-title">绕Z轴旋转相机</span>
+            <div class="z-rotate" style="margin: 10px;"></div>
         </div>
     </div>
 </body>
