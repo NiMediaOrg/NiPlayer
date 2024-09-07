@@ -2,6 +2,7 @@ import { createProgramFromSource, createWebGL } from "./utils";
 import fragmentShader from "./shader/3d/3d.fragment.glsl";
 import vertexShader from "./shader/3d/3d.vertex.glsl";
 import { Matrix4 } from "./utils/matrix";
+import { Vector } from "./utils/vector";
 
 //! 学习3d渲染
 window.onload = () => {
@@ -56,7 +57,6 @@ window.onload = () => {
     // 反转y轴
     gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
 
-
     const vertexBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(pointPos), gl.STATIC_DRAW);
@@ -92,11 +92,16 @@ window.onload = () => {
 
     let dx = 0, dy = 0, dz = 0;
     let rx = 0, ry = 0, rz = 0;
+
     const calcViewMatrix = () => {
         const matrix = new Matrix4();
+        // 这里看作是将相机进行位置的调整
         matrix.multiply(Matrix4.createTranslate3DMatrix(dx, dy, dz)).multiply(Matrix4.createRotate3DMatrix(rz, 'z')).multiply(Matrix4.createRotate3DMatrix(ry, 'y')).multiply(Matrix4.createRotate3DMatrix(rx, 'x'));
+        console.log('matrix', matrix.data)
 
-        return Matrix4.invertMatrix(matrix);
+        const cameraMatrix = Vector.lookAt(new Vector([matrix.data[3], matrix.data[7], matrix.data[11]]), new Vector([0, 0, 0]), new Vector([0, 1, 0]));
+        console.log(cameraMatrix)
+        return Matrix4.invertMatrix(cameraMatrix);
     }
     const translate = () => {
         gl.uniformMatrix4fv(viewMat4, false, calcViewMatrix().data);
@@ -105,7 +110,6 @@ window.onload = () => {
     }
     const rotate = () => {
         gl.uniformMatrix4fv(viewMat4, false, calcViewMatrix().data);
-
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
         gl.drawArrays(gl.TRIANGLES, 0, pointPos.length / 3);
     }
