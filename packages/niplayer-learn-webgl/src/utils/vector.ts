@@ -1,4 +1,4 @@
-import { Matrix4 } from "./matrix";
+import { mat4, vec3 } from "gl-matrix";
 
 export class Vector {
     constructor(public data: number[] = [0,0,0]) {
@@ -10,15 +10,30 @@ export class Vector {
     }
 
     static lookAt(camera: Vector, target: Vector, up: Vector) {
-        const z = target.clone().sub(camera).normalize();
-        const x = up.clone().cross(z).normalize();
-        const y = x.clone().cross(z).normalize();
-        return new Matrix4([
-            x.data[0], y.data[0], z.data[0], camera.data[0],
-            x.data[1], y.data[1], z.data[1], camera.data[1],
-            x.data[2], y.data[2], z.data[2], camera.data[2],
-            0, 0, 0, 1
-        ]);
+        // const z = target.clone().sub(camera).normalize();
+        // const x = up.clone().cross(z).normalize();
+        // const y = x.clone().cross(z).normalize();
+        // return new Matrix4([
+        //     x.data[0], y.data[0], z.data[0], camera.data[0],
+        //     x.data[1], y.data[1], z.data[1], camera.data[1],
+        //     x.data[2], y.data[2], z.data[2], camera.data[2],
+        //     0, 0, 0, 1
+        // ]);
+        const z = vec3.create();
+        const y = vec3.fromValues(up[0], up[1], up[2]);
+        const x = vec3.create();
+        vec3.sub(z, vec3.fromValues(camera[0], camera[1], camera[2]), vec3.fromValues(target[0], target[1], target[2]));
+        vec3.normalize(z, z);
+        vec3.cross(x, y, z);
+        vec3.normalize(x, x);
+        vec3.cross(y, z, x);
+        vec3.normalize(y, y);
+        return mat4.fromValues(
+            x[0], x[1], x[2], 0,
+            y[0], y[1], y[2], 0,
+            z[0], z[1], z[2], 0,
+            camera[0], camera[1], camera[2], 1
+        );
     }
 
     /**

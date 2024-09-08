@@ -1,3 +1,4 @@
+import { mat4 } from "gl-matrix";
 export class Matrix4 {
     constructor(public data: number[] = [
         1, 0, 0, 0,
@@ -75,8 +76,8 @@ export class Matrix4 {
         result.data = data.map((val, index) => {
             return val / 1;
         })
+        
         return Matrix4.transposeMatrix(result);
-
     }
 
     /**

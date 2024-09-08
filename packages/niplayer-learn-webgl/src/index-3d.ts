@@ -3,6 +3,7 @@ import fragmentShader from "./shader/3d/3d.fragment.glsl";
 import vertexShader from "./shader/3d/3d.vertex.glsl";
 import { Matrix4 } from "./utils/matrix";
 import { Vector } from "./utils/vector";
+import { mat4 } from "gl-matrix";
 
 //! 学习3d渲染
 window.onload = () => {
@@ -82,13 +83,13 @@ window.onload = () => {
     const viewMat4 = gl.getUniformLocation(program, 'view_matrix');
     gl.uniformMatrix4fv(viewMat4, false, new Matrix4().data);
 
-    //! 绘制3d图形需要启用深度缓冲，去除一些藏在背部的面的渲染；在绘制3d图形中需要开启该特性
+    //! 绘制3d图形需要启用深度缓冲，使gpu可以保存每个顶点的深度像素数据，来决定哪些面显示在哪些面的上面
     gl.enable(gl.DEPTH_TEST)
     //! 启用GPU的剔除面特性; 顶点绘制顺序逆时针渲染，顺时针剔除不渲染
     // gl.enable(gl.CULL_FACE)
 
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-    gl.drawArrays(gl.TRIANGLES, 0, pointPos.length / 3);
+    gl.drawArrays(gl.TRIANGLES, 0, pointPos.length / 3); 
 
     let dx = 0, dy = 0, dz = 0;
     let rx = 0, ry = 0, rz = 0;
@@ -96,20 +97,28 @@ window.onload = () => {
     const calcViewMatrix = () => {
         const matrix = new Matrix4();
         // 这里看作是将相机进行位置的调整
-        matrix.multiply(Matrix4.createTranslate3DMatrix(dx, dy, dz)).multiply(Matrix4.createRotate3DMatrix(rz, 'z')).multiply(Matrix4.createRotate3DMatrix(ry, 'y')).multiply(Matrix4.createRotate3DMatrix(rx, 'x'));
-        console.log('matrix', matrix.data)
-
+        matrix.multiply(Matrix4.createTranslate3DMatrix(dx, dy, dz))
+            .multiply(Matrix4.createRotate3DMatrix(rz, 'z'))
+            .multiply(Matrix4.createRotate3DMatrix(ry, 'y'))
+            .multiply(Matrix4.createRotate3DMatrix(rx, 'x'));
         const cameraMatrix = Vector.lookAt(new Vector([matrix.data[3], matrix.data[7], matrix.data[11]]), new Vector([0, 0, 0]), new Vector([0, 1, 0]));
-        console.log(cameraMatrix)
-        return Matrix4.invertMatrix(cameraMatrix);
+        // return Matrix4.invertMatrix(new Matrix4([
+        //     cameraMatrix[0], cameraMatrix[1], cameraMatrix[2], cameraMatrix[3],
+        //     cameraMatrix[4], cameraMatrix[5], cameraMatrix[6], cameraMatrix[7],
+        //     cameraMatrix[8], cameraMatrix[9], cameraMatrix[10], cameraMatrix[11],
+        //     cameraMatrix[12], cameraMatrix[13], cameraMatrix[14], cameraMatrix[15]
+        // ]));
+        mat4.invert(cameraMatrix, cameraMatrix);
+        return cameraMatrix;
+        // return Matrix4.invertMatrix(matrix)
     }
     const translate = () => {
-        gl.uniformMatrix4fv(viewMat4, false, calcViewMatrix().data);
+        gl.uniformMatrix4fv(viewMat4, false, calcViewMatrix());
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
         gl.drawArrays(gl.TRIANGLES, 0, pointPos.length / 3);
     }
     const rotate = () => {
-        gl.uniformMatrix4fv(viewMat4, false, calcViewMatrix().data);
+        gl.uniformMatrix4fv(viewMat4, false, calcViewMatrix());
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
         gl.drawArrays(gl.TRIANGLES, 0, pointPos.length / 3);
     }
