@@ -77,7 +77,7 @@ export class Matrix4 {
             return val / 1;
         })
         
-        return result;
+        return Matrix4.transposeMatrix(result);
     }
 
     /**

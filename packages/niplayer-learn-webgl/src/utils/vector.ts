@@ -1,8 +1,9 @@
 import { mat4, vec3 } from "gl-matrix";
+import { Matrix4 } from "./matrix";
 
 export class Vector {
-    constructor(public data: number[] = [0,0,0]) {
-        if (data.length!== 3) throw new Error('pos length must be 3');
+    constructor(public data: number[] = [0, 0, 0]) {
+        if (data.length !== 3) throw new Error('pos length must be 3');
     }
 
     public clone() {
@@ -13,12 +14,12 @@ export class Vector {
         // const z = target.clone().sub(camera).normalize();
         // const x = up.clone().cross(z).normalize();
         // const y = x.clone().cross(z).normalize();
-        // return new Matrix4([
+        // return Matrix4.transposeMatrix(new Matrix4([
         //     x.data[0], y.data[0], z.data[0], camera.data[0],
         //     x.data[1], y.data[1], z.data[1], camera.data[1],
         //     x.data[2], y.data[2], z.data[2], camera.data[2],
         //     0, 0, 0, 1
-        // ]);
+        // ]));
         const z = vec3.create();
         const y = vec3.fromValues(up.data[0], up.data[1], up.data[2]);
         const x = vec3.create();
@@ -28,12 +29,13 @@ export class Vector {
         vec3.normalize(x, x);
         vec3.cross(y, z, x);
         vec3.normalize(y, y);
+
         return mat4.fromValues(
-            x[0], x[1], x[2], 0,
-            y[0], y[1], y[2], 0,
-            z[0], z[1], z[2], 0,
-            camera.data[0], camera.data[1], camera.data[2], 1
-        );
+            x[0], y[0], z[0], camera.data[0],
+            x[1], y[1], z[1], camera.data[1],
+            x[2], y[2], z[2], camera.data[2],
+            0, 0, 0, 1
+        )
     }
 
     /**

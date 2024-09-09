@@ -103,6 +103,7 @@ window.onload = () => {
             .multiply(Matrix4.createRotate3DMatrix(ry, 'y'))
             .multiply(Matrix4.createRotate3DMatrix(rx, 'x'));
         const cameraMatrix = Vector.lookAt(new Vector([matrix.data[3], matrix.data[7], matrix.data[11]]), new Vector([0, 0, 0]), new Vector([0, 1, 0]));
+        console.log(cameraMatrix)
         return Matrix4.invertMatrix(new Matrix4([
             cameraMatrix[0], cameraMatrix[1], cameraMatrix[2], cameraMatrix[3],
             cameraMatrix[4], cameraMatrix[5], cameraMatrix[6], cameraMatrix[7],
