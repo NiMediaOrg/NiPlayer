@@ -11,6 +11,7 @@ window.onload = () => {
     const pause = document.querySelector('.pause') as HTMLButtonElement;
 
     const canvas = document.querySelector('#app canvas') as HTMLCanvasElement;
+    let timer = null;
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 
@@ -91,7 +92,7 @@ window.onload = () => {
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
     gl.drawArrays(gl.TRIANGLES, 0, pointPos.length / 3); 
 
-    let dx = 0, dy = 0, dz = 0;
+    let dx = 0, dy = 0, dz = -600;
     let rx = 0, ry = 0, rz = 0;
 
     const calcViewMatrix = () => {
@@ -118,6 +119,42 @@ window.onload = () => {
         gl.uniformMatrix4fv(viewMat4, false, calcViewMatrix());
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
         gl.drawArrays(gl.TRIANGLES, 0, pointPos.length / 3);
+    }
+
+    translate();
+
+    let opx = 'add', opy = 'add', opz = 'add';
+    const animate = () => {
+        if (dx >= 1000) {
+            opx ='sub';
+        } else if (dx <= -1000) {
+            opx = 'add';
+        }
+        dx = opx === 'add'? dx + 1 : dx - 1;
+        if (dy >= 500) {
+            opy ='sub';
+        } else if (dy <= -500) {
+            opy = 'add';
+        }
+        dy = opy === 'add'? dy + 1 : dy - 1;
+        if (dz >= 1000) {
+            opz ='sub';
+        } else if (dz <= -1000) {
+            opz = 'add';
+        }
+        dz = opz === 'add'? dz + 1 : dz - 1;
+        translate();
+        timer = requestAnimationFrame(animate);
+    }
+
+    play.onclick = () => {
+        if (timer) return;
+        animate();
+    };
+    pause.onclick = () => {
+        if (!timer) return;
+        window.cancelAnimationFrame(timer);
+        timer = null;
     }
 
     window.layui.use(function () {
