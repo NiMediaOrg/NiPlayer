@@ -20,9 +20,9 @@ export class Vector {
         //     0, 0, 0, 1
         // ]);
         const z = vec3.create();
-        const y = vec3.fromValues(up[0], up[1], up[2]);
+        const y = vec3.fromValues(up.data[0], up.data[1], up.data[2]);
         const x = vec3.create();
-        vec3.sub(z, vec3.fromValues(camera[0], camera[1], camera[2]), vec3.fromValues(target[0], target[1], target[2]));
+        vec3.sub(z, vec3.fromValues(camera.data[0], camera.data[1], camera.data[2]), vec3.fromValues(target.data[0], target.data[1], target.data[2]));
         vec3.normalize(z, z);
         vec3.cross(x, y, z);
         vec3.normalize(x, x);
@@ -32,7 +32,7 @@ export class Vector {
             x[0], x[1], x[2], 0,
             y[0], y[1], y[2], 0,
             z[0], z[1], z[2], 0,
-            camera[0], camera[1], camera[2], 1
+            camera.data[0], camera.data[1], camera.data[2], 1
         );
     }
 

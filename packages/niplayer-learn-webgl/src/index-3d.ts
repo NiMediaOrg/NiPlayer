@@ -102,15 +102,12 @@ window.onload = () => {
             .multiply(Matrix4.createRotate3DMatrix(ry, 'y'))
             .multiply(Matrix4.createRotate3DMatrix(rx, 'x'));
         const cameraMatrix = Vector.lookAt(new Vector([matrix.data[3], matrix.data[7], matrix.data[11]]), new Vector([0, 0, 0]), new Vector([0, 1, 0]));
-        // return Matrix4.invertMatrix(new Matrix4([
-        //     cameraMatrix[0], cameraMatrix[1], cameraMatrix[2], cameraMatrix[3],
-        //     cameraMatrix[4], cameraMatrix[5], cameraMatrix[6], cameraMatrix[7],
-        //     cameraMatrix[8], cameraMatrix[9], cameraMatrix[10], cameraMatrix[11],
-        //     cameraMatrix[12], cameraMatrix[13], cameraMatrix[14], cameraMatrix[15]
-        // ]));
-        mat4.invert(cameraMatrix, cameraMatrix);
-        return cameraMatrix;
-        // return Matrix4.invertMatrix(matrix)
+        return Matrix4.invertMatrix(new Matrix4([
+            cameraMatrix[0], cameraMatrix[1], cameraMatrix[2], cameraMatrix[3],
+            cameraMatrix[4], cameraMatrix[5], cameraMatrix[6], cameraMatrix[7],
+            cameraMatrix[8], cameraMatrix[9], cameraMatrix[10], cameraMatrix[11],
+            cameraMatrix[12], cameraMatrix[13], cameraMatrix[14], cameraMatrix[15]
+        ])).data;
     }
     const translate = () => {
         gl.uniformMatrix4fv(viewMat4, false, calcViewMatrix());
