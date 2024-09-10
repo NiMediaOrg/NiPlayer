@@ -1,18 +1,63 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Learn WebGL 3D</title>
-</head>
-<body>
-    <canvas width="1000" height="500" style="background-color:cadetblue;border-radius: 20px;" id="app">
-        你的浏览器不支持canvas，请进行更换
-    </canvas>
+    <!-- 引入 layui.css -->
+    <link href="//unpkg.com/layui@2.9.16/dist/css/layui.css" rel="stylesheet">
+    <!-- 引入 layui.js -->
+    <script src="//unpkg.com/layui@2.9.16/dist/layui.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-    <div class="btn-group">
-        <button class="play">播放</button>
-        <button class="pause">暂停</button>
+        .camera-title {
+            padding: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app" style="position: relative;">
+        <canvas style="background-color:black;">
+            你的浏览器不支持canvas，请进行更换
+        </canvas>
+        <div class="layui-btn-container" style="position: absolute;left: 10px;top: 10px;z-index: 10;">
+            <button type="button" class="layui-btn layui-bg-blue play">播放</button>
+            <button type="button" class="layui-btn layui-bg-red pause">暂停</button>
+        </div>
+        <div class="slider-container" style="
+            color: #FFF;
+            font-size:16px; 
+            position: absolute;
+            top: 50px;
+            right: 20px; 
+            width: 200px;
+            z-index: 10;
+            padding: 20px;
+            border-radius: 10px;
+            box-sizing: content-box;
+            background-color: rgba(143, 136, 136, 0.5);
+        ">
+            <span class="camera-title">左右移动相机</span>
+            <div class="x-range" style="margin: 10px;"></div>
+            <span class="camera-title">上下移动相机</span>
+            <div class="y-range" style="margin: 10px;"></div>
+            <span class="camera-title">前后移动相机</span>
+            <div class="z-range" style="margin: 10px;"></div>
+            <span class="camera-title">绕X轴旋转相机</span>
+            <div class="x-rotate" style="margin: 10px;"></div>
+            <span class="camera-title">绕Y轴旋转相机</span>
+            <div class="y-rotate" style="margin: 10px;"></div>
+            <span class="camera-title">绕Z轴旋转相机</span>
+            <div class="z-rotate" style="margin: 10px;"></div>
+        </div>
     </div>
 </body>
+
 </html>

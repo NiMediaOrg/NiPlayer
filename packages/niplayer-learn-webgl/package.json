@@ -10,5 +10,8 @@
     "WebGL"
   ],
   "author": "NovaNi",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "gl-matrix": "^3.4.3"
+  }
 }
