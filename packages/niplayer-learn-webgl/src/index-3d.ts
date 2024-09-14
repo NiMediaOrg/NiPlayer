@@ -3,7 +3,6 @@ import fragmentShader from "./shader/3d/3d.fragment.glsl";
 import vertexShader from "./shader/3d/3d.vertex.glsl";
 import { Matrix4 } from "./utils/matrix";
 import { Vector } from "./utils/vector";
-import { mat4 } from "gl-matrix";
 
 //! 学习3d渲染
 window.onload = () => {
@@ -99,11 +98,7 @@ window.onload = () => {
         const matrix = new Matrix4();
         // 这里看作是将相机进行位置的调整
         matrix.multiply(Matrix4.createTranslate3DMatrix(dx, dy, dz))
-            .multiply(Matrix4.createRotate3DMatrix(rz, 'z'))
-            .multiply(Matrix4.createRotate3DMatrix(ry, 'y'))
-            .multiply(Matrix4.createRotate3DMatrix(rx, 'x'));
         const cameraMatrix = Vector.lookAt(new Vector([matrix.data[3], matrix.data[7], matrix.data[11]]), new Vector([0, 0, 0]), new Vector([0, 1, 0]));
-        console.log(cameraMatrix)
         return Matrix4.invertMatrix(new Matrix4([
             cameraMatrix[0], cameraMatrix[1], cameraMatrix[2], cameraMatrix[3],
             cameraMatrix[4], cameraMatrix[5], cameraMatrix[6], cameraMatrix[7],
@@ -111,13 +106,23 @@ window.onload = () => {
             cameraMatrix[12], cameraMatrix[13], cameraMatrix[14], cameraMatrix[15]
         ])).data;
     }
+    const calcModelMatrix = () => {
+        const matrix = new Matrix4();
+         matrix.multiply(Matrix4.createRotate3DMatrix(rz, 'z'))
+         .multiply(Matrix4.createRotate3DMatrix(ry, 'y'))
+         .multiply(Matrix4.createRotate3DMatrix(rx, 'x'));
+
+         return matrix.data;
+    }
+
     const translate = () => {
         gl.uniformMatrix4fv(viewMat4, false, calcViewMatrix());
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
         gl.drawArrays(gl.TRIANGLES, 0, pointPos.length / 3);
     }
+
     const rotate = () => {
-        gl.uniformMatrix4fv(viewMat4, false, calcViewMatrix());
+        gl.uniformMatrix4fv(modelMat4, false, calcModelMatrix());
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
         gl.drawArrays(gl.TRIANGLES, 0, pointPos.length / 3);
     }
@@ -126,6 +131,7 @@ window.onload = () => {
 
     let opx = 'add', opy = 'add', opz = 'add';
     const animate = () => {
+        rx += 1, ry += 0.5, rz += 1.3;
         if (dx >= 1000) {
             opx ='sub';
         } else if (dx <= -1000) {
@@ -145,6 +151,7 @@ window.onload = () => {
         }
         dz = opz === 'add'? dz + 1 : dz - 1;
         translate();
+        rotate();
         timer = requestAnimationFrame(animate);
     }
 

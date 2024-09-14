@@ -113,7 +113,13 @@ export function createRotateMatrix(angle: number) {
     ]
 }
 
-
+/**
+ * @desc 创建帧缓冲区对象
+ * @param gl 
+ * @param width 
+ * @param height 
+ * @returns 
+ */
 export function createFrameBuffer(gl: WebGLRenderingContext, width: number, height: number) {
     //!! 创建帧缓冲区对象
     const framebuffer = gl.createFramebuffer();
