@@ -65,12 +65,64 @@ window.onload = () => {
     gl.vertexAttribPointer(positionLocation, 3, gl.FLOAT, false, 0, 0);
     gl.enableVertexAttribArray(positionLocation);
 
-    const colorBuffer = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), gl.STATIC_DRAW);
-    const colorLocation = gl.getAttribLocation(program, 'v_color');
-    gl.vertexAttribPointer(colorLocation, 3, gl.FLOAT, false, 0, 0);
-    gl.enableVertexAttribArray(colorLocation);
+    // const colorBuffer = gl.createBuffer();
+    // gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
+    // gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), gl.STATIC_DRAW);
+    // const colorLocation = gl.getAttribLocation(program, 'v_color');
+    // gl.vertexAttribPointer(colorLocation, 3, gl.FLOAT, false, 0, 0);
+    // gl.enableVertexAttribArray(colorLocation);
+
+    // 设置纹理坐标, 不同于物体坐标，纹理坐标一定是二维的
+    const textureCoordinate = new Float32Array([
+        // 正面
+        0, 0,
+        0, 1,
+        1, 0,
+        1, 1,
+        0, 1,
+        0, 0,
+        // 背面
+        0, 0,
+        0, 1,
+        1, 0,
+        1, 1,
+        0, 1,
+        0, 0,
+        // 顶面
+        0, 0,
+        0, 1,
+        1, 0,
+        1, 1,
+        0, 0,
+        // 底面
+        0, 0,
+        0, 1,
+        1, 0,
+        1, 1,
+        0, 1,
+        0, 0,
+        // 左面
+        0, 0,
+        0, 1,
+        1, 0,
+        1, 1,
+        0, 1,
+        0, 0,
+        // 右面
+        0, 0,
+        0, 1,
+        1, 0,
+        1, 1,
+        0, 1,
+        0, 0,
+    ])
+
+    const textureBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, textureBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(textureCoordinate), gl.STATIC_DRAW);
+    const textureLocation = gl.getAttribLocation(program, 'v_texCoord');
+    gl.vertexAttribPointer(textureLocation, 2, gl.FLOAT, false, 0, 0);
+    gl.enableVertexAttribArray(textureLocation);
 
     //! 1. 设置三维透视矩阵，将三维空间内的物体映射到canvas平面上
     const projMat4 = gl.getUniformLocation(program, 'project_matrix');
