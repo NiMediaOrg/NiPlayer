@@ -1,4 +1,4 @@
-precision highp float;
+precision mediump float;
 varying vec4 f_color;
 // 接受从顶点着色器给到的纹理坐标数据
 varying vec2 f_texCoord;

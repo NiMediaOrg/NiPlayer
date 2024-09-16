@@ -25,7 +25,6 @@ mat4 transpose(mat4 m) {
 
 void main() {
     gl_Position = project_matrix * transpose(view_matrix) * transpose(model_matrix) * v_position;
-    // gl_Position = v_matrix * main_translate_matrix * v_position;
     f_color = v_color;
     // 设置纹理坐标，将纹理坐标传递给片元着色器
     f_texCoord = v_texCoord;

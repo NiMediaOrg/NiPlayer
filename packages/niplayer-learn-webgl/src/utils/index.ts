@@ -140,3 +140,11 @@ export function createFrameBuffer(gl: WebGLRenderingContext, width: number, heig
         texture
     ]
 }
+
+/**
+ * @description 判断纹理坐标是否为2的幂次方
+ * @param value
+ */
+export function isPowerOf2(value: number) {
+    return (value & (value - 1)) === 0;
+}
