@@ -24,7 +24,7 @@ export class Rectangle extends Polygon {
         this.anchor.y = y + height / 2;
     }
 
-    public drawContent(context: CanvasRenderingContext2D): void {
+    public drawContent2d(context: CanvasRenderingContext2D): void {
         this.points = [
             {
                 x: this.style.x,
@@ -43,8 +43,13 @@ export class Rectangle extends Polygon {
                 y: this.style.y + this.style.height
             }
         ]
-        super.drawContent(context);
+        super.drawContent2d(context);
     }
+
+    public drawContentWebgl(context: WebGL2RenderingContext): void {
+        super.drawContentWebgl(context);
+    }
+
 
     public drawText(context: CanvasRenderingContext2D) {
         if (!this.innerText) {

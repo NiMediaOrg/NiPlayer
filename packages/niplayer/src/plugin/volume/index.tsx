@@ -3,7 +3,6 @@ import { JSX } from "solid-js/jsx-runtime";
 import { volume } from "@/assets/svg";
 import { Slider } from "niplayer-components";
 import { createSignal } from "solid-js";
-
 import "./index.less";
 
 export class Volume extends UIPlugin {
@@ -30,16 +29,15 @@ export class Volume extends UIPlugin {
             } else if (val === this.maxProgress) {
                 volume = 1;
             }
-            this.player.setVolume(val);
+            this.player.setVolume(volume);
         }
 
         const handleMouseEnter = () => {
-            // console.log('enter', slider);
             setHideSlider(v => !v)
         }
 
         const handleMouseLeave = () => {
-            // console.log('leave');
+            if (this.player.rootStore.actionStore.state.isVolumeDrag) return;
             setHideSlider(v => !v)
         }
 
@@ -50,6 +48,8 @@ export class Volume extends UIPlugin {
                     <Slider 
                         progress={this.progress} 
                         onChange={handleVolumeChange}
+                        onMouseDown={() => this.player.rootStore.actionStore.setState('isVolumeDrag', true)}
+                        onMouseUp={() => this.player.rootStore.actionStore.setState('isVolumeDrag', false)}
                         minProgress={this.minProgress} 
                         maxProgress={this.maxProgress} 
                         width={hideSlider() ? 0 : 60} 

@@ -4,7 +4,8 @@ const stop = document.querySelector('.stop') as HTMLButtonElement;
 
 const app = new Application({
     width: 1000,
-    height: 500
+    height: 700,
+    background: 'black'
 });
 
 (document.querySelector('#app') as HTMLElement).appendChild(app.view);

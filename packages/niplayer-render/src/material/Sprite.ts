@@ -16,7 +16,7 @@ export class Sprite extends RenderObject {
         this.anchor.x = x + width / 2;
         this.anchor.y = y + height / 2;
     }
-    public drawContent(context: CanvasRenderingContext2D): void {
+    public drawContent2d(context: CanvasRenderingContext2D): void {
         // console.log('@@@')
         if (!this.image) {
             this.image = new Image();
@@ -26,5 +26,9 @@ export class Sprite extends RenderObject {
         }
         // 暂时使用canvas 2d进行绘制
         context.drawImage(this.image, this.style.x, this.style.y, this.style.width, this.style.height)
+    }
+
+    public drawContentWebgl(context: WebGL2RenderingContext): void {
+
     }
 }

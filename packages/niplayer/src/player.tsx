@@ -12,7 +12,7 @@ import { PipInPip } from "./plugin/pip-in-pip";
 import { Volume } from "./plugin/volume";
 import { Progress } from "./plugin/progress";
 import { Setting } from "./plugin/setting";
-import { PlayWaiting } from "./plugin/play-wating";
+import { PlayWaiting } from "./plugin/play-waiting";
 import { IPanel, IPanelItem } from "niplayer-components";
 import { PlaybackRate } from "./plugin/playback-rate";
 import { PlayQuality } from "./plugin/play-quality";
@@ -113,7 +113,7 @@ export default class NiPlayer extends EventEmitter3 {
         const App = () => (
             <div class="niplayer-container" ref={this.nodes.container}>
                 <div class="niplayer-video-area" ref={this.nodes.videoArea} onClick={handleClick} onDblClick={handleDoubleClick}>
-                    {this.config.video ? '' : <video src={this.config.url} ref={this.nodes.videoElement} autoplay muted></video>}
+                    {this.config.video ? '' : <video src={this.config.url} ref={this.nodes.videoElement} autoplay muted crossOrigin="anonymous"></video>}
                 </div>
                 <div classList={{
                     "niplayer-top-area": true, 

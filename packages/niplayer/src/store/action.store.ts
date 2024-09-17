@@ -3,8 +3,10 @@ import { checkPathContainDom } from "@/utils";
 import bind from "bind-decorator";
 interface ActionState {
     isProgressDrag: boolean;
+    isHoverProgress: boolean;
     isControllerBarHidden: boolean;
     isTopBarHidden: boolean;
+    isVolumeDrag: boolean;
 }
 
 export default class ActionStore extends BaseStore<ActionState> {
@@ -13,14 +15,24 @@ export default class ActionStore extends BaseStore<ActionState> {
     get defaultState(): ActionState {
         return {
             isProgressDrag: false,
+            isHoverProgress: false,
             isControllerBarHidden: true,
             isTopBarHidden: true,
+            isVolumeDrag: false,
         }
     }
 
     mounted(): void {
         this.player.nodes.container.addEventListener('mouseenter', this.onMouseEnter);
         this.player.nodes.container.addEventListener('mouseleave', this.onMouseLeave);
+
+        this.player.useState(() => this.state.isHoverProgress, (hover) => {
+            if (hover) {
+                this.player.nodes.controllerBarMiddle.style.pointerEvents = 'none';
+            } else {
+                this.player.nodes.controllerBarMiddle.style.pointerEvents = 'auto';
+            }
+        })
     }
 
     @bind

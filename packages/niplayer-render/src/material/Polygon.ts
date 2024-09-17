@@ -43,7 +43,7 @@ export class Polygon extends Graphics {
         this.points = points;
     }
 
-    public drawContent(context: CanvasRenderingContext2D): void {
+    public drawContent2d(context: CanvasRenderingContext2D): void {
         context.fillStyle = this.style.color;
         context.globalAlpha = this.style.opacity;
 
@@ -55,6 +55,12 @@ export class Polygon extends Graphics {
             context.lineTo(this.points[i].x + (node?.style.x || 0), this.points[i].y + (node?.style.y || 0));
         }
         context.fill();
+    }
+
+    public drawContentWebgl(context: WebGL2RenderingContext): void {
+        const gl = context;
+        gl.clearColor(0, 0, 0, 1);
+        
     }
 
     public drawText(context: CanvasRenderingContext2D): void { }

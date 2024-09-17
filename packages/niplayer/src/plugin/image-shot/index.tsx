@@ -1,19 +1,19 @@
 import { imageshot } from "@/assets/svg";
 import { UIPlugin } from "@/base/ui.plugin";
+import { shot } from "@/utils";
 import { JSX } from "solid-js";
 
 export class ImageShot extends UIPlugin {
     protected name: string = 'image-shot';
 
-    protected shot() {
-        const canvas = document.createElement('canvas');
-        const ctx = canvas.getContext('2d');
-        if (!ctx) throw new Error('your browser don not support canvas');
-    }
 
     protected render(): JSX.Element | string | HTMLElement {
         const handleClick = () => {
-            console.log('video shot')
+            const url = shot(this.player.nodes.videoElement);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = '截图.png';
+            a.click();
         }
         return (
             <div class="niplayer-controller-middle-item niplayer-imageshot-container" onClick={handleClick}>

@@ -27,11 +27,13 @@ export class Progress extends UIPlugin {
         }
 
         const handleMouseEnter = () => {
+            this.player.rootStore.actionStore.setState('isHoverProgress', true);
             setSliderHeight(this.hoverSliderHeight);
             setDotScale(1);
         }
 
         const handleMouseLeave = () => {
+            this.player.rootStore.actionStore.setState('isHoverProgress', false);
             setSliderHeight(this.initSliderHeight);
             setDotScale(0);
         }
