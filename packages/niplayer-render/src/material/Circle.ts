@@ -17,14 +17,9 @@ export class Circle extends Graphics {
         const node = this.findNearPositionNode(this.style.position);
         let dx = vector[0] + (node?.style?.x || 0);
         let dy = vector[1] + (node?.style?.y || 0);
-        if (
-            (x - dx) * (x - dx) + (y - dy) * (y - dy) <
-            this.style.radius * this.style.radius
-        ) {
-            return true
-        } else {
-            return false
-        }
+        return (x - dx) * (x - dx) + (y - dy) * (y - dy) <
+            this.style.radius * this.style.radius;
+
     }
     public innerText: string = '';
 
@@ -37,7 +32,7 @@ export class Circle extends Graphics {
         this.anchor.y = y;
     }
 
-    public drawContent(context: CanvasRenderingContext2D): void {
+    public drawContent2d(context: CanvasRenderingContext2D): void {
         context.fillStyle = this.style.color;
         context.globalAlpha = this.style.opacity;
         const node = this.findNearPositionNode(this.style.position);
@@ -47,6 +42,10 @@ export class Circle extends Graphics {
         context.arc(x, y, this.style.radius, 0, Math.PI * 2, true);
         context.closePath();
         context.fill();
+    }
+
+    public drawContentWebgl(context: WebGL2RenderingContext): void {
+
     }
 
     public drawText(context: CanvasRenderingContext2D): void {

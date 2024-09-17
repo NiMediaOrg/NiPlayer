@@ -113,7 +113,13 @@ export function createRotateMatrix(angle: number) {
     ]
 }
 
-
+/**
+ * @desc 创建帧缓冲区对象
+ * @param gl 
+ * @param width 
+ * @param height 
+ * @returns 
+ */
 export function createFrameBuffer(gl: WebGLRenderingContext, width: number, height: number) {
     //!! 创建帧缓冲区对象
     const framebuffer = gl.createFramebuffer();
@@ -133,4 +139,12 @@ export function createFrameBuffer(gl: WebGLRenderingContext, width: number, heig
         framebuffer,
         texture
     ]
+}
+
+/**
+ * @description 判断纹理坐标是否为2的幂次方
+ * @param value
+ */
+export function isPowerOf2(value: number) {
+    return (value & (value - 1)) === 0;
 }

@@ -1,5 +1,6 @@
 import { UIPlugin } from "@/base/ui.plugin";
 import { JSX } from "solid-js";
+import { Loading } from "niplayer-components";
 import "./index.less";
 
 export class PlayWaiting extends UIPlugin {
@@ -9,7 +10,9 @@ export class PlayWaiting extends UIPlugin {
         const { state } = this.player.rootStore.mediaStore;
         return (
             <div class="niplayer-play-waiting-container" style={{'display': state.waiting ? '' : 'none'}}>
-                {state.waiting ? '缓冲中' : '播放中'}
+                <div class="niplayer-play-waiting-icon-box">
+                    <Loading width={32} height={32} loadingMessage="加载中..." onUpdate={() => console.log('loading')}/>
+                </div>
             </div>
         )
     }

@@ -1,7 +1,7 @@
 import bind from "bind-decorator";
 import { RenderObject } from "./material/RenderObject";
 import { autorun } from "./reactivity/effects";
-import { IApplicationConfig, IPoint } from "./types";
+import { IApplicationConfig, IPoint, renderType } from "./types";
 import { MouseEvent } from "./events/MouseEvent";
 class ApplicationRoot extends RenderObject {
     public anchor: { x: number; y: number; };
@@ -9,15 +9,17 @@ class ApplicationRoot extends RenderObject {
         return true;
     }
 
-    public draw(context: CanvasRenderingContext2D): void {
+    public draw(context: CanvasRenderingContext2D | WebGL2RenderingContext): void {
         this.children.forEach(child => child.draw(context));
     }
 
-    public drawContent(context: CanvasRenderingContext2D): void {}
+    public drawContent2d(context: CanvasRenderingContext2D): void {}
+
+    public drawContentWebgl(context: WebGL2RenderingContext): void {}
 }
 export class Application {
     private canvas: HTMLCanvasElement;
-    private context: CanvasRenderingContext2D;
+    private context: CanvasRenderingContext2D | WebGL2RenderingContext;
     private overTargets: RenderObject[] = [];
     private pressTargets: RenderObject[] = [];
 
@@ -26,13 +28,13 @@ export class Application {
     public root: ApplicationRoot;
     public ticker = {
         add: (cb: () => void) => {
+            if (this.ticksFunction.includes(cb)) return;
             this.ticksFunction.push(cb);
         },
         remove: (cb: () => void) => {
             const index = this.ticksFunction.indexOf(cb);
-            if (index !== -1) {
-                this.ticksFunction.splice(index, 1);
-            }
+            if (index === -1) return;
+            this.ticksFunction.splice(index, 1);
         }
     }
 
@@ -42,15 +44,24 @@ export class Application {
 
     constructor(config: IApplicationConfig) {
         this.canvas = document.createElement("canvas") as HTMLCanvasElement;
-        this.context = this.canvas.getContext("2d")!;
         this.canvas.style.width = config.width + 'px';
         this.canvas.style.height = config.height + 'px';
         this.canvas.style.background = config.background ?? 'white';
         this.canvas.width = config.width * window.devicePixelRatio;
         this.canvas.height = config.height * window.devicePixelRatio;
+
+        this.initContext(config.type ?? '2d');
         this.root = new ApplicationRoot();
         this.addEvents();
         this.play();
+    }
+
+    private initContext(type: renderType) {
+        if (type === 'webgl') {
+            this.context = this.canvas.getContext("webgl2")!;
+        } else {
+            this.context = this.canvas.getContext("2d")!;
+        }
     }
 
     @bind
@@ -233,7 +244,11 @@ export class Application {
 
     public draw() {
         const _draw = () => {
-            this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+            if (this.context instanceof CanvasRenderingContext2D) {
+                this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+            } else if (this.context instanceof WebGL2RenderingContext) {
+                this.context.clear(this.context.COLOR_BUFFER_BIT);
+            }
             this.root.draw(this.context);
         }
         autorun(_draw)

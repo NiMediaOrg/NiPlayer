@@ -81,6 +81,7 @@ export default class MediaStore extends BaseStore<MediaState> {
         this.videoElement.addEventListener('playing', this.onPlaying)
         this.videoElement.addEventListener('ended', this.onEnded)
         this.videoElement.addEventListener('error', this.onError)
+        
     }
 
 

@@ -5,10 +5,14 @@ export interface IWaterMarkOptions {
     fontFamily?: string;
     color?: string;
 }
-
+/**
+ * @desc 指定使用的具体渲染类型
+ */
+export type renderType = 'webgl' | '2d';
 export interface IApplicationConfig {
     width: number;
     height: number;
+    type?: renderType;
     background?: string;
 }
 

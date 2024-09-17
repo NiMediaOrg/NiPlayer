@@ -69,13 +69,17 @@ export abstract class RenderObject extends EventEmitter {
         return path;
     }
 
-    public draw(context: CanvasRenderingContext2D) {
-        context.save();
-        context.beginPath();
-        this.setTransform(context);
-        this.drawContent(context);
-        context.closePath();
-        context.restore();
+    public draw(context: CanvasRenderingContext2D | WebGL2RenderingContext) {
+        if (context instanceof CanvasRenderingContext2D) {
+            context.save();
+            context.beginPath();
+            this.setTransform(context);
+            this.drawContent2d(context);
+            context.closePath();
+            context.restore();
+        } else if (context instanceof WebGL2RenderingContext) {
+            this.drawContentWebgl(context);
+        }
         this.children.forEach(child => child.draw(context));
     }
 
@@ -109,8 +113,16 @@ export abstract class RenderObject extends EventEmitter {
         ]).multiply(this.parent.matrix);
         context.setTransform(this.matrix.matrix[0][0], this.matrix.matrix[1][0], this.matrix.matrix[0][1], this.matrix.matrix[1][1], this.matrix.matrix[0][2], this.matrix.matrix[1][2]);
     }
-
-    public abstract drawContent(context: CanvasRenderingContext2D): void;
+    /**
+     * @desc 使用canvas-2d绘制
+     * @param context 
+     */
+    public abstract drawContent2d(context: CanvasRenderingContext2D): void;
+    /**
+     * @desc 使用canvas-webgl绘制
+     * @param context 
+     */
+    public abstract drawContentWebgl(context: WebGL2RenderingContext): void;
 
     constructor() {
         super();

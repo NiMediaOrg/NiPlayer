@@ -1,5 +1,9 @@
 attribute vec4 v_position;
 attribute vec4 v_color;
+// 设置纹理坐标
+attribute vec2 v_texCoord;
+// 设置片元着色器中的纹理坐标
+varying vec2 f_texCoord;
 // 1. 设置模型矩阵，将 模型坐标系 -> 世界坐标系
 uniform mat4 model_matrix;
 // 2. 设置视图矩阵，将 世界坐标系 -> 相机坐标系
@@ -21,6 +25,7 @@ mat4 transpose(mat4 m) {
 
 void main() {
     gl_Position = project_matrix * transpose(view_matrix) * transpose(model_matrix) * v_position;
-    // gl_Position = v_matrix * main_translate_matrix * v_position;
     f_color = v_color;
+    // 设置纹理坐标，将纹理坐标传递给片元着色器
+    f_texCoord = v_texCoord;
 }

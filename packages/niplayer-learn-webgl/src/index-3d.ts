@@ -1,12 +1,11 @@
-import { createProgramFromSource, createWebGL } from "./utils";
+import { createProgramFromSource, createWebGL, isPowerOf2 } from "./utils";
 import fragmentShader from "./shader/3d/3d.fragment.glsl";
 import vertexShader from "./shader/3d/3d.vertex.glsl";
 import { Matrix4 } from "./utils/matrix";
 import { Vector } from "./utils/vector";
-import { mat4 } from "gl-matrix";
 
 //! 学习3d渲染
-window.onload = () => {
+window.onload = async () => {
     const play = document.querySelector('.play') as HTMLButtonElement;
     const pause = document.querySelector('.pause') as HTMLButtonElement;
 
@@ -58,7 +57,6 @@ window.onload = () => {
 
     // 反转y轴
     gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
-
     const vertexBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(pointPos), gl.STATIC_DRAW);
@@ -66,12 +64,70 @@ window.onload = () => {
     gl.vertexAttribPointer(positionLocation, 3, gl.FLOAT, false, 0, 0);
     gl.enableVertexAttribArray(positionLocation);
 
-    const colorBuffer = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), gl.STATIC_DRAW);
-    const colorLocation = gl.getAttribLocation(program, 'v_color');
-    gl.vertexAttribPointer(colorLocation, 3, gl.FLOAT, false, 0, 0);
-    gl.enableVertexAttribArray(colorLocation);
+    // const colorBuffer = gl.createBuffer();
+    // gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
+    // gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), gl.STATIC_DRAW);
+    // const colorLocation = gl.getAttribLocation(program, 'v_color');
+    // gl.vertexAttribPointer(colorLocation, 3, gl.FLOAT, false, 0, 0);
+    // gl.enableVertexAttribArray(colorLocation);
+
+    const textureCoordinate = [
+        // front-side
+        0, 0,
+        1, 0,
+        1, 1,
+        1, 1,
+        0, 1,
+        0, 0,
+        // back-side
+        0, 0,
+        0, 1,
+        1, 1,
+        1, 1,
+        1, 0,
+        0, 0,
+        // left-side
+        0, 0,
+        1, 0,
+        1, 1,
+        1, 1,
+        0, 1,
+        0, 0,
+        // right-side
+        0, 0,
+        0, 1,
+        1, 1,
+        1, 1,
+        1, 0,
+        0, 0,
+        // top-side
+        0, 1,
+        0, 0,
+        1, 0,
+        1, 0,
+        1, 1,
+        0, 1,
+        // bottom-side
+        0, 1,
+        0, 0,
+        1, 0,
+        1, 0,
+        1, 1,
+        0, 1,
+    ]
+    //!-1: 设置纹理坐标系
+    const textureBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, textureBuffer);
+    const textureLocation = gl.getAttribLocation(program, 'v_texCoord');
+    gl.vertexAttribPointer(textureLocation, 2, gl.FLOAT, false, Float32Array.BYTES_PER_ELEMENT * 2, 0);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(textureCoordinate), gl.STATIC_DRAW);
+    gl.enableVertexAttribArray(textureLocation);
+    //! 0: 设置具体的纹理
+    const texture = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+    //! Fill the texture with a 1x1 blue pixel.
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE,
+        new Uint8Array([0, 0, 255, 255]));
 
     //! 1. 设置三维透视矩阵，将三维空间内的物体映射到canvas平面上
     const projMat4 = gl.getUniformLocation(program, 'project_matrix');
@@ -86,24 +142,40 @@ window.onload = () => {
 
     //! 绘制3d图形需要启用深度缓冲，使gpu可以保存每个顶点的深度像素数据，来决定哪些面显示在哪些面的上面
     gl.enable(gl.DEPTH_TEST)
-    //! 启用GPU的剔除面特性; 顶点绘制顺序逆时针渲染，顺时针剔除不渲染
+    //! 启用GPU的剔除面特性; 顶点绘制顺序 逆时针渲染，顺时针剔除不渲染
     // gl.enable(gl.CULL_FACE)
 
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-    gl.drawArrays(gl.TRIANGLES, 0, pointPos.length / 3); 
+    gl.drawArrays(gl.TRIANGLES, 0, pointPos.length / 3);
+
+    const image = new Image();
+    image.src = 'http://localhost:1010/test.jpg';
+    image.crossOrigin = 'Anonymous';
+    image.onload = () => {
+        gl.bindTexture(gl.TEXTURE_2D, texture);
+        // 上传纹理数据
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
+        // Check if the image is a power of 2 in both dimensions.
+        if (isPowerOf2(image.width) && isPowerOf2(image.height)) {
+            // Yes, it's a power of 2. Generate mips.
+            gl.generateMipmap(gl.TEXTURE_2D);
+        } else {
+            // No, it's not a power of 2. Turn of mips and set wrapping to clamp to edge
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+        }
+    }
 
     let dx = 0, dy = 0, dz = -600;
     let rx = 0, ry = 0, rz = 0;
 
+    //! 计算视图矩阵
     const calcViewMatrix = () => {
         const matrix = new Matrix4();
         // 这里看作是将相机进行位置的调整
         matrix.multiply(Matrix4.createTranslate3DMatrix(dx, dy, dz))
-            .multiply(Matrix4.createRotate3DMatrix(rz, 'z'))
-            .multiply(Matrix4.createRotate3DMatrix(ry, 'y'))
-            .multiply(Matrix4.createRotate3DMatrix(rx, 'x'));
         const cameraMatrix = Vector.lookAt(new Vector([matrix.data[3], matrix.data[7], matrix.data[11]]), new Vector([0, 0, 0]), new Vector([0, 1, 0]));
-        console.log(cameraMatrix)
         return Matrix4.invertMatrix(new Matrix4([
             cameraMatrix[0], cameraMatrix[1], cameraMatrix[2], cameraMatrix[3],
             cameraMatrix[4], cameraMatrix[5], cameraMatrix[6], cameraMatrix[7],
@@ -111,13 +183,25 @@ window.onload = () => {
             cameraMatrix[12], cameraMatrix[13], cameraMatrix[14], cameraMatrix[15]
         ])).data;
     }
+
+    //! 计算模型矩阵
+    const calcModelMatrix = () => {
+        const matrix = new Matrix4();
+         matrix.multiply(Matrix4.createRotate3DMatrix(rz, 'z'))
+         .multiply(Matrix4.createRotate3DMatrix(ry, 'y'))
+         .multiply(Matrix4.createRotate3DMatrix(rx, 'x'));
+
+         return matrix.data;
+    }
+
     const translate = () => {
         gl.uniformMatrix4fv(viewMat4, false, calcViewMatrix());
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
         gl.drawArrays(gl.TRIANGLES, 0, pointPos.length / 3);
     }
+
     const rotate = () => {
-        gl.uniformMatrix4fv(viewMat4, false, calcViewMatrix());
+        gl.uniformMatrix4fv(modelMat4, false, calcModelMatrix());
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
         gl.drawArrays(gl.TRIANGLES, 0, pointPos.length / 3);
     }
@@ -126,6 +210,7 @@ window.onload = () => {
 
     let opx = 'add', opy = 'add', opz = 'add';
     const animate = () => {
+        rx += 1, ry += 0.5, rz += 1.3;
         if (dx >= 1000) {
             opx ='sub';
         } else if (dx <= -1000) {
@@ -145,6 +230,7 @@ window.onload = () => {
         }
         dz = opz === 'add'? dz + 1 : dz - 1;
         translate();
+        rotate();
         timer = requestAnimationFrame(animate);
     }
 

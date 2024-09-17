@@ -42,7 +42,6 @@ export function observable(object: Record<string, any>) {
                 });
             }
 
-            // flushScheduleQueue();
             if (!pending) {
                 pending = true;
                 nextTick(() => flushScheduleQueue);
