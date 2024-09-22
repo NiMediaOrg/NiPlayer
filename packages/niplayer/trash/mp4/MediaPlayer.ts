@@ -67,28 +67,7 @@ class MediaPlayer {
             ctx.onUpdateEnd.call(sb, true, false, ctx)
         }
 
-        this.player.on('seeking', (e: Event) => {
-            var i, start, end
-            var seek_info
-            var video = this.player.video
-            if (this.lastSeekTime !== video.currentTime) {
-                for (i = 0; i < video.buffered.length; i++) {
-                    start = video.buffered.start(i)
-                    end = video.buffered.end(i)
-                    if (
-                        video.currentTime >= start &&
-                        video.currentTime <= end
-                    ) {
-                        return
-                    }
-                }
-                this.downloader.stop()
-                seek_info = this.mp4boxfile.seek(video.currentTime, true)
-                this.downloader.setChunkStart(seek_info.offset)
-                this.downloader.resume()
-                this.lastSeekTime = video.currentTime
-            }
-        })
+        this.mp4boxfile.onSegment = (id, sourceBuffer, )
     }
 
     start() {
@@ -118,7 +97,7 @@ class MediaPlayer {
         var sb: MP4SourceBuffer
         if (MediaSource.isTypeSupported(mime)) {
             try {
-                console.log(
+                console.log("[Agent SourceBuffer Init]",
                     'MSE - SourceBuffer #' + track_id,
                     "Creation with type '" + mime + "'"
                 )

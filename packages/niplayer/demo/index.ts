@@ -7,6 +7,8 @@ const player = new NiPlayer({
     waterMark: {
         message: 'NovaNi'
     },
+    streamPlay: true,
+    streamPlayOptions: {},
     seamlessChangeQuality: true,
     quality: [
         {

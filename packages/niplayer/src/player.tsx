@@ -19,7 +19,7 @@ import { PlayQuality } from "./plugin/play-quality";
 import { ImageShot } from "./plugin/image-shot";
 import { PlayAgent } from "./plugin/play-agent";
 interface Plugin {
-    new (player: NiPlayer):void;
+    new (player: NiPlayer): void;
 }
 /**
  * @desc 播放器的入口文件
