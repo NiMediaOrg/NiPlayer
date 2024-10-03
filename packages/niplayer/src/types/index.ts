@@ -67,4 +67,10 @@ export type PlayerConfig = {
      * @desc 截图的水印相关配置
      */
     waterMark?: IWaterMark
+    /**
+     * @desc 截图相关配置
+     */
+    shot?: {
+        filename?: string;
+    }
 }

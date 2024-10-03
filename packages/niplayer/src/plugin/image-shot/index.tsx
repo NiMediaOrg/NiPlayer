@@ -12,7 +12,7 @@ export class ImageShot extends UIPlugin {
             const url = shot(this.player.nodes.videoElement);
             const a = document.createElement('a');
             a.href = url;
-            a.download = '截图.png';
+            a.download = `${this.player.config.shot.filename}.png` ?? 'Niplayer-image.png';
             a.click();
         }
         return (

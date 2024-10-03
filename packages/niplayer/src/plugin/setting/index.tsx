@@ -87,7 +87,10 @@ export class Setting extends UIPlugin {
 
         return (
             <div class="niplayer-controller-middle-item niplayer-setting-controller">
-                <div innerHTML={setting} style={{ width: '48px', height: '48px' }} onClick={handleClick}></div>
+                <div innerHTML={setting} style={{ width: '48px', height: '48px' }} onClick={handleClick} classList={{
+                    "niplayer-setting-controller-icon": true,
+                    "active": settingPanelShow()
+                }}></div>
                 <div class="niplayer-setting-panel-container">
                     <Panel main={state.mainPanel} side={state.sidePanel} hidden={!settingPanelShow()} onBackClick={handleBack}/>
                 </div>

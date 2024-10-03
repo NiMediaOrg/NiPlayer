@@ -61,6 +61,8 @@ export default class NiPlayer extends EventEmitter3 {
         topAreaRight: null,
     };
 
+    private disposeCallback: () => void;
+
     private plugins: Plugin[] = [
         PlayAgent,
         PlayWaiting,
@@ -143,7 +145,7 @@ export default class NiPlayer extends EventEmitter3 {
             </div>
         );
 
-        render(() => <App/>, this.config.container);
+        this.disposeCallback = render(() => <App/>, this.config.container);
 
         this.emit(NI_PLAYER_EVENT.MOUNTED);
     }
@@ -244,5 +246,11 @@ export default class NiPlayer extends EventEmitter3 {
      */
     public setPlaybackRate(val: number) {
         this.nodes.videoElement.playbackRate = val;
+    }
+
+    public dispose() {
+        this.disposeCallback?.();
+        this.nodes = null;
+        this.plugins = null;
     }
 }

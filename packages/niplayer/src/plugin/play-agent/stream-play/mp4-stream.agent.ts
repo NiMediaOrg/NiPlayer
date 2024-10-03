@@ -78,9 +78,9 @@ export class Mp4StreamAgent {
         this.mp4boxFile.onReady = (info) => {
             console.log('[Agent Event] onReady', info)
             this.stop()
-            //* 如果是fmp4类型的视频
+            //* 如果是fmp4类型的视频,则最后视频总时长的计算方式是使用fragment_duration，否则使用duration */
             if (info.isFragmented) {
-                // this.mediaSource.duration =
+                this.mediaSource.duration = info.fragment_duration / info.timescale
             } else {
                 this.mediaSource.duration = info.duration / info.timescale
             }
@@ -204,7 +204,7 @@ export class Mp4StreamAgent {
     }
 
     loadVideo(): Promise<{
-        data: ArrayBuffer
+        data: ArrayBuffer & { fileStart: number }
         eof: boolean
     }> {
         const url = this.player.config.url
@@ -235,8 +235,9 @@ export class Mp4StreamAgent {
                     ) {
                         eof = true
                     }
+                    const data: (ArrayBuffer & { fileStart: number }) = buffer as (ArrayBuffer & { fileStart: number });
                     res({
-                        data: buffer,
+                        data: data,
                         eof: eof,
                     })
                 })

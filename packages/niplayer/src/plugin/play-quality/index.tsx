@@ -32,4 +32,8 @@ export class PlayQuality extends BasePlugin {
             }
         })
     }
+
+    protected dispose(): void {
+        console.log('dispose');
+    }
 }

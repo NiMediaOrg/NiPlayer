@@ -1,4 +1,6 @@
 import { createEffect } from "solid-js";
+import { FONT_SIZE, HEADER_HEIGHT, ICON_HEIGHT, ICON_WIDTH, PADDING_BOTTOM, PADDING_TOP } from "./constants";
+import { calculateSize } from "./calculate";
 
 export interface IPanel {
     items?: IPanelItem[],
@@ -32,9 +34,11 @@ const Panel = (props: PanelProps) => {
 
     return (
         <>
-            {/* 主列表 */}
             <div class="nova-panel-container" style={{opacity: props.hidden ? 0 : 1}} ref={container}>
-                <ul class="nova-panel-list nova-panel-main-list" ref={mainList}>
+                {/* 主列表 */}
+                <ul class="nova-panel-list nova-panel-main-list" ref={mainList} style={{
+                    height: `${calculateSize(props.main)?.height ?? 0}px`
+                }}>
                     {
                         props.main.items.map((item, index) => {
                             return (
@@ -53,7 +57,9 @@ const Panel = (props: PanelProps) => {
                     }
                 </ul>
                 {/* 副列表 */}
-                <ul class="nova-panel-list nova-panel-side-list" ref={sideList}>
+                <ul class="nova-panel-list nova-panel-side-list" ref={sideList} style={{
+                    height: `${calculateSize(props.side)?.height ?? 0}px`
+                }}>
                     {
                         props.side?.items ? 
                         <>
@@ -89,21 +95,18 @@ const Panel = (props: PanelProps) => {
                     .nova-panel-container {
                         background-color: #2d2a2ae7;
                         border-radius: 10px;
-                        font-size: 14px;
-                        transition: opacity .5s ease, max-height 1.5s ease;
+                        font-size: ${FONT_SIZE}px;
                         overflow: hidden;
                         position: relative;
-                        display: grid;
-                        max-height: ${props.side?.items ? '1000px' : '200px'}
+                        transition: opacity 0.5s ease;
                     }
 
                     .nova-panel-list {
                         list-style: none;
                         padding: 0;
                         margin: 0;
-                        transition: transform .5s ease;
+                        transition: height .5s ease, transform .5s ease;
                     }
-
 
                     .nova-panel-main-list {
                         position: ${props.side?.items ? 'absolute' : 'relative'};
@@ -121,7 +124,7 @@ const Panel = (props: PanelProps) => {
 
                     .nova-panel-header {
                         width: 100%;
-                        height: 50px;
+                        height: ${HEADER_HEIGHT}px;
                         padding-left: 15px;
                         display: flex;
                         align-items: center;
@@ -148,7 +151,7 @@ const Panel = (props: PanelProps) => {
                     .nova-panel-list-item {
                         white-space: nowrap;
                         width: 230px;
-                        padding: 10px 15px;
+                        padding: ${PADDING_TOP}px 15px ${PADDING_BOTTOM}px 15px;
                         display: flex;
                         align-items: center;
                         border-radius: 10px;
@@ -165,8 +168,8 @@ const Panel = (props: PanelProps) => {
                     }
 
                     .nova-panel-list-item-icon {
-                        width: 21px;
-                        height: 21px;
+                        width: ${ICON_WIDTH}px;
+                        height: ${ICON_HEIGHT}px;
                         display: inline-block;
                         margin-right: 10px;
                     }

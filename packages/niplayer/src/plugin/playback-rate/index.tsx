@@ -60,4 +60,8 @@ export class PlaybackRate extends BasePlugin {
             }
         },)
     }
+
+    protected dispose(): void {
+        console.log('dispose');
+    }
 }

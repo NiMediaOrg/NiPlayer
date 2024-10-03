@@ -7,9 +7,13 @@ const player = new NiPlayer({
     waterMark: {
         message: 'NovaNi'
     },
-    streamPlay: true,
+    //todo 这里的mp4流式播放还有问题，暂时不使用
+    streamPlay: false,
     streamPlayOptions: {},
     seamlessChangeQuality: true,
+    shot: {
+        filename: 'test'
+    },
     quality: [
         {
             url: 'https://cdn.jsdelivr.net/gh/shiyiya/QI-ABSL@master/o/君の名は.mp4',

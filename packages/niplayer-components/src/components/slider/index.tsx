@@ -64,7 +64,7 @@ const Slider = (props: SliderProps) => {
                             position: relative;
                             margin-right: 10px;
                             display: ${props?.hidden ? 'none' : ''};
-                            transition: all .3s ease-in-out;
+                            transition: width .3s ease;
                         }
 
                         .nova-slider-top {
@@ -94,7 +94,7 @@ const Slider = (props: SliderProps) => {
                             height: 100%;
                             width: 100%;
                             transform: scaleX(${props.progress !== undefined ? props.progress + '' : '1'});
-                            transform-origin: left;
+                            transform-origin: left bottom;
                             border-radius: 5px;
                             pointer-events: none;
                             box-sizing: border-box;
@@ -113,7 +113,6 @@ const Slider = (props: SliderProps) => {
                             transform-origin: center center;
                             transition: transform .3s ease;
                             display: ${props?.dotHidden? 'none' : ''};
-
                         }`
                 }
             </style>
