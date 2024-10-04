@@ -2,6 +2,9 @@ import type {} from "solid-styled-jsx";
 
 interface SliderProps {
     progress: number;
+    /** 视频缓冲的buffer长度 */
+    bufferProgress?: number;
+    previewProgress?: number;
     width?: number;
     height?: number
     minProgress?: number;
@@ -50,6 +53,7 @@ const Slider = (props: SliderProps) => {
                 <div class="nova-slider-middle">
                     <div class="nova-slider-done"></div>
                     <div class="nova-slider-buffer"></div>
+                    <div class="nova-slider-preview"></div>
                     <div class="nova-slider-dot"></div>
                 </div>
                 <div class="nova-slider-bottom"></div>
@@ -59,12 +63,13 @@ const Slider = (props: SliderProps) => {
                     `.nova-slider-container {
                             width: ${props.width !== undefined ? `${props.width}px` : '100%'};
                             height: ${props.height !== undefined ? `${props.height}px` : '100%'};
-                            background-color: #faf4f4fc;
+                            background-color: #ffffff40;
                             border-radius: 5px;
                             position: relative;
                             margin-right: 10px;
                             display: ${props?.hidden ? 'none' : ''};
-                            transition: width .3s ease;
+                            transition: width .3s ease, height .1s ease;
+                            transform-origin: center center;
                         }
 
                         .nova-slider-top {
@@ -91,13 +96,16 @@ const Slider = (props: SliderProps) => {
 
                         .nova-slider-done {
                             background-color: #f00;
-                            height: 100%;
                             width: 100%;
                             transform: scaleX(${props.progress !== undefined ? props.progress + '' : '1'});
                             transform-origin: left bottom;
+                            transition: width .3s ease, height .1s ease;
                             border-radius: 5px;
                             pointer-events: none;
                             box-sizing: border-box;
+                            position: absolute;
+                            bottom: 0px;
+                            top: 0px;
                         }
 
                         .nova-slider-dot {
@@ -117,7 +125,6 @@ const Slider = (props: SliderProps) => {
                 }
             </style>
         </>
-
     )
 }
 

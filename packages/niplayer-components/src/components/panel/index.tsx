@@ -1,4 +1,4 @@
-import { createEffect } from "solid-js";
+import type { JSX } from "solid-js";
 import { FONT_SIZE, HEADER_HEIGHT, ICON_HEIGHT, ICON_WIDTH, PADDING_BOTTOM, PADDING_TOP } from "./constants";
 import { calculateSize } from "./calculate";
 
@@ -105,7 +105,7 @@ const Panel = (props: PanelProps) => {
                         list-style: none;
                         padding: 0;
                         margin: 0;
-                        transition: height .5s ease, transform .5s ease;
+                        transition: height .5s ease, transform .2s ease;
                     }
 
                     .nova-panel-main-list {

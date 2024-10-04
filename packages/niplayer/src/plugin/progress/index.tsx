@@ -7,7 +7,7 @@ export class Progress extends UIPlugin {
     protected name: string = 'progress-bar';
 
     protected initSliderHeight: number = 3;
-    protected hoverSliderHeight: number = 5;
+    protected hoverSliderHeight: number = 6;
     protected progressSignal = createSignal(0);
 
     protected get progressPercentage(): number {
