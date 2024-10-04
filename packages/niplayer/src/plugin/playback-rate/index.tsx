@@ -1,5 +1,6 @@
 import { back, playrate, rightArrow } from "@/assets/svg";
 import BasePlugin from "@/base/base.plugin";
+import { createActionDescriptor } from "mobx/dist/internal";
 import { IPanelItem } from "packages/niplayer-components/src";
 
 export class PlaybackRate extends BasePlugin {
@@ -22,6 +23,10 @@ export class PlaybackRate extends BasePlugin {
                         ...state.sidePanel,
                         items: null
                     });
+                    setState('mainPanel', {
+                       ...state.mainPanel,
+                        items: this.player.rootStore.settingStore.mainPanelItems
+                    })
                 },
                 items: [
                     {

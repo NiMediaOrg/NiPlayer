@@ -5,7 +5,7 @@ export const calculateSize = (panel: IPanel): {
     height: number;
     width: number;
 } => {
-    if (!panel.items) return null;
+    if (!panel?.items) return null;
     const paddingPerItem = PADDING_BOTTOM + PADDING_TOP;
     const heightPerItem = Math.max(FONT_SIZE, ICON_HEIGHT);
     const height = (panel.items?.length || 0) * (heightPerItem + paddingPerItem) + (panel.headerIcon ? HEADER_HEIGHT : 0);

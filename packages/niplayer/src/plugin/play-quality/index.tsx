@@ -21,6 +21,10 @@ export class PlayQuality extends BasePlugin {
                         ...state.sidePanel,
                         items: null
                     });
+                    setState('mainPanel', {
+                        ...state.mainPanel,
+                        items: this.player.rootStore.settingStore.mainPanelItems
+                     })
                     this.player.rootStore.qualityStore.internalRequestQuality({...qualityList.filter(i => i.qn === item.val)[0]});
                 },
                 items: qualityList.map(item => {

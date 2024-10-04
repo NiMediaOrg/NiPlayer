@@ -7,14 +7,22 @@ interface SettingState {
 
 
 export class SettingStore extends BaseStore<SettingState> {
+    public mainPanelItems: IPanelItem[] = [];
     get defaultState(): SettingState {
         return {
             mainPanel: {
                 title: 'main',
-                panelItemClick: (item: IPanelItem) => this.setState('sidePanel', item.jump),
+                panelItemClick: (item: IPanelItem) => {
+                    this.mainPanelItems = JSON.parse(JSON.stringify(this.state.mainPanel.items));
+                    this.setState('sidePanel', item.jump);
+                    this.setState('mainPanel', {
+                        ...this.state.mainPanel,
+                        items: null
+                    })
+                },
                 items: []
             },
-            sidePanel: {}
+            sidePanel: null,
         }
     }
 

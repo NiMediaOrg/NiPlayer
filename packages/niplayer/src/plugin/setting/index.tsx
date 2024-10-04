@@ -83,6 +83,10 @@ export class Setting extends UIPlugin {
                 ...state.sidePanel,
                 items: null
             });
+            setState('mainPanel', {
+                ...state.mainPanel,
+                items: this.player.rootStore.settingStore.mainPanelItems
+            })
         }
 
         return (

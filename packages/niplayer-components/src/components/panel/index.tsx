@@ -40,7 +40,7 @@ const Panel = (props: PanelProps) => {
                     height: `${calculateSize(props.main)?.height ?? 0}px`
                 }}>
                     {
-                        props.main.items.map((item, index) => {
+                        props.main.items && props.main.items.map((item, index) => {
                             return (
                                 <li class="nova-panel-list-item" onClick={() => props.main.panelItemClick?.(item)}>
                                     <div class="nova-panel-list-item-left">
