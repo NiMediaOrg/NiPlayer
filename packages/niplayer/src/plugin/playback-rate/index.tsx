@@ -1,31 +1,32 @@
-import { back, playrate, rightArrow } from "@/assets/svg";
-import BasePlugin from "@/base/base.plugin";
-import { createActionDescriptor } from "mobx/dist/internal";
-import { IPanelItem } from "packages/niplayer-components/src";
+import { back, playrate, rightArrow } from '@/assets/svg'
+import BasePlugin from '@/base/base.plugin'
+import { createActionDescriptor } from 'mobx/dist/internal'
+import { IPanelItem } from 'packages/niplayer-components/src'
 
 export class PlaybackRate extends BasePlugin {
-    protected name: string = 'playback-rate';
+    protected name: string = 'playback-rate'
 
     protected install(): void {
-        const { state, setState } = this.player.rootStore.settingStore;
+        const { state, setState } = this.player.rootStore.settingStore
         this.player.registerSettingItem({
             content: '倍速',
             icon: playrate,
             //!! 此处tip的依赖收集没有生效，很是奇怪（已解决， 通过传入函数来延迟tip的取值时机，让其在jsx中渲染时才获取对应的值来进行依赖收集）
-            tip: () => this.player.rootStore.mediaStore.playRateTitle,
+            tip: () => this.player.rootStore.mediaStore.playRateTitle ?? '正常',
             button: rightArrow,
             jump: {
                 title: '倍速',
                 headerIcon: back,
                 panelItemClick: (item: IPanelItem) => {
-                    this.player.setPlaybackRate(item.val);
+                    this.player.setPlaybackRate(item.val)
                     setState('sidePanel', {
                         ...state.sidePanel,
-                        items: null
-                    });
+                        items: null,
+                    })
                     setState('mainPanel', {
-                       ...state.mainPanel,
-                        items: this.player.rootStore.settingStore.mainPanelItems
+                        ...state.mainPanel,
+                        items: this.player.rootStore.settingStore
+                            .mainPanelItems,
                     })
                 },
                 items: [
@@ -60,13 +61,13 @@ export class PlaybackRate extends BasePlugin {
                     {
                         content: '2',
                         val: 2,
-                    }
-                ]
-            }
-        },)
+                    },
+                ],
+            },
+        })
     }
 
     protected dispose(): void {
-        console.log('dispose');
+        console.log('dispose')
     }
 }

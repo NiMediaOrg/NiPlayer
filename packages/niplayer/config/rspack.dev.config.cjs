@@ -1,7 +1,7 @@
-const { defineConfig } = require('@rspack/cli');
-const baseOptions = require('../../../rspack.base.config.cjs');
-const HtmlWebpackPlugin = require("html-webpack-plugin");
-const path = require('node:path');
+const { defineConfig } = require('@rspack/cli')
+const baseOptions = require('../../../rspack.base.config.cjs')
+const HtmlWebpackPlugin = require('html-webpack-plugin')
+const path = require('node:path')
 
 module.exports = defineConfig({
     mode: 'development',
@@ -9,27 +9,24 @@ module.exports = defineConfig({
         core: './demo/index.ts',
     },
     module: {
-        rules: [
-            ...baseOptions.module?.rules || []
-        ]
+        rules: [...(baseOptions.module?.rules || [])],
     },
     plugins: [
         new HtmlWebpackPlugin({
-            template: path.resolve(__dirname, "../demo/index.html"),
-        })
+            template: path.resolve(__dirname, '../demo/index.html'),
+        }),
     ],
     resolve: {
         alias: {
             ...(baseOptions.resolve?.alias || {}),
-            '@': path.resolve(__dirname, "../src")
+            '@': path.resolve(__dirname, '../src'),
         },
-        extensions: [
-            ...baseOptions.resolve?.extensions || []
-        ]
+        extensions: [...(baseOptions.resolve?.extensions || [])],
     },
     devServer: {
         port: 7777,
         open: true,
-        hot: true
-    }
+        hot: true,
+        static: path.resolve(__dirname, '../demo'),
+    },
 })
