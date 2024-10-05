@@ -16,7 +16,7 @@ import { Setting } from './plugin/setting'
 import { PlayWaiting } from './plugin/play-waiting'
 import { PlaybackRate } from './plugin/playback-rate'
 import { PlayQuality } from './plugin/play-quality'
-import { ImageShot } from './plugin/image-shot'
+import { ImageShot } from './plugin/video-shot'
 import { PlayAgent } from './plugin/play-agent'
 import { Subtitle } from './plugin/subtitle'
 
