@@ -2,7 +2,7 @@ import BasePlugin from './base.plugin'
 import { render } from 'solid-js/web'
 import type { JSX } from 'solid-js/jsx-runtime'
 import type NiPlayer from '@/player'
-import { NI_PLAYER_EVENT } from '@/events'
+import { NI_PLAYER_EVENT } from '@/shared/events'
 /**
  * @instance UI类型的插件
  */

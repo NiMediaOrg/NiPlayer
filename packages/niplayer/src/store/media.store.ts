@@ -1,5 +1,5 @@
 import BaseStore from '@/base/base.store'
-import { NI_PLAYER_EVENT } from '@/events'
+import { NI_PLAYER_EVENT } from '@/shared/events'
 import bind from 'bind-decorator'
 
 export interface MediaState {

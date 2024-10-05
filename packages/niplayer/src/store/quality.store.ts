@@ -1,5 +1,5 @@
 import BaseStore from "@/base/base.store";
-import { NI_PLAYER_EVENT } from "@/events";
+import { NI_PLAYER_EVENT } from "@/shared/events";
 import NiPlayer from "@/player";
 import { IQuality } from "@/types";
 interface QualityState {

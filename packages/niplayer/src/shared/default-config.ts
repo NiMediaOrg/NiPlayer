@@ -1,4 +1,4 @@
-import { PlayerConfig } from "./types";
+import { PlayerConfig } from "../types";
 
 export const defaultConfig: Partial<PlayerConfig> = {
     autoPlay: false,

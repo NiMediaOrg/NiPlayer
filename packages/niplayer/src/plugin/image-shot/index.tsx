@@ -1,6 +1,6 @@
 import { imageshot } from "@/assets/svg";
 import { UIPlugin } from "@/base/ui.plugin";
-import { shot } from "@/utils";
+import Utils from "@/shared/utils";
 import { JSX } from "solid-js";
 
 export class ImageShot extends UIPlugin {
@@ -9,10 +9,10 @@ export class ImageShot extends UIPlugin {
 
     protected render(): JSX.Element | string | HTMLElement {
         const handleClick = () => {
-            const url = shot(this.player.nodes.videoElement);
+            const url = Utils.shot(this.player.nodes.videoElement);
             const a = document.createElement('a');
             a.href = url;
-            a.download = `${this.player.config.shot.filename}.png` ?? 'Niplayer-image.png';
+            a.download = `${this.player.config.shot.filename ?? `Niplayer_${Date.now()}`}.png`;
             a.click();
         }
         return (

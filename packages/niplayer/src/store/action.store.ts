@@ -1,5 +1,5 @@
 import BaseStore from "@/base/base.store";
-import { checkPathContainDom } from "@/utils";
+import Utils from "@/shared/utils";
 import bind from "bind-decorator";
 interface ActionState {
     isProgressDrag: boolean;
@@ -43,7 +43,7 @@ export default class ActionStore extends BaseStore<ActionState> {
             isTopBarHidden: false,
         });        
         window.clearTimeout(this.hiddenTimer);
-        if (checkPathContainDom(e.composedPath() as HTMLElement[], this.player.nodes.controllerBar) || checkPathContainDom(e.composedPath() as HTMLElement[], this.player.nodes.topArea)) return;
+        if (Utils.checkPathContainDom(e.composedPath() as HTMLElement[], this.player.nodes.controllerBar) || Utils.checkPathContainDom(e.composedPath() as HTMLElement[], this.player.nodes.topArea)) return;
         this.hiddenTimer = window.setTimeout(() => {    
             this.setState({
                 isControllerBarHidden: true,
@@ -68,7 +68,7 @@ export default class ActionStore extends BaseStore<ActionState> {
             isTopBarHidden: false,
         });  
         window.clearTimeout(this.hiddenTimer);
-        if (checkPathContainDom(e.composedPath() as HTMLElement[], this.player.nodes.controllerBar) || checkPathContainDom(e.composedPath() as HTMLElement[], this.player.nodes.topArea)) return;
+        if (Utils.checkPathContainDom(e.composedPath() as HTMLElement[], this.player.nodes.controllerBar) || Utils.checkPathContainDom(e.composedPath() as HTMLElement[], this.player.nodes.topArea)) return;
         this.hiddenTimer = window.setTimeout(() => {
             this.setState({
                 isControllerBarHidden: true,

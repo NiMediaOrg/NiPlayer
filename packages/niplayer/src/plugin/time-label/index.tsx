@@ -1,7 +1,7 @@
 import { UIPlugin } from "@/base/ui.plugin";
 import { JSX } from "solid-js/jsx-runtime";
 import "./index.less";
-import { formatTime } from "@/utils";
+import Utils from "@/shared/utils";
 
 export class TimeLabel extends UIPlugin {
     protected name: string = 'time-label';
@@ -10,9 +10,9 @@ export class TimeLabel extends UIPlugin {
         const { state } = this.player.rootStore.mediaStore;
         return (
             <div class="niplayer-controller-time-label-container">
-                <span class="current-time">{formatTime(state.currentTime)}</span>
+                <span class="current-time">{Utils.formatTime(state.currentTime)}</span>
                 <span class="split"> / </span>
-                <span class="total-time">{formatTime(state.totalTime)}</span>
+                <span class="total-time">{Utils.formatTime(state.totalTime)}</span>
             </div>
         )
     }
