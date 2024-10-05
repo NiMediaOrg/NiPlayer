@@ -33,12 +33,12 @@ export class Volume extends UIPlugin {
         }
 
         const handleMouseEnter = () => {
-            setHideSlider(v => !v)
+            setHideSlider(false)
         }
 
         const handleMouseLeave = () => {
             if (this.player.rootStore.actionStore.state.isVolumeDrag) return;
-            setHideSlider(v => !v)
+            setHideSlider(true)
         }
 
         return (

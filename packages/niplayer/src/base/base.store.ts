@@ -1,4 +1,4 @@
-import { NI_PLAYER_EVENT } from "@/events";
+import { NI_PLAYER_EVENT } from "@/shared/events";
 import NiPlayer from "@/player";
 import { createStore, SetStoreFunction } from "solid-js/store";
 /**

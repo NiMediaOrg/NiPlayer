@@ -1,3 +1,9 @@
+export interface ISubtitle {
+    lang: string
+    url: string
+    default?: boolean
+}
+
 export interface IQuality {
     url: string
     qn: number
@@ -67,4 +73,14 @@ export type PlayerConfig = {
      * @desc 截图的水印相关配置
      */
     waterMark?: IWaterMark
+    /**
+     * @desc 截图相关配置
+     */
+    shot?: {
+        filename?: string
+    }
+    /**
+     * @desc 字幕相关的设置
+     */
+    subtitle?: ISubtitle[]
 }

@@ -72,6 +72,7 @@
     "last 3 iOS versions"
   ],
   "dependencies": {
-    "bind-decorator": "^1.0.11"
+    "bind-decorator": "^1.0.11",
+    "lodash": "^4.17.21"
   }
 }
