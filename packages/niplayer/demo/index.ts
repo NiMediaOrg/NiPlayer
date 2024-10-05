@@ -43,7 +43,7 @@ const player = new NiPlayer({
     ],
     subtitle: [
         {
-            lang: '双语字幕',
+            lang: '双语字幕(中+日)',
             url: 'vtt/subtitle.vtt',
             default: true,
         },
@@ -55,6 +55,10 @@ const player = new NiPlayer({
             lang: '日文',
             url: 'vtt/subtitle.jp.vtt',
         },
+        {
+            lang: '英语',
+            url: 'vtt/subtitle.en.vtt',
+        }
     ],
 })
 

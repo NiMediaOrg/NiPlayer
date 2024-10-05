@@ -10,12 +10,14 @@ export interface IPanel {
 }
 
 export interface IPanelItem {
-    content: string;
+    content: string | (() => string);
     icon?: string;
     tip?: string | (() => string);
     button?: string;
     jump?: IPanel;
     val?: any;
+    id?: string;
+
 }
 
 interface PanelProps {
@@ -45,7 +47,7 @@ const Panel = (props: PanelProps) => {
                                 <li class="nova-panel-list-item" onClick={() => props.main.panelItemClick?.(item)}>
                                     <div class="nova-panel-list-item-left">
                                         <span class="nova-panel-list-item-icon" innerHTML={item.icon || ''}></span>
-                                        <span class="nova-panel-list-item-content">{item.content}</span>
+                                        <span class="nova-panel-list-item-content">{typeof item.content === 'function' ? item.content() : item.content}</span>
                                     </div>
                                     <div class="nova-panel-list-item-right">
                                         <span class="nova-panel-list-item-tip">{typeof item.tip === 'function' ? item.tip() : item.tip}</span>
@@ -73,7 +75,7 @@ const Panel = (props: PanelProps) => {
                                         <li class="nova-panel-list-item" onClick={() => props.side?.panelItemClick?.(item)}>
                                             <div class="nova-panel-list-item-left">
                                                 <span class="nova-panel-list-item-icon" innerHTML={item.icon || ''}></span>
-                                                <span class="nova-panel-list-item-content">{item.content}</span>
+                                                <span class="nova-panel-list-item-content">{typeof item.content === 'function' ? item.content() : item.content}</span>
                                             </div>
                                             <div class="nova-panel-list-item-right">
                                                 <span class="nova-panel-list-item-tip">{typeof item.tip === 'function' ? item.tip() : item.tip}</span>

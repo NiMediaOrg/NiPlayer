@@ -37,6 +37,7 @@ export default class NiPlayer extends EventEmitter3 {
     public nodes: {
         container: HTMLDivElement
         videoArea: HTMLDivElement
+        videoLayer: HTMLDivElement
         videoElement: HTMLVideoElement
         controllerBar: HTMLDivElement
         controllerBarTop: HTMLDivElement
@@ -53,6 +54,7 @@ export default class NiPlayer extends EventEmitter3 {
         container: null,
         videoArea: null,
         videoElement: null,
+        videoLayer: null,
         controllerBar: null,
         controllerBarTop: null,
         controllerBarMiddle: null,
@@ -139,6 +141,10 @@ export default class NiPlayer extends EventEmitter3 {
                         ></video>
                     )}
                 </div>
+                <div
+                    class="niplayer-video-layer"
+                    ref={this.nodes.videoLayer}
+                ></div>
                 <div
                     classList={{
                         'niplayer-top-area': true,

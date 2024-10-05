@@ -40,6 +40,16 @@
         }
     }
 
+    .niplayer-video-layer {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 9;
+        pointer-events: none;
+    }
+
     .niplayer-controller-area {
         width: 100%;
         height: 51px;
@@ -152,10 +162,4 @@
             visibility: hidden;
         }
     }
-}
-::cue {
-    background: red;
-    color: #fff;
-    text-shadow: 0 1px #000, 1px 0 #000, -1px 0 #000, 0 -1px #000;
-    font-size: medium;
 }

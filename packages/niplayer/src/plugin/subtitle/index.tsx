@@ -1,12 +1,19 @@
-import BasePlugin from '@/base/base.plugin'
 import { back, rightArrow, subtitle } from '@/assets/svg'
 import type { IPanelItem } from 'niplayer-components'
+import { UIPlugin } from '@/base/ui.plugin'
+import { JSX } from 'solid-js/jsx-runtime'
+import './index.less'
 
-export class Subtitle extends BasePlugin {
+export class Subtitle extends UIPlugin {
     protected name: string = 'play-subtitle'
 
     protected subtitleTrack: HTMLTrackElement | null = null
+
+    get baseBottom() {
+        return this.player.rootStore.actionStore.state.isControllerBarHidden ? 0 : this.player.nodes.controllerBar.clientHeight 
+    }
     protected install() {
+        super.install()
         if (
             !this.player.config.subtitle ||
             this.player.config.subtitle.length === 0
@@ -19,7 +26,7 @@ export class Subtitle extends BasePlugin {
         this.player.registerSettingItem({
             content: '字幕',
             icon: subtitle,
-            tip: () => this.player.rootStore.subtitleStore.lang,
+            tip: () => this.player.rootStore.subtitleStore.state.subtitleOpen ? this.player.rootStore.subtitleStore.lang : '开启字幕',
             button: rightArrow,
             jump: {
                 title: '字幕',
@@ -34,19 +41,50 @@ export class Subtitle extends BasePlugin {
                         items: this.player.rootStore.settingStore
                             .mainPanelItems,
                     })
-                    that.player.rootStore.subtitleStore.changeSelectedSubtitle({
-                        url: item.val,
-                        lang: item.content,
-                    })
+                    if (item?.id === 'switch') {
+                        that.player.rootStore.subtitleStore.setState(
+                           'subtitleOpen',
+                           !this.player.rootStore.subtitleStore.state.subtitleOpen
+                        )
+                    } else {
+                        that.player.rootStore.subtitleStore.changeSelectedSubtitle({
+                            url: item.val,
+                            lang: typeof item.content === 'function' ? item.content() : item.content,
+                        })
+                    }
                 },
-                items: that.player.config.subtitle.map((item) => {
+                items: [
+                    {
+                        content: () => this.player.rootStore.subtitleStore.state.subtitleOpen ? '关闭字幕' : '开启字幕',
+                        val: null,
+                        id: 'switch'
+                    },
+                    ...that.player.config.subtitle.map((item) => {
                     return {
                         content: item.lang,
                         val: item.url,
                     }
-                }),
+                })],
             },
         })
+    }
+
+    protected render(): JSX.Element | string | HTMLElement {
+        return (
+            <div class="niplayer-subtitle-container" style={{ 
+                opacity: 0, 
+                bottom: `${this.baseBottom + 10}px`,
+                display: this.player.rootStore.subtitleStore.state.subtitleOpen ? 'block' : 'none',    
+            }}>
+                {
+                    this.player.rootStore.subtitleStore.state.currentText?.split('\n').map(text => <p innerText={text}></p>)
+                }
+            </div>
+        )
+    }
+
+    protected afterRender() {
+        this.player.nodes.videoLayer.appendChild(this.element)
     }
 
     protected dispose() {
@@ -72,6 +110,13 @@ export class Subtitle extends BasePlugin {
                 }
                 this.subtitleTrack.track.oncuechange = () => {
                     const cue = this.subtitleTrack.track.activeCues[0]
+                    if (cue) {
+                        this.player.rootStore.subtitleStore.setState(
+                            'currentText',
+                            cue.text
+                        )
+                    }
+                    this.element.style.opacity = cue ? '1' : '0'
                 }
             },
             {

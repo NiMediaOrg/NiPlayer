@@ -42,7 +42,9 @@ export abstract class UIPlugin extends BasePlugin {
      * @desc 插件卸载时的生命周期hooks
      */
     protected dispose(): void {
-        console.log(`[Plugin Dispose] The UIPlugin "${this.name}" has been disposed`)
+        console.log(
+            `[Plugin Dispose] The UIPlugin "${this.name}" has been disposed`
+        )
         this.disposeCallback && this.disposeCallback()
     }
 }

@@ -4,6 +4,11 @@ import { ISubtitle } from '@/types'
 interface SubtitleState {
     subtitle: ISubtitle[]
     selectedSubtitle: ISubtitle
+    /**
+     * @desc 当前字幕内容
+     */
+    currentText: string
+    subtitleOpen: boolean
 }
 
 export class SubtitleStore extends BaseStore<SubtitleState> {
@@ -11,6 +16,8 @@ export class SubtitleStore extends BaseStore<SubtitleState> {
         return {
             subtitle: null,
             selectedSubtitle: null,
+            currentText: null,
+            subtitleOpen: false,
         }
     }
 
@@ -23,7 +30,6 @@ export class SubtitleStore extends BaseStore<SubtitleState> {
             this.player.config.subtitle.filter((item) => item.default)?.[0] ??
             null
         if (subtitleItem) {
-            console.log(subtitleItem)
             this.setState('selectedSubtitle', subtitleItem)
         }
     }
