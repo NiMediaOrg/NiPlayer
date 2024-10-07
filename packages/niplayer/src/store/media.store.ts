@@ -1,6 +1,7 @@
 import BaseStore from '@/base/base.store'
 import { NI_PLAYER_EVENT } from '@/shared/events'
 import bind from 'bind-decorator'
+import { cursorTo } from 'readline'
 
 export interface MediaState {
     /**
@@ -59,6 +60,24 @@ export default class MediaStore extends BaseStore<MediaState> {
 
     get videoElement() {
         return this.player.nodes.videoElement
+    }
+
+    get bufferTime() {
+        const current = this.state.currentTime
+        for (let i = 0; i < this.videoElement.buffered.length; i++) {
+            const start = this.videoElement.buffered.start(i)
+            const end = this.videoElement.buffered.end(i)
+            
+            if (current >= start && current <= end) {
+                return end
+            }
+
+            if (start > this.videoElement.currentTime) {
+                break;
+            }
+        }
+
+        return current
     }
 
     mounted(): void {

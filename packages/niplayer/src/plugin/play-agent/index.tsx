@@ -11,4 +11,8 @@ export class PlayAgent extends BasePlugin {
             new Mp4NativeAgent(this.player);
         }
     }
+
+    protected dispose(): void {
+        console.log(`${this.name} dispose`)
+    }
 }

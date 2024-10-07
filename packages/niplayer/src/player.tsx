@@ -19,12 +19,13 @@ import { PlayQuality } from './plugin/play-quality'
 import { ImageShot } from './plugin/video-shot'
 import { PlayAgent } from './plugin/play-agent'
 import { Subtitle } from './plugin/subtitle'
+import { PauseCenter } from './plugin/pause-center'
 
 /**
  * @desc 声明插件的类型
  */
 interface Plugin {
-    new (player: NiPlayer): void
+    new(player: NiPlayer): void
 }
 /**
  * @desc 播放器的入口文件
@@ -51,26 +52,27 @@ export default class NiPlayer extends EventEmitter3 {
         topAreaMiddle: HTMLDivElement
         topAreaRight: HTMLDivElement
     } = {
-        container: null,
-        videoArea: null,
-        videoElement: null,
-        videoLayer: null,
-        controllerBar: null,
-        controllerBarTop: null,
-        controllerBarMiddle: null,
-        controllerBarBottom: null,
-        controllerBarMiddleLeft: null,
-        controllerBarMiddleMiddle: null,
-        controllerBarMiddleRight: null,
-        topArea: null,
-        topAreaLeft: null,
-        topAreaMiddle: null,
-        topAreaRight: null,
-    }
+            container: null,
+            videoArea: null,
+            videoElement: null,
+            videoLayer: null,
+            controllerBar: null,
+            controllerBarTop: null,
+            controllerBarMiddle: null,
+            controllerBarBottom: null,
+            controllerBarMiddleLeft: null,
+            controllerBarMiddleMiddle: null,
+            controllerBarMiddleRight: null,
+            topArea: null,
+            topAreaLeft: null,
+            topAreaMiddle: null,
+            topAreaRight: null,
+        }
 
     private disposeCallback: () => void
 
     private plugins: Plugin[] = [
+        PauseCenter,
         PlayAgent,
         PlayWaiting,
         Progress,
@@ -204,6 +206,7 @@ export default class NiPlayer extends EventEmitter3 {
             </div>
         )
 
+        if (this.config.video) this.nodes.videoElement = this.config.video
         this.disposeCallback = render(() => <App />, this.config.container)
 
         this.emit(NI_PLAYER_EVENT.MOUNTED)

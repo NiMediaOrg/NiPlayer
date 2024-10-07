@@ -23,7 +23,7 @@ export class Mp4StreamAgent {
     /**
      * @desc 设置加载分片的大小，单位为字节
      */
-    private chunkSize: number = 1024 * 1024
+    private chunkSize: number = 1024 * 1024 
     /**
      * @desc 设置加载分片的间隔，单位为毫秒
      */
@@ -32,6 +32,8 @@ export class Mp4StreamAgent {
      * @desc 定时器
      */
     private timer: number = -1
+
+    private isStreamEnd: boolean = false
 
     private mediaSource: MediaSource
     private pendingInits: number = 0
@@ -194,7 +196,22 @@ export class Mp4StreamAgent {
             const nextStart = this.mp4boxFile.appendBuffer(data, eof)
             this.chunkStart = nextStart
             if (eof) {
+                this.isStreamEnd = true
                 this.mp4boxFile.flush()
+                this.stop()
+                const check = () => {
+                    let isReady = true;
+                    this.pendingMap.forEach(item => {
+                        const buffer = item.sourceBuffer;
+                        if (buffer.updating) isReady = false 
+                    })
+                    if (isReady) {
+                        this.mediaSource.endOfStream()
+                    } else {
+                        window.requestAnimationFrame(check)
+                    }
+                }
+                check()
                 return
             }
             this.timer = window.setTimeout(() => {
@@ -213,12 +230,13 @@ export class Mp4StreamAgent {
                 rej(new Error('fetch is not supported'))
             }
             let eof = false
+            const chunkEnd = this.chunkStart + this.chunkSize - 1
+            
+
             fetch(url, {
                 method: 'GET',
                 headers: {
-                    Range: `bytes=${this.chunkStart}-${
-                        this.chunkSize + this.chunkStart - 1
-                    }`,
+                    Range: `bytes=${this.chunkStart}-${chunkEnd}`,
                 },
             })
                 .then((response) => {
@@ -231,7 +249,8 @@ export class Mp4StreamAgent {
                 .then((buffer) => {
                     if (
                         buffer.byteLength !== this.chunkSize ||
-                        this.totalSize === buffer.byteLength
+                        this.totalSize === buffer.byteLength ||
+                        (this.totalSize > 0 && chunkEnd >= this.totalSize)
                     ) {
                         eof = true
                     }

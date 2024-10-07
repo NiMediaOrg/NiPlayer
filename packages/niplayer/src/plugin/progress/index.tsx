@@ -17,7 +17,19 @@ export class Progress extends UIPlugin {
         const { state } = this.player.rootStore.mediaStore;
         const val = isNaN(state.currentTime / state.totalTime) ? 0 : state.currentTime / state.totalTime;
         return val;
+    }
+
+    protected get bufferProgressPercentage(): number {
+        const { state, bufferTime } = this.player.rootStore.mediaStore;
+    
+        const val = isNaN(bufferTime / state.totalTime)? 0 : bufferTime / state.totalTime;
+        return val;
     } 
+
+    protected get previewProgressPercentage(): number {
+        const previewTime = this.player.rootStore.actionStore.state.previewTime;
+        return this.player.rootStore.actionStore.state.isHoverProgress? previewTime : 0;
+    }
 
     protected render(): JSX.Element | string | HTMLElement {
         const [ sliderHeight, setSliderHeight ] = createSignal(this.initSliderHeight);
@@ -47,9 +59,29 @@ export class Progress extends UIPlugin {
                 this.player.rootStore.actionStore.setState('isProgressDrag', false);
             });
         }
+
+        const onHover = (per) => {
+            const { state } = this.player.rootStore.mediaStore;
+            const time = Math.max(state.currentTime, per * state.totalTime);
+            const val = isNaN(time / state.totalTime)? 0 : time / state.totalTime;
+            this.player.rootStore.actionStore.setState('previewTime', val);
+        }
+
         return (
             <div class="niplayer-progress-container" style={{cursor: 'pointer', position: 'absolute', bottom: '0', width: '100%'}} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
-                <Slider progress={this.progressPercentage} height={sliderHeight()} onChange={handleChange} dotScale={dotScale()} onMouseDown={handleMouseDown} onMouseUp={handleMouseUp}/>
+                <Slider 
+                    progress={this.progressPercentage} 
+                    bufferProgress={this.bufferProgressPercentage}
+                    previewProgress={this.previewProgressPercentage}
+                    height={sliderHeight()} 
+                    onChange={handleChange} 
+                    dotScale={dotScale()} 
+                    onMouseDown={handleMouseDown} 
+                    onMouseUp={handleMouseUp}
+                    maxProgress={1}
+                    minProgress={0}
+                    hover={onHover}
+                />
             </div>
         )
     }

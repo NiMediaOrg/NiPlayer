@@ -8,7 +8,7 @@ const player = new NiPlayer({
         message: 'NovaNi',
     },
     //todo 这里的mp4流式播放还有问题，暂时不使用
-    streamPlay: false,
+    streamPlay: true,
     streamPlayOptions: {},
     seamlessChangeQuality: true,
     shot: {
