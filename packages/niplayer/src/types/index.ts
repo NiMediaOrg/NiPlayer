@@ -1,3 +1,4 @@
+import { Plugin } from '@/base/base.plugin'
 export interface ISubtitle {
     lang: string
     url: string
@@ -85,4 +86,8 @@ export type PlayerConfig = {
      * @desc 字幕相关的设置
      */
     subtitle?: ISubtitle[]
+    /**
+     * @desc 插件列表
+     */
+    plugins?: Plugin[]
 }

@@ -60,7 +60,7 @@ export class Progress extends UIPlugin {
             });
         }
 
-        const onHover = (per) => {
+        const onHover = (per: number) => {
             const { state } = this.player.rootStore.mediaStore;
             const time = Math.max(state.currentTime, per * state.totalTime);
             const val = isNaN(time / state.totalTime)? 0 : time / state.totalTime;

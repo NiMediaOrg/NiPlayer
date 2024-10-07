@@ -1,4 +1,4 @@
-import { NiPlayer } from '../src/index'
+import { NiPlayer, WebCodecProxy, CanvasProxy } from '../src/index'
 
 const player = new NiPlayer({
     container: document.querySelector('#app'),
@@ -60,6 +60,9 @@ const player = new NiPlayer({
             url: 'vtt/subtitle.en.vtt',
         }
     ],
+    plugins: [
+        // WebCodecProxy
+    ]
 })
 
 player.on(NiPlayer.Event.VIDEO_QUALITY_CHANGING, (q) => {

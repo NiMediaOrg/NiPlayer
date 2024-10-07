@@ -1,4 +1,5 @@
 export enum NI_PLAYER_EVENT {
+    BEFORE_INIT = 'before_init',
     MOUNTED = 'mounted',
     VIDEO_QUALITY_CHANGING = 'video_quality_changing',
     VIDEO_QUALITY_CHANGED = 'video_quality_changed',

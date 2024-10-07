@@ -20,13 +20,7 @@ import { ImageShot } from './plugin/video-shot'
 import { PlayAgent } from './plugin/play-agent'
 import { Subtitle } from './plugin/subtitle'
 import { PauseCenter } from './plugin/pause-center'
-
-/**
- * @desc 声明插件的类型
- */
-interface Plugin {
-    new(player: NiPlayer): void
-}
+import { Plugin } from './base/base.plugin'
 /**
  * @desc 播放器的入口文件
  */
@@ -91,8 +85,10 @@ export default class NiPlayer extends EventEmitter3 {
     constructor(options?: PlayerConfig) {
         super()
         this.config = Object.assign(defaultConfig, options)
+        this.config.plugins && this.config.plugins.length > 0 && this.plugins.push(...this.config.plugins)
         this.rootStore = new RootStore(this)
         this.renderPlugin()
+        this.emit(NI_PLAYER_EVENT.BEFORE_INIT);
         this.renderTemplate()
     }
 
@@ -133,7 +129,7 @@ export default class NiPlayer extends EventEmitter3 {
                     onDblClick={handleDoubleClick}
                 >
                     {this.config.proxy ? (
-                        ''
+                        this.config.proxy()
                     ) : (
                         <video
                             ref={this.nodes.videoElement}
@@ -206,7 +202,9 @@ export default class NiPlayer extends EventEmitter3 {
             </div>
         )
 
-        if (this.config.proxy) this.nodes.videoElement = this.config.proxy()
+        if (this.config.proxy) {
+            this.nodes.videoElement = this.config.proxy()
+        }
         this.disposeCallback = render(() => <App />, this.config.container)
 
         this.emit(NI_PLAYER_EVENT.MOUNTED)

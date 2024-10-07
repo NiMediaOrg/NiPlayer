@@ -1,5 +1,9 @@
 declare global {
     export const DEBUG: boolean;
+
+    export interface TextTrackCue {
+        text: string;
+    }
 }
 
 declare module '.png' {
