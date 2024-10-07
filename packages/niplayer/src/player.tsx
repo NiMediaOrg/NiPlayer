@@ -132,7 +132,7 @@ export default class NiPlayer extends EventEmitter3 {
                     onClick={handleClick}
                     onDblClick={handleDoubleClick}
                 >
-                    {this.config.video ? (
+                    {this.config.proxy ? (
                         ''
                     ) : (
                         <video
@@ -206,7 +206,7 @@ export default class NiPlayer extends EventEmitter3 {
             </div>
         )
 
-        if (this.config.video) this.nodes.videoElement = this.config.video
+        if (this.config.proxy) this.nodes.videoElement = this.config.proxy()
         this.disposeCallback = render(() => <App />, this.config.container)
 
         this.emit(NI_PLAYER_EVENT.MOUNTED)

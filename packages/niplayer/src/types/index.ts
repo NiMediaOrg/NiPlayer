@@ -15,6 +15,8 @@ export interface IWaterMark {
     rotate?: number
 }
 
+export class VideoProxy extends HTMLVideoElement {}
+
 export type PlayerConfig = {
     /**
      * @desc 视频的url地址
@@ -25,9 +27,9 @@ export type PlayerConfig = {
      */
     container: HTMLElement
     /**
-     * @desc 播放器使用的video元素，不传则使用内置video
+     * @desc 播放器使用的播放元素代理，不传则使用内置video
      */
-    video?: HTMLVideoElement
+    proxy?: () => VideoProxy
     /**
      * @desc 视频的封面
      */

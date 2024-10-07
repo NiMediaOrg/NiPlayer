@@ -68,7 +68,7 @@ export class Mp4StreamAgent {
 
         this.mediaSource.addEventListener('sourceopen', (e) => {
             console.log('[Agent Event] sourceopen')
-            this.load()
+            this.start()
         })
     }
 
@@ -192,31 +192,32 @@ export class Mp4StreamAgent {
     load() {
         console.log('[Agent Event] load video buffer')
         this.loadVideo().then(({ data, eof }) => {
+            this.timer = window.setTimeout(() => {
+                this.load()
+            }, this.loadGap)
+
             data.fileStart = this.chunkStart
             const nextStart = this.mp4boxFile.appendBuffer(data, eof)
             this.chunkStart = nextStart
             if (eof) {
-                this.isStreamEnd = true
-                this.mp4boxFile.flush()
-                this.stop()
                 const check = () => {
                     let isReady = true;
                     this.pendingMap.forEach(item => {
                         const buffer = item.sourceBuffer;
-                        if (buffer.updating) isReady = false 
+                        if (buffer.updating) isReady = false
                     })
-                    if (isReady) {
+                    if (isReady && this.mediaSource.readyState === 'open') {
                         this.mediaSource.endOfStream()
                     } else {
                         window.requestAnimationFrame(check)
                     }
                 }
+                this.isStreamEnd = true
+                this.mp4boxFile.flush()
+                this.stop()
                 check()
                 return
             }
-            this.timer = window.setTimeout(() => {
-                this.load()
-            }, this.loadGap)
         })
     }
 
@@ -231,8 +232,6 @@ export class Mp4StreamAgent {
             }
             let eof = false
             const chunkEnd = this.chunkStart + this.chunkSize - 1
-            
-
             fetch(url, {
                 method: 'GET',
                 headers: {
