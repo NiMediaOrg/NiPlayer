@@ -1,5 +1,13 @@
 declare global {
     export const DEBUG: boolean;
+
+    export interface TextTrackCue {
+        text: string;
+    }
+
+    export interface HTMLVideoElement {
+        captureStream: MediaStream;
+    }
 }
 
 declare module '.png' {
