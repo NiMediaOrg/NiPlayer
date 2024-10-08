@@ -62,6 +62,7 @@ const player = new NiPlayer({
     ],
     plugins: [
         // WebCodecProxy
+        CanvasProxy
     ]
 })
 
