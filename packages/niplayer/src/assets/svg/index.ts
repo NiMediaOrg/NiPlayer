@@ -13,3 +13,4 @@ export { default as back } from "./back.svg";
 export { default as quality } from "./quality.svg";
 export { default as imageshot } from "./imageshot.svg";
 export { default as pauseCenter } from "./pause-center.svg";
+export { default as videoRecorder } from "./video-recorder.svg";

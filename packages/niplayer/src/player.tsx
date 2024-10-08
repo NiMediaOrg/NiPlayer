@@ -21,6 +21,7 @@ import { PlayAgent } from './plugin/play-agent'
 import { Subtitle } from './plugin/subtitle'
 import { PauseCenter } from './plugin/pause-center'
 import { Plugin } from './base/base.plugin'
+import { VideoRecorder } from './plugin/video-recorder'
 /**
  * @desc 播放器的入口文件
  */
@@ -73,6 +74,7 @@ export default class NiPlayer extends EventEmitter3 {
         PlayButton,
         Volume,
         TimeLabel,
+        VideoRecorder,
         ImageShot,
         Setting,
         PipInPip,

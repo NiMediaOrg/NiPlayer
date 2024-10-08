@@ -1,7 +1,6 @@
 import BaseStore from '@/base/base.store'
 import { NI_PLAYER_EVENT } from '@/shared/events'
 import bind from 'bind-decorator'
-import { cursorTo } from 'readline'
 
 export interface MediaState {
     /**

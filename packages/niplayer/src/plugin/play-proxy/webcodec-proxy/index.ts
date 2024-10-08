@@ -7,7 +7,7 @@ export class WebCodecProxy extends BasePlugin {
     protected beforeInit(): void {
         this.canvas = document.createElement('canvas')
         this.player.config.proxy = () => {
-            return this.canvas
+            return this.canvas as unknown as HTMLVideoElement
         }
     }
 

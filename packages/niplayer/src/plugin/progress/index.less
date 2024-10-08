@@ -1,4 +1,32 @@
 .niplayer-progress-container {
-    // width: 5px;
-    // height: 100%;
+    .niplayer-progress-thumbnail-container {
+        position: absolute;
+        transform: translateY(-110%);
+
+        .niplayer-progress-thumbnail {
+            width: 240px;
+            height: 135px;
+            overflow: hidden;
+            border-radius: 8px;
+            box-sizing: border-box;
+            border: 1px solid #fff;
+
+            img {
+                width: 100%;
+                height: 100%;
+            }
+        }
+
+        .niplayer-progress-time-label {
+            text-align: center;
+            padding: 5px;
+            font-family: 'PingFang SC';
+            font-style: normal;
+            font-weight: 400;
+            font-size: 14px;
+            line-height: 17px;
+            color: #FFFFFF;
+            text-shadow: 0px 1px 4px #000000;
+        }
+    }
 }

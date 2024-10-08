@@ -4,6 +4,10 @@ declare global {
     export interface TextTrackCue {
         text: string;
     }
+
+    export interface HTMLVideoElement {
+        captureStream: MediaStream;
+    }
 }
 
 declare module '.png' {

@@ -63,7 +63,14 @@ const player = new NiPlayer({
     plugins: [
         // WebCodecProxy
         CanvasProxy
-    ]
+    ],
+    thumbnail: {
+        url: './images/thumbnails.png',
+        width: 160,
+        height: 90,
+        num: 60,
+        columns: 10
+    }
 })
 
 player.on(NiPlayer.Event.VIDEO_QUALITY_CHANGING, (q) => {

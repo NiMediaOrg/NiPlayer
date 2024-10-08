@@ -1,35 +1,11 @@
 import BasePlugin from "@/base/base.plugin";
 import { NI_PLAYER_EVENT } from "@/shared/events";
+import { proxyCanvas } from "../proxy";
 export class CanvasProxy extends BasePlugin {
     /**
      * canvas代理的video对象
      */
     private _video: HTMLVideoElement;
-    /**
-     * 代理的video事件列表
-     */
-    private _videoEvents: string[] = [
-        'play',
-        'pause',
-        'seeking',
-        'seeked',
-        'ended',
-        'error',
-        'loadeddata',
-        'loadedmetadata',
-        'timeupdate',
-        'volumechange',
-        'ratechange',
-        'durationchange',
-        'waiting',
-        'playing',
-        'canplay',
-        'canplaythrough',
-        'progress',
-        'abort',
-        'emptied',
-        'stalled',
-    ];
     protected name = 'CanvasProxy';
 
     protected canvas: HTMLCanvasElement;
@@ -66,9 +42,8 @@ export class CanvasProxy extends BasePlugin {
             canvasHeight = canvasWidth / aspectRatio;
         }
 
-        this.canvas.width = canvasWidth;
-        this.canvas.height = canvasHeight;
-
+        this.canvas.width = canvasWidth * window.devicePixelRatio;
+        this.canvas.height = canvasHeight * window.devicePixelRatio;
         const paddingLeft = (containerWidth - canvasWidth) / 2;
         const paddingTop = (containerHeight - canvasHeight) / 2;
 
@@ -78,56 +53,18 @@ export class CanvasProxy extends BasePlugin {
     }
 
     protected initCanvas() {
-        this.canvas = document.createElement('canvas')
         this._video = document.createElement('video')
-        // 1. 将video的更新属性代理到canvas对象上
-        for (let prop in this._video) {
-            if (!(prop in this.canvas)) {
-                Object.defineProperty(this.canvas, prop, {
-                    get: () => {
-                        return typeof this._video[prop] === 'function' ? this._video[prop].bind(this._video) : this._video[prop]
-                    },
-                    set: (value) => {
-                        this._video[prop] = value
-                    },
-                    enumerable: true,
-                    configurable: true,
-                })
-            }
-        }
-        //2. 代理video的各项事件
-        this._videoEvents.forEach((event) => {
-            this._video.addEventListener(event, (e) => {
-                const ev = new Event(e.type, e)
-                this.canvas.dispatchEvent(ev)
-            })
-        })
-
-        //3. 代理canvas的appendChild方法
-        this.canvas.appendChild = (dom) => {
-            return this._video.appendChild(dom)
-        }
-
-        //4. 代理canvas的removeChild方法
-        this.canvas.removeChild = (dom) => {
-            return this._video.removeChild(dom)
-        }
-
-        //5. 代理canvas的append方法
-        this.canvas.append = (...nodes: (Node | string)[]) => {
-            return this._video.append(...nodes)
-        }
+        this.canvas = proxyCanvas(this._video)
     }
 
     protected beforeInit(): void {
         this.initCanvas()
         this.player.config.proxy = () => {
-            return this.canvas
+            return this.canvas as unknown as HTMLVideoElement
         }
     }
 
     protected install() {
-        console.log('[Proxy Installed] The CanvasProxy has been installed')
         this._video.style.display = 'none'
         this.player.nodes.videoArea.appendChild(this._video)
         this.player.on(NI_PLAYER_EVENT.VIDEO_CAN_PLAY, () => {

@@ -16,6 +16,29 @@ export interface IWaterMark {
     rotate?: number
 }
 
+export interface IThumbnail {
+    /**
+     * @desc 预览图的url地址
+     */
+    url: string
+    /**
+     * @desc 预览图的宽度
+     */
+    width?: number
+    /**
+     * @desc 预览图的高度
+     */
+    height?: number
+    /**
+     * @desc 预览图的数量
+     */
+    num?: number;
+    /**
+     * @desc 预览图的列数
+     */
+    columns?: number;
+}
+
 export class VideoProxy extends HTMLVideoElement {}
 
 export type PlayerConfig = {
@@ -90,4 +113,8 @@ export type PlayerConfig = {
      * @desc 插件列表
      */
     plugins?: Plugin[]
+    /**
+     * @desc 预览图相关设置
+     */
+    thumbnail?: IThumbnail
 }
