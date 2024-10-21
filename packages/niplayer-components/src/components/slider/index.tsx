@@ -90,7 +90,7 @@ const Slider = (props: SliderProps) => {
                             position: absolute;
                             width: 100%;
                             height: 10px;
-                            top: 5px;
+                            top: 3px;
                             background-color: transparent;
                         }
 
@@ -109,8 +109,7 @@ const Slider = (props: SliderProps) => {
                             pointer-events: none;
                             box-sizing: border-box;
                             position: absolute;
-                            bottom: 0px;
-                            top: 0px;
+                            height: 110%;
                         }
 
                         .nova-slider-buffer {

@@ -9,13 +9,18 @@ export class VideoRecorder extends UIPlugin {
      * @desc 开始录制视频
      */
     protected startRecord() {
-        this.mediaRecorder = new MediaRecorder(this.player.nodes.videoElement.captureStream)
+        // this.mediaRecorder = new MediaRecorder(this.player.nodes.videoElement.captureStream)
+        this.player.rootStore.toastStore.create({
+            text: '开始录制视频',
+            duration: 2000,
+            position: 'bottom-left'
+        })
     }
 
     protected render(): JSX.Element | string | HTMLElement {
         return (
             <div class="niplayer-controller-middle-item niplayer-imageshot-container">
-                <div innerHTML={svg.videoRecorder} style={{width: '60%', height: '60%'}}></div>
+                <div innerHTML={svg.videoRecorder} style={{width: '60%', height: '60%'}} onclick={() => this.startRecord()}></div>
                 <span class="niplayer-controller-middle-item-tip">录制视频</span>
             </div>
         )

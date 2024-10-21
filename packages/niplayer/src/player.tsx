@@ -22,6 +22,7 @@ import { Subtitle } from './plugin/subtitle'
 import { PauseCenter } from './plugin/pause-center'
 import { Plugin } from './base/base.plugin'
 import { VideoRecorder } from './plugin/video-recorder'
+import { Toast } from './plugin/toast'
 /**
  * @desc 播放器的入口文件
  */
@@ -34,6 +35,7 @@ export default class NiPlayer extends EventEmitter3 {
         container: HTMLDivElement
         videoArea: HTMLDivElement
         videoLayer: HTMLDivElement
+        toastLayer: HTMLDivElement
         videoElement: HTMLVideoElement
         controllerBar: HTMLDivElement
         controllerBarTop: HTMLDivElement
@@ -51,6 +53,7 @@ export default class NiPlayer extends EventEmitter3 {
             videoArea: null,
             videoElement: null,
             videoLayer: null,
+            toastLayer: null,
             controllerBar: null,
             controllerBarTop: null,
             controllerBarMiddle: null,
@@ -67,6 +70,7 @@ export default class NiPlayer extends EventEmitter3 {
     private disposeCallback: () => void
 
     private plugins: Plugin[] = [
+        Toast,
         PauseCenter,
         PlayAgent,
         PlayWaiting,
@@ -145,6 +149,7 @@ export default class NiPlayer extends EventEmitter3 {
                     class="niplayer-video-layer"
                     ref={this.nodes.videoLayer}
                 ></div>
+                <div class="niplayer-toast-layer" ref={this.nodes.toastLayer}></div>
                 <div
                     classList={{
                         'niplayer-top-area': true,

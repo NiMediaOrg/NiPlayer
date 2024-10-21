@@ -14,6 +14,7 @@ export class Progress extends UIPlugin {
     protected shotImage: HTMLImageElement = document.createElement('img');
 
     protected thumbContainer: HTMLDivElement;
+    protected imageUrlStore = {};
 
     protected get progressPercentage(): number {
         if (this.player.rootStore.actionStore.state.isProgressDrag) {
@@ -68,16 +69,25 @@ export class Progress extends UIPlugin {
     protected get imageUrl() {
         const {x, y} = this.thumbPosition;
         const { width, height } = this.player.config.thumbnail;
+
+        if (this.imageUrlStore[x]?.[y]) {
+            return this.imageUrlStore[x][y];
+        }
         const ctx = this.canvas.getContext('2d');
         ctx.drawImage(this.shotImage, x, y, width, height, 0, 0, width, height);
-        return this.canvas.toDataURL();
+        const url = this.canvas.toDataURL();
+        if (!this.imageUrlStore[x]) {
+            this.imageUrlStore[x] = {};
+        }
+        this.imageUrlStore[x][y] = url;
+        return url;
     }
 
 
     protected render(): JSX.Element | string | HTMLElement {
         this.shotImage.src = this.player.config.thumbnail?.url ?? '';
-        this.canvas.width = 160 * window.devicePixelRatio
-        this.canvas.height = 90 * window.devicePixelRatio
+        this.canvas.width = this.player.config.thumbnail?.width?? 160;
+        this.canvas.height = this.player.config.thumbnail?.height?? 90;
         const [ sliderHeight, setSliderHeight ] = createSignal(this.initSliderHeight);
         const [ dotScale, setDotScale ] = createSignal(0);
         const handleChange = (val: number) => {

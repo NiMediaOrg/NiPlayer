@@ -62,7 +62,7 @@ const player = new NiPlayer({
     ],
     plugins: [
         // WebCodecProxy
-        CanvasProxy
+        // CanvasProxy
     ],
     thumbnail: {
         url: './images/thumbnails.png',
