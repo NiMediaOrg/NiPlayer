@@ -19,13 +19,10 @@ import { PlayQuality } from './plugin/play-quality'
 import { ImageShot } from './plugin/video-shot'
 import { PlayAgent } from './plugin/play-agent'
 import { Subtitle } from './plugin/subtitle'
-
-/**
- * @desc 声明插件的类型
- */
-interface Plugin {
-    new (player: NiPlayer): void
-}
+import { PauseCenter } from './plugin/pause-center'
+import { Plugin } from './base/base.plugin'
+import { VideoRecorder } from './plugin/video-recorder'
+import { Toast } from './plugin/toast'
 /**
  * @desc 播放器的入口文件
  */
@@ -38,6 +35,7 @@ export default class NiPlayer extends EventEmitter3 {
         container: HTMLDivElement
         videoArea: HTMLDivElement
         videoLayer: HTMLDivElement
+        toastLayer: HTMLDivElement
         videoElement: HTMLVideoElement
         controllerBar: HTMLDivElement
         controllerBarTop: HTMLDivElement
@@ -51,32 +49,36 @@ export default class NiPlayer extends EventEmitter3 {
         topAreaMiddle: HTMLDivElement
         topAreaRight: HTMLDivElement
     } = {
-        container: null,
-        videoArea: null,
-        videoElement: null,
-        videoLayer: null,
-        controllerBar: null,
-        controllerBarTop: null,
-        controllerBarMiddle: null,
-        controllerBarBottom: null,
-        controllerBarMiddleLeft: null,
-        controllerBarMiddleMiddle: null,
-        controllerBarMiddleRight: null,
-        topArea: null,
-        topAreaLeft: null,
-        topAreaMiddle: null,
-        topAreaRight: null,
-    }
+            container: null,
+            videoArea: null,
+            videoElement: null,
+            videoLayer: null,
+            toastLayer: null,
+            controllerBar: null,
+            controllerBarTop: null,
+            controllerBarMiddle: null,
+            controllerBarBottom: null,
+            controllerBarMiddleLeft: null,
+            controllerBarMiddleMiddle: null,
+            controllerBarMiddleRight: null,
+            topArea: null,
+            topAreaLeft: null,
+            topAreaMiddle: null,
+            topAreaRight: null,
+        }
 
     private disposeCallback: () => void
 
     private plugins: Plugin[] = [
+        Toast,
+        PauseCenter,
         PlayAgent,
         PlayWaiting,
         Progress,
         PlayButton,
         Volume,
         TimeLabel,
+        VideoRecorder,
         ImageShot,
         Setting,
         PipInPip,
@@ -89,8 +91,10 @@ export default class NiPlayer extends EventEmitter3 {
     constructor(options?: PlayerConfig) {
         super()
         this.config = Object.assign(defaultConfig, options)
+        this.config.plugins && this.config.plugins.length > 0 && this.plugins.push(...this.config.plugins)
         this.rootStore = new RootStore(this)
         this.renderPlugin()
+        this.emit(NI_PLAYER_EVENT.BEFORE_INIT);
         this.renderTemplate()
     }
 
@@ -130,8 +134,8 @@ export default class NiPlayer extends EventEmitter3 {
                     onClick={handleClick}
                     onDblClick={handleDoubleClick}
                 >
-                    {this.config.video ? (
-                        ''
+                    {this.config.proxy ? (
+                        this.config.proxy()
                     ) : (
                         <video
                             ref={this.nodes.videoElement}
@@ -145,6 +149,7 @@ export default class NiPlayer extends EventEmitter3 {
                     class="niplayer-video-layer"
                     ref={this.nodes.videoLayer}
                 ></div>
+                <div class="niplayer-toast-layer" ref={this.nodes.toastLayer}></div>
                 <div
                     classList={{
                         'niplayer-top-area': true,
@@ -204,6 +209,9 @@ export default class NiPlayer extends EventEmitter3 {
             </div>
         )
 
+        if (this.config.proxy) {
+            this.nodes.videoElement = this.config.proxy()
+        }
         this.disposeCallback = render(() => <App />, this.config.container)
 
         this.emit(NI_PLAYER_EVENT.MOUNTED)

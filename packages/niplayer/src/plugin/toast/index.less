@@ -1,0 +1,16 @@
+.niplayer-toast-container {
+    padding: 7px 16px;
+    background-color: rgba(25, 25, 25, .88);
+    margin-top: 10px;
+    color: #fff;
+    border-radius: 5px;
+    font-size: 16px;
+    font-weight: 400;
+    opacity: 0;
+    transform: translateX(-50px);
+    transition: all.5s ease;
+    &.show {
+        opacity: 1;
+        transform: translateX(0px);
+    }
+}

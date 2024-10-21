@@ -48,7 +48,8 @@
     "eventemitter3": "^5.0.1",
     "mobx": "^6.13.1",
     "mp4box": "^0.5.2",
-    "niplayer-components": "workspace:^1.0.0"
+    "niplayer-components": "workspace:^1.0.0",
+    "uuid": "^10.0.0"
   },
   "files": [
     "package.json",

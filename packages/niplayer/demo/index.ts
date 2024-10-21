@@ -1,4 +1,4 @@
-import { NiPlayer } from '../src/index'
+import { NiPlayer, WebCodecProxy, CanvasProxy } from '../src/index'
 
 const player = new NiPlayer({
     container: document.querySelector('#app'),
@@ -8,7 +8,7 @@ const player = new NiPlayer({
         message: 'NovaNi',
     },
     //todo 这里的mp4流式播放还有问题，暂时不使用
-    streamPlay: false,
+    streamPlay: true,
     streamPlayOptions: {},
     seamlessChangeQuality: true,
     shot: {
@@ -60,6 +60,17 @@ const player = new NiPlayer({
             url: 'vtt/subtitle.en.vtt',
         }
     ],
+    plugins: [
+        // WebCodecProxy
+        // CanvasProxy
+    ],
+    thumbnail: {
+        url: './images/thumbnails.png',
+        width: 160,
+        height: 90,
+        num: 60,
+        columns: 10
+    }
 })
 
 player.on(NiPlayer.Event.VIDEO_QUALITY_CHANGING, (q) => {

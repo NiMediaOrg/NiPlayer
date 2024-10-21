@@ -7,6 +7,8 @@ interface ActionState {
     isControllerBarHidden: boolean;
     isTopBarHidden: boolean;
     isVolumeDrag: boolean;
+    previewTime: number;
+    hoverTime: number;
 }
 
 export default class ActionStore extends BaseStore<ActionState> {
@@ -19,6 +21,8 @@ export default class ActionStore extends BaseStore<ActionState> {
             isControllerBarHidden: true,
             isTopBarHidden: true,
             isVolumeDrag: false,
+            previewTime: 0,
+            hoverTime: 0
         }
     }
 
