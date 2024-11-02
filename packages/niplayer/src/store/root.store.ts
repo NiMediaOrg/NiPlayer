@@ -5,6 +5,7 @@ import ActionStore from './action.store'
 import { SettingStore } from './setting.store'
 import { QualityStore } from './quality.store'
 import { SubtitleStore } from '@/store/subtitle.store'
+import { ToastStore } from './toast.store'
 export interface RootState {
     playerInitialized?: boolean
 }
@@ -17,6 +18,7 @@ export class RootStore extends BaseStore<RootState> {
     public settingStore: SettingStore
     public qualityStore: QualityStore
     public subtitleStore: SubtitleStore
+    public toastStore: ToastStore;
     get defaultState() {
         return {
             playerInitialized: false,
@@ -29,6 +31,7 @@ export class RootStore extends BaseStore<RootState> {
         this.settingStore = new SettingStore(this.player)
         this.qualityStore = new QualityStore(this.player)
         this.subtitleStore = new SubtitleStore(this.player)
+        this.toastStore = new ToastStore(this.player)
     }
 
     constructor(player: NiPlayer) {

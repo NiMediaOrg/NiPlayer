@@ -14,8 +14,9 @@ interface SliderProps {
     dotHidden?: boolean;
     onChange?: (progress: number) => void;
     onMouseDown?: () => void;
-    onMouseMove?: () => void;
+    onMouseMove?: (per: number) => void;
     onMouseUp?: (per: number) => void;
+    hover?: (per: number) => void;
 }
 
 const Slider = (props: SliderProps) => {
@@ -34,7 +35,7 @@ const Slider = (props: SliderProps) => {
             const deltaX = ev.clientX - e.clientX;
             const per = getProgressPercentage(initPer + deltaX / sliderHTML.clientWidth);
             props.onChange?.(per);
-            props.onMouseMove?.();
+            props.onMouseMove?.(per);
         }
 
         document.onmouseup = (evs: MouseEvent) => {
@@ -45,15 +46,19 @@ const Slider = (props: SliderProps) => {
             props.onMouseUp?.(per);
         }
     }
+
+    const handleMouseMove = (e) => {
+        props.hover?.(getProgressPercentage(e.offsetX / sliderHTML.clientWidth))
+    }
         
     return (
         <>
-            <div class="nova-slider-container" ref={sliderHTML} onMouseDown={handleMouseDown}>
+            <div class="nova-slider-container" ref={sliderHTML} onMouseDown={handleMouseDown} onMouseMove={handleMouseMove}>
                 <div class="nova-slider-top"></div>
                 <div class="nova-slider-middle">
-                    <div class="nova-slider-done"></div>
                     <div class="nova-slider-buffer"></div>
                     <div class="nova-slider-preview"></div>
+                    <div class="nova-slider-done"></div>
                     <div class="nova-slider-dot"></div>
                 </div>
                 <div class="nova-slider-bottom"></div>
@@ -85,7 +90,7 @@ const Slider = (props: SliderProps) => {
                             position: absolute;
                             width: 100%;
                             height: 10px;
-                            top: 5px;
+                            top: 3px;
                             background-color: transparent;
                         }
 
@@ -97,7 +102,34 @@ const Slider = (props: SliderProps) => {
                         .nova-slider-done {
                             background-color: #f00;
                             width: 100%;
-                            transform: scaleX(${props.progress !== undefined ? props.progress + '' : '1'});
+                            transform: scaleX(${props.progress !== undefined ? props.progress + '' : '0'});
+                            transform-origin: left bottom;
+                            transition: width .3s ease, height .1s ease;
+                            border-radius: 5px;
+                            pointer-events: none;
+                            box-sizing: border-box;
+                            position: absolute;
+                            height: 110%;
+                        }
+
+                        .nova-slider-buffer {
+                            background-color: #ffffff4e;
+                            width: 100%;
+                            transform: scaleX(${props.bufferProgress !== undefined ? props.bufferProgress + '' : '0'});
+                            transform-origin: left bottom;
+                            transition: width .3s ease, height .1s ease;
+                            border-radius: 5px;
+                            pointer-events: none;
+                            box-sizing: border-box;
+                            position: absolute;
+                            bottom: 0px;
+                            top: 0px;
+                        }
+
+                        .nova-slider-preview {
+                            background-color: #fffffff2;
+                            width: 100%;
+                            transform: scaleX(${props.previewProgress !== undefined ? props.previewProgress + '' : '0'});
                             transform-origin: left bottom;
                             transition: width .3s ease, height .1s ease;
                             border-radius: 5px;

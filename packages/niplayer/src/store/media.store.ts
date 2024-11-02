@@ -61,6 +61,24 @@ export default class MediaStore extends BaseStore<MediaState> {
         return this.player.nodes.videoElement
     }
 
+    get bufferTime() {
+        const current = this.state.currentTime
+        for (let i = 0; i < this.videoElement.buffered.length; i++) {
+            const start = this.videoElement.buffered.start(i)
+            const end = this.videoElement.buffered.end(i)
+            
+            if (current >= start && current <= end) {
+                return end
+            }
+
+            if (start > this.videoElement.currentTime) {
+                break;
+            }
+        }
+
+        return current
+    }
+
     mounted(): void {
         this.addMediaEvents()
         this.player.config.container.addEventListener(

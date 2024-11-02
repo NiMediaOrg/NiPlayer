@@ -1,7 +1,7 @@
 export { default as fullscreen } from "./fullscreen.svg";
-export { default as pipInPip } from "./pip-in-pip.svg";
 export { default as leaveFullscreen } from "./leave-fullscreen.svg";
 export { default as play } from "./play.svg";
+export { default as pipInPip } from "./pip-in-pip.svg";
 export { default as pause } from "./pause.svg";
 export { default as volume } from "./volume.svg";
 export { default as setting } from "./setting.svg";
@@ -12,3 +12,5 @@ export { default as rightArrow } from "./right-arrow.svg";
 export { default as back } from "./back.svg";
 export { default as quality } from "./quality.svg";
 export { default as imageshot } from "./imageshot.svg";
+export { default as pauseCenter } from "./pause-center.svg";
+export { default as videoRecorder } from "./video-recorder.svg";
